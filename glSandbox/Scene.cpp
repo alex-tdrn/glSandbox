@@ -237,6 +237,18 @@ void Scene::drawUI()
 		auto generateListUI = [&](auto& data, std::optional<std::string_view const> const name = std::nullopt){
 		if(!name.has_value() || ImGui::TreeNode((*name).data()))
 		{
+			if(ImGui::Button("Disable All"))
+			{
+				update();
+				for(auto& entity : data)
+					entity.disable();
+			}
+			if(ImGui::Button("Enable All"))
+			{
+				update();
+				for(auto& entity : data)
+					entity.enable();
+			}
 			for(int i = 0; i < data.size(); i++)
 			{
 				if(ImGui::TreeNode(std::to_string(i).data()))
@@ -252,17 +264,33 @@ void Scene::drawUI()
 		};
 		if(ImGui::CollapsingHeader("Actors"))
 		{
-			ImGui::Indent();
 			generateListUI(actors);
-			ImGui::Unindent();
 		}
 		if(ImGui::CollapsingHeader("Lights"))
 		{
-			ImGui::Indent();
+			if(ImGui::Button("Disable All"))
+			{
+				update();
+				for(auto& light : directionalLights)
+					light.disable();
+				for(auto& light : pointLights)
+					light.disable();
+				for(auto& light : spotLights)
+					light.disable();
+			}
+			if(ImGui::Button("Enable All"))
+			{
+				update();
+				for(auto& light : directionalLights)
+					light.enable();
+				for(auto& light : pointLights)
+					light.enable();
+				for(auto& light : spotLights)
+					light.enable();
+			}
 			generateListUI(directionalLights, "Directional Lights");
 			generateListUI(pointLights, "Point Lights");
 			generateListUI(spotLights, "Spot Lights");
-			ImGui::Unindent();
 		}
 		ImGui::Unindent();
 	}

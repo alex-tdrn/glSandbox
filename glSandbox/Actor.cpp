@@ -7,6 +7,16 @@ Actor::Actor(Model const* model, std::string const name)
 
 }
 
+void Actor::enable()
+{
+	enabled = true;
+}
+
+void Actor::disable()
+{
+	enabled = false;
+}
+
 void Actor::setModel(Model const* model)
 {
 	this->model = model;
@@ -24,7 +34,7 @@ void Actor::setScale(glm::vec3 scale)
 
 void Actor::draw(Shader shader) const
 {
-	if(!model)
+	if(!enabled || !model)
 		return;
 
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
@@ -45,7 +55,7 @@ void Actor::draw(Shader shader) const
 
 void Actor::drawOutline(Shader outlineShader) const
 {
-	if(!model || !outlined)
+	if(!enabled || !model || !outlined)
 		return;
 
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
@@ -59,6 +69,9 @@ void Actor::drawOutline(Shader outlineShader) const
 bool Actor::drawUI()
 {
 	bool valueChanged = false;
+	if(ImGui::Checkbox("Enabled", &enabled))
+		valueChanged = true;
+	ImGui::SameLine();
 	if(ImGui::Checkbox("Outlined", &outlined))
 		valueChanged = true;
 	if(position.drawUI())

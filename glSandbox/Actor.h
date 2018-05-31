@@ -6,6 +6,7 @@
 class Actor
 {
 private:
+	bool enabled = true;
 	bool outlined = false;
 	Position position;
 	Scale scale;
@@ -18,6 +19,8 @@ public:
 	Actor(Model const* model = nullptr, std::string const name = "Actor#" + std::to_string(ct++));
 
 public:
+	void enable();
+	void disable();
 	void setModel(Model const* model);
 	void setPosition(glm::vec3 position);
 	void setScale(glm::vec3 scale);

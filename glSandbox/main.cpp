@@ -84,6 +84,7 @@ int main(int argc, char** argv)
 	ImGui_ImplGlfwGL3_Init(window, false);
 	ImGui::StyleColorsLight();
 	
+	resources::scene.setBackgroundColor({1.0f, 1.0f, 1.0f});
 	resources::scene.getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
 	resources::scene.getCamera().setOrientation(Orientation{200.0f, -20.0f, 0.0f});
 	resources::init();

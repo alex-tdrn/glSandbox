@@ -75,7 +75,7 @@ namespace settings
 		inline bool specularMaps = true;
 		inline glm::vec3 diffuseColor{1.0f, 1.0f, 1.0f};
 		inline glm::vec3 specularColor{1.0f, 1.0f, 1.0f};
-		inline float ambientStrength = 0.5f;
+		inline float ambientStrength = 0.2f;
 		inline bool debugDepthBufferLinear = false;
 		inline bool debugNormalsViewSpace = false;
 

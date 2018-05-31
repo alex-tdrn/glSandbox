@@ -6,6 +6,16 @@ bool Light::isEnabled() const
 	return enabled;
 }
 
+void Light::enable()
+{
+	enabled = true;
+}
+
+void Light::disable()
+{
+	enabled = false;
+}
+
 void Light::setColor(glm::vec3 color)
 {
 	this->color = color;

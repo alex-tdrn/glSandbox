@@ -10,6 +10,8 @@ private:
 
 public:
 	bool isEnabled() const;
+	void enable();
+	void disable();
 	void setColor(glm::vec3 color);
 	glm::vec3 const& getColor() const;
 	virtual bool drawUI();

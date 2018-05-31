@@ -1,8 +1,10 @@
 #include "Actor.h"
+#include "GLobals.h"
+
 #include <imgui.h>
 
-Actor::Actor(Model const* model, std::string const name)
-	:model(model), name(name)
+Actor::Actor(Model* model, std::string name)
+	:model(model), name(std::move(name))
 {
 
 }
@@ -17,7 +19,7 @@ void Actor::disable()
 	enabled = false;
 }
 
-void Actor::setModel(Model const* model)
+void Actor::setModel(Model* model)
 {
 	this->model = model;
 }
@@ -69,6 +71,28 @@ void Actor::drawOutline(Shader outlineShader) const
 bool Actor::drawUI()
 {
 	bool valueChanged = false;
+	std::string_view comboPreview = "None";
+	if(model)
+		comboPreview = model->getName();
+	if(ImGui::BeginCombo("Model", comboPreview.data()))
+	{
+		if(ImGui::Selectable("None", !model))
+		{
+			model = nullptr;
+			resources::scene.update();
+		}
+		if(ImGui::Selectable(resources::models::nanosuit.getName().data(), model == &resources::models::nanosuit))
+		{
+			model = &resources::models::nanosuit;
+			resources::scene.update();
+		}
+		if(ImGui::Selectable(resources::models::sponza.getName().data(), model == &resources::models::sponza))
+		{
+			model = &resources::models::sponza;
+			resources::scene.update();
+		}
+		ImGui::EndCombo();
+	}
 	if(ImGui::Checkbox("Enabled", &enabled))
 		valueChanged = true;
 	ImGui::SameLine();

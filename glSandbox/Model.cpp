@@ -98,6 +98,12 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 		return Mesh(std::move(vertices), std::move(indices), material);
 }
 
+std::string_view const Model::getName() const
+{
+	return name;
+}
+
+
 bool Model::isInitialized() const
 {
 	if(!initialized)

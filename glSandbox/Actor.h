@@ -11,17 +11,18 @@ private:
 	Position position;
 	Scale scale;
 
-	Model const* model = nullptr;
-	std::string const name;
+	Model* model = nullptr;
+	std::string name;
 	inline static int ct = 0;
 
 public:
-	Actor(Model const* model = nullptr, std::string const name = "Actor#" + std::to_string(ct++));
+	Actor(Model* model = nullptr, std::string name = "Actor#" + std::to_string(ct++));
+	Actor& operator=(Actor const&) = default;
 
 public:
 	void enable();
 	void disable();
-	void setModel(Model const* model);
+	void setModel(Model* model);
 	void setPosition(glm::vec3 position);
 	void setScale(glm::vec3 scale);
 	void draw(Shader shader) const;

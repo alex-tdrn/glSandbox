@@ -34,6 +34,7 @@ private:
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene, std::string_view const dir) const;
 
 public:
+	std::string_view const getName() const;
 	bool isInitialized() const;
 	void draw(Shader shader) const;
 	bool drawUI();

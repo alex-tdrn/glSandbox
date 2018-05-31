@@ -243,20 +243,34 @@ void Scene::drawUI()
 				for(auto& entity : data)
 					entity.disable();
 			}
+			ImGui::SameLine();
 			if(ImGui::Button("Enable All"))
 			{
 				update();
 				for(auto& entity : data)
 					entity.enable();
 			}
+			if(ImGui::Button("Add New"))
+			{
+				update();
+				data.emplace_back();
+			}
+			int removeIdx = -1;
 			for(int i = 0; i < data.size(); i++)
 			{
 				if(ImGui::TreeNode(std::to_string(i).data()))
 				{
+					if(ImGui::Button("Remove"))
+						removeIdx = i;
 					if(data[i].drawUI())
 						update();
 					ImGui::TreePop();
 				}
+			}
+			if(removeIdx != -1)
+			{
+				data.erase(data.begin() + removeIdx);
+				update();
 			}
 			if(name.has_value())
 				ImGui::TreePop();
@@ -278,6 +292,7 @@ void Scene::drawUI()
 				for(auto& light : spotLights)
 					light.disable();
 			}
+			ImGui::SameLine();
 			if(ImGui::Button("Enable All"))
 			{
 				update();

@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/x64
+/glSandbox/x64
+/.vs/glSandbox/v15
+/glSandbox/.vs/Hello Triangle/v15

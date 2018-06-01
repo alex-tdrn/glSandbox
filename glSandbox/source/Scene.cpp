@@ -94,20 +94,6 @@ void Scene::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 
-	//draw skybox
-	if(skybox)
-	{
-		glDepthMask(GL_FALSE);
-		skybox->use();
-		resources::shaders::skybox.use();
-		resources::shaders::skybox.set("skybox", 0);
-		resources::scene.getCamera().use(resources::shaders::skybox, info::windowWidth, info::windowHeight);
-		glBindVertexArray(resources::boxVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glDepthMask(GL_TRUE);
-	}
-
-
 	if(depthTesting)
 	{
 		glEnable(GL_DEPTH_TEST);
@@ -225,6 +211,20 @@ void Scene::draw()
 		actor.drawOutline(resources::shaders::outline);
 	glStencilMask(0xFF);
 	glDisable(GL_STENCIL_TEST);
+
+	//draw skybox
+	if(skybox)
+	{
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		skybox->use();
+		resources::shaders::skybox.use();
+		resources::shaders::skybox.set("skybox", 0);
+		resources::scene.getCamera().use(resources::shaders::skybox, info::windowWidth, info::windowHeight);
+		glBindVertexArray(resources::boxVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }

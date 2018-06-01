@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "Scene.h"
 #include "PostProcessingStep.h"
+#include "Cubemap.h"
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
@@ -22,6 +23,7 @@ namespace resources
 	}
 	namespace shaders
 	{
+		//rendering
 		inline Shader phong("shaders/phong.vert", "shaders/phong.frag");
 		inline Shader gouraud("shaders/gouraud.vert", "shaders/gouraud.frag");
 		inline Shader outline("shaders/outline.vert", "shaders/outline.frag");
@@ -29,13 +31,27 @@ namespace resources
 		inline Shader debugTexCoords("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
 		inline Shader debugDepthBuffer("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
 		inline Shader light("shaders/light.vert", "shaders/light.frag");
-
+		inline Shader skybox("shaders/skybox.vert", "shaders/skybox.frag");
+		//postprocessing
 		inline Shader passthrough("shaders/ppPassthrough.vert", "shaders/ppPassthrough.frag");
 		inline Shader grayscale("shaders/ppBW.vert", "shaders/ppBW.frag");
 		inline Shader invert("shaders/ppInvert.vert", "shaders/ppInvert.frag");
 		inline Shader convolution("shaders/ppConvolution.vert", "shaders/ppConvolution.frag");
 
 		inline void reload();
+	}
+	namespace cubemaps
+	{
+		inline Cubemap skybox("skybox",{
+			"cubemaps/skybox/right.jpg", "cubemaps/skybox/left.jpg",
+			"cubemaps/skybox/top.jpg", "cubemaps/skybox/bottom.jpg",
+			"cubemaps/skybox/front.jpg", "cubemaps/skybox/back.jpg"
+			});
+		inline Cubemap mp_blizzard("mp_blizzard",{
+			"cubemaps/mp_blizzard/blizzard_rt.tga", "cubemaps/mp_blizzard/blizzard_lf.tga",
+			"cubemaps/mp_blizzard/blizzard_up.tga", "cubemaps/mp_blizzard/blizzard_dn.tga",
+			"cubemaps/mp_blizzard/blizzard_ft.tga", "cubemaps/mp_blizzard/blizzard_bk.tga"
+			});
 	}
 	inline void init();
 	inline void drawUI();
@@ -95,47 +111,47 @@ void resources::init()
 {
 	//create vertex data and buffer objects
 	float boxVertices[] = {
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, 0.5f, -0.5f,
-		0.5f, 0.5f, -0.5f,
-		-0.5f, 0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-1.0f, 1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
 
-		-0.5f, -0.5f, 0.5f,
-		0.5f, -0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
-		-0.5f, 0.5f, 0.5f,
-		-0.5f, -0.5f, 0.5f,
+		-1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
 
-		-0.5f, 0.5f, 0.5f,
-		-0.5f, 0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, 0.5f,
-		-0.5f, 0.5f, 0.5f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
 
-		0.5f, 0.5f, 0.5f,
-		0.5f, 0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
+		-1.0f, -1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
 
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, 0.5f,
-		0.5f, -0.5f, 0.5f,
-		-0.5f, -0.5f, 0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-1.0f, 1.0f, -1.0f,
+		1.0f, 1.0f, -1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,
 
-		-0.5f, 0.5f, -0.5f,
-		0.5f, 0.5f, -0.5f,
-		0.5f, 0.5f, 0.5f,
-		0.5f, 0.5f, 0.5f,
-		-0.5f, 0.5f, 0.5f,
-		-0.5f, 0.5f, -0.5f
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f
 	};
 
 	unsigned int boxVBO;
@@ -222,6 +238,7 @@ void resources::shaders::reload()
 	resources::shaders::debugTexCoords.reload();
 	resources::shaders::debugDepthBuffer.reload();
 	resources::shaders::light.reload();
+	resources::shaders::skybox.reload();
 
 	resources::shaders::passthrough.reload();
 	resources::shaders::grayscale.reload();
@@ -239,6 +256,13 @@ void resources::drawUI()
 			if(models::nanosuit.drawUI())
 				scene.update();
 			if(models::sponza.drawUI())
+				scene.update();
+		}
+		if(ImGui::CollapsingHeader("Cubemaps"))
+		{
+			if(cubemaps::skybox.drawUI())
+				scene.update();
+			if(cubemaps::mp_blizzard.drawUI())
 				scene.update();
 		}
 		if(ImGui::Button("Reload Shaders"))

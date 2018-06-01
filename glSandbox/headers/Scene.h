@@ -2,6 +2,7 @@
 #include "Actor.h"
 #include "Lights.h"
 #include "Camera.h"
+#include "Cubemap.h"
 
 #include <vector>
 
@@ -19,6 +20,7 @@ private:
 	std::vector<Actor> actors;
 	Camera camera;
 	glm::vec3 backgroundColor{0.5f, 0.5f, 0.5f};
+	Cubemap* skybox = nullptr;
 
 public:
 	Scene();

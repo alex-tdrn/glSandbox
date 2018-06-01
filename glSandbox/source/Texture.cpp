@@ -112,6 +112,7 @@ Texture::~Texture()
 
 Texture const& Texture::operator=(Texture const& other)
 {
+	this->initialized = other.initialized;
 	this->location = other.location;
 	this->path = other.path;
 	this->ID = other.ID;

@@ -94,6 +94,19 @@ void Scene::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 
+	//draw skybox
+	if(skybox)
+	{
+		glDepthMask(GL_FALSE);
+		skybox->use();
+		resources::shaders::skybox.use();
+		resources::shaders::skybox.set("skybox", 0);
+		resources::scene.getCamera().use(resources::shaders::skybox, info::windowWidth, info::windowHeight);
+		glBindVertexArray(resources::boxVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDepthMask(GL_TRUE);
+	}
+
 
 	if(depthTesting)
 	{
@@ -233,9 +246,30 @@ void Scene::drawUI()
 		ImGui::Indent();
 		if(ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs))
 			update();
+		std::string_view comboPreview = "None";
+		if(skybox)
+			comboPreview = skybox->getName();
+		if(ImGui::BeginCombo("Skybox", comboPreview.data()))
+		{
+			if(ImGui::Selectable("None", !skybox))
+			{
+				skybox = nullptr;
+				resources::scene.update();
+			}
+			if(ImGui::Selectable(resources::cubemaps::skybox.getName().data(), skybox == &resources::cubemaps::skybox))
+			{
+				skybox = &resources::cubemaps::skybox;
+				resources::scene.update();
+			}
+			if(ImGui::Selectable(resources::cubemaps::mp_blizzard.getName().data(), skybox == &resources::cubemaps::mp_blizzard))
+			{
+				skybox = &resources::cubemaps::mp_blizzard;
+				resources::scene.update();
+			}
+			ImGui::EndCombo();
+		}
 		if(camera.drawUI())
 			update();
-
 		auto generateListUI = [&](auto& data, std::optional<std::string_view const> const name = std::nullopt){
 		if(!name.has_value() || ImGui::TreeNode((*name).data()))
 		{

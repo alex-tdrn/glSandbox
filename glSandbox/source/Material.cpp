@@ -85,6 +85,7 @@ void Material::use(Shader shader) const
 		shader.set("material.specularMapOffset", maps[specular]->getUVOffset());
 		shader.set("material.shininess", shininessValue);
 	}
+
 	shader.set("material.hasOpacityMap", bool(maps[opacity]));
 	if(maps[opacity])
 	{
@@ -92,6 +93,7 @@ void Material::use(Shader shader) const
 		shader.set("material.opacityMap", maps[opacity]->getLocation());
 		shader.set("material.opacityMapOffset", maps[opacity]->getUVOffset());
 	}
+
 }
 
 bool Material::drawUI()

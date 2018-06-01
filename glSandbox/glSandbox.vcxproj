@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Cubemap.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Components.cpp" />
     <ClCompile Include="source\glad.c" />
@@ -162,6 +163,7 @@
     <ClCompile Include="source\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />
     <ClInclude Include="headers\Components.h" />
     <ClInclude Include="headers\Globals.h" />
@@ -200,6 +202,8 @@
     <None Include="shaders\ppInvert.vert" />
     <None Include="shaders\ppPassthrough.frag" />
     <None Include="shaders\ppPassthrough.vert" />
+    <None Include="shaders\skybox.frag" />
+    <None Include="shaders\skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

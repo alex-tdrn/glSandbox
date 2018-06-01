@@ -17,8 +17,8 @@ namespace resources
 	
 	namespace models
 	{
-		inline Model nanosuit{"../models/nanosuit/nanosuit.obj", "Nanosuit"};
-		inline Model sponza{"../models/sponza/sponza.obj", "Sponza"};
+		inline Model nanosuit{"models/nanosuit/nanosuit.obj", "Nanosuit"};
+		inline Model sponza{"models/sponza/sponza.obj", "Sponza"};
 	}
 	namespace shaders
 	{

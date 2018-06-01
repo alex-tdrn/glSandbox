@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -135,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -146,36 +146,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Components.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="imgui_impl_glfw_gl3.cpp" />
-    <ClCompile Include="Lights.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="PostProcessingStep.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\Components.cpp" />
+    <ClCompile Include="source\glad.c" />
+    <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="source\Lights.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\Material.cpp" />
+    <ClCompile Include="source\Mesh.cpp" />
+    <ClCompile Include="source\Model.cpp" />
+    <ClCompile Include="source\Actor.cpp" />
+    <ClCompile Include="source\PostProcessingStep.cpp" />
+    <ClCompile Include="source\Scene.cpp" />
+    <ClCompile Include="source\Shader.cpp" />
+    <ClCompile Include="source\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Components.h" />
-    <ClInclude Include="Globals.h" />
-    <ClInclude Include="imgui_impl_glfw_gl3.h" />
-    <ClInclude Include="Lights.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Actor.h" />
-    <ClInclude Include="PostProcessingStep.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Util.h" />
+    <ClInclude Include="headers\Camera.h" />
+    <ClInclude Include="headers\Components.h" />
+    <ClInclude Include="headers\Globals.h" />
+    <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="headers\Lights.h" />
+    <ClInclude Include="headers\Material.h" />
+    <ClInclude Include="headers\Mesh.h" />
+    <ClInclude Include="headers\Model.h" />
+    <ClInclude Include="headers\Actor.h" />
+    <ClInclude Include="headers\PostProcessingStep.h" />
+    <ClInclude Include="headers\Scene.h" />
+    <ClInclude Include="headers\Shader.h" />
+    <ClInclude Include="headers\Texture.h" />
+    <ClInclude Include="headers\Util.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\debugDepthBuffer.frag" />

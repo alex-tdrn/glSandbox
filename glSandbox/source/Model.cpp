@@ -65,18 +65,22 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 				return std::string(dir) + "/" + std::string(path.C_Str());
 			return std::nullopt;
 		};
+
 		std::optional<std::string> diffusePath = getTexturePath(aiTextureType_DIFFUSE);
 		std::optional<std::string> specularPath = getTexturePath(aiTextureType_SPECULAR);
 
 		for(auto& loadedMaterial : materials)
 		{
-			if(diffusePath && loadedMaterial->contains(*diffusePath))
+			for(auto& texturePath : {diffusePath, specularPath})
 			{
-				material = loadedMaterial.get();
-				break;
+				if(texturePath && loadedMaterial->contains(*texturePath))
+				{
+					material = loadedMaterial.get();
+					break;
+				}
 			}
-			if(specularPath && loadedMaterial->contains(*specularPath))
-				material = loadedMaterial.get();
+			if(material != nullptr)
+				break;
 		}
 		if(material == nullptr)
 		{

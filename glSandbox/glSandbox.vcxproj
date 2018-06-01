@@ -202,6 +202,8 @@
     <None Include="shaders\ppInvert.vert" />
     <None Include="shaders\ppPassthrough.frag" />
     <None Include="shaders\ppPassthrough.vert" />
+    <None Include="shaders\reflection.frag" />
+    <None Include="shaders\reflection.vert" />
     <None Include="shaders\skybox.frag" />
     <None Include="shaders\skybox.vert" />
   </ItemGroup>

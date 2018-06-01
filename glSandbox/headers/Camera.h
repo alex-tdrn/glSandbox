@@ -26,6 +26,7 @@ public:
 	std::tuple<glm::mat4, glm::mat4> getMatrices(float width, float height) const;
 	glm::mat4 getProjectionMatrix(float width, float height) const;
 	glm::mat4 getViewMatrix() const;
+	glm::vec3 getPosition() const;
 	void setPosition(Position position);
 	void setOrientation(Orientation orientation);
 	void dolly(float amount);

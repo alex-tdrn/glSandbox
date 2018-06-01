@@ -26,6 +26,7 @@ namespace resources
 		//rendering
 		inline Shader phong("shaders/phong.vert", "shaders/phong.frag");
 		inline Shader gouraud("shaders/gouraud.vert", "shaders/gouraud.frag");
+		inline Shader reflection("shaders/reflection.vert", "shaders/reflection.frag");
 		inline Shader outline("shaders/outline.vert", "shaders/outline.frag");
 		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag");
 		inline Shader debugTexCoords("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
@@ -73,6 +74,7 @@ namespace settings
 		{
 			phong,
 			gouraud,
+			reflection,
 			debugNormals,
 			debugTexCoords,
 			debugDepthBuffer
@@ -198,6 +200,8 @@ Shader& settings::rendering::getActiveShader()
 		{
 			case type::gouraud:
 				return resources::shaders::gouraud;
+			case type::reflection:
+				return resources::shaders::reflection;
 			case type::debugNormals:
 				return resources::shaders::debugNormals;
 			case type::debugTexCoords:
@@ -233,6 +237,7 @@ void resources::shaders::reload()
 {
 	resources::shaders::phong.reload();
 	resources::shaders::gouraud.reload();
+	resources::shaders::reflection.reload();
 	resources::shaders::outline.reload();
 	resources::shaders::debugNormals.reload();
 	resources::shaders::debugTexCoords.reload();
@@ -369,12 +374,14 @@ void settings::rendering::drawUI()
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Gouraud", &active, type::gouraud))
 			resources::scene.update();
+		
+		if(ImGui::RadioButton("Reflection", &active, type::reflection))
+			resources::scene.update();
 
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Normals", &active, type::debugNormals))
 			resources::scene.update();
 
-		ImGui::SameLine();
 		if(ImGui::RadioButton("Texture Coordinates", &active, type::debugTexCoords))
 			resources::scene.update();
 

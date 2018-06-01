@@ -196,6 +196,13 @@ void Scene::draw()
 			activeShader.set("nSpotLights", enabledLights);
 		}
 	}
+	else if(active == type::reflection)
+	{
+		if(skybox)
+			skybox->use();
+		activeShader.set("skybox", 0);
+		activeShader.set("cameraPos", camera.getPosition());
+	}
 
 	camera.use(activeShader, info::windowWidth, info::windowHeight);
 	glEnable(GL_STENCIL_TEST);

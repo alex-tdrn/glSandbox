@@ -2,12 +2,47 @@
 #include "Texture.h"
 #include <imgui.h>
 
-int Material::ct = 0;
+std::string mapToString(int mapType)
+{
+	switch(mapType)
+	{
+		case Material::Maps::ambient:
+			return "Ambient";
+		case Material::Maps::diffuse:
+			return "Diffuse";
+		case Material::Maps::specular:
+			return "Specular";
+		case Material::Maps::shininess:
+			return "Shininess";
+		case Material::Maps::emission:
+			return "Emission";
+		case Material::Maps::light:
+			return "Light";
+		case Material::Maps::reflection:
+			return "Reflection";
+		case Material::Maps::opacity:
+			return "Opacity";
+		case Material::Maps::normal:
+			return "Normal";
+		case Material::Maps::bump:
+			return "Bump";
+		case Material::Maps::displacement:
+			return "Displacement";
+		default:
+			return "Unknown";
+	}
+}
 
-Material::Material(std::optional<Texture> diffuseMap, std::optional<Texture> specularMap, float shininess, std::string const name)
-	: name(name), diffuseMap(diffuseMap), specularMap(specularMap), shininess(shininess)
+Material::Material(std::string const name)
+	: name(name)
 {
 }
+
+void Material::setMap(int mapType, std::optional<Texture> map)
+{
+	maps[mapType] = map;
+}
+
 std::string_view const Material::getName() const
 {
 	return name;
@@ -16,16 +51,16 @@ std::string_view const Material::getName() const
 bool Material::isInitialized() const
 {
 	bool ret = true;
-	if(diffuseMap)
-		ret = ret && diffuseMap->isInitialized();
-	if(specularMap)
-		ret = ret && specularMap->isInitialized();
+	for(auto& map : maps)
+		if(map)
+			ret = ret && map->isInitialized();
+
 	return ret;
 }
 
 bool Material::contains(std::string_view const path)
 {
-	for(auto& map : {diffuseMap, specularMap})
+	for(auto& map : maps)
 		if(map && map->getPath() == path)
 			return true;
 	return false;
@@ -33,19 +68,20 @@ bool Material::contains(std::string_view const path)
 
 void Material::use(Shader shader) const
 {
-	shader.set("material.hasDiffuseMap", bool(diffuseMap));
-	if(diffuseMap)
+
+	shader.set("material.hasDiffuseMap", bool(maps[diffuse]));
+	if(maps[diffuse])
 	{
-		diffuseMap->use(GL_TEXTURE0);
+		maps[diffuse]->use(GL_TEXTURE0);
 		shader.set("material.diffuse", 0);
 	}
 
-	shader.set("material.hasSpecularMap", bool(specularMap));
-	if(specularMap)
+	shader.set("material.hasSpecularMap", bool(maps[specular]));
+	if(maps[specular])
 	{
-		specularMap->use(GL_TEXTURE1);
+		maps[specular]->use(GL_TEXTURE1);
 		shader.set("material.specular", 1);
-		shader.set("material.shininess", shininess);
+		shader.set("material.shininess", shininessValue);
 	}
 }
 
@@ -56,23 +92,38 @@ void Material::drawUI()
 		header += "(loading...)";
 	if(ImGui::TreeNode(header.data()))
 	{
-		if(specularMap)
-			ImGui::DragFloat("Shininess", &shininess, 0.1f);
-		ImGui::Columns(2, nullptr, false);
-		ImGui::Text("Diffuse Map");
-		if(diffuseMap)
-			diffuseMap->drawUI();
-		else
-			ImGui::Text("Missing");
-		ImGui::NextColumn();
-		ImGui::Text("Specular Map");
-		if(specularMap)
-			specularMap->drawUI();
-		else
-			ImGui::Text("Missing");
-		ImGui::NextColumn();
+		if(maps[specular])
+			ImGui::DragFloat("Shininess", &shininessValue, 0.1f);
 
-		ImGui::Columns(1);
+		int mapType = 0;
+		int columnsEmpty = 0;
+		while(mapType < Maps::n)
+		{
+			if(maps[mapType])
+			{
+				ImGui::Columns(2, nullptr, false);
+				columnsEmpty = 2;
+			}
+			else
+				mapType++;
+			while(mapType < Maps::n && columnsEmpty > 0)
+			{
+				if(maps[mapType])
+				{
+					ImGui::Text((mapToString(mapType) + " Map").c_str());
+					maps[mapType]->drawUI();
+					ImGui::NextColumn();
+					columnsEmpty--;
+				}
+				mapType++;
+			}
+		}
+		while(columnsEmpty)
+		{
+			ImGui::NextColumn();
+			columnsEmpty--;
+		}
+		ImGui::Columns(1, nullptr, false);
 		ImGui::TreePop();
 	}
 }

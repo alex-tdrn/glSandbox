@@ -4,20 +4,38 @@
 
 #include <string>
 #include <optional>
+#include <array>
 
 class Material
 {
+public:
+	enum Maps
+	{
+		ambient,
+		diffuse,
+		specular,
+		shininess,
+		emission,
+		light,
+		reflection,
+		opacity,
+		normal,
+		bump,
+		displacement,
+		unknown,
+		n
+	};
 private:
 	std::string const name;
-	std::optional<Texture> const diffuseMap;
-	std::optional<Texture> const specularMap;
-	float shininess;
-	static int ct;
+	std::array<std::optional<Texture>, Maps::n> maps;
+	float shininessValue = 32.0f;
+	inline static int ct = 0;
 
 public:
-	Material(std::optional<Texture> diffuseMap, std::optional<Texture> specularMap, float shininess = 32.0f, std::string const name = "Material#" + std::to_string(ct++));
+	Material(std::string const name = "Material#" + std::to_string(ct++));
 
 public:
+	void setMap(int mapType, std::optional<Texture> map);
 	bool isInitialized() const;
 	std::string_view const getName() const;
 	bool contains(std::string_view const path);

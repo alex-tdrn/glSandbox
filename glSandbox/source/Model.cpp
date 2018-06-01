@@ -66,14 +66,53 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 			return std::nullopt;
 		};
 
-		std::optional<std::string> diffusePath = getTexturePath(aiTextureType_DIFFUSE);
-		std::optional<std::string> specularPath = getTexturePath(aiTextureType_SPECULAR);
-
-		for(auto& loadedMaterial : materials)
+		std::array<std::optional<std::string>, Material::Maps::n> mapPaths;
+		for(int internalMapType = 0; internalMapType < mapPaths.size(); internalMapType++)
 		{
-			for(auto& texturePath : {diffusePath, specularPath})
+			aiTextureType assimpMapType;
+			switch(internalMapType)
 			{
-				if(texturePath && loadedMaterial->contains(*texturePath))
+				case Material::Maps::ambient:
+					assimpMapType = aiTextureType_AMBIENT;
+					break;
+				case Material::Maps::diffuse:
+					assimpMapType = aiTextureType_DIFFUSE;
+					break;
+				case Material::Maps::specular:
+					assimpMapType = aiTextureType_SPECULAR;
+					break;
+				case Material::Maps::shininess:
+					assimpMapType = aiTextureType_SHININESS;
+					break;
+				case Material::Maps::emission:
+					assimpMapType = aiTextureType_EMISSIVE;
+					break;
+				case Material::Maps::light:
+					assimpMapType = aiTextureType_LIGHTMAP;
+					break;
+				case Material::Maps::reflection:
+					assimpMapType = aiTextureType_REFLECTION;
+					break;
+				case Material::Maps::opacity:
+					assimpMapType = aiTextureType_OPACITY;
+					break;
+				case Material::Maps::normal:
+					assimpMapType = aiTextureType_NORMALS;
+					break;
+				case Material::Maps::bump:
+					assimpMapType = aiTextureType_HEIGHT;
+					break;
+				case Material::Maps::displacement:
+					assimpMapType = aiTextureType_DISPLACEMENT;
+					break;
+				default:
+					assimpMapType = aiTextureType_UNKNOWN;
+					break;
+			}
+			mapPaths[internalMapType] = getTexturePath(assimpMapType);
+			for(auto& loadedMaterial : materials)
+			{
+				if(mapPaths[internalMapType] && loadedMaterial->contains(*mapPaths[internalMapType]))
 				{
 					material = loadedMaterial.get();
 					break;
@@ -82,15 +121,20 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 			if(material != nullptr)
 				break;
 		}
+
 		if(material == nullptr)
 		{
-			std::optional<Texture> diffuseTexture;
-			if(diffusePath)
-				diffuseTexture = Texture{std::move(*diffusePath)};
-			std::optional<Texture> specularTexture;
-			if(specularPath)
-				specularTexture = Texture{std::move(*specularPath)};
-			material = new Material(diffuseTexture, specularTexture);
+			aiMaterial* assimpMaterial = scene->mMaterials[mesh->mMaterialIndex];
+			aiString name;
+			aiGetMaterialString(assimpMaterial, AI_MATKEY_NAME, &name);
+			material = new Material(name.C_Str());
+			std::array<std::optional<Texture>, Material::Maps::n> maps;
+			for(int internalMapType = 0; internalMapType < maps.size(); internalMapType++)
+			{
+				if(mapPaths[internalMapType])
+					maps[internalMapType] = Texture{std::move(*mapPaths[internalMapType])};
+				material->setMap(internalMapType, maps[internalMapType]);
+			}
 			materials.emplace_back(material);
 		}
 	}

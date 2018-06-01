@@ -65,10 +65,11 @@ private:
 
 	void doJob(Job& job)
 	{
-		*job.data = stbi_load(job.path.data(), job.width, job.height, job.nrChannels, STBI_rgb_alpha);
-		//if(!*job.data) throw ("Could not load texture" + job.path);
+		*job.data = stbi_load(job.path.data(), job.width, job.height, job.nrChannels, STBI_default);
 		if(job.data)
 			*job.readyFlag = true;
+		else
+			throw ("Could not load texture" + job.path);
 	}
 	
 public:
@@ -122,6 +123,18 @@ Texture const& Texture::operator=(Texture const& other)
 }
 bool Texture::isInitialized() const
 {
+	if(!initialized && *ready)
+	{
+		initialized = true;
+		glBindTexture(GL_TEXTURE_2D, ID);
+		if(image->nrChannels == 4)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+		stbi_image_free(image->data);
+	}
 	return initialized;
 }
 
@@ -137,7 +150,10 @@ void Texture::use(GLenum location) const
 	if(!initialized)
 	{
 		glBindTexture(GL_TEXTURE_2D, ID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
+		if(image->nrChannels == 4)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(image->data);
 		initialized = true;

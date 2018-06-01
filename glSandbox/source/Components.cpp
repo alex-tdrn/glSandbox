@@ -18,7 +18,7 @@ bool Position::drawUI()
 	return valueChanged;
 }
 
-glm::vec3 const& Orientation::getDirectionVector() const
+glm::vec3 const Orientation::getDirectionVector() const
 {
 	glm::vec3 direction;
 	const float rPitch = glm::radians(pitch);

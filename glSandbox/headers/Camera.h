@@ -31,5 +31,5 @@ public:
 	void dolly(float amount);
 	void pan(glm::vec2 amount);
 	void adjustOrientation(float yaw, float pitch);
-	bool drawUI();
+	[[nodiscard]]bool drawUI();
 };

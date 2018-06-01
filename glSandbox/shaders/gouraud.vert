@@ -5,17 +5,17 @@
 
 struct Material
 {
-	bool useDiffuseMap;
+	bool overrideDiffuse;
+	vec3 overrideDiffuseColor;
 	bool hasDiffuseMap;
 	sampler2D diffuseMap;
 	vec2 diffuseMapOffset;
-	vec3 diffuseColor;
 
-	bool useSpecularMap;
+	bool overrideSpecular;
+	vec3 overrideSpecularColor;
 	bool hasSpecularMap;
 	sampler2D specularMap;
 	vec2 specularMapOffset;
-	vec3 specularColor;
 	float shininess;
 };
 
@@ -71,15 +71,19 @@ vec3 ambient();
 void main()
 {
 	gl_Position = projection * view * model * vec4(aPos, 1.0f);
-	if(material.useDiffuseMap && material.hasDiffuseMap)
+	if(!material.overrideDiffuse && material.hasDiffuseMap)
 		diffuseColor = vec3(texture(material.diffuseMap, texCoord + material.diffuseMapOffset));
+	else if(material.overrideDiffuse)
+		diffuseColor = material.overrideDiffuseColor;
 	else
-		diffuseColor = material.diffuseColor;
+		diffuseColor = vec3(1.0f);
 
-	if(material.useSpecularMap && material.hasDiffuseMap)
+	if(!material.overrideSpecular && material.hasSpecularMap)
 		specularColor = vec3(texture(material.specularMap, texCoord + material.specularMapOffset));
+	else if(material.overrideSpecular)
+		specularColor = material.overrideSpecularColor;
 	else
-		specularColor = material.specularColor;
+		specularColor = vec3(0.0f);
 
 	vec3 result = vec3(0,0,0);
 

@@ -27,5 +27,5 @@ public:
 	void setScale(glm::vec3 scale);
 	void draw(Shader shader) const;
 	void drawOutline(Shader outlineShader) const;
-	bool drawUI();
+	[[nodiscard]]bool drawUI();
 };

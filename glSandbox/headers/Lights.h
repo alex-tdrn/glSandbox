@@ -14,7 +14,7 @@ public:
 	void disable();
 	void setColor(glm::vec3 color);
 	glm::vec3 const& getColor() const;
-	virtual bool drawUI();
+	[[nodiscard]]virtual bool drawUI();
 
 };
 class DirectionalLight : public Light

@@ -6,7 +6,7 @@ class Position
 public:
 	glm::vec3 position{0.0f, 0.0f, 0.0f};
 
-	bool drawUI();
+	[[nodiscard]]bool drawUI();
 };
 
 class Orientation
@@ -16,8 +16,8 @@ public:
 	float pitch = 0.0f;
 	float roll = 0.0f;
 
-	glm::vec3 const& getDirectionVector() const;
-	bool drawUI();
+	glm::vec3 const getDirectionVector() const;
+	[[nodiscard]]bool drawUI();
 };
 
 class Scale
@@ -25,5 +25,5 @@ class Scale
 public:
 	glm::vec3 scale{1.0f, 1.0f, 1.0f};
 
-	bool drawUI();
+	[[nodiscard]]bool drawUI();
 };

@@ -126,7 +126,7 @@ Texture const& Texture::operator=(Texture const& other)
 
 glm::vec2 const& Texture::getUVOffset() const
 {
-	return uvOffset;
+	return {-uvOffset.x, uvOffset.y};
 }
 
 bool Texture::isInitialized() const
@@ -135,11 +135,23 @@ bool Texture::isInitialized() const
 	{
 		initialized = true;
 		glBindTexture(GL_TEXTURE_2D, ID);
-		if(image->nrChannels == 4)
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
-		else
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
-
+		GLenum format;
+		switch(image->nrChannels)
+		{
+			case 1:
+				format = GL_R;
+				break;
+			case 2:
+				format = GL_RG;
+				break;
+			case 3:
+				format = GL_RGB;
+				break;
+			case 4:
+				format = GL_RGBA;
+				break;
+		}
+		glTexImage2D(GL_TEXTURE_2D, 0, format, image->width, image->height, 0, format, GL_UNSIGNED_BYTE, image->data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(image->data);
 	}
@@ -158,10 +170,23 @@ void Texture::use(GLenum location) const
 	if(!initialized)
 	{
 		glBindTexture(GL_TEXTURE_2D, ID);
-		if(image->nrChannels == 4)
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
-		else
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->data);
+		GLenum format;
+		switch(image->nrChannels)
+		{
+			case 1:
+				format = GL_R;
+				break;
+			case 2:
+				format = GL_RG;
+				break;
+			case 3:
+				format = GL_RGB;
+				break;
+			case 4:
+				format = GL_RGBA;
+				break;
+		}
+		glTexImage2D(GL_TEXTURE_2D, 0, format, image->width, image->height, 0, format, GL_UNSIGNED_BYTE, image->data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(image->data);
 		initialized = true;
@@ -190,7 +215,7 @@ bool Texture::drawUI()
 	ImGui::Text("%i x %i", image->width, image->height);
 	ImGui::Text("# channels %i", image->nrChannels);
 	ImGui::Text("Path: %s", path.data());
-	ImGui::Image(ImTextureID(ID), ImVec2(size, size));
+	ImGui::Image(ImTextureID(ID), ImVec2(size, size), ImVec2(-uvOffset.x, uvOffset.y), ImVec2(-uvOffset.x + 1.0f, uvOffset.y + 1.0f));
 	if(false && size < 256 && ImGui::IsItemHovered())
 	{
 		ImGui::BeginTooltip();

@@ -31,6 +31,6 @@ public:
 	bool isInitialized() const;
 	std::string_view getPath() const;
 	void use(GLenum location) const;
-	bool drawUI();
+	[[nodiscard]]bool drawUI();
 
 };

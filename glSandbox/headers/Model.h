@@ -37,6 +37,6 @@ public:
 	std::string_view const getName() const;
 	bool isInitialized() const;
 	void draw(Shader shader) const;
-	bool drawUI();
+	[[nodiscard]]bool drawUI();
 
 };

@@ -71,10 +71,10 @@ namespace settings
 		inline int depthFunction = GL_LESS;
 		inline int faceCullingMode = GL_BACK;
 		inline int faceCullingOrdering = GL_CCW;
-		inline bool diffuseMaps = true;
-		inline bool specularMaps = true;
-		inline glm::vec3 diffuseColor{1.0f, 1.0f, 1.0f};
-		inline glm::vec3 specularColor{1.0f, 1.0f, 1.0f};
+		inline bool overrideDiffuse = false;
+		inline bool overrideSpecular = false;
+		inline glm::vec3 overrideDiffuseColor{1.0f, 1.0f, 1.0f};
+		inline glm::vec3 overrideSpecularColor{1.0f, 1.0f, 1.0f};
 		inline float ambientStrength = 0.2f;
 		inline bool debugDepthBufferLinear = false;
 		inline bool debugNormalsViewSpace = false;
@@ -197,10 +197,10 @@ Shader& settings::rendering::getActiveShader()
 	{
 		case type::phong:
 		case type::gouraud:
-			ret.set("material.useDiffuseMap", diffuseMaps);
-			ret.set("material.useSpecularMap", specularMaps);
-			ret.set("material.diffuseColor", diffuseColor);
-			ret.set("material.specularColor", specularColor);
+			ret.set("material.overrideDiffuse", overrideDiffuse);
+			ret.set("material.overrideSpecular", overrideSpecular);
+			ret.set("material.overrideDiffuseColor", overrideDiffuseColor);
+			ret.set("material.overrideSpecularColor", overrideSpecularColor);
 			ret.set("ambientStrength", ambientStrength);
 			break;
 		case type::debugDepthBuffer:
@@ -362,23 +362,23 @@ void settings::rendering::drawUI()
 		{
 			case type::phong:
 			case type::gouraud:
-				if(ImGui::Checkbox("Diffuse Maps", &diffuseMaps))
+				if(ImGui::Checkbox("Override Diffuse", &overrideDiffuse))
 					resources::scene.update();
 
-				if(!diffuseMaps)
+				if(overrideDiffuse)
 				{
 					ImGui::SameLine();
-					if(ImGui::ColorEdit3("Diffuse", &diffuseColor.x, ImGuiColorEditFlags_NoInputs))
+					if(ImGui::ColorEdit3("Diffuse", &overrideDiffuseColor.x, ImGuiColorEditFlags_NoInputs))
 						resources::scene.update();
 
 				}
-				if(ImGui::Checkbox("Specular Maps", &specularMaps))
+				if(ImGui::Checkbox("Override Specular", &overrideSpecular))
 					resources::scene.update();
 
-				if(!specularMaps)
+				if(overrideSpecular)
 				{
 					ImGui::SameLine();
-					if(ImGui::ColorEdit3("Specular", &specularColor.x, ImGuiColorEditFlags_NoInputs))
+					if(ImGui::ColorEdit3("Specular", &overrideSpecularColor.x, ImGuiColorEditFlags_NoInputs))
 						resources::scene.update();
 
 				}

@@ -31,6 +31,5 @@ public:
 	std::vector<Vertex> const& getVertices() const;
 	std::vector<unsigned int> const& getIndices() const;
 	void draw(Shader shader) const;
-	bool drawUI();
-
+	[[nodiscard]] bool drawUI();
 };

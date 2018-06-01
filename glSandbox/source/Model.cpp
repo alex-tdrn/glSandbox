@@ -195,7 +195,8 @@ bool Model::drawUI()
 		if(ImGui::TreeNode(materialsHeader.data()))
 		{
 			for(auto& material : materials)
-				material->drawUI();
+				if(material->drawUI())
+					valueChanged = true;
 			ImGui::TreePop();
 		}
 		ImGui::TreePop();

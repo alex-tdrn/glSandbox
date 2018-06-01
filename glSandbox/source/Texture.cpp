@@ -1,6 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Texture.h"
 #include "Globals.h"
+#include "Util.h"
 
 #include <stb_image.h>
 #include <imgui.h>
@@ -114,6 +115,7 @@ Texture::~Texture()
 			delete image->data;*/
 	}
 }
+
 Texture const& Texture::operator=(Texture const& other)
 {
 	this->path = other.path;
@@ -121,6 +123,12 @@ Texture const& Texture::operator=(Texture const& other)
 	*(this->image) = *other.image;
 	return *this;
 }
+
+glm::vec2 const& Texture::getUVOffset() const
+{
+	return uvOffset;
+}
+
 bool Texture::isInitialized() const
 {
 	if(!initialized && *ready)
@@ -163,13 +171,21 @@ void Texture::use(GLenum location) const
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
 
-void Texture::drawUI() const
+bool Texture::drawUI()
 {
+	bool valueChanged = false;
 	if(!initialized)
 	{
 		ImGui::Text("Loading...");
-		return;
+		return false;
 	}
+	ImGui::PushID(this);
+	if(drag2("UV Offset", 0.0001f, uvOffset.x, uvOffset.y, 0.0f, 1.0f))
+		valueChanged = true;
+	if(ImGui::SliderFloat("U ", &uvOffset.x, 0.0f, 1.0f))
+		valueChanged = true;
+	if(ImGui::SliderFloat("V ", &uvOffset.y, 0.0f, 1.0f))
+		valueChanged = true;
 	float const size = ImGui::GetColumnWidth();
 	ImGui::Text("%i x %i", image->width, image->height);
 	ImGui::Text("# channels %i", image->nrChannels);
@@ -181,4 +197,6 @@ void Texture::drawUI() const
 		ImGui::Image(ImTextureID(ID), ImVec2(512, 512));
 		ImGui::EndTooltip();
 	}
+	ImGui::PopID();
+	return valueChanged;
 }

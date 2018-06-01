@@ -21,7 +21,6 @@ private:
 	std::string name;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	glm::vec2 uvOffset{0, 0};
 	Material* material;
 	static int ct;
 public:

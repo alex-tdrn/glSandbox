@@ -73,20 +73,23 @@ void Material::use(Shader shader) const
 	if(maps[diffuse])
 	{
 		maps[diffuse]->use(GL_TEXTURE0);
-		shader.set("material.diffuse", 0);
+		shader.set("material.diffuseMap", GL_TEXTURE0);
+		shader.set("material.diffuseMapOffset", maps[diffuse]->getUVOffset());
 	}
 
 	shader.set("material.hasSpecularMap", bool(maps[specular]));
 	if(maps[specular])
 	{
 		maps[specular]->use(GL_TEXTURE1);
-		shader.set("material.specular", 1);
+		shader.set("material.specularMap", GL_TEXTURE1);
+		shader.set("material.specularMapOffset", maps[specular]->getUVOffset());
 		shader.set("material.shininess", shininessValue);
 	}
 }
 
-void Material::drawUI()
+bool Material::drawUI()
 {
+	bool valueChanged = false;
 	std::string header = name;
 	if(!isInitialized())
 		header += "(loading...)";
@@ -111,7 +114,8 @@ void Material::drawUI()
 				if(maps[mapType])
 				{
 					ImGui::Text((mapToString(mapType) + " Map").c_str());
-					maps[mapType]->drawUI();
+					if(maps[mapType]->drawUI())
+						valueChanged = true;
 					ImGui::NextColumn();
 					columnsEmpty--;
 				}
@@ -126,4 +130,5 @@ void Material::drawUI()
 		ImGui::Columns(1, nullptr, false);
 		ImGui::TreePop();
 	}
+	return valueChanged;
 }

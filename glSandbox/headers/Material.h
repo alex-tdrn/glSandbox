@@ -40,5 +40,5 @@ public:
 	std::string_view const getName() const;
 	bool contains(std::string_view const path);
 	void use(Shader shader) const;
-	void drawUI();
+	bool drawUI();
 };

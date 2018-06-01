@@ -8,11 +8,13 @@ struct Material
 	bool useDiffuseMap;
 	bool hasDiffuseMap;
 	sampler2D diffuseMap;
+	vec2 diffuseMapOffset;
 	vec3 diffuseColor;
 
 	bool useSpecularMap;
 	bool hasSpecularMap;
 	sampler2D specularMap;
+	vec2 specularMapOffset;
 	vec3 specularColor;
 	float shininess;
 };
@@ -67,12 +69,12 @@ vec3 ambient();
 void main()
 {
 	if(material.useDiffuseMap && material.hasDiffuseMap)
-		diffuseColor = vec3(texture(material.diffuseMap, texCoord));
+		diffuseColor = vec3(texture(material.diffuseMap, texCoord + material.diffuseMapOffset));
 	else
 		diffuseColor = material.diffuseColor;
 
 	if(material.useSpecularMap && material.hasDiffuseMap)
-		specularColor = vec3(texture(material.specularMap, texCoord));
+		specularColor = vec3(texture(material.specularMap, texCoord + material.specularMapOffset));
 	else
 		specularColor = material.specularColor;
 

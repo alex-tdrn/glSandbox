@@ -1,6 +1,5 @@
 #include "Mesh.h"
 #include "Material.h"
-#include "Util.h"
 
 #include <imgui.h>
 #include <algorithm>
@@ -56,7 +55,6 @@ void Mesh::draw(Shader shader) const
 	{
 		material->use(shader);
 	}
-	shader.set("uvOffset", uvOffset);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -71,13 +69,8 @@ bool Mesh::drawUI()
 		ImGui::Text("Indices %i", indices.size());
 		ImGui::Text("Triangles %i", indices.size() / 3);
 		
-		if(drag2("UV Offset", 0.0001f, uvOffset.x, uvOffset.y, 0.0f, 1.0f))
+		if(material->drawUI())
 			valueChanged = true;
-		if(ImGui::SliderFloat("U ", &uvOffset.x, 0.0f, 1.0f))
-			valueChanged = true;
-		if(ImGui::SliderFloat("V ", &uvOffset.y, 0.0f, 1.0f))
-			valueChanged = true;
-		material->drawUI();
 
 		ImGui::TreePop();
 	}

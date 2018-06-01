@@ -8,11 +8,13 @@ struct Material
 	bool useDiffuseMap;
 	bool hasDiffuseMap;
 	sampler2D diffuseMap;
+	vec2 diffuseMapOffset;
 	vec3 diffuseColor;
 
 	bool useSpecularMap;
 	bool hasSpecularMap;
 	sampler2D specularMap;
+	vec2 specularMapOffset;
 	vec3 specularColor;
 	float shininess;
 };
@@ -51,7 +53,6 @@ uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec2 uvOffset;
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 texCoord;
@@ -71,12 +72,12 @@ void main()
 {
 	gl_Position = projection * view * model * vec4(aPos, 1.0f);
 	if(material.useDiffuseMap && material.hasDiffuseMap)
-		diffuseColor = vec3(texture(material.diffuseMap, texCoord + uvOffset));
+		diffuseColor = vec3(texture(material.diffuseMap, texCoord + material.diffuseMapOffset));
 	else
 		diffuseColor = material.diffuseColor;
 
 	if(material.useSpecularMap && material.hasDiffuseMap)
-		specularColor = vec3(texture(material.specularMap, texCoord + uvOffset));
+		specularColor = vec3(texture(material.specularMap, texCoord + material.specularMapOffset));
 	else
 		specularColor = material.specularColor;
 

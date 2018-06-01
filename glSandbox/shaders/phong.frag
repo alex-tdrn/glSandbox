@@ -17,6 +17,10 @@ struct Material
 	sampler2D specularMap;
 	vec2 specularMapOffset;
 	float shininess;
+
+	bool hasOpacityMap;
+	sampler2D opacityMap;
+	vec2 opacityMapOffset;
 };
 
 struct DirLight
@@ -67,7 +71,13 @@ vec3 calcSpotLight(SpotLight light);
 vec3 ambient();
 
 void main()
-{
+{	
+	if(material.hasOpacityMap)
+	{
+		float opacity = texture(material.opacityMap, texCoord + material.opacityMapOffset).r;
+		if(opacity <= 0.1f)
+			discard;
+	}
 	if(!material.overrideDiffuse && material.hasDiffuseMap)
 		diffuseColor = vec3(texture(material.diffuseMap, texCoord + material.diffuseMapOffset));
 	else if(material.overrideDiffuse)
@@ -99,11 +109,11 @@ vec3 ambient()
 {
 	return ambientStrength * ambientColor * diffuseColor;	
 }
-vec3 diffuse(vec3 lightDirection, vec3 lightColor)
+vec3 diffuse(vec3 lightDirection)
 {
 	float m = max(dot(normal, lightDirection), 0.0);
 
-    return m * lightColor * diffuseColor;
+    return m * diffuseColor;
 }
 
 vec3 specular(vec3 lightDirection)
@@ -118,7 +128,7 @@ vec3 calcDirLight(DirLight light)
 {
 	vec3 lightDirection = normalize(-light.direction);
 
-    return diffuse(lightDirection, light.color) + specular(lightDirection);
+    return light.color * (diffuse(lightDirection) + specular(lightDirection));
 }
 
 vec3 calcPointLight(PointLight light)
@@ -127,7 +137,7 @@ vec3 calcPointLight(PointLight light)
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 	vec3 lightDirection = normalize(light.position - fragPos);
 
-	return attenuation * (diffuse(lightDirection, light.color) + specular(lightDirection));
+	return attenuation * light.color * (diffuse(lightDirection) + specular(lightDirection));
 }
 
 vec3 calcSpotLight(SpotLight light)
@@ -138,5 +148,5 @@ vec3 calcSpotLight(SpotLight light)
 	float epsilon = light.innerCutoff - light.outerCutoff;
 	float intensity = clamp((theta - light.outerCutoff) / epsilon, 0.0f, 1.0f);
 
-	return intensity * (diffuse(lightDirection, light.color) + specular(lightDirection));
+	return intensity * light.color * (diffuse(lightDirection) + specular(lightDirection));
 }

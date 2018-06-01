@@ -86,23 +86,17 @@ public:
 Loader textureLoader;
 
 Texture::Texture(Texture const& other)
-	: path(std::move(other.path)), ID(other.ID), initialized(other.initialized), ready(other.ready)
+	: path(std::move(other.path)), ID(other.ID), initialized(other.initialized), ready(other.ready), location(other.location)
 {
 	image = other.image;
 }
 
-Texture::Texture(std::string const path)
-	:path(path)
+Texture::Texture(std::string const path, int location)
+	:path(path), location(location)
 {
 	image = new ImageData();
 	textureLoader.addJob({path, &(image->data), &(image->width), &(image->height), &(image->nrChannels), ready});
 
-	glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_2D, ID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 Texture::~Texture()
@@ -118,6 +112,7 @@ Texture::~Texture()
 
 Texture const& Texture::operator=(Texture const& other)
 {
+	this->location = other.location;
 	this->path = other.path;
 	this->ID = other.ID;
 	*(this->image) = *other.image;
@@ -134,26 +129,40 @@ bool Texture::isInitialized() const
 	if(!initialized && *ready)
 	{
 		initialized = true;
-		glBindTexture(GL_TEXTURE_2D, ID);
+		
 		GLenum format;
+		GLenum pixelTransfer;
 		switch(image->nrChannels)
 		{
 			case 1:
-				format = GL_R;
+				format = GL_R8;
+				pixelTransfer = GL_RED;
 				break;
 			case 2:
-				format = GL_RG;
+				format = GL_RG8;
+				pixelTransfer = GL_RG;
 				break;
 			case 3:
-				format = GL_RGB;
+				format = GL_RGB8;
+				pixelTransfer = GL_RGB;
 				break;
 			case 4:
-				format = GL_RGBA;
+				format = GL_RGBA8;
+				pixelTransfer = GL_RGBA;
 				break;
 		}
-		glTexImage2D(GL_TEXTURE_2D, 0, format, image->width, image->height, 0, format, GL_UNSIGNED_BYTE, image->data);
+		glActiveTexture(GL_TEXTURE0 + location);
+		glGenTextures(1, &ID);
+		glBindTexture(GL_TEXTURE_2D, ID);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, format, image->width, image->height, 0, pixelTransfer, GL_UNSIGNED_BYTE, image->data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(image->data);
+		resources::scene.update();
 	}
 	return initialized;
 }
@@ -163,36 +172,16 @@ std::string_view Texture::getPath() const
 	return path;
 }
 
-void Texture::use(GLenum location) const
+int Texture::getLocation() const
 {
-	if(!*ready)
+	return location;
+}
+
+void Texture::use() const
+{
+	if(!isInitialized())
 		return;
-	if(!initialized)
-	{
-		glBindTexture(GL_TEXTURE_2D, ID);
-		GLenum format;
-		switch(image->nrChannels)
-		{
-			case 1:
-				format = GL_R;
-				break;
-			case 2:
-				format = GL_RG;
-				break;
-			case 3:
-				format = GL_RGB;
-				break;
-			case 4:
-				format = GL_RGBA;
-				break;
-		}
-		glTexImage2D(GL_TEXTURE_2D, 0, format, image->width, image->height, 0, format, GL_UNSIGNED_BYTE, image->data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		stbi_image_free(image->data);
-		initialized = true;
-		resources::scene.update();
-	}
-	glActiveTexture(location);
+	glActiveTexture(GL_TEXTURE0 + location);
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
 

@@ -9,7 +9,8 @@ class Texture
 private:
 	std::atomic<bool>* ready = new std::atomic<bool>(false);
 	mutable bool initialized = false;
-	unsigned int ID;
+	mutable unsigned int ID;
+	int location;
 	glm::vec2 uvOffset{0, 0};
 	struct ImageData
 	{
@@ -21,7 +22,7 @@ private:
 	std::string path;
 
 public:
-	explicit Texture(std::string const path);
+	explicit Texture(std::string const path, int location);
 	Texture(Texture const& other);
 	~Texture();
 	Texture const & operator=(Texture const& other);
@@ -30,7 +31,8 @@ public:
 	glm::vec2 const& getUVOffset() const;
 	bool isInitialized() const;
 	std::string_view getPath() const;
-	void use(GLenum location) const;
+	int getLocation() const;
+	void use() const;
 	[[nodiscard]]bool drawUI();
 
 };

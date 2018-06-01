@@ -110,9 +110,9 @@ int main(int argc, char** argv)
 		Actor actor(&resources::models::sponza);
 		actor.setPosition({0.0f, -1.8f, 0.0f});
 		actor.setScale({0.0125f, 0.0125f, 0.0125f});
-//#ifdef NDEBUG
+#ifdef NDEBUG
 		resources::scene.add(actor);
-//#endif
+#endif
 	}
 	{
 		int idx = 1;

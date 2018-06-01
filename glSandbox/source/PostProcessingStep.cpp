@@ -6,7 +6,7 @@ void PostProcessingStep::initFramebuffer()
 	initialized = true;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &colorbuffer);
 	glBindTexture(GL_TEXTURE_2D, colorbuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -22,6 +22,7 @@ void PostProcessingStep::initFramebuffer()
 
 void PostProcessingStep::updateFramebuffer()
 {
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorbuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);

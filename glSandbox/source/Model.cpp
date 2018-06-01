@@ -132,7 +132,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 			for(int internalMapType = 0; internalMapType < maps.size(); internalMapType++)
 			{
 				if(mapPaths[internalMapType])
-					maps[internalMapType] = Texture{std::move(*mapPaths[internalMapType])};
+					maps[internalMapType] = Texture{std::move(*mapPaths[internalMapType]), internalMapType};
 				material->setMap(internalMapType, maps[internalMapType]);
 			}
 			materials.emplace_back(material);

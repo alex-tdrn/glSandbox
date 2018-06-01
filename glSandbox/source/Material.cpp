@@ -72,18 +72,25 @@ void Material::use(Shader shader) const
 	shader.set("material.hasDiffuseMap", bool(maps[diffuse]));
 	if(maps[diffuse])
 	{
-		maps[diffuse]->use(GL_TEXTURE0);
-		shader.set("material.diffuseMap", GL_TEXTURE0);
+		maps[diffuse]->use();
+		shader.set("material.diffuseMap", maps[diffuse]->getLocation());
 		shader.set("material.diffuseMapOffset", maps[diffuse]->getUVOffset());
 	}
 
 	shader.set("material.hasSpecularMap", bool(maps[specular]));
 	if(maps[specular])
 	{
-		maps[specular]->use(GL_TEXTURE1);
-		shader.set("material.specularMap", GL_TEXTURE1);
+		maps[specular]->use();
+		shader.set("material.specularMap", maps[specular]->getLocation());
 		shader.set("material.specularMapOffset", maps[specular]->getUVOffset());
 		shader.set("material.shininess", shininessValue);
+	}
+	shader.set("material.hasOpacityMap", bool(maps[opacity]));
+	if(maps[opacity])
+	{
+		maps[opacity]->use();
+		shader.set("material.opacityMap", maps[opacity]->getLocation());
+		shader.set("material.opacityMapOffset", maps[opacity]->getUVOffset());
 	}
 }
 

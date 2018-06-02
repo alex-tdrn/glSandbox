@@ -196,7 +196,7 @@ void Scene::draw()
 			activeShader.set("nSpotLights", enabledLights);
 		}
 	}
-	else if(active == type::reflection)
+	else if(active == type::reflection || active == type::refraction)
 	{
 		if(skybox)
 			skybox->use();

@@ -190,5 +190,11 @@
     <None Include="shaders\reflection.frag">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\refraction.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\refraction.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

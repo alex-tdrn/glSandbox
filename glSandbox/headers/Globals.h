@@ -27,6 +27,7 @@ namespace resources
 		inline Shader phong("shaders/phong.vert", "shaders/phong.frag");
 		inline Shader gouraud("shaders/gouraud.vert", "shaders/gouraud.frag");
 		inline Shader reflection("shaders/reflection.vert", "shaders/reflection.frag");
+		inline Shader refraction("shaders/refraction.vert", "shaders/refraction.frag");
 		inline Shader outline("shaders/outline.vert", "shaders/outline.frag");
 		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag");
 		inline Shader debugTexCoords("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
@@ -75,6 +76,7 @@ namespace settings
 			phong,
 			gouraud,
 			reflection,
+			refraction,
 			debugNormals,
 			debugTexCoords,
 			debugDepthBuffer
@@ -94,6 +96,8 @@ namespace settings
 		inline glm::vec3 overrideDiffuseColor{1.0f, 1.0f, 1.0f};
 		inline glm::vec3 overrideSpecularColor{1.0f, 1.0f, 1.0f};
 		inline float ambientStrength = 0.2f;
+		inline float firstMedium = 1.0f;
+		inline float secondMedium = 1.52f;
 		inline bool debugDepthBufferLinear = false;
 		inline bool debugNormalsViewSpace = false;
 
@@ -202,6 +206,8 @@ Shader& settings::rendering::getActiveShader()
 				return resources::shaders::gouraud;
 			case type::reflection:
 				return resources::shaders::reflection;
+			case type::refraction:
+				return resources::shaders::refraction;
 			case type::debugNormals:
 				return resources::shaders::debugNormals;
 			case type::debugTexCoords:
@@ -223,6 +229,10 @@ Shader& settings::rendering::getActiveShader()
 			ret.set("material.overrideSpecularColor", overrideSpecularColor);
 			ret.set("ambientStrength", ambientStrength);
 			break;
+		case type::refraction:
+			ret.set("n1", firstMedium);
+			ret.set("n2", secondMedium);
+			break;
 		case type::debugDepthBuffer:
 			ret.set("linearize", debugDepthBufferLinear);
 			break;
@@ -238,6 +248,7 @@ void resources::shaders::reload()
 	resources::shaders::phong.reload();
 	resources::shaders::gouraud.reload();
 	resources::shaders::reflection.reload();
+	resources::shaders::refraction.reload();
 	resources::shaders::outline.reload();
 	resources::shaders::debugNormals.reload();
 	resources::shaders::debugTexCoords.reload();
@@ -370,22 +381,22 @@ void settings::rendering::drawUI()
 		}
 		if(ImGui::RadioButton("Phong", &active, type::phong))
 			resources::scene.update();
-
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Gouraud", &active, type::gouraud))
 			resources::scene.update();
 		
 		if(ImGui::RadioButton("Reflection", &active, type::reflection))
 			resources::scene.update();
-
 		ImGui::SameLine();
-		if(ImGui::RadioButton("Normals", &active, type::debugNormals))
+		if(ImGui::RadioButton("Refraction", &active, type::refraction))
 			resources::scene.update();
 
+		if(ImGui::RadioButton("Normals", &active, type::debugNormals))
+			resources::scene.update();
+		ImGui::SameLine();
 		if(ImGui::RadioButton("Texture Coordinates", &active, type::debugTexCoords))
 			resources::scene.update();
 
-		ImGui::SameLine();
 		if(ImGui::RadioButton("Depth Buffer", &active, type::debugDepthBuffer))
 			resources::scene.update();
 
@@ -416,6 +427,12 @@ void settings::rendering::drawUI()
 				if(ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f))
 					resources::scene.update();
 
+				break;
+			case type::refraction:
+				if(ImGui::DragFloat("First Medium", &firstMedium, 0.001f))
+					resources::scene.update();
+				if(ImGui::DragFloat("Second Medium", &secondMedium, 0.001f))
+					resources::scene.update();
 				break;
 			case type::debugNormals:
 				if(ImGui::Checkbox("View Space", &debugNormalsViewSpace))

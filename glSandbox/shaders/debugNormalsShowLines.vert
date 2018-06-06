@@ -17,9 +17,6 @@ out VS_OUT
 
 void main()
 {
-	if(viewSpace)
-		vs_out.normal = mat3(transpose(inverse(view * model))) * normal;
-	else
-		vs_out.normal = mat3(transpose(inverse(model))) * normal;
+	vs_out.normal = normalize(mat3(projection * transpose(inverse(view * model))) * normal);
 	gl_Position = projection * view * model * vec4(position, 1.0f);
 }

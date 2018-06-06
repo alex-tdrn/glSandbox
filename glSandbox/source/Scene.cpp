@@ -207,6 +207,16 @@ void Scene::draw()
 		activeShader.set("nearPlane", camera.getNearPlane());
 		activeShader.set("farPlane", camera.getFarPlane());
 	}
+	else if(active == type::debugNormals)
+	{
+		if(settings::rendering::debugNormalsShowLines)
+		{
+			resources::shaders::debugNormalsShowLines.use();
+			for(auto& actor : actors)
+				actor.draw(resources::shaders::debugNormalsShowLines);
+			activeShader.use();
+		}
+	}
 
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);

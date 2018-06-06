@@ -29,7 +29,8 @@ namespace resources
 		inline Shader reflection("shaders/reflection.vert", "shaders/reflection.frag");
 		inline Shader refraction("shaders/refraction.vert", "shaders/refraction.frag");
 		inline Shader outline("shaders/outline.vert", "shaders/outline.frag");
-		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
+		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag");
+		inline Shader debugNormalsShowLines("shaders/debugNormalsShowLines.vert", "shaders/debugNormalsShowLines.frag", "shaders/debugNormalsShowLines.geom");
 		inline Shader debugTexCoords("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
 		inline Shader debugDepthBuffer("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
 		inline Shader light("shaders/light.vert", "shaders/light.frag");
@@ -100,6 +101,9 @@ namespace settings
 		inline float secondMedium = 1.52f;
 		inline bool debugDepthBufferLinear = false;
 		inline bool debugNormalsViewSpace = false;
+		inline bool debugNormalsShowLines = false;
+		inline float debugNormalsLineLength = 0.015f;
+		inline glm::vec3 debugNormalsLineColor{1.0f, 1.0f, 1.0f};
 
 		inline Shader& getActiveShader();
 		inline void drawUI();
@@ -238,6 +242,13 @@ Shader& settings::rendering::getActiveShader()
 			break;
 		case type::debugNormals:
 			ret.set("viewSpace", debugNormalsViewSpace);
+			if(debugNormalsShowLines)
+			{
+				resources::shaders::debugNormalsShowLines.use();
+				resources::shaders::debugNormalsShowLines.set("lineLength", debugNormalsLineLength);
+				resources::shaders::debugNormalsShowLines.set("color", debugNormalsLineColor);
+				ret.use();
+			}
 			break;
 	}
 	return ret;
@@ -251,6 +262,7 @@ void resources::shaders::reload()
 	resources::shaders::refraction.reload();
 	resources::shaders::outline.reload();
 	resources::shaders::debugNormals.reload();
+	resources::shaders::debugNormalsShowLines.reload();
 	resources::shaders::debugTexCoords.reload();
 	resources::shaders::debugDepthBuffer.reload();
 	resources::shaders::light.reload();
@@ -437,7 +449,15 @@ void settings::rendering::drawUI()
 			case type::debugNormals:
 				if(ImGui::Checkbox("View Space", &debugNormalsViewSpace))
 					resources::scene.update();
-
+				if(ImGui::Checkbox("Show Lines", &debugNormalsShowLines))
+					resources::scene.update();
+				if(debugNormalsShowLines)
+				{
+					if(ImGui::DragFloat("Line length", &debugNormalsLineLength, 0.001f))
+						resources::scene.update();
+					if(ImGui::ColorEdit3("Line color", &debugNormalsLineColor.x, ImGuiColorEditFlags_NoInputs))
+						resources::scene.update();
+				}
 				break;
 			case type::debugTexCoords:
 

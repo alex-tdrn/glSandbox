@@ -6,15 +6,21 @@ layout(std140, binding = 0) uniform CameraMatrices
 };
 uniform mat4 model;
 uniform vec2 uvOffset;
-layout (location = 0) in vec3 aPos;
-layout (location = 2) in vec2 texCoords;
-out vec2 t;
+
+layout (location = 0) in vec3 position;
+layout (location = 2) in vec2 textureCoordinates;
+
+out VS_OUT
+{
+	vec2 textureCoordinates;
+} vs_out;
+
 void main()
 {
-	t = texCoords + uvOffset;
-	while(t.x > 1.0f)
-		t.x -= 1.0f;
-	while(t.y > 1.0f)
-		t.y -= 1.0f;
-	gl_Position = projection * view * model * vec4(aPos, 1.0f);
+	vs_out.textureCoordinates = textureCoordinates+ uvOffset;
+	while(vs_out.textureCoordinates.x > 1.0f)
+		vs_out.textureCoordinates.x -= 1.0f;
+	while(vs_out.textureCoordinates.y > 1.0f)
+		vs_out.textureCoordinates.y -= 1.0f;
+	gl_Position = projection * view * model * vec4(position, 1.0f);
 }

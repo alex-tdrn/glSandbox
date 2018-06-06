@@ -6,8 +6,9 @@ layout(std140, binding = 0) uniform CameraMatrices
 };
 uniform mat4 model;
 
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec3 position;
+
 void main()
 {
-	gl_Position = projection * view * model * vec4(aPos, 1.0f);
+	gl_Position = projection * view * model * vec4(position, 1.0f);
 }

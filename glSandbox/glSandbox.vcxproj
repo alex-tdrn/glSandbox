@@ -197,13 +197,10 @@
     <None Include="shaders\phong.frag" />
     <None Include="shaders\phong.vert" />
     <None Include="shaders\ppBW.frag" />
-    <None Include="shaders\ppBW.vert" />
     <None Include="shaders\ppConvolution.frag" />
-    <None Include="shaders\ppConvolution.vert" />
     <None Include="shaders\ppInvert.frag" />
-    <None Include="shaders\ppInvert.vert" />
     <None Include="shaders\ppPassthrough.frag" />
-    <None Include="shaders\ppPassthrough.vert" />
+    <None Include="shaders\pp.vert" />
     <None Include="shaders\reflection.frag" />
     <None Include="shaders\reflection.vert" />
     <None Include="shaders\refraction.frag" />

@@ -6,14 +6,20 @@ layout(std140, binding = 0) uniform CameraMatrices
 };
 uniform mat4 model;
 uniform bool viewSpace;
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-out vec3 n;
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+
+out VS_OUT
+{
+	vec3 normal;
+} vs_out;
+
 void main()
 {
 	if(viewSpace)
-		n = mat3(transpose(inverse(view * model))) * aNormal;
+		vs_out.normal = mat3(transpose(inverse(view * model))) * normal;
 	else
-		n = mat3(transpose(inverse(model))) * aNormal;
-	gl_Position = projection * view * model * vec4(aPos, 1.0f);
+		vs_out.normal = mat3(transpose(inverse(model))) * normal;
+	gl_Position = projection * view * model * vec4(position, 1.0f);
 }

@@ -19,8 +19,8 @@ unsigned int compile(std::string_view const source, GLenum type)
 	return compiledShader;
 }
 
-Shader::Shader(std::string const vertexPath, std::string const fragmentPath)
-	:vertexPath(vertexPath), fragmentPath(fragmentPath)
+Shader::Shader(std::string const vertexPath, std::string const fragmentPath, std::optional<std::string const> geometryPath)
+	:vertexPath(vertexPath), fragmentPath(fragmentPath), geometryPath(geometryPath)
 {
 }
 
@@ -29,17 +29,28 @@ void Shader::reload()
 	if(ID != -1)
 		glDeleteProgram(ID);
 	ID = glCreateProgram();
+
 	std::string const vertexCode = read(vertexPath);
-	std::string const fragmentCode = read(fragmentPath);
-	if(vertexCode.empty() || fragmentCode.empty())
-		throw("wtf");
 	unsigned int vertex = compile(vertexCode, GL_VERTEX_SHADER);
-	unsigned int fragment = compile(fragmentCode, GL_FRAGMENT_SHADER);
 	glAttachShader(ID, vertex);
+
+	std::string const fragmentCode = read(fragmentPath);
+	unsigned int fragment = compile(fragmentCode, GL_FRAGMENT_SHADER);
 	glAttachShader(ID, fragment);
+
+	unsigned int geometry;
+	if(geometryPath)
+	{
+		std::string const geometryCode = read(*geometryPath);
+		geometry = compile(geometryCode, GL_GEOMETRY_SHADER);
+		glAttachShader(ID, geometry);
+	}
+
 	glLinkProgram(ID);
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
+	if(geometryPath)
+		glDeleteShader(geometry);
 }
 
 void Shader::use()

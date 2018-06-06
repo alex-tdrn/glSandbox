@@ -185,6 +185,7 @@
     <None Include="shaders\debugDepthBuffer.frag" />
     <None Include="shaders\debugDepthBuffer.vert" />
     <None Include="shaders\debugNormals.frag" />
+    <None Include="shaders\debugNormals.geom" />
     <None Include="shaders\debugNormals.vert" />
     <None Include="shaders\debugTextureCoords.frag" />
     <None Include="shaders\debugTextureCoords.vert" />

@@ -29,7 +29,7 @@ namespace resources
 		inline Shader reflection("shaders/reflection.vert", "shaders/reflection.frag");
 		inline Shader refraction("shaders/refraction.vert", "shaders/refraction.frag");
 		inline Shader outline("shaders/outline.vert", "shaders/outline.frag");
-		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag");
+		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
 		inline Shader debugTexCoords("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
 		inline Shader debugDepthBuffer("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
 		inline Shader light("shaders/light.vert", "shaders/light.frag");

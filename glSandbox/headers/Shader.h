@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <optional>
 
 class Shader
 {
@@ -13,9 +14,10 @@ private:
 	unsigned int ID = -1;
 	std::string const vertexPath;
 	std::string const fragmentPath;
+	std::optional<std::string const> const geometryPath;
 
 public:
-	Shader(std::string const vertexPath, std::string const fragmentPath);
+	Shader(std::string const vertexPath, std::string const fragmentPath, std::optional<std::string const> geometryPath = std::nullopt);
 
 public:
 	void reload();

@@ -13,6 +13,7 @@ layout (location = 1) in vec3 normal;
 out VS_OUT
 {
 	vec3 normal;
+	vec3 clipSpaceNormal;
 } vs_out;
 
 void main()
@@ -21,5 +22,6 @@ void main()
 		vs_out.normal = mat3(transpose(inverse(view * model))) * normal;
 	else
 		vs_out.normal = mat3(transpose(inverse(model))) * normal;
+	vs_out.clipSpaceNormal = normalize(mat3(projection * transpose(inverse(view * model))) * normal);
 	gl_Position = projection * view * model * vec4(position, 1.0f);
 }

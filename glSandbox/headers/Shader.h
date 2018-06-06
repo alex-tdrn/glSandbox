@@ -12,6 +12,7 @@ class Shader
 {
 private:
 	unsigned int ID = -1;
+	bool initialized = false;
 	std::string const vertexPath;
 	std::string const fragmentPath;
 	std::optional<std::string const> const geometryPath;

@@ -26,8 +26,9 @@ Shader::Shader(std::string const vertexPath, std::string const fragmentPath, std
 
 void Shader::reload()
 {
-	if(ID != -1)
+	if(initialized)
 		glDeleteProgram(ID);
+	initialized = true;
 	ID = glCreateProgram();
 
 	std::string const vertexCode = read(vertexPath);
@@ -55,6 +56,8 @@ void Shader::reload()
 
 void Shader::use()
 {
+	if(!initialized)
+		reload();
 	glUseProgram(ID);
 }
 

@@ -1,10 +1,14 @@
 #version 420 core
-
 uniform sampler2D screenTexture;
 uniform float offset;
 uniform float kernel[9];
 uniform float divisor;
-in vec2 texCoord;
+
+in VS_OUT
+{
+	vec2 textureCoordinates;
+} fs_in;
+
 out vec4 FragColor;
 
 vec2 offsets[9] = vec2[](
@@ -21,9 +25,9 @@ vec2 offsets[9] = vec2[](
 
 void main()
 {
-	vec3 col = vec3(0.0);
+	vec3 col = vec3(0.0f);
 	for(int i = 0; i < 9; i++)
-		col += kernel[i] * vec3(texture(screenTexture, texCoord + offsets[i])) / divisor;
+		col += kernel[i] * vec3(texture(screenTexture, fs_in.textureCoordinates + offsets[i])) / divisor;
 
 	FragColor = vec4(col, 1.0f);
 }

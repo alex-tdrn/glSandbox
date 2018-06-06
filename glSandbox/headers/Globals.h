@@ -35,10 +35,10 @@ namespace resources
 		inline Shader light("shaders/light.vert", "shaders/light.frag");
 		inline Shader skybox("shaders/skybox.vert", "shaders/skybox.frag");
 		//postprocessing
-		inline Shader passthrough("shaders/ppPassthrough.vert", "shaders/ppPassthrough.frag");
-		inline Shader grayscale("shaders/ppBW.vert", "shaders/ppBW.frag");
-		inline Shader invert("shaders/ppInvert.vert", "shaders/ppInvert.frag");
-		inline Shader convolution("shaders/ppConvolution.vert", "shaders/ppConvolution.frag");
+		inline Shader passthrough("shaders/pp.vert", "shaders/ppPassthrough.frag");
+		inline Shader grayscale("shaders/pp.vert", "shaders/ppBW.frag");
+		inline Shader invert("shaders/pp.vert", "shaders/ppInvert.frag");
+		inline Shader convolution("shaders/pp.vert", "shaders/ppConvolution.frag");
 
 		inline void reload();
 	}

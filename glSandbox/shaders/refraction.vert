@@ -1,10 +1,4 @@
 #version 420 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-
-out vec3 Normal;
-out vec3 Position;
-
 layout(std140, binding = 0) uniform CameraMatrices
 {
 	uniform mat4 projection;
@@ -12,9 +6,18 @@ layout(std140, binding = 0) uniform CameraMatrices
 };
 uniform mat4 model;
 
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+
+out VS_OUT
+{
+	vec3 position;
+	vec3 normal;
+} vs_out;
+
 void main()
 {
-    Normal = mat3(transpose(inverse(model))) * aNormal;
-    Position = vec3(model * vec4(aPos, 1.0));
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
+    vs_out.position = vec3(model * vec4(position, 1.0));
+    vs_out.normal = mat3(transpose(inverse(model))) * normal;
+    gl_Position = projection * view * model * vec4(position, 1.0);
 }  

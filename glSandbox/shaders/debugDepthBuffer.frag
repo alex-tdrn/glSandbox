@@ -5,6 +5,7 @@
 uniform bool linearize;
 uniform float nearPlane;
 uniform float farPlane;
+
 out vec4 FragColor;
 
 void main()

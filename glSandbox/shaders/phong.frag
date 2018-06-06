@@ -55,16 +55,19 @@ uniform DirLight dirLights[MAX_DIR_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
-in vec2 texCoord;
-in vec3 n;
-in vec3 fragPos;
+in VS_OUT
+{
+	vec3 position;
+	vec3 normal;
+	vec2 textureCoordinates;
+} fs_in;
 
 out vec4 FragColor;
 
-vec3 viewDirection = normalize(-fragPos);
+vec3 viewDirection = normalize(-fs_in.position);
 vec3 diffuseColor;
 vec3 specularColor;
-vec3 normal = normalize(n);
+vec3 normal = normalize(fs_in.normal);
 vec3 calcDirLight(DirLight light);
 vec3 calcPointLight(PointLight light);
 vec3 calcSpotLight(SpotLight light);
@@ -74,19 +77,19 @@ void main()
 {	
 	if(material.hasOpacityMap)
 	{
-		float opacity = texture(material.opacityMap, texCoord + material.opacityMapOffset).r;
+		float opacity = texture(material.opacityMap, fs_in.textureCoordinates + material.opacityMapOffset).r;
 		if(opacity <= 0.1f)
 			discard;
 	}
 	if(!material.overrideDiffuse && material.hasDiffuseMap)
-		diffuseColor = vec3(texture(material.diffuseMap, texCoord + material.diffuseMapOffset));
+		diffuseColor = vec3(texture(material.diffuseMap, fs_in.textureCoordinates + material.diffuseMapOffset));
 	else if(material.overrideDiffuse)
 		diffuseColor = material.overrideDiffuseColor;
 	else
 		diffuseColor = vec3(1.0f);
 
 	if(!material.overrideSpecular && material.hasSpecularMap)
-		specularColor = vec3(texture(material.specularMap, texCoord + material.specularMapOffset));
+		specularColor = vec3(texture(material.specularMap, fs_in.textureCoordinates + material.specularMapOffset));
 	else if(material.overrideSpecular)
 		specularColor = material.overrideSpecularColor;
 	else
@@ -133,16 +136,16 @@ vec3 calcDirLight(DirLight light)
 
 vec3 calcPointLight(PointLight light)
 {
-	float distance = length(light.position - fragPos);
+	float distance = length(light.position - fs_in.position);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-	vec3 lightDirection = normalize(light.position - fragPos);
+	vec3 lightDirection = normalize(light.position - fs_in.position);
 
 	return attenuation * light.color * (diffuse(lightDirection) + specular(lightDirection));
 }
 
 vec3 calcSpotLight(SpotLight light)
 {
-	vec3 lightDirection = normalize(light.position - fragPos);
+	vec3 lightDirection = normalize(light.position - fs_in.position);
 
 	float theta = dot(lightDirection, normalize(-light.direction));
 	float epsilon = light.innerCutoff - light.outerCutoff;

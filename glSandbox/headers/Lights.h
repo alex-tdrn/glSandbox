@@ -24,7 +24,7 @@ private:
 
 public:
 	void setOrientation(glm::vec3 orientation);
-	glm::vec3 const& getDirection() const;
+	glm::vec3 const getDirection() const;
 	bool drawUI() override;
 
 };
@@ -59,7 +59,7 @@ public:
 	void setPosition(glm::vec3 position);
 	void setOrientation(glm::vec3 orientation);
 	glm::vec3 const& getPosition() const;
-	glm::vec3 const& getDirection() const;
+	glm::vec3 const getDirection() const;
 	float getInnerCutoff() const;
 	float getOuterCutoff() const;
 	bool drawUI() override;

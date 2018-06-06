@@ -22,9 +22,9 @@ private:
 	void update();
 
 public:
-	void use(Shader shader, float width, float height) const;
-	std::tuple<glm::mat4, glm::mat4> getMatrices(float width, float height) const;
-	glm::mat4 getProjectionMatrix(float width, float height) const;
+	void use(Shader shader, int width, int height) const;
+	std::tuple<glm::mat4, glm::mat4> getMatrices(int width, int height) const;
+	glm::mat4 getProjectionMatrix(int width, int height) const;
 	glm::mat4 getViewMatrix() const;
 	glm::vec3 getPosition() const;
 	void setPosition(Position position);

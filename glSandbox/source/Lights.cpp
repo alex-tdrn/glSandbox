@@ -44,7 +44,7 @@ void DirectionalLight::setOrientation(glm::vec3 orientation)
 	this->orientation.roll = orientation.z;
 }
 
-glm::vec3 const& DirectionalLight::getDirection() const
+glm::vec3 const DirectionalLight::getDirection() const
 {
 	return orientation.getDirectionVector();
 }
@@ -125,7 +125,7 @@ glm::vec3 const& SpotLight::getPosition() const
 	return position.position;
 }
 
-glm::vec3 const& SpotLight::getDirection() const
+glm::vec3 const SpotLight::getDirection() const
 {
 	return orientation.getDirectionVector();
 }

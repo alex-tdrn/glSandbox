@@ -28,19 +28,19 @@ void Model::load() const
 
 void Model::processNode(aiNode* node, const aiScene* scene, std::string_view const dir) const
 {
-	for(int i = 0; i < node->mNumMeshes; i++)
+	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(processMesh(mesh, scene, dir));
 	}
-	for(int i = 0; i < node->mNumChildren; i++)
+	for(unsigned int i = 0; i < node->mNumChildren; i++)
 		processNode(node->mChildren[i], scene, dir);
 }
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view const dir) const
 {
 	std::vector<Vertex> vertices(mesh->mNumVertices);
-	for(int i = 0; i < mesh->mNumVertices; i++)
+	for(unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		vertices[i].position = glm::vec3{mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
 		vertices[i].normal = glm::vec3{mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
@@ -49,8 +49,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 	}
 
 	std::vector<unsigned int> indices(mesh->mNumFaces * 3);
-	for(int i = 0; i < mesh->mNumFaces; i++)
-		for(int j = 0; j < mesh->mFaces[i].mNumIndices; j++)
+	for(unsigned int i = 0; i < mesh->mNumFaces; i++)
+		for(unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++)
 			indices[i * 3 + j] = mesh->mFaces[i].mIndices[j];
 
 	Material* material = nullptr;

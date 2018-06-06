@@ -15,8 +15,8 @@ private:
 	std::string path;
 	mutable std::vector<Mesh> meshes;
 	mutable std::vector<std::unique_ptr<Material>> materials;
-	mutable int nVertices = 0;
-	mutable int nIndices = 0;
+	mutable size_t nVertices = 0;
+	mutable size_t nIndices = 0;
 	mutable bool initialized = false;
 	inline static int ct = 0;
 

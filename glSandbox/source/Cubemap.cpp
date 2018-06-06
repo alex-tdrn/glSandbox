@@ -72,7 +72,7 @@ bool Cubemap::drawUI()
 	if(false && size < 256 && ImGui::IsItemHovered())
 	{
 		ImGui::BeginTooltip();
-		ImGui::Image(ImTextureID(ID), ImVec2(512, 512));
+		ImGui::Image(reinterpret_cast<ImTextureID>(ID), ImVec2(512, 512));
 		ImGui::EndTooltip();
 	}
 	ImGui::PopID();

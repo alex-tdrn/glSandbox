@@ -28,7 +28,7 @@ public:
 	Texture const & operator=(Texture const& other);
 
 public:
-	glm::vec2 const& getUVOffset() const;
+	glm::vec2 const getUVOffset() const;
 	bool isInitialized() const;
 	std::string_view getPath() const;
 	int getLocation() const;

@@ -120,7 +120,7 @@ Texture const& Texture::operator=(Texture const& other)
 	return *this;
 }
 
-glm::vec2 const& Texture::getUVOffset() const
+glm::vec2 const Texture::getUVOffset() const
 {
 	return {-uvOffset.x, uvOffset.y};
 }

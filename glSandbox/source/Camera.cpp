@@ -8,7 +8,7 @@ void Camera::update()
 	up = glm::normalize(glm::cross(-front, right));
 }
 
-void Camera::use(Shader shader, float width, float height) const
+void Camera::use(Shader shader, int width, int height) const
 {
 	shader.set("projection", getProjectionMatrix(width, height));
 	shader.set("view", getViewMatrix());
@@ -16,17 +16,17 @@ void Camera::use(Shader shader, float width, float height) const
 	shader.set("farPlane", farPlane);
 }
 
-std::tuple<glm::mat4, glm::mat4> Camera::getMatrices(float width, float height) const
+std::tuple<glm::mat4, glm::mat4> Camera::getMatrices(int width, int height) const
 {
 	return {getProjectionMatrix(width, height), getViewMatrix()};
 }
 
-glm::mat4 Camera::getProjectionMatrix(float width, float height) const
+glm::mat4 Camera::getProjectionMatrix(int width, int height) const
 {
 	if(projectionOrtho)
 		return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
 	else
-		return glm::perspective(glm::radians(fov), width / height, nearPlane, farPlane);
+		return glm::perspective(glm::radians(fov), static_cast<float>(width) / height, nearPlane, farPlane);
 }
 
 glm::mat4 Camera::getViewMatrix() const

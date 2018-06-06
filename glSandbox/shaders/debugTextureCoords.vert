@@ -1,7 +1,10 @@
-#version 330 core
+#version 420 core
+layout(std140, binding = 0) uniform CameraMatrices
+{
+	uniform mat4 projection;
+	uniform mat4 view;
+};
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 uniform vec2 uvOffset;
 layout (location = 0) in vec3 aPos;
 layout (location = 2) in vec2 texCoords;

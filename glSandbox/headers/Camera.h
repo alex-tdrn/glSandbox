@@ -8,6 +8,8 @@
 class Camera
 {
 private:
+	mutable unsigned int ubo;
+	bool initialized = false;
 	bool projectionOrtho = false;
 	Orientation orientation;
 	Position position = {{0.0f, 0.0f, 3.0f}};
@@ -20,13 +22,15 @@ private:
 
 private:
 	void update();
+	void init() const;
 
 public:
-	void use(Shader shader, int width, int height) const;
-	std::tuple<glm::mat4, glm::mat4> getMatrices(int width, int height) const;
-	glm::mat4 getProjectionMatrix(int width, int height) const;
+	void use() const;
+	glm::mat4 getProjectionMatrix() const;
 	glm::mat4 getViewMatrix() const;
 	glm::vec3 getPosition() const;
+	float getNearPlane() const;
+	float getFarPlane() const;
 	void setPosition(Position position);
 	void setOrientation(Orientation orientation);
 	void dolly(float amount);

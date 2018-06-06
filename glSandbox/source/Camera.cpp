@@ -1,5 +1,15 @@
 #include "Camera.h"
+#include "Globals.h"
+#include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
+
+void Camera::init() const
+{
+	glGenBuffers(1, &ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STREAM_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+}
 
 void Camera::update()
 {
@@ -8,25 +18,32 @@ void Camera::update()
 	up = glm::normalize(glm::cross(-front, right));
 }
 
-void Camera::use(Shader shader, int width, int height) const
+void Camera::use() const
 {
-	shader.set("projection", getProjectionMatrix(width, height));
-	shader.set("view", getViewMatrix());
-	shader.set("nearPlane", nearPlane);
-	shader.set("farPlane", farPlane);
+	if(!initialized)
+		init();
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, 64, glm::value_ptr(getProjectionMatrix()));
+	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, glm::value_ptr(getViewMatrix()));
+	
 }
 
-std::tuple<glm::mat4, glm::mat4> Camera::getMatrices(int width, int height) const
+float Camera::getNearPlane() const
 {
-	return {getProjectionMatrix(width, height), getViewMatrix()};
+	return nearPlane;
 }
 
-glm::mat4 Camera::getProjectionMatrix(int width, int height) const
+float Camera::getFarPlane() const
+{
+	return farPlane;
+}
+
+glm::mat4 Camera::getProjectionMatrix() const
 {
 	if(projectionOrtho)
 		return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
 	else
-		return glm::perspective(glm::radians(fov), static_cast<float>(width) / height, nearPlane, farPlane);
+		return glm::perspective(glm::radians(fov), static_cast<float>(info::windowWidth) / info::windowHeight, nearPlane, farPlane);
 }
 
 glm::mat4 Camera::getViewMatrix() const

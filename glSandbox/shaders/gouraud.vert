@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 #define MAX_DIR_LIGHTS 256
 #define MAX_POINT_LIGHTS 256
 #define MAX_SPOT_LIGHTS 256
@@ -50,9 +50,12 @@ uniform int nSpotLights;
 uniform DirLight dirLights[MAX_DIR_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
+layout(std140, binding = 0) uniform CameraMatrices
+{
+	uniform mat4 projection;
+	uniform mat4 view;
+};
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 texCoord;

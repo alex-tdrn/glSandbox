@@ -121,10 +121,8 @@ void Scene::draw()
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	auto[projectionMatrix, viewMatrix] = camera.getMatrices(info::windowWidth, info::windowHeight);
-
+	camera.use();
 	resources::shaders::light.use();
-	camera.use(resources::shaders::light, info::windowWidth, info::windowHeight);
 	glBindVertexArray(resources::boxVAO);
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
@@ -142,6 +140,7 @@ void Scene::draw()
 	drawLights(pointLights);
 	drawLights(spotLights);
 	Shader& activeShader = getActiveShader();
+	glm::mat4 viewMatrix = camera.getViewMatrix();
 	if(active == type::phong || active == type::gouraud)
 	{
 		activeShader.set("ambientColor", backgroundColor);
@@ -203,8 +202,12 @@ void Scene::draw()
 		activeShader.set("skybox", 0);
 		activeShader.set("cameraPos", camera.getPosition());
 	}
+	else if(active == type::debugDepthBuffer)
+	{
+		activeShader.set("nearPlane", camera.getNearPlane());
+		activeShader.set("farPlane", camera.getFarPlane());
+	}
 
-	camera.use(activeShader, info::windowWidth, info::windowHeight);
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	for(auto& actor : actors)
@@ -213,7 +216,6 @@ void Scene::draw()
 	glStencilMask(0x00);
 	glDisable(GL_DEPTH_TEST);
 	resources::shaders::outline.use();
-	camera.use(resources::shaders::outline, info::windowWidth, info::windowHeight);
 	for(auto& actor : actors)
 		actor.drawOutline(resources::shaders::outline);
 	glStencilMask(0xFF);
@@ -227,7 +229,6 @@ void Scene::draw()
 		skybox->use();
 		resources::shaders::skybox.use();
 		resources::shaders::skybox.set("skybox", 0);
-		resources::scene.getCamera().use(resources::shaders::skybox, info::windowWidth, info::windowHeight);
 		glBindVertexArray(resources::boxVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}

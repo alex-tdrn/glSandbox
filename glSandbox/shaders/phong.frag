@@ -1,4 +1,4 @@
-#version 450 core
+#version 420 core
 #define MAX_DIR_LIGHTS 256
 #define MAX_POINT_LIGHTS 256
 #define MAX_SPOT_LIGHTS 256

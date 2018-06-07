@@ -187,5 +187,26 @@
     <None Include="shaders\pp.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\debugNormalsShowLines.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\debugNormalsShowLines.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\debugNormalsShowLines.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\debugNormals.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\flat.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\flat.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\flat.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

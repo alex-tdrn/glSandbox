@@ -2,12 +2,12 @@
 
 in GS_OUT
 {
-	vec3 normal;
+	vec4 color;
 } fs_in;
 
 out vec4 FragColor;
 
 void main()
 {
-	FragColor = vec4(normalize(fs_in.normal), 1.0f);
+	FragColor = fs_in.color;
 }

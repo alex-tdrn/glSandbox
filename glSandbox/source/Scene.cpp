@@ -141,7 +141,7 @@ void Scene::draw()
 	drawLights(spotLights);
 	Shader& activeShader = getActiveShader();
 	glm::mat4 viewMatrix = camera.getViewMatrix();
-	if(active == type::phong || active == type::gouraud)
+	if(active == type::phong || active == type::gouraud || active == type::flat)
 	{
 		activeShader.set("ambientColor", backgroundColor);
 		//directional lights
@@ -206,6 +206,16 @@ void Scene::draw()
 	{
 		activeShader.set("nearPlane", camera.getNearPlane());
 		activeShader.set("farPlane", camera.getFarPlane());
+	}
+	else if(active == type::debugNormals)
+	{
+		if(settings::rendering::debugNormalsShowLines)
+		{
+			resources::shaders::debugNormalsShowLines.use();
+			for(auto& actor : actors)
+				actor.draw(resources::shaders::debugNormalsShowLines);
+			activeShader.use();
+		}
 	}
 
 	glEnable(GL_STENCIL_TEST);

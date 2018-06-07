@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 	ImGui_ImplGlfwGL3_Init(window, false);
 	ImGui::StyleColorsLight();
 	
-	resources::scene.setBackgroundColor({1.0f, 1.0f, 1.0f});
+	resources::scene.setBackgroundColor({0.5f, 0.5f, 0.5f});
 	resources::scene.getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
 	resources::scene.getCamera().setOrientation(Orientation{200.0f, -20.0f, 0.0f});
 	resources::init();
@@ -282,7 +282,7 @@ void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severi
 	if(type == GL_DEBUG_TYPE_PERFORMANCE)
 		return;
 	std::cout << "-----------------------------------\n"
-		<< "OpenGL Debug Message (" << id << "): " << message << '\n';
+		<< "OpenGL Debug Message (" << id << "): \n" << message << '\n';
 	std::cout << "Source: ";
 	switch(source)
 	{

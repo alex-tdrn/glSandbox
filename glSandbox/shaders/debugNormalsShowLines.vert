@@ -18,12 +18,6 @@ out VS_OUT
 
 void main()
 {
-	if(!faceNormals)
-	{
-		if(viewSpace)
-			vs_out.normal = mat3(transpose(inverse(view * model))) * normal;
-		else
-			vs_out.normal = mat3(transpose(inverse(model))) * normal;
-	}
+	vs_out.normal = normal;
 	gl_Position =  vec4(position, 1.0f);
 }

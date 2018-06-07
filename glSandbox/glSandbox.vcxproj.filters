@@ -208,5 +208,6 @@
     <None Include="shaders\flat.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\ppChromaticAberration.frag" />
   </ItemGroup>
 </Project>

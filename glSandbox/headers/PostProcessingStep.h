@@ -11,6 +11,7 @@ private:
 	{
 		passthrough,
 		grayscale,
+		chromaticAberration,
 		invert,
 		convolution
 	};

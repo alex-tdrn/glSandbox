@@ -57,6 +57,7 @@ namespace resources
 		//postprocessing
 		inline Shader passthrough("shaders/pp.vert", "shaders/ppPassthrough.frag");
 		inline Shader grayscale("shaders/pp.vert", "shaders/ppBW.frag");
+		inline Shader chromaticAberration("shaders/pp.vert", "shaders/ppChromaticAberration.frag");
 		inline Shader invert("shaders/pp.vert", "shaders/ppInvert.frag");
 		inline Shader convolution("shaders/pp.vert", "shaders/ppConvolution.frag");
 
@@ -401,6 +402,7 @@ void resources::shaders::reload()
 
 	resources::shaders::passthrough.reload();
 	resources::shaders::grayscale.reload();
+	resources::shaders::chromaticAberration.reload();
 	resources::shaders::invert.reload();
 	resources::shaders::convolution.reload();
 }

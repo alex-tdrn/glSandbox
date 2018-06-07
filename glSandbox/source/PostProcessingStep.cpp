@@ -35,6 +35,8 @@ Shader& PostProcessingStep::getActiveShader()
 		{
 			case type::grayscale:
 				return resources::shaders::grayscale;
+			case type::chromaticAberration:
+				return resources::shaders::chromaticAberration;
 			case type::invert:
 				return resources::shaders::invert;
 			case type::convolution:
@@ -90,6 +92,8 @@ void PostProcessingStep::drawUI()
 	ImGui::SameLine();
 	ImGui::RadioButton("Grayscale", &active, type::grayscale);
 	ImGui::SameLine();
+	ImGui::RadioButton("Chromatic Aberration", &active, type::chromaticAberration);
+
 	ImGui::RadioButton("Invert", &active, type::invert);
 	ImGui::SameLine();
 	ImGui::RadioButton("Convolution", &active, type::convolution);
@@ -98,6 +102,8 @@ void PostProcessingStep::drawUI()
 		case type::passthrough:
 			break;
 		case type::grayscale:
+			break;
+		case type::chromaticAberration:
 			break;
 		case type::invert:
 			break;

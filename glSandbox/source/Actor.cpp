@@ -70,6 +70,7 @@ void Actor::drawOutline(Shader outlineShader) const
 }
 bool Actor::drawUI()
 {
+	Scene& activeScene = resources::scenes::getActiveScene();
 	bool valueChanged = false;
 	std::string_view comboPreview = "None";
 	if(model)
@@ -79,17 +80,17 @@ bool Actor::drawUI()
 		if(ImGui::Selectable("None", !model))
 		{
 			model = nullptr;
-			resources::scene.update();
+			activeScene.update();
 		}
 		if(ImGui::Selectable(resources::models::nanosuit.getName().data(), model == &resources::models::nanosuit))
 		{
 			model = &resources::models::nanosuit;
-			resources::scene.update();
+			activeScene.update();
 		}
 		if(ImGui::Selectable(resources::models::sponza.getName().data(), model == &resources::models::sponza))
 		{
 			model = &resources::models::sponza;
-			resources::scene.update();
+			activeScene.update();
 		}
 		ImGui::EndCombo();
 	}

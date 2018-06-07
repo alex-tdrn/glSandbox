@@ -12,10 +12,28 @@
 
 namespace resources
 {
-	inline Scene scene;
 	inline unsigned int boxVAO;
 	inline unsigned int quadVAO;
-	
+	namespace scenes
+	{
+		inline Scene empty{"Empty"};
+		inline Scene simple{"Simple"};
+		inline Scene medium{"Medium"};
+		inline Scene stressTest{"Stress Test"};
+		namespace type
+		{
+			enum type
+			{
+				empty,
+				simple,
+				medium,
+				stressTest
+			};
+		}
+		inline int active = type::empty;
+
+		inline Scene& getActiveScene();
+	}
 	namespace models
 	{
 		inline Model nanosuit{"models/nanosuit/nanosuit.obj", "Nanosuit"};
@@ -202,7 +220,107 @@ void resources::init()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) (2 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	for(Scene* scene : {&scenes::empty, &scenes::simple, &scenes::medium, &scenes::stressTest})
+	{
+		scene->setBackgroundColor({0.5f, 0.5f, 0.5f});
+		scene->getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
+		scene->getCamera().setOrientation(Orientation{200.0f, -20.0f, 0.0f});
+	}
+
+	{
+		DirectionalLight light;
+		light.setColor({20.0f / 255.0f, 10.0f / 255.0f, 70.0f / 255.0f});
+		light.setOrientation({120.0f, -60.0f, 0.0f});
+		scenes::simple.add(light);
+
+		Actor actor(&resources::models::nanosuit);
+		actor.setPosition({0.0f, -1.75f, 0.0f});
+		actor.setScale({0.15f, 0.15f, 0.15f});
+		scenes::simple.add(actor);
+	}
+
+	{
+		DirectionalLight light;
+		light.setColor({20.0f / 255.0f, 10.0f / 255.0f, 70.0f / 255.0f});
+		light.setOrientation({120.0f, -60.0f, 0.0f});
+		scenes::medium.add(light);
+	}
+	{
+		PointLight light;
+		light.setColor({1.0f, 200.0f / 255.0f, 0.0f});
+		light.setPosition({-1.0f, 0.0f, 2.0f});
+		scenes::medium.add(light);
+	}
+	{
+		SpotLight light;
+		light.setPosition({-2.4f, -1.4f, -2.4f});
+		light.setOrientation({170.0f, 0.0f, 0.0f});
+		scenes::medium.add(light);
+	}
+	{
+		Actor actor(&resources::models::sponza);
+		actor.setPosition({0.0f, -1.8f, 0.0f});
+		actor.setScale({0.0125f, 0.0125f, 0.0125f});
+		scenes::medium.add(actor);
+	}
+	{
+		int idx = 1;
+		for(int i = 0; i < 3; i++)
+		{
+			for(int j = 0; j < 3; j++)
+			{
+				Actor actor(&resources::models::nanosuit);
+				actor.setPosition({0.0f - i * 3.0f, -1.75f, 0.0f - j * 1.0f});
+				actor.setScale({0.15f, 0.15f, 0.15f});
+				scenes::medium.add(actor);
+				idx++;
+			}
+		}
+	}
+
+	{
+		scenes::stressTest.getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
+		scenes::stressTest.getCamera().setOrientation(Orientation{215.0f, -20.0f, 0.0f});
+		DirectionalLight light;
+		light.setOrientation({225.0f, +60.0f, 0.0f});
+
+		scenes::stressTest.add(light);
+
+		int idx = 1;
+		const int n = 10;
+		for(int i = 0; i < n; i++)
+		{
+			for(int j = 0; j < 2 * n; j++)
+			{
+				Actor actor(&resources::models::nanosuit);
+				actor.setPosition({0.0f - i * 3.0f, -1.75f, 0.0f - j * 1.0f});
+				actor.setScale({0.15f, 0.15f, 0.15f});
+				scenes::stressTest.add(actor);
+				idx++;
+			}
+		}
+	}
 }
+
+Scene& resources::scenes::getActiveScene()
+{
+	Scene& ret = [&]() -> Scene&{
+		switch(active)
+		{
+			case type::simple:
+				return simple;
+			case type::medium:
+				return medium;
+			case type::stressTest:
+				return stressTest;
+			default:
+				return empty;
+		}
+	}();
+	return ret;
+}
+
 
 Shader& settings::rendering::getActiveShader()
 {
@@ -288,31 +406,75 @@ void resources::shaders::reload()
 
 void resources::drawUI()
 {
+	Scene& activeScene = scenes::getActiveScene();
 	if(ImGui::CollapsingHeader("Resources"))
 	{
 		ImGui::Indent();
+		if(ImGui::CollapsingHeader("Scenes"))
+		{
+			std::string_view comboPreview = scenes::empty.getName();
+			switch(scenes::active)
+			{
+				case scenes::type::simple:
+					comboPreview = scenes::simple.getName();
+					break;
+				case scenes::type::medium:
+					comboPreview = scenes::medium.getName();
+					break;
+				case scenes::type::stressTest:
+					comboPreview = scenes::stressTest.getName();
+					break;
+			}
+			if(ImGui::BeginCombo("Active", comboPreview.data()))
+			{
+				if(ImGui::Selectable(scenes::empty.getName().data(), scenes::active == scenes::type::empty))
+				{
+					scenes::active = scenes::type::empty;
+					activeScene.update();
+				}
+				if(ImGui::Selectable(scenes::simple.getName().data(), scenes::active == scenes::type::simple))
+				{
+					scenes::active = scenes::type::simple;
+					activeScene.update();
+				}
+				if(ImGui::Selectable(scenes::medium.getName().data(), scenes::active == scenes::type::medium))
+				{
+					scenes::active = scenes::type::medium;
+					activeScene.update();
+				}
+				if(ImGui::Selectable(scenes::stressTest.getName().data(), scenes::active == scenes::type::stressTest))
+				{
+					scenes::active = scenes::type::stressTest;
+					activeScene.update();
+				}
+				ImGui::EndCombo();
+			}
+			scenes::empty.drawUI();
+			scenes::simple.drawUI();
+			scenes::medium.drawUI();
+			scenes::stressTest.drawUI();
+		}
 		if(ImGui::CollapsingHeader("Models"))
 		{
 			if(models::nanosuit.drawUI())
-				scene.update();
+				activeScene.update();
 			if(models::sponza.drawUI())
-				scene.update();
+				activeScene.update();
 		}
 		if(ImGui::CollapsingHeader("Cubemaps"))
 		{
 			if(cubemaps::skybox.drawUI())
-				scene.update();
+				activeScene.update();
 			if(cubemaps::mp_blizzard.drawUI())
-				scene.update();
+				activeScene.update();
 		}
 		if(ImGui::Button("Reload Shaders"))
 		{
 			shaders::reload();
-			scene.update();
+			activeScene.update();
 		}
 		ImGui::Unindent();
 	}
-	scene.drawUI();
 }
 
 void settings::drawUI()
@@ -328,6 +490,8 @@ void settings::drawUI()
 
 void settings::rendering::drawUI()
 {
+	Scene& activeScene = resources::scenes::getActiveScene();
+
 	if(ImGui::CollapsingHeader("Rendering"))
 	{
 		ImGui::Indent();
@@ -336,96 +500,96 @@ void settings::rendering::drawUI()
 		ImGui::Checkbox("V-Sync", &vsync);
 		ImGui::SameLine();
 		if(ImGui::Checkbox("Wireframe", &wireframe))
-			resources::scene.update();
+			activeScene.update();
 
 		ImGui::SameLine();
 		if(ImGui::Checkbox("Depth Testing", &depthTesting))
-			resources::scene.update();
+			activeScene.update();
 
 
 		if(depthTesting && ImGui::CollapsingHeader("Depth Function"))
 		{
 			ImGui::Indent();
 			if(ImGui::RadioButton("GL_ALWAYS", &depthFunction, GL_ALWAYS))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::SameLine();
 			if(ImGui::RadioButton("GL_NEVER", &depthFunction, GL_NEVER))
-				resources::scene.update();
+				activeScene.update();
 
 			if(ImGui::RadioButton("GL_LESS", &depthFunction, GL_LESS))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::SameLine();
 			if(ImGui::RadioButton("GL_EQUAL", &depthFunction, GL_EQUAL))
-				resources::scene.update();
+				activeScene.update();
 
 			if(ImGui::RadioButton("GL_LEQUAL", &depthFunction, GL_LEQUAL))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::SameLine();
 			if(ImGui::RadioButton("GL_GREATER", &depthFunction, GL_GREATER))
-				resources::scene.update();
+				activeScene.update();
 
 			if(ImGui::RadioButton("GL_NOTEQUAL", &depthFunction, GL_NOTEQUAL))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::SameLine();
 			if(ImGui::RadioButton("GL_GEQUAL", &depthFunction, GL_GEQUAL))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::Unindent();
 		}
 		if(ImGui::Checkbox("Face Culling", &faceCulling))
-			resources::scene.update();
+			activeScene.update();
 
 		if(faceCulling)
 		{
 			ImGui::Indent();
 			ImGui::Text("Face Culling Mode");
 			if(ImGui::RadioButton("GL_BACK", &faceCullingMode, GL_BACK))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::SameLine();
 			if(ImGui::RadioButton("GL_FRONT", &faceCullingMode, GL_FRONT))
-				resources::scene.update();
+				activeScene.update();
 
 			if(ImGui::RadioButton("GL_FRONT_AND_BACK", &faceCullingMode, GL_FRONT_AND_BACK))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::Text("Face Culling Ordering");
 			if(ImGui::RadioButton("GL_CCW", &faceCullingOrdering, GL_CCW))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::SameLine();
 			if(ImGui::RadioButton("GL_CW ", &faceCullingOrdering, GL_CW))
-				resources::scene.update();
+				activeScene.update();
 
 			ImGui::Unindent();
 		}
 		if(ImGui::RadioButton("Phong", &active, type::phong))
-			resources::scene.update();
+			activeScene.update();
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Gouraud", &active, type::gouraud))
-			resources::scene.update();
+			activeScene.update();
 
 		if(ImGui::RadioButton("Flat", &active, type::flat))
-			resources::scene.update();
+			activeScene.update();
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Reflection", &active, type::reflection))
-			resources::scene.update();
+			activeScene.update();
 
 		if(ImGui::RadioButton("Refraction", &active, type::refraction))
-			resources::scene.update();
+			activeScene.update();
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Normals", &active, type::debugNormals))
-			resources::scene.update();
+			activeScene.update();
 
 		if(ImGui::RadioButton("Texture Coordinates", &active, type::debugTexCoords))
-			resources::scene.update();
+			activeScene.update();
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Depth Buffer", &active, type::debugDepthBuffer))
-			resources::scene.update();
+			activeScene.update();
 
 		switch(active)
 		{
@@ -433,52 +597,52 @@ void settings::rendering::drawUI()
 			case type::gouraud:
 			case type::flat:
 				if(ImGui::Checkbox("Override Diffuse", &overrideDiffuse))
-					resources::scene.update();
+					activeScene.update();
 
 				if(overrideDiffuse)
 				{
 					ImGui::SameLine();
 					if(ImGui::ColorEdit3("Diffuse", &overrideDiffuseColor.x, ImGuiColorEditFlags_NoInputs))
-						resources::scene.update();
+						activeScene.update();
 
 				}
 				if(ImGui::Checkbox("Override Specular", &overrideSpecular))
-					resources::scene.update();
+					activeScene.update();
 
 				if(overrideSpecular)
 				{
 					ImGui::SameLine();
 					if(ImGui::ColorEdit3("Specular", &overrideSpecularColor.x, ImGuiColorEditFlags_NoInputs))
-						resources::scene.update();
+						activeScene.update();
 
 				}
 				if(ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f))
-					resources::scene.update();
+					activeScene.update();
 
 				break;
 			case type::refraction:
 				if(ImGui::DragFloat("First Medium", &firstMedium, 0.001f))
-					resources::scene.update();
+					activeScene.update();
 				if(ImGui::DragFloat("Second Medium", &secondMedium, 0.001f))
-					resources::scene.update();
+					activeScene.update();
 				break;
 			case type::debugNormals:
 				if(ImGui::Checkbox("View Space", &debugNormalsViewSpace))
-					resources::scene.update();
+					activeScene.update();
 				ImGui::SameLine();
 				if(ImGui::Checkbox("Show Lines", &debugNormalsShowLines))
-					resources::scene.update();
+					activeScene.update();
 				ImGui::SameLine();
 				if(ImGui::Checkbox("Face Normals", &debugNormalsFaceNormals))
-					resources::scene.update();
+					activeScene.update();
 				if(ImGui::DragFloat("Explode Magnitude", &debugNormalsExplodeMagnitude, 0.01f))
-					resources::scene.update();
+					activeScene.update();
 				if(debugNormalsShowLines)
 				{
 					if(ImGui::DragFloat("Line length", &debugNormalsLineLength, 0.001f))
-						resources::scene.update();
+						activeScene.update();
 					if(ImGui::ColorEdit3("Line color", &debugNormalsLineColor.x, ImGuiColorEditFlags_NoInputs))
-						resources::scene.update();
+						activeScene.update();
 				}
 				break;
 			case type::debugTexCoords:
@@ -486,8 +650,7 @@ void settings::rendering::drawUI()
 				break;
 			case type::debugDepthBuffer:
 				if(ImGui::Checkbox("Linearize", &debugDepthBufferLinear))
-					resources::scene.update();
-
+					activeScene.update();
 				break;
 		}
 		ImGui::Unindent();

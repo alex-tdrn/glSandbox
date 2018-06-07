@@ -84,50 +84,7 @@ int main(int argc, char** argv)
 	ImGui_ImplGlfwGL3_Init(window, false);
 	ImGui::StyleColorsLight();
 	
-	resources::scene.setBackgroundColor({0.5f, 0.5f, 0.5f});
-	resources::scene.getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
-	resources::scene.getCamera().setOrientation(Orientation{200.0f, -20.0f, 0.0f});
 	resources::init();
-	{
-		DirectionalLight light;
-		light.setColor({20.0f / 255.0f, 10.0f / 255.0f, 70.0f / 255.0f});
-		light.setOrientation({120.0f, -60.0f, 0.0f});
-		resources::scene.add(light);
-	}
-	{
-		PointLight light;
-		light.setColor({1.0f, 200.0f / 255.0f, 0.0f});
-		light.setPosition({-1.0f, 0.0f, 2.0f});
-		resources::scene.add(light);
-	}
-	{
-		SpotLight light;
-		light.setPosition({-2.4f, -1.4f, -2.4f});
-		light.setOrientation({170.0f, 0.0f, 0.0f});
-		resources::scene.add(light);
-	}
-	{
-		Actor actor(&resources::models::sponza);
-		actor.setPosition({0.0f, -1.8f, 0.0f});
-		actor.setScale({0.0125f, 0.0125f, 0.0125f});
-#ifdef NDEBUG
-		resources::scene.add(actor);
-#endif
-	}
-	{
-		int idx = 1;
-		for(int i = 0; i < 3; i++)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				Actor actor(&resources::models::nanosuit);
-				actor.setPosition({0.0f - i * 3.0f, -1.75f, 0.0f - j * 1.0f});
-				actor.setScale({0.15f, 0.15f, 0.15f});
-				resources::scene.add(actor);
-				idx++;
-			}
-		}
-	}
 	while(!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
@@ -140,17 +97,18 @@ int main(int argc, char** argv)
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		resources::scene.draw();
+		Scene& activeScene = resources::scenes::getActiveScene();
+		activeScene.draw();
 
 		{
 			using settings::postprocessing::steps;
 			if(steps.size() == 1)
 			{
-				steps[0].draw(resources::scene.getColorbuffer(), 0);
+				steps[0].draw(activeScene.getColorbuffer(), 0);
 			}
 			else if(steps.size() > 1)
 			{
-				steps[0].draw(resources::scene.getColorbuffer());
+				steps[0].draw(activeScene.getColorbuffer());
 				for(int i = 1; i < steps.size() - 1; i++)
 					steps[i].draw(steps[i - 1].getColorbuffer());
 				steps[steps.size() - 1].draw(steps[steps.size() - 2].getColorbuffer(), 0);
@@ -180,7 +138,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 	info::windowWidth = width;
 	info::windowHeight = height;
 	glViewport(0, 0, width, height);
-	resources::scene.updateFramebuffer();
+	resources::scenes::getActiveScene().updateFramebuffer();
 	for(auto& step : settings::postprocessing::steps)
 		step.updateFramebuffer();
 }
@@ -197,18 +155,19 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 		firstMouse = false;
 		return;
 	}
-	resources::scene.update();
+	Scene& activeScene = resources::scenes::getActiveScene();
+	activeScene.update();
 
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= -sensitivity;
-	resources::scene.getCamera().adjustOrientation(xoffset, yoffset);
+	activeScene.getCamera().adjustOrientation(xoffset, yoffset);
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
 	if(ImGuiIO& io = ImGui::GetIO(); io.WantCaptureMouse)
 		return ImGui_ImplGlfw_MouseButtonCallback(window, button, mode, modifier);
-	resources::scene.update();
+	resources::scenes::getActiveScene().update();
 
 
 	if(button == GLFW_MOUSE_BUTTON_1)
@@ -231,7 +190,7 @@ void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifie
 		return ImGui_ImplGlfw_KeyCallback(window, key, keycode, mode, modifier);
 	if(mode != GLFW_PRESS)
 		return;
-	resources::scene.update();
+	resources::scenes::getActiveScene().update();
 
 	switch(key)
 	{
@@ -244,35 +203,36 @@ void processInput(GLFWwindow* window)
 {
 
 	float moveDistance = 2.5f * deltaTime; // adjust accordingly
+	Scene& activeScene = resources::scenes::getActiveScene();
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		resources::scene.getCamera().dolly(+moveDistance);
-		resources::scene.update();
+		activeScene.getCamera().dolly(+moveDistance);
+		activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		resources::scene.getCamera().dolly(-moveDistance);
-		resources::scene.update();
+		activeScene.getCamera().dolly(-moveDistance);
+		activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		resources::scene.getCamera().pan({+moveDistance, 0.0f});
-		resources::scene.update();
+		activeScene.getCamera().pan({+moveDistance, 0.0f});
+		activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		resources::scene.getCamera().pan({-moveDistance, 0.0f});
-		resources::scene.update();
+		activeScene.getCamera().pan({-moveDistance, 0.0f});
+		activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
-		resources::scene.getCamera().pan({0.0f, +moveDistance});
-		resources::scene.update();
+		activeScene.getCamera().pan({0.0f, +moveDistance});
+		activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
-		resources::scene.getCamera().pan({0.0f, -moveDistance});
-		resources::scene.update();
+		activeScene.getCamera().pan({0.0f, -moveDistance});
+		activeScene.update();
 	}
 }
 

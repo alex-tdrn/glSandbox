@@ -4,7 +4,8 @@
 #include <glad/glad.h>
 #include <imgui.h>
 
-Scene::Scene()
+Scene::Scene(std::string const name)
+	: name(name)
 {
 	
 }
@@ -33,6 +34,11 @@ void Scene::init()
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+std::string_view const Scene::getName()
+{
+	return name;
 }
 
 void Scene::add(DirectionalLight light)
@@ -259,7 +265,7 @@ Camera& Scene::getCamera()
 
 void Scene::drawUI()
 {
-	if(ImGui::CollapsingHeader("Scene"))
+	if(ImGui::TreeNode(name.data()))
 	{
 		ImGui::Indent();
 		if(ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs))
@@ -272,17 +278,17 @@ void Scene::drawUI()
 			if(ImGui::Selectable("None", !skybox))
 			{
 				skybox = nullptr;
-				resources::scene.update();
+				update();
 			}
 			if(ImGui::Selectable(resources::cubemaps::skybox.getName().data(), skybox == &resources::cubemaps::skybox))
 			{
 				skybox = &resources::cubemaps::skybox;
-				resources::scene.update();
+				update();
 			}
 			if(ImGui::Selectable(resources::cubemaps::mp_blizzard.getName().data(), skybox == &resources::cubemaps::mp_blizzard))
 			{
 				skybox = &resources::cubemaps::mp_blizzard;
-				resources::scene.update();
+				update();
 			}
 			ImGui::EndCombo();
 		}
@@ -362,5 +368,6 @@ void Scene::drawUI()
 			generateListUI(spotLights, "Spot Lights");
 		}
 		ImGui::Unindent();
+		ImGui::TreePop();
 	}
 }

@@ -163,7 +163,7 @@ bool Texture::isInitialized() const
 		glTexImage2D(GL_TEXTURE_2D, 0, format, image->width, image->height, 0, pixelTransfer, GL_UNSIGNED_BYTE, image->data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(image->data);
-		resources::scene.update();
+		resources::scenes::getActiveScene().update();
 	}
 	return initialized;
 }

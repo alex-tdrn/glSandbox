@@ -29,7 +29,7 @@ namespace resources
 		inline Shader reflection("shaders/reflection.vert", "shaders/reflection.frag");
 		inline Shader refraction("shaders/refraction.vert", "shaders/refraction.frag");
 		inline Shader outline("shaders/outline.vert", "shaders/outline.frag");
-		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag");
+		inline Shader debugNormals("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
 		inline Shader debugNormalsShowLines("shaders/debugNormalsShowLines.vert", "shaders/debugNormalsShowLines.frag", "shaders/debugNormalsShowLines.geom");
 		inline Shader debugTexCoords("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
 		inline Shader debugDepthBuffer("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
@@ -101,6 +101,8 @@ namespace settings
 		inline float secondMedium = 1.52f;
 		inline bool debugDepthBufferLinear = false;
 		inline bool debugNormalsViewSpace = false;
+		inline bool debugNormalsFaceNormals= false;
+		inline float debugNormalsExplodeMagnitude = 0.0f;
 		inline bool debugNormalsShowLines = false;
 		inline float debugNormalsLineLength = 0.015f;
 		inline glm::vec3 debugNormalsLineColor{1.0f, 1.0f, 1.0f};
@@ -241,11 +243,16 @@ Shader& settings::rendering::getActiveShader()
 			break;
 		case type::debugNormals:
 			ret.set("viewSpace", debugNormalsViewSpace);
+			ret.set("faceNormals", debugNormalsFaceNormals);
+			ret.set("explodeMagnitude", debugNormalsExplodeMagnitude);
 			if(debugNormalsShowLines)
 			{
 				resources::shaders::debugNormalsShowLines.use();
 				resources::shaders::debugNormalsShowLines.set("lineLength", debugNormalsLineLength);
 				resources::shaders::debugNormalsShowLines.set("color", debugNormalsLineColor);
+				resources::shaders::debugNormalsShowLines.set("viewSpace", debugNormalsViewSpace);
+				resources::shaders::debugNormalsShowLines.set("faceNormals", debugNormalsFaceNormals);
+				resources::shaders::debugNormalsShowLines.set("explodeMagnitude", debugNormalsExplodeMagnitude);
 				ret.use();
 			}
 			break;
@@ -448,7 +455,13 @@ void settings::rendering::drawUI()
 			case type::debugNormals:
 				if(ImGui::Checkbox("View Space", &debugNormalsViewSpace))
 					resources::scene.update();
+				ImGui::SameLine();
 				if(ImGui::Checkbox("Show Lines", &debugNormalsShowLines))
+					resources::scene.update();
+				ImGui::SameLine();
+				if(ImGui::Checkbox("Face Normals", &debugNormalsFaceNormals))
+					resources::scene.update();
+				if(ImGui::DragFloat("Explode Magnitude", &debugNormalsExplodeMagnitude, 0.01f))
 					resources::scene.update();
 				if(debugNormalsShowLines)
 				{

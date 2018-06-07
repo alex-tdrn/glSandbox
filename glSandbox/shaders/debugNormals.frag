@@ -1,6 +1,6 @@
 #version 420 core
 
-in VS_OUT
+in GS_OUT
 {
 	vec3 normal;
 } fs_in;

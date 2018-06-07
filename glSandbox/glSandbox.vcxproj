@@ -182,6 +182,7 @@
     <ClInclude Include="headers\Util.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\debugNormals.geom" />
     <None Include="shaders\debugDepthBuffer.frag" />
     <None Include="shaders\debugDepthBuffer.vert" />
     <None Include="shaders\debugNormals.frag" />

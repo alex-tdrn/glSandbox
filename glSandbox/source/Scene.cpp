@@ -141,7 +141,7 @@ void Scene::draw()
 	drawLights(spotLights);
 	Shader& activeShader = getActiveShader();
 	glm::mat4 viewMatrix = camera.getViewMatrix();
-	if(active == type::phong || active == type::gouraud)
+	if(active == type::phong || active == type::gouraud || active == type::flat)
 	{
 		activeShader.set("ambientColor", backgroundColor);
 		//directional lights

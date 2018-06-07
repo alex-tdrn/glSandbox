@@ -192,6 +192,9 @@
     <None Include="shaders\debugNormalsShowLines.vert" />
     <None Include="shaders\debugTextureCoords.frag" />
     <None Include="shaders\debugTextureCoords.vert" />
+    <None Include="shaders\flat.frag" />
+    <None Include="shaders\flat.geom" />
+    <None Include="shaders\flat.vert" />
     <None Include="shaders\gouraud.frag" />
     <None Include="shaders\gouraud.vert" />
     <None Include="shaders\light.frag" />

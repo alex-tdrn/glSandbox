@@ -26,6 +26,7 @@ namespace resources
 		//rendering
 		inline Shader phong("shaders/phong.vert", "shaders/phong.frag");
 		inline Shader gouraud("shaders/gouraud.vert", "shaders/gouraud.frag");
+		inline Shader flat("shaders/flat.vert", "shaders/flat.frag", "shaders/flat.geom");
 		inline Shader reflection("shaders/reflection.vert", "shaders/reflection.frag");
 		inline Shader refraction("shaders/refraction.vert", "shaders/refraction.frag");
 		inline Shader outline("shaders/outline.vert", "shaders/outline.frag");
@@ -76,6 +77,7 @@ namespace settings
 		{
 			phong,
 			gouraud,
+			flat,
 			reflection,
 			refraction,
 			debugNormals,
@@ -209,6 +211,8 @@ Shader& settings::rendering::getActiveShader()
 		{
 			case type::gouraud:
 				return resources::shaders::gouraud;
+			case type::flat:
+				return resources::shaders::flat;
 			case type::reflection:
 				return resources::shaders::reflection;
 			case type::refraction:
@@ -228,6 +232,7 @@ Shader& settings::rendering::getActiveShader()
 	{
 		case type::phong:
 		case type::gouraud:
+		case type::flat:
 			ret.set("material.overrideDiffuse", overrideDiffuse);
 			ret.set("material.overrideSpecular", overrideSpecular);
 			ret.set("material.overrideDiffuseColor", overrideDiffuseColor);
@@ -264,6 +269,7 @@ void resources::shaders::reload()
 {
 	resources::shaders::phong.reload();
 	resources::shaders::gouraud.reload();
+	resources::shaders::flat.reload();
 	resources::shaders::reflection.reload();
 	resources::shaders::refraction.reload();
 	resources::shaders::outline.reload();
@@ -402,19 +408,22 @@ void settings::rendering::drawUI()
 		ImGui::SameLine();
 		if(ImGui::RadioButton("Gouraud", &active, type::gouraud))
 			resources::scene.update();
-		
+
+		if(ImGui::RadioButton("Flat", &active, type::flat))
+			resources::scene.update();
+		ImGui::SameLine();
 		if(ImGui::RadioButton("Reflection", &active, type::reflection))
 			resources::scene.update();
-		ImGui::SameLine();
+
 		if(ImGui::RadioButton("Refraction", &active, type::refraction))
 			resources::scene.update();
-
+		ImGui::SameLine();
 		if(ImGui::RadioButton("Normals", &active, type::debugNormals))
 			resources::scene.update();
-		ImGui::SameLine();
+
 		if(ImGui::RadioButton("Texture Coordinates", &active, type::debugTexCoords))
 			resources::scene.update();
-
+		ImGui::SameLine();
 		if(ImGui::RadioButton("Depth Buffer", &active, type::debugDepthBuffer))
 			resources::scene.update();
 
@@ -422,6 +431,7 @@ void settings::rendering::drawUI()
 		{
 			case type::phong:
 			case type::gouraud:
+			case type::flat:
 				if(ImGui::Checkbox("Override Diffuse", &overrideDiffuse))
 					resources::scene.update();
 

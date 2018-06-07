@@ -30,7 +30,7 @@ namespace resources
 				stressTest
 			};
 		}
-		inline int active = type::empty;
+		inline int active = type::simple;
 
 		inline Scene& getActiveScene();
 	}
@@ -116,7 +116,7 @@ namespace settings
 		inline bool overrideSpecular = false;
 		inline glm::vec3 overrideDiffuseColor{1.0f, 1.0f, 1.0f};
 		inline glm::vec3 overrideSpecularColor{1.0f, 1.0f, 1.0f};
-		inline float ambientStrength = 0.2f;
+		inline float ambientStrength = 0.4f;
 		inline float firstMedium = 1.0f;
 		inline float secondMedium = 1.52f;
 		inline bool debugDepthBufferLinear = false;
@@ -224,14 +224,14 @@ void resources::init()
 	for(Scene* scene : {&scenes::empty, &scenes::simple, &scenes::medium, &scenes::stressTest})
 	{
 		scene->setBackgroundColor({0.5f, 0.5f, 0.5f});
-		scene->getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
-		scene->getCamera().setOrientation(Orientation{200.0f, -20.0f, 0.0f});
+		scene->getCamera().setPosition(Position{{1.0f, 0.2f, 1.0f}});
+		scene->getCamera().setOrientation(Orientation{215.0f, -5.0f, 0.0f});
 	}
 
 	{
 		DirectionalLight light;
-		light.setColor({20.0f / 255.0f, 10.0f / 255.0f, 70.0f / 255.0f});
-		light.setOrientation({120.0f, -60.0f, 0.0f});
+		light.setColor({1.0f, 1.0f, 1.0f});
+		light.setOrientation({250.0f, -60.0f, 0.0f});
 		scenes::simple.add(light);
 
 		Actor actor(&resources::models::nanosuit);
@@ -289,12 +289,13 @@ void resources::init()
 
 		int idx = 1;
 		const int n = 10;
+		const float stride = 1.0f;
 		for(int i = 0; i < n; i++)
 		{
-			for(int j = 0; j < 2 * n; j++)
+			for(int j = 0; j < n; j++)
 			{
 				Actor actor(&resources::models::nanosuit);
-				actor.setPosition({0.0f - i * 3.0f, -1.75f, 0.0f - j * 1.0f});
+				actor.setPosition({0.0f - i * stride, -1.75f, 0.0f - j * stride});
 				actor.setScale({0.15f, 0.15f, 0.15f});
 				scenes::stressTest.add(actor);
 				idx++;

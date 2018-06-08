@@ -55,6 +55,13 @@ Shader& PostProcessingStep::getActiveShader()
 		for(int i = 0; i < 9; i++)
 			ret.set("kernel[" + std::to_string(i) + "]", convolutionKernel[i]);
 	}
+	if(active == type::chromaticAberration)
+	{
+		ret.set("intensity", chromaticAberrationIntensity);
+		ret.set("offsetR", chromaticAberrationOffsetR);
+		ret.set("offsetG", chromaticAberrationOffsetG);
+		ret.set("offsetB", chromaticAberrationOffsetB);
+	}
 	return ret;
 }
 
@@ -104,6 +111,10 @@ void PostProcessingStep::drawUI()
 		case type::grayscale:
 			break;
 		case type::chromaticAberration:
+			ImGui::DragFloat("Intensity", &chromaticAberrationIntensity, 0.01f);
+			ImGui::DragFloat2("Offset R", &chromaticAberrationOffsetR.x, 0.0001f);
+			ImGui::DragFloat2("Offset G", &chromaticAberrationOffsetG.x, 0.0001f);
+			ImGui::DragFloat2("Offset B", &chromaticAberrationOffsetB.x, 0.0001f);
 			break;
 		case type::invert:
 			break;

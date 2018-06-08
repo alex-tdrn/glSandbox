@@ -118,8 +118,11 @@ namespace settings
 		inline glm::vec3 overrideDiffuseColor{1.0f, 1.0f, 1.0f};
 		inline glm::vec3 overrideSpecularColor{1.0f, 1.0f, 1.0f};
 		inline float ambientStrength = 0.4f;
-		inline float firstMedium = 1.0f;
-		inline float secondMedium = 1.52f;
+		inline bool refractionPerChannel = false;
+		inline float refractionN1 = 1.0f;
+		inline glm::vec3 refractionN1RGB{refractionN1};
+		inline float refractionN2 = 1.52f;
+		inline glm::vec3 refractionN2RGB{refractionN2};
 		inline bool debugDepthBufferLinear = false;
 		inline bool debugNormalsViewSpace = false;
 		inline bool debugNormalsFaceNormals= false;
@@ -360,8 +363,11 @@ Shader& settings::rendering::getActiveShader()
 			ret.set("ambientStrength", ambientStrength);
 			break;
 		case type::refraction:
-			ret.set("n1", firstMedium);
-			ret.set("n2", secondMedium);
+			ret.set("perChannel", refractionPerChannel);
+			ret.set("n1", refractionN1);
+			ret.set("n1RGB", refractionN1RGB);
+			ret.set("n2", refractionN2);
+			ret.set("n2RGB", refractionN2RGB);
 			break;
 		case type::debugDepthBuffer:
 			ret.set("linearize", debugDepthBufferLinear);
@@ -624,10 +630,24 @@ void settings::rendering::drawUI()
 
 				break;
 			case type::refraction:
-				if(ImGui::DragFloat("First Medium", &firstMedium, 0.001f))
-					activeScene.update();
-				if(ImGui::DragFloat("Second Medium", &secondMedium, 0.001f))
-					activeScene.update();
+				ImGui::Checkbox("Per Channel", &refractionPerChannel);
+
+				if(!refractionPerChannel)
+				{
+					if(ImGui::DragFloat("First Medium", &refractionN1, 0.001f))
+						activeScene.update();
+					if(ImGui::DragFloat("Second Medium", &refractionN2, 0.001f))
+						activeScene.update();
+					refractionN1RGB = glm::vec3(refractionN1);
+					refractionN2RGB = glm::vec3(refractionN2);
+				}
+				else
+				{
+					if(ImGui::DragFloat3("First Medium", &refractionN1RGB.x, 0.001f))
+						activeScene.update();
+					if(ImGui::DragFloat3("Second Medium", &refractionN2RGB.x, 0.001f))
+						activeScene.update();
+				}
 				break;
 			case type::debugNormals:
 				if(ImGui::Checkbox("View Space", &debugNormalsViewSpace))

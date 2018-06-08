@@ -204,9 +204,11 @@ void Scene::draw()
 	else if(active == type::reflection || active == type::refraction)
 	{
 		if(skybox)
+		{
 			skybox->use();
-		activeShader.set("skybox", 0);
-		activeShader.set("cameraPos", camera.getPosition());
+			activeShader.set("skybox", 0);
+			activeShader.set("cameraPos", camera.getPosition());
+		}
 	}
 	else if(active == type::debugDepthBuffer)
 	{

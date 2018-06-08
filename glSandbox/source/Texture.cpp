@@ -91,8 +91,8 @@ Texture::Texture(Texture const& other)
 	image = other.image;
 }
 
-Texture::Texture(std::string const path, int location)
-	:path(path), location(location)
+Texture::Texture(std::string const path, int location, bool linear)
+	:path(path), location(location), linear(linear)
 {
 	image = new ImageData();
 	textureLoader.addJob({path, &(image->data), &(image->width), &(image->height), &(image->nrChannels), ready});
@@ -113,6 +113,7 @@ Texture::~Texture()
 Texture const& Texture::operator=(Texture const& other)
 {
 	this->initialized = other.initialized;
+	this->linear = other.linear;
 	this->location = other.location;
 	this->path = other.path;
 	this->ID = other.ID;
@@ -151,6 +152,18 @@ bool Texture::isInitialized() const
 				format = GL_RGBA8;
 				pixelTransfer = GL_RGBA;
 				break;
+		}
+		if(!linear)
+		{
+			switch(image->nrChannels)
+			{
+				case 3:
+					format = GL_SRGB8;
+					break;
+				case 4:
+					format = GL_SRGB8_ALPHA8;
+					break;
+			}
 		}
 		glActiveTexture(GL_TEXTURE0 + location);
 		glGenTextures(1, &ID);

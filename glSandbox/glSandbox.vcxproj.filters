@@ -209,5 +209,6 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\ppChromaticAberration.frag" />
+    <None Include="shaders\ppGamma.frag" />
   </ItemGroup>
 </Project>

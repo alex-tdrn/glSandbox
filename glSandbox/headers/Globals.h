@@ -55,6 +55,7 @@ namespace resources
 		inline Shader light("shaders/light.vert", "shaders/light.frag");
 		inline Shader skybox("shaders/skybox.vert", "shaders/skybox.frag");
 		//postprocessing
+		inline Shader gamma("shaders/pp.vert", "shaders/ppGamma.frag");
 		inline Shader passthrough("shaders/pp.vert", "shaders/ppPassthrough.frag");
 		inline Shader grayscale("shaders/pp.vert", "shaders/ppBW.frag");
 		inline Shader chromaticAberration("shaders/pp.vert", "shaders/ppChromaticAberration.frag");
@@ -106,6 +107,8 @@ namespace settings
 		inline int active = type::phong;	
 
 		inline bool vsync = true;
+		inline bool gammaCorrection = true;
+		inline float gammaExponent = 2.2f;
 		inline bool wireframe = false;
 		inline bool depthTesting = true;
 		inline bool faceCulling = false;
@@ -117,7 +120,7 @@ namespace settings
 		inline bool overrideSpecular = false;
 		inline glm::vec3 overrideDiffuseColor{1.0f, 1.0f, 1.0f};
 		inline glm::vec3 overrideSpecularColor{1.0f, 1.0f, 1.0f};
-		inline float ambientStrength = 0.4f;
+		inline float ambientStrength = 0.025f;
 		inline bool refractionPerChannel = false;
 		inline float refractionN1 = 1.0f;
 		inline glm::vec3 refractionN1RGB{refractionN1};
@@ -508,6 +511,13 @@ void settings::rendering::drawUI()
 		ImGui::SameLine();
 		ImGui::Checkbox("V-Sync", &vsync);
 		ImGui::SameLine();
+		if(ImGui::Checkbox("Gamma Correction", &gammaCorrection))
+			activeScene.update();
+		if(gammaCorrection)
+		{
+			if(ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f))
+				activeScene.update();
+		}
 		if(ImGui::Checkbox("Wireframe", &wireframe))
 			activeScene.update();
 

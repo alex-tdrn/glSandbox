@@ -67,6 +67,14 @@ Shader& PostProcessingStep::getActiveShader()
 
 void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targetFramebuffer)
 {
+	if(!initialized)
+		initFramebuffer();
+	bool doGamma = false;
+	if(targetFramebuffer == 0 && settings::rendering::gammaCorrection)
+	{
+		doGamma = true;
+		targetFramebuffer = framebuffer;
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisable(GL_DEPTH_TEST);
@@ -78,6 +86,24 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	if(doGamma)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		resources::shaders::gamma.use();
+		resources::shaders::gamma.set("screenTexture", 0);
+		resources::shaders::gamma.set("e", settings::rendering::gammaExponent);
+
+		glBindVertexArray(resources::quadVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 }
 
 void PostProcessingStep::draw(unsigned int sourceColorbuffer)

@@ -9,6 +9,7 @@ class Texture
 private:
 	std::atomic<bool>* ready = new std::atomic<bool>(false);
 	mutable bool initialized = false;
+	bool linear;
 	mutable unsigned int ID;
 	int location;
 	glm::vec2 uvOffset{0, 0};
@@ -22,7 +23,7 @@ private:
 	std::string path;
 
 public:
-	explicit Texture(std::string const path, int location);
+	explicit Texture(std::string const path, int location, bool linear);
 	Texture(Texture const& other);
 	~Texture();
 	Texture const & operator=(Texture const& other);

@@ -126,7 +126,6 @@ void Scene::draw()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 	camera.use();
 	resources::shaders::light.use();
 	glBindVertexArray(resources::boxVAO);

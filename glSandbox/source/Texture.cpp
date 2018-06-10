@@ -86,7 +86,8 @@ public:
 Loader textureLoader;
 
 Texture::Texture(Texture const& other)
-	: path(std::move(other.path)), ID(other.ID), initialized(other.initialized), ready(other.ready), location(other.location)
+	: path(std::move(other.path)), ID(other.ID), initialized(other.initialized), ready(other.ready), location(other.location),
+	linear(other.linear)
 {
 	image = other.image;
 }

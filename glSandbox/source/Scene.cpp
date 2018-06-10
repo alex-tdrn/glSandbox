@@ -175,9 +175,6 @@ void Scene::draw()
 				std::string prefix = "pointLights[" + std::to_string(i) + "].";
 				activeShader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(pointLights[i].getPosition(), 1.0f)));
 				activeShader.set(prefix + "color", pointLights[i].getColor());
-				activeShader.set(prefix + "constant", pointLights[i].getConstant());
-				activeShader.set(prefix + "linear", pointLights[i].getLinear());
-				activeShader.set(prefix + "quadratic", pointLights[i].getQuadratic());
 			}
 			activeShader.set("nPointLights", enabledLights);
 		}

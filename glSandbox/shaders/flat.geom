@@ -31,9 +31,6 @@ struct PointLight
 {
 	vec3 color;
 	vec3 position;
-	float constant;
-	float linear;
-	float quadratic;
 };
 struct SpotLight
 {
@@ -143,7 +140,7 @@ vec3 calcDirLight(DirLight light)
 vec3 calcPointLight(PointLight light)
 {
 	float distance = length(light.position - pos);
-	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	float attenuation = 1.0 / (distance * distance);
 	vec3 lightDirection = normalize(light.position - pos);
 
 	return attenuation * (diffuse(lightDirection, light.color) + specular(lightDirection));

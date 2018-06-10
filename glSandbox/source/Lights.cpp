@@ -72,34 +72,10 @@ glm::vec3 const& PointLight::getPosition() const
 	return position.position;
 }
 
-float PointLight::getConstant() const
-{
-	return constant;
-}
-
-float PointLight::getLinear() const
-{
-	return linear;
-}
-
-float PointLight::getQuadratic() const
-{
-	return quadratic;
-}
-
 bool PointLight::drawUI()
 {
 	bool valueChanged = false;
 	if(Light::drawUI())
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Constant", &constant, 0.001f))
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Linear", &linear, 0.001f))
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Quadratic", &quadratic, 0.001f))
 		valueChanged = true;
 
 	if(position.drawUI())

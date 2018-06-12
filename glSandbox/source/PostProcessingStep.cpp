@@ -104,7 +104,10 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 			resources::shaders::gammaHDR.set("gamma", 1.0f);
 
 		if(settings::rendering::HDR)
-			resources::shaders::gammaHDR.set("tonemapping", 1);
+		{
+			resources::shaders::gammaHDR.set("tonemapping", 2);
+			resources::shaders::gammaHDR.set("exposure", settings::rendering::exposure);
+		}
 		else
 			resources::shaders::gammaHDR.set("tonemapping", 0);
 

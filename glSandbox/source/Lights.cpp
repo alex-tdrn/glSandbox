@@ -27,6 +27,11 @@ glm::vec3 const& Light::getColor() const
 	return color;
 }
 
+void Light::setIntensity(float intensity)
+{
+	this->intensity = intensity;
+}
+
 float Light::getIntensity() const
 {
 	return intensity;
@@ -106,6 +111,7 @@ void SpotLight::setPosition(glm::vec3 position)
 {
 	this->position.position = position;
 }
+
 
 glm::vec3 const& SpotLight::getPosition() const
 {

@@ -15,6 +15,7 @@ public:
 	void disable();
 	void setColor(glm::vec3 color);
 	glm::vec3 const& getColor() const;
+	void setIntensity(float intensity);
 	float getIntensity() const;
 	[[nodiscard]]virtual bool drawUI();
 

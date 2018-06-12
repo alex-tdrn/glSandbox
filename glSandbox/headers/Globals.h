@@ -109,6 +109,7 @@ namespace settings
 		inline bool vsync = true;
 		inline bool gammaCorrection = true;
 		inline bool HDR = false;
+		inline float exposure = 1.0f;
 		inline float gammaExponent = 2.2f;
 		inline bool wireframe = false;
 		inline bool depthTesting = true;
@@ -263,16 +264,27 @@ void resources::init()
 	{
 		SpotLight light;
 		light.setPosition({-10.0f, 0.0f, -1.5f});
+		light.setIntensity(10.0f);
 		light.setOrientation({180.0f, -10.0f, 0.0f});
 		light.setColor({0.0f, 1.0f, 0.0f});
 		scenes::medium.add(light);
+
 		light.setPosition({-10.0f, 0.0f, 1.0f});
+		light.setIntensity(10.0f);
 		light.setOrientation({180.0f, -10.0f, 0.0f});
 		light.setColor({1.0f, 0.0f, 0.0f});
 		scenes::medium.add(light);
+
 		light.setPosition({-10.0f, 2.0f, -0.25f});
+		light.setIntensity(10.0f);
 		light.setOrientation({180.0f, 0.0f, 0.0f});
 		light.setColor({0.0f, 0.0f, 1.0f});
+		scenes::medium.add(light);
+
+		light.setPosition({-3.0f, 1.5f, 1.0f});
+		light.setIntensity(400.0f);
+		light.setOrientation({260.0f, -30.0f, 0.0f});
+		light.setColor({1.0f, 1.0f, 1.0f});
 		scenes::medium.add(light);
 	}
 	{
@@ -522,19 +534,20 @@ void settings::rendering::drawUI()
 		ImGui::SameLine();
 		ImGui::Checkbox("V-Sync", &vsync);
 		ImGui::SameLine();
-		if(ImGui::Checkbox("Gamma Correction", &gammaCorrection))
-			activeScene.update();
+		if(ImGui::Checkbox("Gamma Correction", &gammaCorrection));
+			//activeScene.update();
 		if(gammaCorrection)
 		{
-			if(ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f))
-				activeScene.update();
+			if(ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f));
+				//activeScene.update();
 		}
 
-		if(ImGui::Checkbox("HDR", &HDR))
-			activeScene.update();
+		if(ImGui::Checkbox("HDR", &HDR));
+			//activeScene.update();
 		if(HDR)
 		{
-
+			if(ImGui::DragFloat("Exposure", &exposure, 0.1f));
+				//activeScene.update();
 		}
 
 		if(ImGui::Checkbox("Wireframe", &wireframe))

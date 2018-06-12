@@ -2,6 +2,7 @@
 uniform sampler2D screenTexture;
 uniform float gamma;
 uniform int tonemapping;
+uniform float exposure;
 in VS_OUT
 {
 	vec2 textureCoordinates;
@@ -17,6 +18,10 @@ void main()
 		//Reinhard
 		case 1:
 			color /= color + vec3(1.0f);
+		break;
+		//Exposure
+		case 2:
+			color = vec3(1.0f) - exp(-color * pow(2.0f, exposure));
 		break;
 	}
 

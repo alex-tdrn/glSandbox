@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "Util.h"
 #include "Material.h"
 #include "Texture.h"
 #include <imgui.h>
@@ -175,6 +176,8 @@ void Model::draw(Shader shader) const
 
 bool Model::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	std::string header = name;
 	if(!isInitialized())

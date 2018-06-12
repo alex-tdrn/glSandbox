@@ -36,7 +36,7 @@ void Cubemap::initialize()
 		unsigned char* data = stbi_load(paths[i].c_str(), &width, &height, &nrChannels, STBI_default);
 		if(data)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 			stbi_image_free(data);
 		}
 		else
@@ -51,13 +51,13 @@ void Cubemap::initialize()
 
 bool Cubemap::drawUI()
 {
+	IDGuard idGuard{this};
 	bool valueChanged = false;
 	if(!initialized)
 	{
 		ImGui::Text("Loading...");
 		return false;
 	}
-	ImGui::PushID(this);
 	/*if(drag2("UV Offset", 0.0001f, uvOffset.x, uvOffset.y, 0.0f, 1.0f))
 		valueChanged = true;
 	if(ImGui::SliderFloat("U ", &uvOffset.x, 0.0f, 1.0f))
@@ -75,6 +75,5 @@ bool Cubemap::drawUI()
 		ImGui::Image(reinterpret_cast<ImTextureID>(ID), ImVec2(512, 512));
 		ImGui::EndTooltip();
 	}
-	ImGui::PopID();
 	return valueChanged;
 }

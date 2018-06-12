@@ -1,5 +1,6 @@
 #include "Lights.h"
 #include "imgui.h"
+#include "Util.h"
 
 bool Light::isEnabled() const
 {
@@ -26,12 +27,19 @@ glm::vec3 const& Light::getColor() const
 	return color;
 }
 
+float Light::getIntensity() const
+{
+	return intensity;
+}
+
 bool Light::drawUI()
 {
 	bool valueChanged = false;
 	if(ImGui::Checkbox("Enabled", &enabled))
 		valueChanged = true;
 	if(ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs))
+		valueChanged = true;
+	if(ImGui::DragFloat("Intensity", &intensity, 0.5f))
 		valueChanged = true;
 
 	return valueChanged;
@@ -52,6 +60,8 @@ glm::vec3 const DirectionalLight::getDirection() const
 
 bool DirectionalLight::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(Light::drawUI())
 		valueChanged = true;
@@ -74,13 +84,14 @@ glm::vec3 const& PointLight::getPosition() const
 
 bool PointLight::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(Light::drawUI())
 		valueChanged = true;
 
 	if(position.drawUI())
 		valueChanged = true;
-
 	return valueChanged;
 }
 
@@ -118,6 +129,8 @@ float SpotLight::getOuterCutoff() const
 
 bool SpotLight::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(Light::drawUI())
 		valueChanged = true;
@@ -133,6 +146,5 @@ bool SpotLight::drawUI()
 
 	if(position.drawUI())
 		valueChanged = true;
-
 	return valueChanged;
 }

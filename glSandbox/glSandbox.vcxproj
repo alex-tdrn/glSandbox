@@ -206,7 +206,7 @@
     <None Include="shaders\ppBW.frag" />
     <None Include="shaders\ppChromaticAberration.frag" />
     <None Include="shaders\ppConvolution.frag" />
-    <None Include="shaders\ppGamma.frag" />
+    <None Include="shaders\ppGammaHDR.frag" />
     <None Include="shaders\ppInvert.frag" />
     <None Include="shaders\ppPassthrough.frag" />
     <None Include="shaders\pp.vert" />

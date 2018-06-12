@@ -202,13 +202,14 @@ void Texture::use() const
 
 bool Texture::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(!initialized)
 	{
 		ImGui::Text("Loading...");
 		return false;
 	}
-	ImGui::PushID(this);
 	if(drag2("UV Offset", 0.0001f, uvOffset.x, uvOffset.y, 0.0f, 1.0f))
 		valueChanged = true;
 	if(ImGui::SliderFloat("U ", &uvOffset.x, 0.0f, 1.0f))
@@ -226,6 +227,5 @@ bool Texture::drawUI()
 		ImGui::Image(ImTextureID(ID), ImVec2(512, 512));
 		ImGui::EndTooltip();
 	}
-	ImGui::PopID();
 	return valueChanged;
 }

@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Globals.h"
+#include "Util.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
@@ -97,6 +98,8 @@ void Camera::adjustOrientation(float yawAmount, float pitchAmount)
 
 bool Camera::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(ImGui::CollapsingHeader("Camera"))
 	{

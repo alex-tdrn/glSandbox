@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "Texture.h"
+#include "Util.h"
 #include <imgui.h>
 
 std::string mapToString(int mapType)
@@ -98,6 +99,8 @@ void Material::use(Shader shader) const
 
 bool Material::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	std::string header = name;
 	if(!isInitialized())

@@ -1,6 +1,20 @@
 #pragma once
 #include <imgui.h>
 
+class IDGuard
+{
+public:
+	IDGuard() = delete;
+	IDGuard(void* ID)
+	{
+		ImGui::PushID(ID);
+	}
+	~IDGuard()
+	{
+		ImGui::PopID();
+	}
+};
+
 inline void wrapAround(float& x, float const min, float const max)
 {
 	float const diff = max - min;

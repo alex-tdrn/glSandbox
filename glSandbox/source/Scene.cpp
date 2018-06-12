@@ -1,9 +1,9 @@
 #include "Scene.h"
 #include "Globals.h"
+#include "Util.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
-
 Scene::Scene(std::string const name)
 	: name(name)
 {
@@ -19,7 +19,7 @@ void Scene::init()
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &colorbuffer);
 	glBindTexture(GL_TEXTURE_2D, colorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -71,7 +71,7 @@ void Scene::updateFramebuffer()
 	update();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_FLOAT, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, info::windowWidth, info::windowHeight);
@@ -156,10 +156,11 @@ void Scene::draw()
 			{
 				if(!directionalLights[i].isEnabled())
 					continue;
-				enabledLights++;
-				std::string prefix = "dirLights[" + std::to_string(i) + "].";
+				std::string prefix = "dirLights[" + std::to_string(enabledLights) + "].";
 				activeShader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(directionalLights[i].getDirection(), 0.0f)));
 				activeShader.set(prefix + "color", directionalLights[i].getColor());
+				activeShader.set(prefix + "intensity", directionalLights[i].getIntensity());
+				enabledLights++;
 			}
 			activeShader.set("nDirLights", enabledLights);
 		}
@@ -171,10 +172,11 @@ void Scene::draw()
 			{
 				if(!pointLights[i].isEnabled())
 					continue;
-				enabledLights++;
-				std::string prefix = "pointLights[" + std::to_string(i) + "].";
+				std::string prefix = "pointLights[" + std::to_string(enabledLights) + "].";
 				activeShader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(pointLights[i].getPosition(), 1.0f)));
 				activeShader.set(prefix + "color", pointLights[i].getColor());
+				activeShader.set(prefix + "intensity", pointLights[i].getIntensity());
+				enabledLights++;
 			}
 			activeShader.set("nPointLights", enabledLights);
 		}
@@ -186,13 +188,14 @@ void Scene::draw()
 			{
 				if(!spotLights[i].isEnabled())
 					continue;
-				enabledLights++;
-				std::string prefix = "spotLights[" + std::to_string(i) + "].";
+				std::string prefix = "spotLights[" + std::to_string(enabledLights) + "].";
 				activeShader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(spotLights[i].getPosition(), 1.0f)));
 				activeShader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(spotLights[i].getDirection(), 0.0f)));
 				activeShader.set(prefix + "color", spotLights[i].getColor());
+				activeShader.set(prefix + "intensity", spotLights[i].getIntensity());
 				activeShader.set(prefix + "innerCutoff", glm::cos(glm::radians(spotLights[i].getInnerCutoff())));
 				activeShader.set(prefix + "outerCutoff", glm::cos(glm::radians(spotLights[i].getOuterCutoff())));
+				enabledLights++;
 			}
 			activeShader.set("nSpotLights", enabledLights);
 		}
@@ -261,9 +264,11 @@ Camera& Scene::getCamera()
 	return camera;
 }
 
-void Scene::drawUI()
+void Scene::drawUI(bool const showHeader)
 {
-	if(ImGui::TreeNode(name.data()))
+	IDGuard idGuard{this};
+
+	if(!showHeader || ImGui::TreeNode(name.data()))
 	{
 		ImGui::Indent();
 		if(ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs))

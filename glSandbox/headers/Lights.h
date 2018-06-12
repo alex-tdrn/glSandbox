@@ -7,6 +7,7 @@ class Light
 private:
 	bool enabled = true;
 	glm::vec3 color{1.0f, 1.0f, 1.0f};
+	float intensity = 1.0f;
 
 public:
 	bool isEnabled() const;
@@ -14,6 +15,7 @@ public:
 	void disable();
 	void setColor(glm::vec3 color);
 	glm::vec3 const& getColor() const;
+	float getIntensity() const;
 	[[nodiscard]]virtual bool drawUI();
 
 };

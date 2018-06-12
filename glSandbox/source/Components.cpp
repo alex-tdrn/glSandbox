@@ -4,6 +4,8 @@
 
 bool Position::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(ImGui::DragFloat3("Position", &position.x, 0.2f))
 		valueChanged = true;
@@ -31,6 +33,8 @@ glm::vec3 const Orientation::getDirectionVector() const
 
 bool Orientation::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(ImGui::SliderFloat("Yaw", &yaw, 0.0f, 359.9f))
 		valueChanged = true;
@@ -45,6 +49,8 @@ bool Orientation::drawUI()
 
 bool Scale::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(ImGui::DragFloat3("Scale", &scale.x, 0.01f))
 		valueChanged = true;

@@ -1,5 +1,6 @@
 #include "Actor.h"
 #include "GLobals.h"
+#include "Util.h"
 
 #include <imgui.h>
 
@@ -70,6 +71,8 @@ void Actor::drawOutline(Shader outlineShader) const
 }
 bool Actor::drawUI()
 {
+	IDGuard idGuard{this};
+
 	Scene& activeScene = resources::scenes::getActiveScene();
 	bool valueChanged = false;
 	std::string_view comboPreview = "None";

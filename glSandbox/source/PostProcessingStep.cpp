@@ -1,3 +1,4 @@
+#include "Util.h"
 #include "PostProcessingStep.h"
 #include "Globals.h"
 
@@ -9,7 +10,7 @@ void PostProcessingStep::initFramebuffer()
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &colorbuffer);
 	glBindTexture(GL_TEXTURE_2D, colorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -24,7 +25,7 @@ void PostProcessingStep::updateFramebuffer()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_FLOAT, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -69,10 +70,10 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 {
 	if(!initialized)
 		initFramebuffer();
-	bool doGamma = false;
-	if(targetFramebuffer == 0 && settings::rendering::gammaCorrection)
+	bool doGammaHDR = false;
+	if(targetFramebuffer == 0 && (settings::rendering::gammaCorrection || settings::rendering::HDR))
 	{
-		doGamma = true;
+		doGammaHDR = true;
 		targetFramebuffer = framebuffer;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
@@ -87,7 +88,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	if(doGamma)
+	if(doGammaHDR)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -95,13 +96,21 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glDisable(GL_CULL_FACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		resources::shaders::gamma.use();
-		resources::shaders::gamma.set("screenTexture", 0);
-		resources::shaders::gamma.set("e", settings::rendering::gammaExponent);
+		resources::shaders::gammaHDR.use();
+		resources::shaders::gammaHDR.set("screenTexture", 0);
+		if(settings::rendering::gammaCorrection)
+			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
+		else
+			resources::shaders::gammaHDR.set("gamma", 1.0f);
+
+		if(settings::rendering::HDR)
+			resources::shaders::gammaHDR.set("tonemapping", 1);
+		else
+			resources::shaders::gammaHDR.set("tonemapping", 0);
 
 		glBindVertexArray(resources::quadVAO);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
+		glBindTexture(GL_TEXTURE_2D, colorbuffer);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 }
@@ -120,6 +129,8 @@ unsigned int PostProcessingStep::getColorbuffer()
 
 void PostProcessingStep::drawUI()
 {
+	IDGuard idGuard{this};
+
 	ImGui::Indent();
 	ImGui::RadioButton("Passthrough", &active, type::passthrough);
 	ImGui::SameLine();

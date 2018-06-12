@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "Material.h"
+#include "Util.h"
 
 #include <imgui.h>
 #include <algorithm>
@@ -62,6 +63,8 @@ void Mesh::draw(Shader shader) const
 
 bool Mesh::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	if(ImGui::TreeNode(name.data()))
 	{

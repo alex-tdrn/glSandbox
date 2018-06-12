@@ -43,5 +43,5 @@ public:
 	unsigned int getColorbuffer() const;
 	Camera& getCamera();
 
-	void drawUI();
+	void drawUI(bool const showHeader = true);
 };

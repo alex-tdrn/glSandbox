@@ -55,7 +55,7 @@ namespace resources
 		inline Shader light("shaders/light.vert", "shaders/light.frag");
 		inline Shader skybox("shaders/skybox.vert", "shaders/skybox.frag");
 		//postprocessing
-		inline Shader gamma("shaders/pp.vert", "shaders/ppGamma.frag");
+		inline Shader gammaHDR("shaders/pp.vert", "shaders/ppGammaHDR.frag");
 		inline Shader passthrough("shaders/pp.vert", "shaders/ppPassthrough.frag");
 		inline Shader grayscale("shaders/pp.vert", "shaders/ppBW.frag");
 		inline Shader chromaticAberration("shaders/pp.vert", "shaders/ppChromaticAberration.frag");
@@ -108,6 +108,7 @@ namespace settings
 
 		inline bool vsync = true;
 		inline bool gammaCorrection = true;
+		inline bool HDR = false;
 		inline float gammaExponent = 2.2f;
 		inline bool wireframe = false;
 		inline bool depthTesting = true;
@@ -261,8 +262,17 @@ void resources::init()
 	}
 	{
 		SpotLight light;
-		light.setPosition({-2.4f, -1.4f, -2.4f});
-		light.setOrientation({170.0f, 0.0f, 0.0f});
+		light.setPosition({-10.0f, 0.0f, -1.5f});
+		light.setOrientation({180.0f, -10.0f, 0.0f});
+		light.setColor({0.0f, 1.0f, 0.0f});
+		scenes::medium.add(light);
+		light.setPosition({-10.0f, 0.0f, 1.0f});
+		light.setOrientation({180.0f, -10.0f, 0.0f});
+		light.setColor({1.0f, 0.0f, 0.0f});
+		scenes::medium.add(light);
+		light.setPosition({-10.0f, 2.0f, -0.25f});
+		light.setOrientation({180.0f, 0.0f, 0.0f});
+		light.setColor({0.0f, 0.0f, 1.0f});
 		scenes::medium.add(light);
 	}
 	{
@@ -461,6 +471,7 @@ void resources::drawUI()
 				}
 				ImGui::EndCombo();
 			}
+			activeScene.drawUI(false);
 			scenes::empty.drawUI();
 			scenes::simple.drawUI();
 			scenes::medium.drawUI();
@@ -518,6 +529,14 @@ void settings::rendering::drawUI()
 			if(ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f))
 				activeScene.update();
 		}
+
+		if(ImGui::Checkbox("HDR", &HDR))
+			activeScene.update();
+		if(HDR)
+		{
+
+		}
+
 		if(ImGui::Checkbox("Wireframe", &wireframe))
 			activeScene.update();
 

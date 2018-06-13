@@ -431,6 +431,7 @@ void resources::shaders::reload()
 	resources::shaders::light.reload();
 	resources::shaders::skybox.reload();
 
+	resources::shaders::gammaHDR.reload();
 	resources::shaders::passthrough.reload();
 	resources::shaders::grayscale.reload();
 	resources::shaders::chromaticAberration.reload();

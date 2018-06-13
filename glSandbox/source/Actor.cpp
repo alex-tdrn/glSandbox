@@ -73,38 +73,24 @@ bool Actor::drawUI()
 {
 	IDGuard idGuard{this};
 
-	Scene& activeScene = resources::scenes::getActiveScene();
 	bool valueChanged = false;
 	std::string_view comboPreview = "None";
 	if(model)
 		comboPreview = model->getName();
 	if(ImGui::BeginCombo("Model", comboPreview.data()))
 	{
-		if(ImGui::Selectable("None", !model))
-		{
+		if(valueChanged |= ImGui::Selectable("None", !model))
 			model = nullptr;
-			activeScene.update();
-		}
-		if(ImGui::Selectable(resources::models::nanosuit.getName().data(), model == &resources::models::nanosuit))
-		{
+		if(valueChanged |= ImGui::Selectable(resources::models::nanosuit.getName().data(), model == &resources::models::nanosuit))
 			model = &resources::models::nanosuit;
-			activeScene.update();
-		}
-		if(ImGui::Selectable(resources::models::sponza.getName().data(), model == &resources::models::sponza))
-		{
+		if(valueChanged |= ImGui::Selectable(resources::models::sponza.getName().data(), model == &resources::models::sponza))
 			model = &resources::models::sponza;
-			activeScene.update();
-		}
 		ImGui::EndCombo();
 	}
-	if(ImGui::Checkbox("Enabled", &enabled))
-		valueChanged = true;
+	valueChanged |= ImGui::Checkbox("Enabled", &enabled);
 	ImGui::SameLine();
-	if(ImGui::Checkbox("Outlined", &outlined))
-		valueChanged = true;
-	if(position.drawUI())
-		valueChanged = true;
-	if(scale.drawUI())
-		valueChanged = true;
+	valueChanged |= ImGui::Checkbox("Outlined", &outlined);
+	valueChanged |= position.drawUI();
+	valueChanged |= scale.drawUI();
 	return valueChanged;
 }

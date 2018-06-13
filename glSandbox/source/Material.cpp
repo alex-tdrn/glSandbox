@@ -126,8 +126,7 @@ bool Material::drawUI()
 				if(maps[mapType])
 				{
 					ImGui::Text((mapToString(mapType) + " Map").c_str());
-					if(maps[mapType]->drawUI())
-						valueChanged = true;
+					valueChanged |= maps[mapType]->drawUI();
 					ImGui::NextColumn();
 					columnsEmpty--;
 				}

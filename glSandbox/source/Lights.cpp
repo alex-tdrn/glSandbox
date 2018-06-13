@@ -40,13 +40,9 @@ float Light::getIntensity() const
 bool Light::drawUI()
 {
 	bool valueChanged = false;
-	if(ImGui::Checkbox("Enabled", &enabled))
-		valueChanged = true;
-	if(ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs))
-		valueChanged = true;
-	if(ImGui::DragFloat("Intensity", &intensity, 0.5f))
-		valueChanged = true;
-
+	valueChanged |= ImGui::Checkbox("Enabled", &enabled);
+	valueChanged |= ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs);
+	valueChanged |= ImGui::DragFloat("Intensity", &intensity, 0.5f);
 	return valueChanged;
 }
 
@@ -68,12 +64,8 @@ bool DirectionalLight::drawUI()
 	IDGuard idGuard{this};
 
 	bool valueChanged = false;
-	if(Light::drawUI())
-		valueChanged = true;
-
-	if(orientation.drawUI())
-		valueChanged = true;
-
+	valueChanged |= Light::drawUI();
+	valueChanged |= orientation.drawUI();
 	return valueChanged;
 }
 
@@ -92,11 +84,8 @@ bool PointLight::drawUI()
 	IDGuard idGuard{this};
 
 	bool valueChanged = false;
-	if(Light::drawUI())
-		valueChanged = true;
-
-	if(position.drawUI())
-		valueChanged = true;
+	valueChanged |= Light::drawUI();
+	valueChanged |= position.drawUI();
 	return valueChanged;
 }
 
@@ -138,19 +127,10 @@ bool SpotLight::drawUI()
 	IDGuard idGuard{this};
 
 	bool valueChanged = false;
-	if(Light::drawUI())
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Inner Cutoff", &innerCutoff, 0.02f))
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Outer Cutoff", &outerCutoff, 0.02f))
-		valueChanged = true;
-
-	if(orientation.drawUI())
-		valueChanged = true;
-
-	if(position.drawUI())
-		valueChanged = true;
+	valueChanged |= Light::drawUI();
+	valueChanged |= ImGui::DragFloat("Inner Cutoff", &innerCutoff, 0.02f);
+	valueChanged |= ImGui::DragFloat("Outer Cutoff", &outerCutoff, 0.02f);
+	valueChanged |= orientation.drawUI();
+	valueChanged |= position.drawUI();
 	return valueChanged;
 }

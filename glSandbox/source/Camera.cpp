@@ -107,25 +107,14 @@ bool Camera::drawUI()
 
 		ImGui::Text("Projection");
 		ImGui::SameLine();
-		if(ImGui::RadioButton("Perspective", reinterpret_cast<int*>(&projectionOrtho), 0))
-			valueChanged = true;
+		valueChanged |= ImGui::RadioButton("Perspective", reinterpret_cast<int*>(&projectionOrtho), 0);
 		ImGui::SameLine();
-		if(ImGui::RadioButton("Orthographic", reinterpret_cast<int*>(&projectionOrtho), 1))
-			valueChanged = true;
-
-		if(ImGui::DragFloat("FOV", &fov, 0.1f))
-			valueChanged = true;
-
-		if(ImGui::DragFloat("Near Plane", &nearPlane, 0.01f))
-			valueChanged = true;
-
-		if(ImGui::DragFloat("Far Plane", &farPlane, 0.1f))
-			valueChanged = true;
-
-		if(orientation.drawUI())
-			valueChanged = true;
-		if(position.drawUI())
-			valueChanged = true;
+		valueChanged |= ImGui::RadioButton("Orthographic", reinterpret_cast<int*>(&projectionOrtho), 1);
+		valueChanged |= ImGui::DragFloat("FOV", &fov, 0.1f);
+		valueChanged |= ImGui::DragFloat("Near Plane", &nearPlane, 0.01f);
+		valueChanged |= ImGui::DragFloat("Far Plane", &farPlane, 0.1f);
+		valueChanged |= orientation.drawUI();
+		valueChanged |= position.drawUI();
 		ImGui::Text("Front: (%.2f, %.2f, %.2f)", front.x, front.y, front.z);
 		ImGui::Text("Right: (%.2f, %.2f, %.2f)", right.x, right.y, right.z);
 		ImGui::Text("Up: (%.2f, %.2f, %.2f)", up.x, up.y, up.z);

@@ -371,6 +371,7 @@ void Scene::drawUI(bool const showHeader)
 			generateListUI(spotLights, "Spot Lights");
 		}
 		ImGui::Unindent();
-		ImGui::TreePop();
+		if(showHeader)
+			ImGui::TreePop();
 	}
 }

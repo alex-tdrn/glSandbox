@@ -71,10 +71,7 @@ bool Mesh::drawUI()
 		ImGui::Text("Vertices %i", vertices.size());
 		ImGui::Text("Indices %i", indices.size());
 		ImGui::Text("Triangles %i", indices.size() / 3);
-		
-		if(material->drawUI())
-			valueChanged = true;
-
+		valueChanged |= material->drawUI();
 		ImGui::TreePop();
 	}
 	return valueChanged;

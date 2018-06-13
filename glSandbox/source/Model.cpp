@@ -192,8 +192,7 @@ bool Model::drawUI()
 		{
 			for(auto& mesh : meshes)
 			{
-				if(mesh.drawUI())
-					valueChanged = true;
+				valueChanged |= mesh.drawUI();
 			}
 			ImGui::TreePop();
 		}
@@ -201,8 +200,7 @@ bool Model::drawUI()
 		if(ImGui::TreeNode(materialsHeader.data()))
 		{
 			for(auto& material : materials)
-				if(material->drawUI())
-					valueChanged = true;
+				valueChanged |= material->drawUI();
 			ImGui::TreePop();
 		}
 		ImGui::TreePop();

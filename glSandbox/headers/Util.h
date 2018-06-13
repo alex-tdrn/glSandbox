@@ -33,8 +33,7 @@ inline bool drag2(const char* title, float const sensitivity, float& x, float& y
 		ImVec2 mouseDelta = ImGui::GetMouseDragDelta(0, 0.0f);
 		x += mouseDelta.x  * sensitivity;
 		y -= mouseDelta.y * sensitivity;
-		if(mouseDelta.x != 0 || mouseDelta.y != 0)
-			valueChanged = true;
+		valueChanged |= mouseDelta.x != 0 || mouseDelta.y != 0;
 	}
 	return valueChanged;
 }

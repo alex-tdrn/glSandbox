@@ -210,12 +210,10 @@ bool Texture::drawUI()
 		ImGui::Text("Loading...");
 		return false;
 	}
-	if(drag2("UV Offset", 0.0001f, uvOffset.x, uvOffset.y, 0.0f, 1.0f))
-		valueChanged = true;
-	if(ImGui::SliderFloat("U ", &uvOffset.x, 0.0f, 1.0f))
-		valueChanged = true;
-	if(ImGui::SliderFloat("V ", &uvOffset.y, 0.0f, 1.0f))
-		valueChanged = true;
+	valueChanged |= drag2("UV Offset", 0.0001f, uvOffset.x, uvOffset.y, 0.0f, 1.0f);
+	valueChanged |= ImGui::SliderFloat("U ", &uvOffset.x, 0.0f, 1.0f);
+	valueChanged |= ImGui::SliderFloat("V ", &uvOffset.y, 0.0f, 1.0f);
+	
 	float const size = ImGui::GetColumnWidth();
 	ImGui::Text("%i x %i", image->width, image->height);
 	ImGui::Text("# channels %i", image->nrChannels);

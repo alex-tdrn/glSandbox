@@ -34,7 +34,7 @@ void main()
 			avg += textureLod(screenTexture, fs_in.textureCoordinates + vec2(-d, 0.0f), 5.0).rgb;
 			avg /= 9;
 			float ex = 0.5f / (0.3f * avg.r + 0.59f * avg.g + 0.11f * avg.b);*/
-			color = vec3(1.0f) - exp(-color * exposure);
+			color = vec3(1.0f) - exp(-color * pow(2, exposure));
 		break;
 	}
 

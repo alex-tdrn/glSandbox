@@ -79,12 +79,21 @@ bool Actor::drawUI()
 		comboPreview = model->getName();
 	if(ImGui::BeginCombo("Model", comboPreview.data()))
 	{
-		if(valueChanged |= ImGui::Selectable("None", !model))
+		if(ImGui::Selectable("None", !model))
+		{
 			model = nullptr;
-		if(valueChanged |= ImGui::Selectable(resources::models::nanosuit.getName().data(), model == &resources::models::nanosuit))
+			valueChanged = true;
+		}
+		if(ImGui::Selectable(resources::models::nanosuit.getName().data(), model == &resources::models::nanosuit))
+		{
 			model = &resources::models::nanosuit;
-		if(valueChanged |= ImGui::Selectable(resources::models::sponza.getName().data(), model == &resources::models::sponza))
+			valueChanged = true;
+		}
+		if(ImGui::Selectable(resources::models::sponza.getName().data(), model == &resources::models::sponza))
+		{
 			model = &resources::models::sponza;
+			valueChanged = true;
+		}
 		ImGui::EndCombo();
 	}
 	valueChanged |= ImGui::Checkbox("Enabled", &enabled);

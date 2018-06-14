@@ -108,7 +108,7 @@ namespace settings
 		inline int active = type::phong;	
 
 		inline bool vsync = true;
-		inline bool gammaCorrection = false;
+		inline bool gammaCorrection = true;
 		inline bool HDR = false;
 		inline float exposure = 1.0f;
 		inline float gammaExponent = 2.2f;

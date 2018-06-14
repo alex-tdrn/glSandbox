@@ -37,6 +37,7 @@ namespace resources
 	namespace models
 	{
 		inline Model nanosuit{"models/nanosuit/nanosuit.obj", "Nanosuit"};
+		inline Model bunny{"models/bunny/stanford-bunny.obj", "Bunny"};
 		inline Model sponza{"models/sponza/sponza.obj", "Sponza"};
 	}
 	namespace shaders
@@ -243,18 +244,15 @@ void resources::init()
 		light.setOrientation({250.0f, -60.0f, 0.0f});
 		scenes::simple.add(light);
 
-		Actor actor(&resources::models::nanosuit);
-		actor.setPosition({0.0f, -1.75f, 0.0f});
-		actor.setScale({0.15f, 0.15f, 0.15f});
+		Actor actor(&resources::models::bunny);
+		actor.setPosition({0.0f, 0.0f, 0.0f});
+		actor.setScale({0.010f, 0.010f, 0.010f});
 		scenes::simple.add(actor);
+
+		scenes::simple.getCamera().setPosition(Position{{3.0f, 3.5f, 7.5f}});
+		scenes::simple.getCamera().setOrientation(Orientation{235.0f, -25.0f, 0.0f});
 	}
 
-	{
-		DirectionalLight light;
-		light.setColor({20.0f / 255.0f, 10.0f / 255.0f, 70.0f / 255.0f});
-		light.setOrientation({120.0f, -60.0f, 0.0f});
-		scenes::medium.add(light);
-	}
 	{
 		PointLight light;
 		light.setColor({1.0f, 200.0f / 255.0f, 0.0f});
@@ -295,13 +293,13 @@ void resources::init()
 	}
 	{
 		int idx = 1;
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 2; i++)
 		{
-			for(int j = 0; j < 3; j++)
+			for(int j = 0; j < 2; j++)
 			{
-				Actor actor(&resources::models::nanosuit);
-				actor.setPosition({0.0f - i * 3.0f, -1.75f, 0.0f - j * 1.0f});
-				actor.setScale({0.15f, 0.15f, 0.15f});
+				Actor actor(&resources::models::bunny);
+				actor.setPosition({0.0f - i * 4.0f, -0.75f, 0.0f - j * 2.0f});
+				actor.setScale({0.005f, 0.005f, 0.005f});
 				scenes::medium.add(actor);
 				idx++;
 			}
@@ -492,6 +490,7 @@ void resources::drawUI()
 		}
 		if(ImGui::CollapsingHeader("Models"))
 		{
+			valueChanged |= models::bunny.drawUI();
 			valueChanged |= models::nanosuit.drawUI();
 			valueChanged |= models::sponza.drawUI();
 		}

@@ -43,6 +43,7 @@ namespace resources
 	namespace shaders
 	{
 		//rendering
+		inline Shader blinn_phong("shaders/phong.vert", "shaders/blinn-phong.frag");
 		inline Shader phong("shaders/phong.vert", "shaders/phong.frag");
 		inline Shader gouraud("shaders/gouraud.vert", "shaders/gouraud.frag");
 		inline Shader flat("shaders/flat.vert", "shaders/flat.frag", "shaders/flat.geom");
@@ -96,6 +97,7 @@ namespace settings
 	{
 		enum type
 		{
+			blinn_phong,
 			phong,
 			gouraud,
 			flat,
@@ -105,12 +107,12 @@ namespace settings
 			debugTexCoords,
 			debugDepthBuffer
 		};
-		inline int active = type::phong;	
+		inline int active = type::blinn_phong;	
 
 		inline bool vsync = true;
 		inline bool gammaCorrection = true;
-		inline bool HDR = false;
-		inline float exposure = 1.0f;
+		inline bool tonemapping = true;
+		inline float exposure = 0.0f;
 		inline float gammaExponent = 2.2f;
 		inline bool wireframe = false;
 		inline bool depthTesting = true;
@@ -138,6 +140,7 @@ namespace settings
 		inline glm::vec3 debugNormalsLineColor{1.0f, 1.0f, 1.0f};
 
 		inline Shader& getActiveShader();
+		inline bool isLightingShaderActive();
 		inline void drawUI();
 	}
 
@@ -355,6 +358,8 @@ Shader& settings::rendering::getActiveShader()
 	Shader& ret = [&]() -> Shader&{
 		switch(active)
 		{
+			case type::phong:
+				return resources::shaders::phong;
 			case type::gouraud:
 				return resources::shaders::gouraud;
 			case type::flat:
@@ -370,12 +375,13 @@ Shader& settings::rendering::getActiveShader()
 			case type::debugDepthBuffer:
 				return resources::shaders::debugDepthBuffer;
 			default:
-				return resources::shaders::phong;
+				return resources::shaders::blinn_phong;
 		}
 	}();
 	ret.use();
 	switch(active)
 	{
+		case type::blinn_phong:
 		case type::phong:
 		case type::gouraud:
 		case type::flat:
@@ -414,8 +420,23 @@ Shader& settings::rendering::getActiveShader()
 	return ret;
 }
 
+bool settings::rendering::isLightingShaderActive()
+{
+	switch(active)
+	{
+		case type::blinn_phong:
+		case type::phong:
+		case type::gouraud:
+		case type::flat:
+			return true;
+		default:
+			return false;
+	}
+}
+
 void resources::shaders::reload()
 {
+	resources::shaders::blinn_phong.reload();
 	resources::shaders::phong.reload();
 	resources::shaders::gouraud.reload();
 	resources::shaders::flat.reload();
@@ -537,8 +558,8 @@ void settings::rendering::drawUI()
 			ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f);
 		}
 
-		ImGui::Checkbox("HDR", &HDR);
-		if(HDR)
+		ImGui::Checkbox("Tone Mapping", &tonemapping);
+		if(tonemapping)
 		{
 			ImGui::DragFloat("Exposure", &exposure, 0.1f);
 		}
@@ -582,21 +603,23 @@ void settings::rendering::drawUI()
 			valueChanged |= ImGui::RadioButton("GL_CW ", &faceCullingOrdering, GL_CW);
 			ImGui::Unindent();
 		}
+		valueChanged |= ImGui::RadioButton("Blinn-Phong", &active, type::blinn_phong);
+		ImGui::SameLine();
 		valueChanged |= ImGui::RadioButton("Phong", &active, type::phong);
-		ImGui::SameLine();
 		valueChanged |= ImGui::RadioButton("Gouraud", &active, type::gouraud);
+		ImGui::SameLine();
 		valueChanged |= ImGui::RadioButton("Flat", &active, type::flat);
-		ImGui::SameLine();
 		valueChanged |= ImGui::RadioButton("Reflection", &active, type::reflection);
+		ImGui::SameLine();
 		valueChanged |= ImGui::RadioButton("Refraction", &active, type::refraction);
-		ImGui::SameLine();
 		valueChanged |= ImGui::RadioButton("Normals", &active, type::debugNormals);
-		valueChanged |= ImGui::RadioButton("Texture Coordinates", &active, type::debugTexCoords);
 		ImGui::SameLine();
+		valueChanged |= ImGui::RadioButton("Texture Coordinates", &active, type::debugTexCoords);
 		valueChanged |= ImGui::RadioButton("Depth Buffer", &active, type::debugDepthBuffer);
 
 		switch(active)
 		{
+			case type::blinn_phong:
 			case type::phong:
 			case type::gouraud:
 			case type::flat:

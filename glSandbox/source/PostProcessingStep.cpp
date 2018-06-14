@@ -75,7 +75,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	if(!initialized)
 		initFramebuffer();
 	bool doGammaHDR = false;
-	if(targetFramebuffer == 0 && (settings::rendering::gammaCorrection || settings::rendering::HDR))
+	if(targetFramebuffer == 0 && (settings::rendering::gammaCorrection || settings::rendering::tonemapping))
 	{
 		doGammaHDR = true;
 		targetFramebuffer = framebuffer;
@@ -106,8 +106,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
 		else
 			resources::shaders::gammaHDR.set("gamma", 1.0f);
-
-		if(settings::rendering::HDR)
+		if(settings::rendering::tonemapping && settings::rendering::isLightingShaderActive())
 		{
 			resources::shaders::gammaHDR.set("tonemapping", 2);
 			resources::shaders::gammaHDR.set("exposure", settings::rendering::exposure);

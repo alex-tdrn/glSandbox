@@ -28,7 +28,7 @@ public:
 private:
 	std::string const name;
 	std::array<std::optional<Texture>, Maps::n> maps;
-	float shininessValue = 16.0f;
+	float shininessValue = 32.0f;
 	inline static int ct = 0;
 
 public:

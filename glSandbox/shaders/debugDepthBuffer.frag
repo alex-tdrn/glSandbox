@@ -15,6 +15,7 @@ void main()
 	{
 		z = z*2.0f - 1.0f;
 		z = (2.0f * nearPlane * farPlane) / (farPlane + nearPlane - z * (farPlane - nearPlane));
+		z/= farPlane;
 	}
 	FragColor = vec4(vec3(z), 1.0f);
 }

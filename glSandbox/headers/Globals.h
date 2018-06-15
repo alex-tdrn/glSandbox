@@ -109,6 +109,7 @@ namespace settings
 		};
 		inline int active = type::blinn_phong;	
 
+		inline int multisamples = 1;
 		inline bool vsync = true;
 		inline bool gammaCorrection = true;
 		inline bool tonemapping = true;
@@ -551,7 +552,8 @@ void settings::rendering::drawUI()
 		ImGui::Checkbox("Explicit Rendering", &explicitRendering);
 		ImGui::SameLine();
 		ImGui::Checkbox("V-Sync", &vsync);
-		ImGui::SameLine();
+		if(ImGui::SliderInt("Samples", &multisamples,1, 16))
+			resources::scenes::getActiveScene().updateFramebuffer();
 		ImGui::Checkbox("Gamma Correction", &gammaCorrection);
 		if(gammaCorrection)
 		{

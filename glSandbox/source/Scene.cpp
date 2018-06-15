@@ -18,18 +18,32 @@ void Scene::init()
 
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &colorbuffer);
-	glBindTexture(GL_TEXTURE_2D, colorbuffer);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colorbuffer);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, settings::rendering::multisamples, GL_RGB16F, info::windowWidth, info::windowHeight, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, colorbuffer, 0);
+
+	glGenRenderbuffers(1, &renderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings::rendering::multisamples, GL_DEPTH24_STENCIL8, info::windowWidth, info::windowHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
+
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glGenFramebuffers(1, &simpleFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, simpleFramebuffer);
+
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &simpleColorbuffer);
+	glBindTexture(GL_TEXTURE_2D, simpleColorbuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorbuffer, 0);
-
-	glGenRenderbuffers(1, &renderbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, info::windowWidth, info::windowHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, simpleColorbuffer, 0);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
@@ -70,12 +84,17 @@ void Scene::updateFramebuffer()
 {
 	update();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colorbuffer);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colorbuffer);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, settings::rendering::multisamples, GL_RGB16F, info::windowWidth, info::windowHeight, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings::rendering::multisamples, GL_DEPTH24_STENCIL8, info::windowWidth, info::windowHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, simpleColorbuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_FLOAT, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, info::windowWidth, info::windowHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void Scene::setBackgroundColor(glm::vec3 color)
@@ -100,6 +119,7 @@ void Scene::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 
+	glEnable(GL_MULTISAMPLE);
 	if(depthTesting)
 	{
 		glEnable(GL_DEPTH_TEST);
@@ -256,7 +276,10 @@ void Scene::draw()
 
 unsigned int Scene::getColorbuffer() const
 {
-	return colorbuffer;
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, simpleFramebuffer);
+	glBlitFramebuffer(0, 0, info::windowWidth, info::windowHeight, 0, 0, info::windowWidth, info::windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	return simpleColorbuffer;
 }
 
 Camera& Scene::getCamera()

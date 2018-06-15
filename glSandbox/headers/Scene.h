@@ -13,6 +13,8 @@ private:
 	unsigned int framebuffer;
 	unsigned int colorbuffer;
 	unsigned int renderbuffer;
+	unsigned int simpleFramebuffer;
+	unsigned int simpleColorbuffer;
 	bool initialized = false;
 	bool needRedraw = true;
 	std::vector<DirectionalLight> directionalLights;

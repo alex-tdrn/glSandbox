@@ -66,6 +66,10 @@ namespace resources
 
 		inline void reload();
 	}
+	namespace textures
+	{
+		inline Texture placeholder("textures/placeholder.png", true);
+	}
 	namespace cubemaps
 	{
 		inline Cubemap skybox("skybox",{

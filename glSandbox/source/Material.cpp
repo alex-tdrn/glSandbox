@@ -39,9 +39,9 @@ Material::Material(std::string const name)
 {
 }
 
-void Material::setMap(int mapType, std::optional<Texture> map)
+void Material::setMap(int mapType, std::optional<Texture>&& map)
 {
-	maps[mapType] = map;
+	maps[mapType] = std::move(map);
 }
 
 std::string_view const Material::getName() const
@@ -54,7 +54,7 @@ bool Material::isInitialized() const
 	bool ret = true;
 	for(auto& map : maps)
 		if(map)
-			ret = ret && map->isInitialized();
+			ret = ret && map->isLoaded();
 
 	return ret;
 }
@@ -73,16 +73,16 @@ void Material::use(Shader shader) const
 	shader.set("material.hasDiffuseMap", bool(maps[diffuse]));
 	if(maps[diffuse])
 	{
-		maps[diffuse]->use();
-		shader.set("material.diffuseMap", maps[diffuse]->getLocation());
+		maps[diffuse]->use(diffuse);
+		shader.set("material.diffuseMap", diffuse);
 		shader.set("material.diffuseMapOffset", maps[diffuse]->getUVOffset());
 	}
 
 	shader.set("material.hasSpecularMap", bool(maps[specular]));
 	if(maps[specular])
 	{
-		maps[specular]->use();
-		shader.set("material.specularMap", maps[specular]->getLocation());
+		maps[specular]->use(specular);
+		shader.set("material.specularMap", specular);
 		shader.set("material.specularMapOffset", maps[specular]->getUVOffset());
 		shader.set("material.shininess", shininessValue);
 	}
@@ -90,8 +90,8 @@ void Material::use(Shader shader) const
 	shader.set("material.hasOpacityMap", bool(maps[opacity]));
 	if(maps[opacity])
 	{
-		maps[opacity]->use();
-		shader.set("material.opacityMap", maps[opacity]->getLocation());
+		maps[opacity]->use(opacity);
+		shader.set("material.opacityMap", opacity);
 		shader.set("material.opacityMapOffset", maps[opacity]->getUVOffset());
 	}
 

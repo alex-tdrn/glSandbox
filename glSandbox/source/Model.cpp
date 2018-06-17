@@ -136,8 +136,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 					&& internalMapType != Material::Maps::ambient
 					&& internalMapType != Material::Maps::specular;
 				if(mapPaths[internalMapType])
-					maps[internalMapType] = Texture{std::move(*mapPaths[internalMapType]), internalMapType, linear};
-				material->setMap(internalMapType, maps[internalMapType]);
+					maps[internalMapType] = Texture{std::move(*mapPaths[internalMapType]), linear};
+				material->setMap(internalMapType, std::move(maps[internalMapType]));
 			}
 			materials.emplace_back(material);
 		}

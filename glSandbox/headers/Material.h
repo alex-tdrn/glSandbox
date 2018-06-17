@@ -35,7 +35,7 @@ public:
 	Material(std::string const name = "Material#" + std::to_string(ct++));
 
 public:
-	void setMap(int mapType, std::optional<Texture> map);
+	void setMap(int mapType, std::optional<Texture>&& map);
 	bool isInitialized() const;
 	std::string_view const getName() const;
 	bool contains(std::string_view const path);

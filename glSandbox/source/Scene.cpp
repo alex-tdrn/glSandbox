@@ -158,7 +158,7 @@ void Scene::draw()
 			model = glm::translate(model, light.getPosition());
 			model = glm::scale(model, glm::vec3{0.2f});
 			resources::shaders::light.set("model", model);
-			resources::shaders::light.set("lightColor", light.getColor());
+			resources::shaders::light.set("lightColor", light.getColor() * light.getIntensity());
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 	};

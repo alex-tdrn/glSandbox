@@ -160,10 +160,11 @@ bool Model::isInitialized() const
 {
 	if(!initialized)
 		return false;
-	bool ret = true;
-	for(auto& material : materials)
-		ret = ret && material->isInitialized();
-	return ret;
+	return false;
+	//bool ret = true;
+	//for(auto& material : materials)
+	//	ret = ret && material->isInitialized();
+	//return ret;
 }
 
 void Model::draw(Shader shader) const

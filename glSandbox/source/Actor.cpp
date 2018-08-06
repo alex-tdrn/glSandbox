@@ -4,7 +4,7 @@
 
 #include <imgui.h>
 
-Actor::Actor(Model* model, std::string name)
+Actor::Actor(Model const* model, std::string name)
 	:model(model), name(std::move(name))
 {
 
@@ -20,7 +20,7 @@ void Actor::disable()
 	enabled = false;
 }
 
-void Actor::setModel(Model* model)
+void Actor::setModel(Model const* model)
 {
 	this->model = model;
 }

@@ -136,9 +136,11 @@ unsigned int PostProcessingStep::getColorbuffer()
 
 void PostProcessingStep::drawUI()
 {
-	IDGuard idGuard{this};
 
 	ImGui::Indent();
+	IDGuard idGuard{this};
+	float size = ImGui::GetWindowContentRegionWidth();
+	ImGui::Image(ImTextureID(getColorbuffer()), ImVec2(size,info::windowHeight * size / info::windowWidth),ImVec2(0,1), ImVec2(1,0));
 	ImGui::RadioButton("Passthrough", &active, type::passthrough);
 	ImGui::SameLine();
 	ImGui::RadioButton("Grayscale", &active, type::grayscale);

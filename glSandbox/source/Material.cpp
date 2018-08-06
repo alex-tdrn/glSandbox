@@ -52,6 +52,7 @@ std::string_view const Material::getName() const
 bool Material::isInitialized() const
 {
 	bool ret = true;
+	return true;
 	for(auto& map : maps)
 		if(map)
 			ret = ret && map->isLoaded();

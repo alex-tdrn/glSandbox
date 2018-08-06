@@ -83,7 +83,11 @@ int main(int argc, char** argv)
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplGlfwGL3_Init(window, false);
 	ImGui::StyleColorsDark();
-	
+	ImGui::GetStyle().WindowRounding = 0.0f;
+	ImGui::GetStyle().WindowBorderSize = 0.0f;
+	ImGui::GetStyle().PopupRounding= 0.0f;
+	ImGui::GetStyle().ScrollbarRounding = 0.0f;
+
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{
@@ -128,10 +132,46 @@ int main(int argc, char** argv)
 void drawUI()
 {
 	ImGui_ImplGlfwGL3_NewFrame();
-	resources::drawUI();
-	settings::drawUI();
-	info::drawUI();
+	if(ImGui::BeginMainMenuBar())
+	{
+		if(ImGui::BeginMenu("View"))
+		{
+			if(ImGui::MenuItem("Resources"))
+			{
 
+			}
+			if(ImGui::MenuItem("Settings"))
+			{
+
+			}
+			if(ImGui::MenuItem("Stats"))
+			{
+
+			}
+			if(ImGui::BeginMenu("ImGui"))
+			{
+				if(ImGui::MenuItem("Demo"))
+				{
+
+				}
+				if(ImGui::MenuItem("Debug"))
+				{
+
+				}
+				if(ImGui::MenuItem("Style"))
+				{
+
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+	//resources::drawUI();
+	//settings::drawUI();
+	//info::drawUI();
+	//ImGui::ShowDemoWindow();
 }
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {

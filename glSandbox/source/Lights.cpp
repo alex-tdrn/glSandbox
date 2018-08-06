@@ -42,7 +42,7 @@ bool Light::drawUI()
 	bool valueChanged = false;
 	valueChanged |= ImGui::Checkbox("Enabled", &enabled);
 	valueChanged |= ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs);
-	valueChanged |= ImGui::DragFloat("Intensity", &intensity, 0.5f);
+	valueChanged |= ImGui::DragFloat("Intensity", &intensity, 0.1f);
 	return valueChanged;
 }
 
@@ -101,6 +101,11 @@ void SpotLight::setPosition(glm::vec3 position)
 	this->position.position = position;
 }
 
+void SpotLight::setCutoff(float inner, float outer)
+{
+	this->innerCutoff = inner;
+	this->outerCutoff = outer;
+}
 
 glm::vec3 const& SpotLight::getPosition() const
 {

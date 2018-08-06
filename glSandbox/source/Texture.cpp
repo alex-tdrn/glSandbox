@@ -118,7 +118,7 @@ bool Texture::drawUI()
 	valueChanged |= ImGui::SliderFloat("U ", &uvOffset.x, 0.0f, 1.0f);
 	valueChanged |= ImGui::SliderFloat("V ", &uvOffset.y, 0.0f, 1.0f);
 	
-	float const size = ImGui::GetColumnWidth();
+	float const size = 512;
 	ImGui::Text("%i x %i", image.width, image.height);
 	ImGui::Text("# channels %i", image.nrChannels);
 	ImGui::Text("Path: %s", path.data());

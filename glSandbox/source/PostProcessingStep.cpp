@@ -74,6 +74,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 {
 	if(!initialized)
 		initFramebuffer();
+	inputColorbuffer = sourceColorbuffer;
 	bool doGammaHDR = false;
 	if(targetFramebuffer == 0 && (settings::rendering::gammaCorrection || settings::rendering::tonemapping))
 	{
@@ -90,6 +91,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glBindVertexArray(resources::quadVAO);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	if(doGammaHDR)
@@ -137,10 +139,20 @@ unsigned int PostProcessingStep::getColorbuffer()
 void PostProcessingStep::drawUI()
 {
 
-	ImGui::Indent();
 	IDGuard idGuard{this};
-	float size = ImGui::GetWindowContentRegionWidth();
-	ImGui::Image(ImTextureID(getColorbuffer()), ImVec2(size,info::windowHeight * size / info::windowWidth),ImVec2(0,1), ImVec2(1,0));
+	if(!floatImage)
+	{
+		float size = 256;
+		if(ImGui::ImageButton(ImTextureID(inputColorbuffer), ImVec2(size, info::windowHeight * size / info::windowWidth), ImVec2(0, 1), ImVec2(1, 0)))
+			floatImage = true;
+	}
+	else
+	{
+		ImGui::Begin("buffer", &floatImage);
+		float size = ImGui::GetWindowContentRegionWidth();
+		ImGui::Image(ImTextureID(inputColorbuffer), ImVec2(size, info::windowHeight * size / info::windowWidth), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::End();
+	}
 	ImGui::RadioButton("Passthrough", &active, type::passthrough);
 	ImGui::SameLine();
 	ImGui::RadioButton("Grayscale", &active, type::grayscale);
@@ -219,5 +231,4 @@ void PostProcessingStep::drawUI()
 			ImGui::DragFloat3("##3", &convolutionKernel[6], 0.01f);
 			break;
 	}
-	ImGui::Unindent();
 }

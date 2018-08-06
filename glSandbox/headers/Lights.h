@@ -55,6 +55,7 @@ private:
 public:
 	void setPosition(glm::vec3 position);
 	void setOrientation(glm::vec3 orientation);
+	void setCutoff(float inner, float outer);
 	glm::vec3 const& getPosition() const;
 	glm::vec3 const getDirection() const;
 	float getInnerCutoff() const;

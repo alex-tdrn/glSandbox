@@ -248,7 +248,6 @@ void resources::init()
 
 	for(Scene* scene : {&scenes::empty, &scenes::simple, &scenes::medium, &scenes::stressTest})
 	{
-		scene->setBackgroundColor({0.5f, 0.5f, 0.5f});
 		scene->getCamera().setPosition(Position{{1.0f, 0.2f, 1.0f}});
 		scene->getCamera().setOrientation(Orientation{215.0f, -5.0f, 0.0f});
 	}
@@ -257,7 +256,17 @@ void resources::init()
 		DirectionalLight light;
 		light.setColor({1.0f, 1.0f, 1.0f});
 		light.setOrientation({250.0f, -60.0f, 0.0f});
+		light.setIntensity(0.5f);
 		scenes::simple.add(light);
+
+		SpotLight spotlight;
+		spotlight.setColor({1.0f, 1.0f, 1.0f});
+		spotlight.setPosition({1.0f, 0.0f, 3.0f});
+		spotlight.setOrientation({230.0f, 4.0f, 0.0f});
+		spotlight.setIntensity(125.0f);
+		spotlight.setCutoff(15.0f, 55.0f);
+		spotlight.disable();
+		scenes::simple.add(spotlight);
 
 		Actor actor(&resources::models::bunny);
 		actor.setPosition({0.0f, 0.0f, 0.0f});

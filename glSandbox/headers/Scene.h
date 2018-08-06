@@ -22,7 +22,7 @@ private:
 	std::vector<SpotLight> spotLights;
 	std::vector<Actor> actors;
 	Camera camera;
-	glm::vec3 backgroundColor{0.5f, 0.5f, 0.5f};
+	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
 	Cubemap* skybox = nullptr;
 	inline static int ct = 0;
 

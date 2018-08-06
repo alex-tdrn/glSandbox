@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplGlfwGL3_Init(window, false);
-	ImGui::StyleColorsLight();
+	ImGui::StyleColorsDark();
 	
 	resources::init();
 	while(!glfwWindowShouldClose(window))

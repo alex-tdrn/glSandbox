@@ -110,6 +110,9 @@
     <ClInclude Include="headers\Cubemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="headers\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\light.vert">

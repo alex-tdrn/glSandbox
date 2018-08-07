@@ -69,7 +69,6 @@ int main(int argc, char** argv)
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 #endif
-
 	glfwSetFramebufferSizeCallback(window, windowResizeCallback);
 	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
@@ -100,7 +99,7 @@ int main(int argc, char** argv)
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
+		info::rendering = false;
 		Scene& activeScene = resources::scenes::getActiveScene();
 		activeScene.draw();
 
@@ -131,47 +130,45 @@ int main(int argc, char** argv)
 
 void drawUI()
 {
+	static bool drawResources = false;
+	static bool drawRenderingSettings = false;
+	static bool drawPostprocessingSettings = false;
+	static bool drawStats = false;
+	static bool drawImGuiDemo = false;
+
 	ImGui_ImplGlfwGL3_NewFrame();
 	if(ImGui::BeginMainMenuBar())
 	{
 		if(ImGui::BeginMenu("View"))
 		{
 			if(ImGui::MenuItem("Resources"))
+				drawResources = true;
+			if(ImGui::BeginMenu("Settings"))
 			{
-
-			}
-			if(ImGui::MenuItem("Settings"))
-			{
-
+				if(ImGui::MenuItem("Rendering"))
+					drawRenderingSettings = true;
+				if(ImGui::MenuItem("Postprocessing"))
+					drawPostprocessingSettings = true;
+				ImGui::EndMenu();
 			}
 			if(ImGui::MenuItem("Stats"))
-			{
-
-			}
+				drawStats = true;
 			if(ImGui::BeginMenu("ImGui"))
 			{
 				if(ImGui::MenuItem("Demo"))
-				{
-
-				}
-				if(ImGui::MenuItem("Debug"))
-				{
-
-				}
-				if(ImGui::MenuItem("Style"))
-				{
-
-				}
+					drawImGuiDemo = true;
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
-	//resources::drawUI();
-	//settings::drawUI();
-	//info::drawUI();
-	//ImGui::ShowDemoWindow();
+	resources::drawUI(&drawResources);
+	settings::rendering::drawUI(&drawRenderingSettings);
+	settings::postprocessing::drawUI(&drawPostprocessingSettings);
+	info::drawUI(&drawStats);
+	if(drawImGuiDemo)
+		ImGui::ShowDemoWindow(&drawImGuiDemo);
 }
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {

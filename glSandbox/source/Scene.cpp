@@ -114,7 +114,7 @@ void Scene::draw()
 	else
 		needRedraw = true;
 
-	ImGui::Text("rendering scene..");
+	info::rendering = true;
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);

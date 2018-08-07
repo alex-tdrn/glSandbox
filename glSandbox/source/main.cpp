@@ -174,6 +174,8 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
 	info::windowWidth = width;
 	info::windowHeight = height;
+	info::aspectRatio = float(info::windowWidth) / info::windowHeight;
+
 	glViewport(0, 0, width, height);
 	resources::scenes::getActiveScene().updateFramebuffer();
 	for(auto& step : settings::postprocessing::steps)

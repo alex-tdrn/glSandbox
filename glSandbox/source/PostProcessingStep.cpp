@@ -143,14 +143,16 @@ void PostProcessingStep::drawUI()
 	if(!floatImage)
 	{
 		float size = 256;
-		if(ImGui::ImageButton(ImTextureID(inputColorbuffer), ImVec2(size, info::windowHeight * size / info::windowWidth), ImVec2(0, 1), ImVec2(1, 0)))
+		if(ImGui::ImageButton(ImTextureID(inputColorbuffer), ImVec2(size, size / info::aspectRatio), ImVec2(0, 1), ImVec2(1, 0)))
 			floatImage = true;
 	}
 	else
 	{
-		ImGui::Begin("buffer", &floatImage);
+		ImGui::Begin("buff", &floatImage, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+		const float titlebarHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2;
+		ImGui::SetWindowSize({ImGui::GetWindowSize().x, ImGui::GetWindowSize().x / info::aspectRatio + titlebarHeight + ImGui::GetStyle().WindowPadding.y});
 		float size = ImGui::GetWindowContentRegionWidth();
-		ImGui::Image(ImTextureID(inputColorbuffer), ImVec2(size, info::windowHeight * size / info::windowWidth), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image(ImTextureID(inputColorbuffer), ImVec2(size, size / info::aspectRatio), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::End();
 	}
 	ImGui::RadioButton("Passthrough", &active, type::passthrough);

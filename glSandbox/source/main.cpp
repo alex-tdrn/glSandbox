@@ -5,6 +5,7 @@
 #include "Lights.h"
 #include "Globals.h"
 #include "Scene.h"
+#include "AssetLoader.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -87,6 +88,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 
+	AssetLoader{"models/Cube/Cube.gltf"};
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{

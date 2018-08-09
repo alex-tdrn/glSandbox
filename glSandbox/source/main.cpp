@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 
-	AssetLoader{"models/Cube/Cube.gltf"};
+	loadGLTF("models/Cube/Cube.gltf");
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{

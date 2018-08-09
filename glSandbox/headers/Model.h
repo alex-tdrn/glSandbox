@@ -31,7 +31,7 @@ public:
 private:
 	void load() const;
 	void processNode(aiNode* node, const aiScene* scene, std::string_view const dir) const;
-	Mesh processMesh(aiMesh* mesh, const aiScene* scene, std::string_view const dir) const;
+	//Mesh processMesh(aiMesh* mesh, const aiScene* scene, std::string_view const dir) const;
 
 public:
 	std::string_view const getName() const;

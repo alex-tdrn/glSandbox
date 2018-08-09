@@ -1,35 +1,45 @@
 #pragma once
 #include "Shader.h"
+#include "NamedAsset.h"
 
 #include <glm/glm.hpp>
 #include <vector>
 
 class Material;
-struct Vertex
+
+struct VertexBuffer
 {
-	glm::vec3 position{0.0f, 0.0f, 0.0f};
-	glm::vec3 normal{0.0f, 0.0f, 0.0f};
-	glm::vec2 texCoords{0.0f, 0.0f};
+	struct Attribute
+	{
+		uint8_t const* data;
+		uint32_t stride;
+		uint32_t size;
+	};
+	Attribute positions;
+	Attribute normals;
+	Attribute textureCoords;
 };
 
-class Mesh
+struct IndicesBuffer
+{
+	uint8_t const* data;
+	uint32_t size;
+};
+
+class Mesh : public NamedAsset<Mesh>
 {
 private:
 	unsigned int VAO;
 	unsigned int VBO;
 	unsigned int EBO;
-	std::string name;
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+	VertexBuffer const vertices;
+	IndicesBuffer const indices;
 	Material* material;
-	static int ct;
 public:
-	Mesh(std::vector<Vertex>&& vertices, std::vector<unsigned int>&& indices, Material* material, std::string const name = "Mesh#" + std::to_string(ct++));
+	Mesh(VertexBuffer&& vertices, IndicesBuffer&& indices, Material* material);
 	~Mesh();
 
 public:
-	std::vector<Vertex> const& getVertices() const;
-	std::vector<unsigned int> const& getIndices() const;
 	void draw(Shader shader) const;
 	[[nodiscard]] bool drawUI();
 };

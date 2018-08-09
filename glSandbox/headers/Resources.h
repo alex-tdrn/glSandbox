@@ -12,6 +12,7 @@ namespace resources
 {
 	inline unsigned int boxVAO;
 	inline unsigned int quadVAO;
+	inline Mesh* gltfMesh = nullptr;
 	namespace scenes
 	{
 		inline Scene empty{"Empty"};

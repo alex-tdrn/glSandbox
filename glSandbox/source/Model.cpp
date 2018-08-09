@@ -16,6 +16,7 @@ Model::Model(std::string_view const path, std::string const name)
 
 void Model::load() const
 {
+	return;
 	initialized = true;
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -32,15 +33,15 @@ void Model::processNode(aiNode* node, const aiScene* scene, std::string_view con
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(processMesh(mesh, scene, dir));
+	//	meshes.push_back(processMesh(mesh, scene, dir));
 	}
 	for(unsigned int i = 0; i < node->mNumChildren; i++)
 		processNode(node->mChildren[i], scene, dir);
 }
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view const dir) const
-{
-	std::vector<Vertex> vertices(mesh->mNumVertices);
+//Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view const dir) const
+//{
+	/*std::vector<Vertex> vertices(mesh->mNumVertices);
 	for(unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		vertices[i].position = glm::vec3{mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
@@ -147,8 +148,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, std::string_view con
 	if(mesh->mName.length > 0)
 		return Mesh(std::move(vertices), std::move(indices), material, mesh->mName.C_Str());
 	else
-		return Mesh(std::move(vertices), std::move(indices), material);
-}
+		return Mesh(std::move(vertices), std::move(indices), material);*/
+//}
 
 std::string_view const Model::getName() const
 {
@@ -169,6 +170,7 @@ bool Model::isInitialized() const
 
 void Model::draw(Shader shader) const
 {
+	return;
 	if(!initialized)
 		load();
 	for(auto& mesh : meshes)
@@ -177,6 +179,7 @@ void Model::draw(Shader shader) const
 
 bool Model::drawUI()
 {
+	return false;
 	IDGuard idGuard{this};
 
 	bool valueChanged = false;

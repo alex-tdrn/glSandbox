@@ -264,7 +264,7 @@ void Scene::draw()
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	glStencilMask(0xFF);
 	if(resources::gltfMesh)
-		resources::gltfMesh->draw(activeShader);
+		resources::gltfMesh->use();
 	//for(auto& actor : actors)
 		//actor.draw(activeShader);
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);

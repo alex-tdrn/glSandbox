@@ -6,40 +6,106 @@
 using namespace fx;
 
 uint32_t calculateElementSize(gltf::Accessor const& accessor);
+uint32_t componentSize(gltf::Accessor::Type type);
+GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 
 void loadGLTF(std::string const& filename)
 {
 	gltf::Document doc = gltf::LoadFromText(filename);
 	
-	auto const& mesh = doc.meshes[0];
-	auto const& primitive = mesh.primitives[0];
-	VertexBuffer vertices;
+	auto const& primitive = doc.meshes[0].primitives[0];
+	Mesh::AttributeArray attributeArray;
 	for(auto const& attribute : primitive.attributes)
 	{
+		Mesh::AttributeBuffer attributeBuffer;
+		if(attribute.first == "POSITION")
+			attributeBuffer.attributeType = Mesh::AttributeType::positions;
+		else if(attribute.first == "NORMAL")
+			attributeBuffer.attributeType = Mesh::AttributeType::normals;
+		else if(attribute.first == "TEXCOORD_0")
+			attributeBuffer.attributeType = Mesh::AttributeType::texcoords;
+		else
+			continue;
 		auto const& accessor = doc.accessors[attribute.second];
 		auto const& bufferView = doc.bufferViews[accessor.bufferView];
 		auto const& buffer = doc.buffers[bufferView.buffer];
 		auto const elementSize = calculateElementSize(accessor);
-		VertexBuffer::Attribute att;
-		att.data = &buffer.data[bufferView.byteOffset + accessor.byteOffset];
-		att.size = accessor.count * elementSize;
-		att.stride = elementSize;
-		if(attribute.first == "POSITION")
-			vertices.positions = att;
-		else if(attribute.first == "NORMAL")
-			vertices.normals = att;
-		else if(attribute.first == "TEXCOORD_0")
-			vertices.textureCoords = att;
+		attributeBuffer.data = &buffer.data[bufferView.byteOffset + accessor.byteOffset];
+		attributeBuffer.size = accessor.count * elementSize;
+		attributeBuffer.stride = elementSize;
+		attributeBuffer.componentSize = componentSize(accessor.type);
+		attributeBuffer.dataType = gltfToGLType(accessor.componentType);
+		attributeArray[attributeBuffer.attributeType] = std::move(attributeBuffer);
 	}
 	auto const& accessor = doc.accessors[primitive.indices];
 	auto const& bufferView = doc.bufferViews[accessor.bufferView];
 	auto const& buffer = doc.buffers[bufferView.buffer];
-	IndicesBuffer indices;
+	Mesh::IndexBuffer indices;
 	indices.data = &buffer.data[bufferView.byteOffset + accessor.byteOffset];
+	indices.count = accessor.count;
 	indices.size = accessor.count * calculateElementSize(accessor);
-	resources::gltfMesh = new Mesh{std::move(vertices), std::move(indices), nullptr};
+	indices.dataType = gltfToGLType(accessor.componentType);
+
+	GLenum drawMode = [&](){
+		switch(primitive.mode)
+		{
+			case gltf::Primitive::Mode::Points:
+				return GL_POINTS;
+			case gltf::Primitive::Mode::Lines:
+				return GL_LINES;
+			case gltf::Primitive::Mode::LineLoop:
+				return GL_LINE_LOOP;
+			case gltf::Primitive::Mode::TriangleFan:
+				return GL_TRIANGLE_FAN;
+			case gltf::Primitive::Mode::TriangleStrip:
+				return GL_TRIANGLE_STRIP;
+			default:
+				return GL_TRIANGLES;
+		}
+	}();
+	
+	resources::gltfMesh = new Mesh{drawMode, std::move(attributeArray), std::move(indices)};
+}
+GLenum gltfToGLType(gltf::Accessor::ComponentType type)
+{
+	switch(type)
+	{
+		case gltf::Accessor::ComponentType::Byte:
+			return GL_BYTE;
+		case gltf::Accessor::ComponentType::UnsignedByte:
+			return GL_UNSIGNED_BYTE;
+		case gltf::Accessor::ComponentType::Short:
+			return GL_SHORT;
+		case gltf::Accessor::ComponentType::UnsignedShort:
+			return GL_UNSIGNED_SHORT;
+		case gltf::Accessor::ComponentType::Float:
+			return GL_FLOAT;
+		case gltf::Accessor::ComponentType::UnsignedInt:
+			return GL_UNSIGNED_INT;
+	}
+	assert(0);
 }
 
+uint32_t componentSize(gltf::Accessor::Type type)
+{
+	switch(type)
+	{
+		case gltf::Accessor::Type::Scalar:
+			return 1;
+		case gltf::Accessor::Type::Vec2:
+			return 2;
+		case gltf::Accessor::Type::Vec3:
+			return 3;
+		case gltf::Accessor::Type::Vec4:
+		case gltf::Accessor::Type::Mat2:
+			return 4;
+		case gltf::Accessor::Type::Mat3:
+			return 9;
+		case gltf::Accessor::Type::Mat4:
+			return 16;
+	}
+	assert(0);
+}
 uint32_t calculateElementSize(gltf::Accessor const& accessor)
 {
 	uint32_t elementSize = 0;
@@ -58,21 +124,5 @@ uint32_t calculateElementSize(gltf::Accessor const& accessor)
 			elementSize = 4;
 			break;
 	}
-	switch(accessor.type)
-	{
-		case gltf::Accessor::Type::Scalar:
-			return elementSize;
-		case gltf::Accessor::Type::Vec2:
-			return 2 * elementSize;
-		case gltf::Accessor::Type::Vec3:
-			return 3 * elementSize;
-		case gltf::Accessor::Type::Vec4:
-		case gltf::Accessor::Type::Mat2:
-			return 4 * elementSize;
-		case gltf::Accessor::Type::Mat3:
-			return 9 * elementSize;
-		case gltf::Accessor::Type::Mat4:
-			return 16 * elementSize;
-	}
-	return 0;
+	return elementSize * componentSize(accessor.type);
 }

@@ -88,7 +88,8 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 
-	loadGLTF("models/Cube/Cube.gltf");
+	//loadGLTF("models/Cube/Cube.gltf");
+	loadGLTF("models/stanford_dragon_vrip/scene.gltf");
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{

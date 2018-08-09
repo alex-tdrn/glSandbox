@@ -4,68 +4,58 @@
 #include "Resources.h"
 
 #include <imgui.h>
-#include <algorithm>
+#include <array>
 
-Mesh::Mesh(VertexBuffer&& vertices, IndicesBuffer&& indices, Material* material)
-	: vertices(vertices), indices(indices), material(material), NamedAsset<Mesh>("mesh")
+Mesh::Mesh(GLenum drawMode, AttributeArray&& attributes, std::optional<IndexBuffer>&& indices)
+	: Asset<Mesh>("mesh"), drawMode(drawMode), vertexCount(attributes[AttributeType::positions]->size / attributes[AttributeType::positions]->stride),
+	indexCount(indices? indices->count : 0), indexDataType(indices? indices->dataType : 0), indexedDrawing(indices)
 {
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
 	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	int const bufferSize = vertices.positions.size + vertices.normals.size + vertices.textureCoords.size;
-	glBufferData(GL_ARRAY_BUFFER, bufferSize , nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.positions.size, vertices.positions.data);
-	glBufferSubData(GL_ARRAY_BUFFER, vertices.positions.size, vertices.normals.size, vertices.normals.data);
-	glBufferSubData(GL_ARRAY_BUFFER, vertices.positions.size + vertices.normals.size, vertices.textureCoords.size, vertices.textureCoords.data);
 
-	// vertex positions
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertices.positions.stride, (void*) 0);
-	// vertex normals
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertices.normals.stride, (void*) vertices.positions.size);
-	// vertex texture coords
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertices.textureCoords.stride, (void*) (vertices.normals.size + vertices.positions.size));
+	int bufferSize = 0;
+	for(auto const& attribute : attributes)
+		bufferSize += attribute ? attribute->size : 0;
+	glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
 
-	if(indices.size)
+	int offset = 0;
+	for(auto const& attribute : attributes)
+	{
+		if(!attribute)
+			continue;
+		glBufferSubData(GL_ARRAY_BUFFER, offset, attribute->size, attribute->data);
+		glEnableVertexAttribArray(attribute->attributeType);
+		glVertexAttribPointer(attribute->attributeType, attribute->componentSize, attribute->dataType, GL_FALSE, attribute->stride, (void*) (offset));
+		offset += attribute->size;
+	}
+
+	if(indices)
 	{
 		glGenBuffers(1, &EBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size , indices.data, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size, indices->data, GL_STATIC_DRAW);
 	}
 
 	glBindVertexArray(0);
 }
+
 Mesh::~Mesh()
 {
-	/*glDeleteVertexArrays(1, &VAO);
+	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);*/
+	glDeleteBuffers(1, &EBO);
 }
 
-void Mesh::draw(Shader shader) const
+void Mesh::use() const
 {
-	//if(material)
-	//{
-	//	material->use(shader);
-	//}
-	//else
-	//{
-	//	shader.set("material.hasDiffuseMap", false);
-	//	shader.set("material.hasSpecularMap",false);
-	//	shader.set("material.hasOpacityMap", false);
-	//}
-	///*else
-	//{
-	//	shader.set("material.hasDiffuseMap", true);
-	//	shader.set("material.diffuseMap", 1);
-	//	resources::textures::placeholder.use(1);
-	//}*/
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, indices.size / 2, GL_UNSIGNED_SHORT, 0);
+	if(indexedDrawing)
+		glDrawElements(drawMode, indexCount, indexDataType, 0);
+	else
+		glDrawArrays(drawMode, 0, vertexCount);
 	glBindVertexArray(0);
 }
 

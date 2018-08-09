@@ -173,8 +173,8 @@ void Model::draw(Shader shader) const
 	return;
 	if(!initialized)
 		load();
-	for(auto& mesh : meshes)
-		mesh.draw(shader);
+	//for(auto& mesh : meshes)
+		//mesh.draw(shader);
 }
 
 bool Model::drawUI()

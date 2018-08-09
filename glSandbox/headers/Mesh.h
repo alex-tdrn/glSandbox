@@ -1,45 +1,54 @@
 #pragma once
 #include "Shader.h"
-#include "NamedAsset.h"
+#include "Asset.h"
 
-#include <glm/glm.hpp>
-#include <vector>
+#include <optional>
+#include <array>
 
-class Material;
-
-struct VertexBuffer
+class Mesh : public Asset<Mesh>
 {
-	struct Attribute
+public:
+	enum AttributeType
+	{
+		positions,
+		normals,
+		texcoords,
+		N
+	};
+	struct AttributeBuffer
 	{
 		uint8_t const* data;
-		uint32_t stride;
 		uint32_t size;
+		uint32_t stride;
+		GLenum dataType;
+		uint32_t componentSize;
+		AttributeType attributeType;
 	};
-	Attribute positions;
-	Attribute normals;
-	Attribute textureCoords;
-};
+	using AttributeArray = std::array<std::optional<AttributeBuffer>, AttributeType::N>;
+	struct IndexBuffer
+	{
+		uint8_t const* data;
+		uint32_t size;
+		uint32_t count;
+		GLenum dataType;
+	};
 
-struct IndicesBuffer
-{
-	uint8_t const* data;
-	uint32_t size;
-};
-
-class Mesh : public NamedAsset<Mesh>
-{
 private:
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO;
-	VertexBuffer const vertices;
-	IndicesBuffer const indices;
-	Material* material;
+	mutable unsigned int VAO;
+	mutable unsigned int VBO;
+	mutable unsigned int EBO;
+	GLenum drawMode = GL_POINTS;
+	uint32_t const vertexCount;
+	uint32_t const indexCount;
+	GLenum const indexDataType;
+	bool indexedDrawing;
+
 public:
-	Mesh(VertexBuffer&& vertices, IndicesBuffer&& indices, Material* material);
+	Mesh(GLenum drawMode, AttributeArray&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
 	~Mesh();
 
 public:
-	void draw(Shader shader) const;
-	[[nodiscard]] bool drawUI();
+	void use() const override;
+	bool drawUI() override;
+
 };

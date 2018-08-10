@@ -119,9 +119,6 @@
     <ClInclude Include="headers\AssetLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="headers\NamedAsset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="headers\Asset.h">
       <Filter>Header Files</Filter>
     </ClInclude>

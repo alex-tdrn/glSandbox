@@ -62,6 +62,7 @@ namespace settings
 		inline glm::vec3 overrideDiffuseColor{1.0f, 1.0f, 1.0f};
 		inline glm::vec3 overrideSpecularColor{1.0f, 1.0f, 1.0f};
 		inline float ambientStrength = 0.025f;
+		inline float shininess = 8;
 		inline bool refractionPerChannel = false;
 		inline float refractionN1 = 1.0f;
 		inline glm::vec3 refractionN1RGB{refractionN1};
@@ -125,6 +126,7 @@ Shader& settings::rendering::getActiveShader()
 			ret.set("material.overrideDiffuseColor", overrideDiffuseColor);
 			ret.set("material.overrideSpecularColor", overrideSpecularColor);
 			ret.set("ambientStrength", ambientStrength);
+			ret.set("material.shininess", shininess);
 			break;
 		case type::refraction:
 			ret.set("perChannel", refractionPerChannel);
@@ -276,6 +278,7 @@ void settings::rendering::drawUI(bool* open)
 				ImGui::SameLine();
 				valueChanged |= ImGui::ColorEdit3("Specular", &overrideSpecularColor.x, ImGuiColorEditFlags_NoInputs);
 			}
+			valueChanged |= ImGui::SliderFloat("Shininess", &shininess, 0, 128);
 			valueChanged |= ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
 			break;
 		case type::refraction:

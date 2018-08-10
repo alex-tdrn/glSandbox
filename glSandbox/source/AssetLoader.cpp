@@ -3,6 +3,7 @@
 #include "Resources.h"
 
 #include <fx/gltf.h>
+#include <numeric>
 using namespace fx;
 
 uint32_t calculateElementSize(gltf::Accessor const& accessor);
@@ -11,7 +12,9 @@ GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 
 void loadGLTF(std::string const& filename)
 {
-	gltf::Document doc = gltf::LoadFromText(filename);
+	gltf::ReadQuotas readQuota;
+	readQuota.MaxBufferByteLength = std::numeric_limits<uint32_t>::max();
+	gltf::Document doc = gltf::LoadFromText(filename, readQuota);
 	
 	auto const& primitive = doc.meshes[0].primitives[0];
 	Mesh::AttributeArray attributeArray;

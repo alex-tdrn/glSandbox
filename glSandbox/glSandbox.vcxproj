@@ -178,7 +178,6 @@
     <ClInclude Include="headers\Mesh.h" />
     <ClInclude Include="headers\Model.h" />
     <ClInclude Include="headers\Actor.h" />
-    <ClInclude Include="headers\NamedAsset.h" />
     <ClInclude Include="headers\PostProcessingStep.h" />
     <ClInclude Include="headers\Resources.h" />
     <ClInclude Include="headers\Scene.h" />

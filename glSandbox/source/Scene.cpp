@@ -166,6 +166,9 @@ void Scene::draw()
 	drawLights(spotLights);
 	Shader& activeShader = getActiveShader();
 	glm::mat4 viewMatrix = camera.getViewMatrix();
+	glm::mat4 model = glm::mat4(1.0f);
+	//model = glm::translate(model, light.getPosition());
+	model = glm::scale(model, glm::vec3{2.0f});
 	if(isLightingShaderActive())
 	{
 		activeShader.set("ambientColor", backgroundColor);
@@ -239,17 +242,18 @@ void Scene::draw()
 		if(settings::rendering::debugNormalsShowLines)
 		{
 			resources::shaders::debugNormalsShowLines.use();
-			for(auto& actor : actors)
-				actor.draw(resources::shaders::debugNormalsShowLines);
+			resources::shaders::debugNormalsShowLines.set("model", model);
+
+			if(resources::gltfMesh)
+				resources::gltfMesh->use();
+			/*for(auto& actor : actors)
+				actor.draw(resources::shaders::debugNormalsShowLines);*/
 			activeShader.use();
 		}
 	}
 
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glm::mat4 model = glm::mat4(1.0f);
-	//model = glm::translate(model, light.getPosition());
-	//model = glm::scale(model, glm::vec3{0.2f});
 	activeShader.set("model", model);
 	activeShader.set("material.hasDiffuseMap", true);
 	activeShader.set("material.diffuseMap", 1);

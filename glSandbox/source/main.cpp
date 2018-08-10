@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 
 	//loadGLTF("models/Cube/Cube.gltf");
-	loadGLTF("models/stanford_dragon_vrip/scene.gltf");
+	loadGLTF("models/glTF-Sample-Models/Box/glTF/Box.gltf");
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{
@@ -131,8 +131,18 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+void drawFileBrowser(bool *open)
+{
+	if(!*open)
+		return;
+	ImGui::Begin("File Browser", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+
+	ImGui::End();
+}
+
 void drawUI()
 {
+	static bool drawFileBrowserFlag = false;
 	static bool drawResources = false;
 	static bool drawRenderingSettings = false;
 	static bool drawPostprocessingSettings = false;
@@ -144,6 +154,8 @@ void drawUI()
 	{
 		if(ImGui::BeginMenu("View"))
 		{
+			if(ImGui::MenuItem("File Browser"))
+				drawFileBrowserFlag = true;
 			if(ImGui::MenuItem("Resources"))
 				drawResources = true;
 			if(ImGui::BeginMenu("Settings"))
@@ -166,6 +178,7 @@ void drawUI()
 		}
 		ImGui::EndMainMenuBar();
 	}
+	drawFileBrowser(&drawFileBrowserFlag);
 	resources::drawUI(&drawResources);
 	settings::rendering::drawUI(&drawRenderingSettings);
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
@@ -173,6 +186,7 @@ void drawUI()
 	if(drawImGuiDemo)
 		ImGui::ShowDemoWindow(&drawImGuiDemo);
 }
+
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
 	info::windowWidth = width;

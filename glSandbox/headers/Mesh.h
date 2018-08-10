@@ -52,6 +52,10 @@ private:
 
 public:
 	Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
+	Mesh(Mesh const&) = delete;
+	Mesh(Mesh&&);
+	Mesh& operator=(Mesh const&) = delete;
+	Mesh& operator=(Mesh&&) = delete;
 	~Mesh();
 
 public:

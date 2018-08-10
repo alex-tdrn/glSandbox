@@ -7,12 +7,14 @@
 
 #include <glad/glad.h>
 #include <imgui.h>
+#include <vector>
 
 namespace resources
 {
 	inline unsigned int boxVAO;
 	inline unsigned int quadVAO;
 	inline Mesh* gltfMesh = nullptr;
+	inline std::vector<Mesh> meshes;
 	namespace scenes
 	{
 		inline Scene empty{"Empty"};

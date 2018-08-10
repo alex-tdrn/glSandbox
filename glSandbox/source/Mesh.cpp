@@ -57,8 +57,17 @@ Mesh::Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&
 	glBindVertexArray(0);
 }
 
+Mesh::Mesh(Mesh&& other)
+	:Asset<Mesh>("mesh"), drawMode(other.drawMode), vertexCount(other.vertexCount),
+	indexCount(other.indexCount), indexDataType(other.indexDataType), indexedDrawing(other.indexedDrawing),
+	VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
+{
+	other.releaseResources = false;
+}
 Mesh::~Mesh()
 {
+	if(!releaseResources)
+		return;
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);

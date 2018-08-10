@@ -10,6 +10,7 @@ private:
 
 protected:
 	std::string name;
+	bool releaseResources = true;
 
 public:
 	Asset(std::string namePrefix)

@@ -244,10 +244,8 @@ void Scene::draw()
 			resources::shaders::debugNormalsShowLines.use();
 			resources::shaders::debugNormalsShowLines.set("model", model);
 
-			if(resources::gltfMesh)
-				resources::gltfMesh->use();
-			/*for(auto& actor : actors)
-				actor.draw(resources::shaders::debugNormalsShowLines);*/
+			for(auto const& mesh : resources::meshes)
+				mesh.use();
 			activeShader.use();
 		}
 	}
@@ -267,8 +265,8 @@ void Scene::draw()
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	glStencilMask(0xFF);
-	if(resources::gltfMesh)
-		resources::gltfMesh->use();
+	for(auto const& mesh : resources::meshes)
+		mesh.use();
 	//for(auto& actor : actors)
 		//actor.draw(activeShader);
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);

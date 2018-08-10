@@ -15,16 +15,23 @@ public:
 		texcoords,
 		N
 	};
-	struct AttributeBuffer
+	struct Attributes
 	{
+		struct AttributeBuffer
+		{
+			uint8_t const* data;
+			uint32_t size;
+			uint32_t stride;
+			uint32_t offset;
+			GLenum dataType;
+			uint32_t componentSize;
+			AttributeType attributeType;
+		};
+		std::array<std::optional<AttributeBuffer>, AttributeType::N> array;
+		bool interleaved = false;
 		uint8_t const* data;
 		uint32_t size;
-		uint32_t stride;
-		GLenum dataType;
-		uint32_t componentSize;
-		AttributeType attributeType;
 	};
-	using AttributeArray = std::array<std::optional<AttributeBuffer>, AttributeType::N>;
 	struct IndexBuffer
 	{
 		uint8_t const* data;
@@ -44,7 +51,7 @@ private:
 	bool indexedDrawing;
 
 public:
-	Mesh(GLenum drawMode, AttributeArray&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
+	Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
 	~Mesh();
 
 public:

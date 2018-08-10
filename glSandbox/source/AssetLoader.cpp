@@ -17,10 +17,10 @@ void loadGLTF(std::string const& filename)
 	gltf::Document doc = gltf::LoadFromText(filename, readQuota);
 	
 	auto const& primitive = doc.meshes[0].primitives[0];
-	Mesh::AttributeArray attributeArray;
+	Mesh::Attributes attributes;
 	for(auto const& attribute : primitive.attributes)
 	{
-		Mesh::AttributeBuffer attributeBuffer;
+		Mesh::Attributes::AttributeBuffer attributeBuffer;
 		if(attribute.first == "POSITION")
 			attributeBuffer.attributeType = Mesh::AttributeType::positions;
 		else if(attribute.first == "NORMAL")
@@ -35,19 +35,32 @@ void loadGLTF(std::string const& filename)
 		auto const elementSize = calculateElementSize(accessor);
 		attributeBuffer.data = &buffer.data[bufferView.byteOffset + accessor.byteOffset];
 		attributeBuffer.size = accessor.count * elementSize;
-		attributeBuffer.stride = elementSize;
+		if(bufferView.byteStride > elementSize)//interleaved data
+		{
+			attributeBuffer.stride = bufferView.byteStride;
+			attributeBuffer.offset = accessor.byteOffset;
+			attributes.interleaved = true;
+			attributes.data = &buffer.data[bufferView.byteOffset];
+			attributes.size = bufferView.byteLength;
+		}
+		else
+			attributeBuffer.stride = elementSize;
 		attributeBuffer.componentSize = componentSize(accessor.type);
 		attributeBuffer.dataType = gltfToGLType(accessor.componentType);
-		attributeArray[attributeBuffer.attributeType] = std::move(attributeBuffer);
+		attributes.array[attributeBuffer.attributeType] = std::move(attributeBuffer);
 	}
-	auto const& accessor = doc.accessors[primitive.indices];
-	auto const& bufferView = doc.bufferViews[accessor.bufferView];
-	auto const& buffer = doc.buffers[bufferView.buffer];
-	Mesh::IndexBuffer indices;
-	indices.data = &buffer.data[bufferView.byteOffset + accessor.byteOffset];
-	indices.count = accessor.count;
-	indices.size = accessor.count * calculateElementSize(accessor);
-	indices.dataType = gltfToGLType(accessor.componentType);
+	std::optional<Mesh::IndexBuffer> indices = std::nullopt;
+	if(primitive.indices != -1)
+	{
+		indices = Mesh::IndexBuffer{};
+		auto const& accessor = doc.accessors[primitive.indices];
+		auto const& bufferView = doc.bufferViews[accessor.bufferView];
+		auto const& buffer = doc.buffers[bufferView.buffer];
+		indices->data = &buffer.data[bufferView.byteOffset + accessor.byteOffset];
+		indices->count = accessor.count;
+		indices->size = accessor.count * calculateElementSize(accessor);
+		indices->dataType = gltfToGLType(accessor.componentType);
+	}
 
 	GLenum drawMode = [&](){
 		switch(primitive.mode)
@@ -67,7 +80,7 @@ void loadGLTF(std::string const& filename)
 		}
 	}();
 	
-	resources::gltfMesh = new Mesh{drawMode, std::move(attributeArray), std::move(indices)};
+	resources::gltfMesh = new Mesh{drawMode, std::move(attributes), std::move(indices)};
 }
 GLenum gltfToGLType(gltf::Accessor::ComponentType type)
 {

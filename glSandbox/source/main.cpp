@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 
 	//loadGLTF("models/Cube/Cube.gltf");
-	loadGLTF("models/glTF-Sample-Models/Box/glTF/Box.gltf");
+	loadGLTF("models/glTF-Sample-Models/BoxInterleaved/glTF/BoxInterleaved.gltf");
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{

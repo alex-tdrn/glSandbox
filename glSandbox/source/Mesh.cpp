@@ -6,8 +6,8 @@
 #include <imgui.h>
 #include <array>
 
-Mesh::Mesh(GLenum drawMode, AttributeArray&& attributes, std::optional<IndexBuffer>&& indices)
-	: Asset<Mesh>("mesh"), drawMode(drawMode), vertexCount(attributes[AttributeType::positions]->size / attributes[AttributeType::positions]->stride),
+Mesh::Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices)
+	: Asset<Mesh>("mesh"), drawMode(drawMode), vertexCount(attributes.array[AttributeType::positions]->size / attributes.array[AttributeType::positions]->stride),
 	indexCount(indices? indices->count : 0), indexDataType(indices? indices->dataType : 0), indexedDrawing(indices)
 {
 	glGenVertexArrays(1, &VAO);
@@ -16,20 +16,35 @@ Mesh::Mesh(GLenum drawMode, AttributeArray&& attributes, std::optional<IndexBuff
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	int bufferSize = 0;
-	for(auto const& attribute : attributes)
-		bufferSize += attribute ? attribute->size : 0;
-	glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
-
-	int offset = 0;
-	for(auto const& attribute : attributes)
+	if(attributes.interleaved)
 	{
-		if(!attribute)
-			continue;
-		glBufferSubData(GL_ARRAY_BUFFER, offset, attribute->size, attribute->data);
-		glEnableVertexAttribArray(attribute->attributeType);
-		glVertexAttribPointer(attribute->attributeType, attribute->componentSize, attribute->dataType, GL_FALSE, attribute->stride, (void*) (offset));
-		offset += attribute->size;
+		glBufferData(GL_ARRAY_BUFFER, attributes.size, attributes.data, GL_STATIC_DRAW);
+
+		for(auto const& attribute : attributes.array)
+		{
+			if(!attribute)
+				continue;
+			glEnableVertexAttribArray(attribute->attributeType);
+			glVertexAttribPointer(attribute->attributeType, attribute->componentSize, attribute->dataType, GL_FALSE, attribute->stride, (void*) (attribute->offset));
+		}
+	}
+	else
+	{
+		int bufferSize = 0;
+		for(auto const& attribute : attributes.array)
+			bufferSize += attribute ? attribute->size : 0;
+		glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+
+		int offset = 0;
+		for(auto const& attribute : attributes.array)
+		{
+			if(!attribute)
+				continue;
+			glBufferSubData(GL_ARRAY_BUFFER, offset, attribute->size, attribute->data);
+			glEnableVertexAttribArray(attribute->attributeType);
+			glVertexAttribPointer(attribute->attributeType, attribute->componentSize, attribute->dataType, GL_FALSE, attribute->stride, (void*) (offset));
+			offset += attribute->size;
+		}
 	}
 
 	if(indices)

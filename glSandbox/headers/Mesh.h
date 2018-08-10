@@ -1,12 +1,15 @@
 #pragma once
-#include "Shader.h"
-#include "Asset.h"
+#include "Named.h"
 
+#include <glad/glad.h>
 #include <optional>
 #include <array>
 
-class Mesh : public Asset<Mesh>
+class Mesh
 {
+private:
+	Name<Mesh> name{"mesh"};
+
 public:
 	enum AttributeType
 	{
@@ -54,12 +57,11 @@ public:
 	Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
 	Mesh(Mesh const&) = delete;
 	Mesh(Mesh&&);
+	~Mesh() = default;
 	Mesh& operator=(Mesh const&) = delete;
 	Mesh& operator=(Mesh&&) = delete;
-	~Mesh();
 
 public:
-	void use() const override;
-	bool drawUI() override;
+	void use() const;
 
 };

@@ -148,6 +148,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="headers\Node.cpp" />
+    <ClCompile Include="headers\Prop.cpp" />
     <ClCompile Include="source\AssetLoader.cpp" />
     <ClCompile Include="source\Cubemap.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -161,12 +163,13 @@
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\Actor.cpp" />
     <ClCompile Include="source\PostProcessingStep.cpp" />
+    <ClCompile Include="source\Renderer.cpp" />
     <ClCompile Include="source\Scene.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\Asset.h" />
+    <ClInclude Include="headers\Named.h" />
     <ClInclude Include="headers\AssetLoader.h" />
     <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />
@@ -178,7 +181,10 @@
     <ClInclude Include="headers\Mesh.h" />
     <ClInclude Include="headers\Model.h" />
     <ClInclude Include="headers\Actor.h" />
+    <ClInclude Include="headers\Node.h" />
     <ClInclude Include="headers\PostProcessingStep.h" />
+    <ClInclude Include="headers\Prop.h" />
+    <ClInclude Include="headers\Renderer.h" />
     <ClInclude Include="headers\Resources.h" />
     <ClInclude Include="headers\Scene.h" />
     <ClInclude Include="headers\Shader.h" />

@@ -1,6 +1,7 @@
 #include "AssetLoader.h"
 #include "Mesh.h"
 #include "Resources.h"
+#include "Prop.h"
 
 #include <fx/gltf.h>
 #include <numeric>
@@ -86,6 +87,10 @@ void loadGLTF(std::string const& filename)
 			resources::meshes.emplace_back(drawMode, std::move(attributes), std::move(indices));
 		}
 	}
+	std::vector<std::unique_ptr<Node>> nodes;
+	for(int i = 0; i < resources::meshes.size(); i++)
+		nodes.emplace_back(new Prop{i});
+	resources::scenes.emplace_back(std::move(nodes));
 }
 GLenum gltfToGLType(gltf::Accessor::ComponentType type)
 {

@@ -13,28 +13,8 @@ namespace resources
 {
 	inline unsigned int boxVAO;
 	inline unsigned int quadVAO;
-	inline Mesh* gltfMesh = nullptr;
 	inline std::vector<Mesh> meshes;
-	namespace scenes
-	{
-		inline Scene empty{"Empty"};
-		inline Scene simple{"Simple"};
-		inline Scene medium{"Medium"};
-		inline Scene stressTest{"Stress Test"};
-		namespace type
-		{
-			enum type
-			{
-				empty,
-				simple,
-				medium,
-				stressTest
-			};
-		}
-		inline int active = type::simple;
-
-		inline Scene& getActiveScene();
-	}
+	inline std::vector<Scene> scenes;
 	namespace models
 	{
 		inline Model nanosuit{"models/nanosuit/nanosuit.obj", "Nanosuit"};
@@ -169,133 +149,6 @@ void resources::init()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) (2 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	for(Scene* scene : {&scenes::empty, &scenes::simple, &scenes::medium, &scenes::stressTest})
-	{
-		scene->getCamera().setPosition(Position{{1.0f, 0.2f, 1.0f}});
-		scene->getCamera().setOrientation(Orientation{215.0f, -5.0f, 0.0f});
-	}
-
-	{
-		DirectionalLight light;
-		light.setColor({1.0f, 1.0f, 1.0f});
-		light.setOrientation({250.0f, -60.0f, 0.0f});
-		light.setIntensity(0.5f);
-		scenes::simple.add(light);
-
-		SpotLight spotlight;
-		spotlight.setColor({1.0f, 1.0f, 1.0f});
-		spotlight.setPosition({1.0f, 0.0f, 3.0f});
-		spotlight.setOrientation({230.0f, 4.0f, 0.0f});
-		spotlight.setIntensity(125.0f);
-		spotlight.setCutoff(15.0f, 55.0f);
-		spotlight.disable();
-		scenes::simple.add(spotlight);
-
-		Actor actor(&resources::models::bunny);
-		actor.setPosition({0.0f, 0.0f, 0.0f});
-		actor.setScale({0.010f, 0.010f, 0.010f});
-		scenes::simple.add(actor);
-
-		scenes::simple.getCamera().setPosition(Position{{3.0f, 3.5f, 7.5f}});
-		scenes::simple.getCamera().setOrientation(Orientation{235.0f, -25.0f, 0.0f});
-	}
-
-	{
-		PointLight light;
-		light.setColor({1.0f, 200.0f / 255.0f, 0.0f});
-		light.setIntensity(5.0f);
-		light.setPosition({-1.0f, 0.0f, 2.0f});
-		scenes::medium.add(light);
-	}
-	{
-		SpotLight light;
-		light.setPosition({-10.0f, 0.0f, -1.5f});
-		light.setIntensity(10.0f);
-		light.setOrientation({180.0f, -10.0f, 0.0f});
-		light.setColor({0.0f, 1.0f, 0.0f});
-		scenes::medium.add(light);
-
-		light.setPosition({-10.0f, 0.0f, 1.0f});
-		light.setIntensity(10.0f);
-		light.setOrientation({180.0f, -10.0f, 0.0f});
-		light.setColor({1.0f, 0.0f, 0.0f});
-		scenes::medium.add(light);
-
-		light.setPosition({-10.0f, 2.0f, -0.25f});
-		light.setIntensity(10.0f);
-		light.setOrientation({180.0f, 0.0f, 0.0f});
-		light.setColor({0.0f, 0.0f, 1.0f});
-		scenes::medium.add(light);
-
-		light.setPosition({-3.0f, 1.5f, 1.0f});
-		light.setIntensity(400.0f);
-		light.setOrientation({260.0f, -30.0f, 0.0f});
-		light.setColor({1.0f, 1.0f, 1.0f});
-		scenes::medium.add(light);
-	}
-	{
-		Actor actor(&resources::models::sponza);
-		actor.setPosition({0.0f, -1.8f, 0.0f});
-		actor.setScale({0.0125f, 0.0125f, 0.0125f});
-		scenes::medium.add(actor);
-	}
-	{
-		int idx = 1;
-		for(int i = 0; i < 2; i++)
-		{
-			for(int j = 0; j < 2; j++)
-			{
-				Actor actor(&resources::models::bunny);
-				actor.setPosition({0.0f - i * 4.0f, -0.75f, 0.0f - j * 2.0f});
-				actor.setScale({0.005f, 0.005f, 0.005f});
-				scenes::medium.add(actor);
-				idx++;
-			}
-		}
-	}
-
-	{
-		scenes::stressTest.getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
-		scenes::stressTest.getCamera().setOrientation(Orientation{215.0f, -20.0f, 0.0f});
-		DirectionalLight light;
-		light.setOrientation({225.0f, +60.0f, 0.0f});
-
-		scenes::stressTest.add(light);
-
-		int idx = 1;
-		const int n = 10;
-		const float stride = 1.0f;
-		for(int i = 0; i < n; i++)
-		{
-			for(int j = 0; j < n; j++)
-			{
-				Actor actor(&resources::models::nanosuit);
-				actor.setPosition({0.0f - i * stride, -1.75f, 0.0f - j * stride});
-				actor.setScale({0.15f, 0.15f, 0.15f});
-				scenes::stressTest.add(actor);
-				idx++;
-			}
-		}
-	}
-}
-
-Scene& resources::scenes::getActiveScene()
-{
-	Scene& ret = [&]() -> Scene&{
-		switch(active)
-		{
-			case type::simple:
-				return simple;
-			case type::medium:
-				return medium;
-			case type::stressTest:
-				return stressTest;
-			default:
-				return empty;
-		}
-	}();
-	return ret;
 }
 
 void resources::shaders::reload()
@@ -330,51 +183,6 @@ void resources::drawUI(bool* open)
 
 	bool valueChanged = false;
 	ImGui::Indent();
-	if(ImGui::CollapsingHeader("Scenes"))
-	{
-		std::string_view comboPreview = scenes::empty.getName();
-		switch(scenes::active)
-		{
-			case scenes::type::simple:
-				comboPreview = scenes::simple.getName();
-				break;
-			case scenes::type::medium:
-				comboPreview = scenes::medium.getName();
-				break;
-			case scenes::type::stressTest:
-				comboPreview = scenes::stressTest.getName();
-				break;
-		}
-		if(ImGui::BeginCombo("Active", comboPreview.data()))
-		{
-			if(ImGui::Selectable(scenes::empty.getName().data(), scenes::active == scenes::type::empty))
-			{
-				scenes::active = scenes::type::empty;
-				valueChanged = true;
-			}
-			if(ImGui::Selectable(scenes::simple.getName().data(), scenes::active == scenes::type::simple))
-			{
-				scenes::active = scenes::type::simple;
-				valueChanged = true;
-			}
-			if(ImGui::Selectable(scenes::medium.getName().data(), scenes::active == scenes::type::medium))
-			{
-				scenes::active = scenes::type::medium;
-				valueChanged = true;
-			}
-			if(ImGui::Selectable(scenes::stressTest.getName().data(), scenes::active == scenes::type::stressTest))
-			{
-				scenes::active = scenes::type::stressTest;
-				valueChanged = true;
-			}
-			ImGui::EndCombo();
-		}
-		scenes::getActiveScene().drawUI(false);
-		scenes::empty.drawUI();
-		scenes::simple.drawUI();
-		scenes::medium.drawUI();
-		scenes::stressTest.drawUI();
-	}
 	if(ImGui::CollapsingHeader("Models"))
 	{
 		valueChanged |= models::bunny.drawUI();
@@ -392,8 +200,8 @@ void resources::drawUI(bool* open)
 		valueChanged = true;
 	}
 	ImGui::Unindent();
-	if(valueChanged)
-		scenes::getActiveScene().update();
+	//if(valueChanged)
+		//scenes::getActiveScene().update();
 
 	ImGui::End();
 }

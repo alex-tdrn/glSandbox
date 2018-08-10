@@ -53,7 +53,7 @@ namespace settings
 		inline bool wireframe = false;
 		inline bool depthTesting = true;
 		inline bool faceCulling = false;
-		inline bool explicitRendering = true;
+		inline bool explicitRendering = false;
 		inline int depthFunction = GL_LESS;
 		inline int faceCullingMode = GL_BACK;
 		inline int faceCullingOrdering = GL_CCW;
@@ -182,8 +182,8 @@ void settings::rendering::drawUI(bool* open)
 	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
 	ImGui::SameLine();
 	ImGui::Checkbox("V-Sync", &vsync);
-	if(ImGui::SliderInt("Samples", &multisamples,1, 16))
-		resources::scenes::getActiveScene().updateFramebuffer();
+	if(ImGui::SliderInt("Samples", &multisamples,1, 16))//TODO
+		//resources::scenes::getActiveScene().updateFramebuffer();
 	ImGui::Checkbox("Gamma Correction", &gammaCorrection);
 	if(gammaCorrection)
 	{
@@ -317,8 +317,8 @@ void settings::rendering::drawUI(bool* open)
 			break;
 	}
 	ImGui::Unindent();
-	if(valueChanged)
-		resources::scenes::getActiveScene().update();
+	//if(valueChanged)
+		//resources::scenes::getActiveScene().update();
 	ImGui::End();
 }
 

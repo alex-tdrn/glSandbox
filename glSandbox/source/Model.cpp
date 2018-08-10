@@ -196,7 +196,7 @@ bool Model::drawUI()
 		{
 			for(auto& mesh : meshes)
 			{
-				valueChanged |= mesh.drawUI();
+				//valueChanged |= mesh.drawUI();
 			}
 			ImGui::TreePop();
 		}

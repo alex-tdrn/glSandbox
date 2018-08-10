@@ -1,49 +1,26 @@
 #pragma once
-#include "Actor.h"
-#include "Lights.h"
+#include "Named.h"
+#include "Node.h"
 #include "Camera.h"
-#include "Cubemap.h"
 
 #include <vector>
+#include <memory>
+#include <forward_list>
+
+class Prop;
 
 class Scene
 {
 private:
-	std::string name;
-	unsigned int framebuffer;
-	unsigned int colorbuffer;
-	unsigned int renderbuffer;
-	unsigned int simpleFramebuffer;
-	unsigned int simpleColorbuffer;
-	bool initialized = false;
-	bool needRedraw = true;
-	std::vector<DirectionalLight> directionalLights;
-	std::vector<PointLight> pointLights;
-	std::vector<SpotLight> spotLights;
-	std::vector<Actor> actors;
+	Name<Scene> name{"scene"};
+	std::vector<std::unique_ptr<Node>> nodes;
 	Camera camera;
-	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
-	Cubemap* skybox = nullptr;
-	inline static int ct = 0;
 
 public:
-	Scene(std::string const name = "Model#" + std::to_string(ct++));
-
-private:
-	void init();
+	Scene(std::vector<std::unique_ptr<Node>>&& nodes = {});
 
 public:
-	std::string_view const getName();
-	void add(DirectionalLight light);
-	void add(PointLight light);
-	void add(SpotLight light);
-	void add(Actor actor);
-	void update();
-	void updateFramebuffer();
-	void draw();
-	void setBackgroundColor(glm::vec3 color);
-	unsigned int getColorbuffer() const;
 	Camera& getCamera();
+	std::forward_list<Prop const*> getActiveProps() const;
 
-	void drawUI(bool const showHeader = true);
 };

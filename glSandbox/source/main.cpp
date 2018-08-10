@@ -6,6 +6,7 @@
 #include "Globals.h"
 #include "Scene.h"
 #include "AssetLoader.h"
+#include "Renderer.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -90,6 +91,7 @@ int main(int argc, char** argv)
 
 	//loadGLTF("models/Cube/Cube.gltf");
 	loadGLTF("models/the_great_drawing_room/scene.gltf");
+	renderer.init();
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{
@@ -102,26 +104,8 @@ int main(int argc, char** argv)
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		info::rendering = false;
-		Scene& activeScene = resources::scenes::getActiveScene();
-		activeScene.draw();
-
-		{
-			using settings::postprocessing::steps;
-			if(steps.size() == 1)
-			{
-				steps[0].draw(activeScene.getColorbuffer(), 0);
-			}
-			else if(steps.size() > 1)
-			{
-				steps[0].draw(activeScene.getColorbuffer());
-				for(int i = 1; i < steps.size() - 1; i++)
-					steps[i].draw(steps[i - 1].getColorbuffer());
-				steps[steps.size() - 1].draw(steps[steps.size() - 2].getColorbuffer(), 0);
-			}
-
-		}
-
+		renderer.render();
+		settings::postprocessing::steps[0].draw(renderer.getOutput(), 0);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
@@ -194,7 +178,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 	info::aspectRatio = float(info::windowWidth) / info::windowHeight;
 
 	glViewport(0, 0, width, height);
-	resources::scenes::getActiveScene().updateFramebuffer();
+	renderer.resizeFramebuffer();
 	for(auto& step : settings::postprocessing::steps)
 		step.updateFramebuffer();
 }
@@ -211,20 +195,23 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 		firstMouse = false;
 		return;
 	}
-	Scene& activeScene = resources::scenes::getActiveScene();
+	//TODO
+	/*Scene& activeScene = resources::scenes::getActiveScene();
 	activeScene.update();
-
+	*/
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= -sensitivity;
-	activeScene.getCamera().adjustOrientation(xoffset, yoffset);
+	if(resources::scenes.empty())
+		return;
+	resources::scenes[0].getCamera().adjustOrientation(xoffset, yoffset);
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
 	if(ImGuiIO& io = ImGui::GetIO(); io.WantCaptureMouse)
 		return ImGui_ImplGlfw_MouseButtonCallback(window, button, mode, modifier);
-	resources::scenes::getActiveScene().update();
-
+	//resources::scenes::getActiveScene().update();
+	//TODO
 
 	if(button == GLFW_MOUSE_BUTTON_1)
 	{
@@ -246,8 +233,8 @@ void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifie
 		return ImGui_ImplGlfw_KeyCallback(window, key, keycode, mode, modifier);
 	if(mode != GLFW_PRESS)
 		return;
-	resources::scenes::getActiveScene().update();
-
+	//resources::scenes::getActiveScene().update();
+	//TODO
 	switch(key)
 	{
 		case GLFW_KEY_ESCAPE:
@@ -259,36 +246,38 @@ void processInput(GLFWwindow* window)
 {
 
 	float moveDistance = 2.5f * deltaTime; // adjust accordingly
-	Scene& activeScene = resources::scenes::getActiveScene();
+	if(resources::scenes.empty())
+		return;
+	Camera& cam = resources::scenes[0].getCamera();
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		activeScene.getCamera().dolly(+moveDistance);
-		activeScene.update();
+		cam.dolly(+moveDistance);
+		//activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		activeScene.getCamera().dolly(-moveDistance);
-		activeScene.update();
+		cam.dolly(-moveDistance);
+		//activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		activeScene.getCamera().pan({+moveDistance, 0.0f});
-		activeScene.update();
+		cam.pan({+moveDistance, 0.0f});
+		//activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		activeScene.getCamera().pan({-moveDistance, 0.0f});
-		activeScene.update();
+		cam.pan({-moveDistance, 0.0f});
+		//activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
-		activeScene.getCamera().pan({0.0f, +moveDistance});
-		activeScene.update();
+		cam.pan({0.0f, +moveDistance});
+		//activeScene.update();
 	}
 	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
-		activeScene.getCamera().pan({0.0f, -moveDistance});
-		activeScene.update();
+		cam.pan({0.0f, -moveDistance});
+		//activeScene.update();
 	}
 }
 

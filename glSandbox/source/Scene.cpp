@@ -10,6 +10,26 @@ Scene::Scene(std::vector<std::unique_ptr<Node>>&& nodes)
 
 }
 
+std::vector<DirectionalLight> const& Scene::getDirectionalLights() const
+{
+	return directionalLights;
+}
+
+std::vector<PointLight> const& Scene::getPointLights() const
+{
+	return pointLights;
+}
+
+std::vector<SpotLight> const& Scene::getSpotLights() const
+{
+	return spotLights;
+}
+
+glm::vec3 const& Scene::getBackground() const
+{
+	return backgroundColor;
+}
+
 Camera& Scene::getCamera()
 {
 	return camera;

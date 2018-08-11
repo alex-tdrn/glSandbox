@@ -63,16 +63,14 @@ void Renderer::resizeFramebuffer()
 }
 void Renderer::render()
 {
-	static std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({270, 60, 0}); return light; } ()};
-	static std::vector<PointLight> pointLights;
-	static std::vector<SpotLight> spotLights;
-	static glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
-	static Cubemap* skybox = nullptr;
 	if(resources::scenes.empty())
 		return;
 	auto const& props = resources::scenes[0].getActiveProps();
 	auto const& camera = resources::scenes[0].getCamera();
-
+	auto const& backgroundColor = resources::scenes[0].getBackground();
+	auto const& directionalLights = resources::scenes[0].getDirectionalLights();
+	auto const& spotLights = resources::scenes[0].getSpotLights();
+	auto const& pointLights = resources::scenes[0].getPointLights();
 	using namespace settings::rendering;
 	if(explicitRendering && !needRedraw)
 		return;
@@ -189,12 +187,12 @@ void Renderer::render()
 	}
 	else if(active == type::reflection || active == type::refraction)
 	{
-		if(skybox)
+		/*if(skybox)
 		{
 			skybox->use();
 			activeShader.set("skybox", 0);
 			activeShader.set("cameraPos", camera.getPosition());
-		}
+		}*/
 	}
 	else if(active == type::debugDepthBuffer)
 	{
@@ -245,7 +243,7 @@ void Renderer::render()
 	glDisable(GL_STENCIL_TEST);
 
 	//draw skybox
-	if(skybox)
+	/*if(skybox)
 	{
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -254,7 +252,7 @@ void Renderer::render()
 		resources::shaders::skybox.set("skybox", 0);
 		glBindVertexArray(resources::boxVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
+	}*/
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

@@ -1,5 +1,9 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include <glm/gtx/matrix_decompose.hpp>
+
 #include <imgui.h>
 #include <string>
 #include <tuple>
@@ -57,15 +61,15 @@ inline bool drag2(const char* title, float const sensitivity, float& x, float& y
 	return ret;
 }
 
-inline std::tuple<glm::vec3, glm::vec3, glm::vec3> decomposeTransformation(glm::mat4 const& t)
+inline std::tuple<glm::vec3, glm::quat, glm::vec3> decomposeTransformation(glm::mat4 const& transformation)
 {
-	glm::vec3 translation{t[3][0], t[3][1], t[3][2]};
-	glm::vec3 scale{glm::length(t[0]), glm::length(t[1]), glm::length(t[2])};
-	glm::mat4 rotationMatrix{1.0f};
-	rotationMatrix[0] = t[0] / scale.x;
-	rotationMatrix[1] = t[1] / scale.y;
-	rotationMatrix[2] = t[2] / scale.z;
-	glm::vec3 rotation{};
+	glm::vec3 translation;
+	glm::quat rotation;
+	glm::vec3 scale;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(transformation, scale, rotation, translation, skew, perspective);
+
 	return {translation, rotation, scale};
 }
 

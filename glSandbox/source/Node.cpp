@@ -3,6 +3,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+#include <algorithm>
+
 Node::Node(Node&& other)
 	:children(std::move(other.children))
 {
@@ -47,21 +49,23 @@ void Node::drawUI()
 			{
 				drawMatrix(getTransformation());
 				auto [t, r, s] = decomposeTransformation(getTransformation());
-				ImGui::DragFloat3("Translation", &t[0], 0.01f, 0, 0, "%.2f");
-				ImGui::DragFloat3("Scale", &s[0], 0.01f, 0, 0, "%.2f");
+				auto e = glm::eulerAngles(r);
+				ImGui::Text("%.2f %.2f %.2f T", t[0], t[1], t[2]);
+				ImGui::Text("%.2f %.2f %.2f R", e[0], e[1], e[2]);
+				ImGui::Text("%.2f %.2f %.2f S", s[0], s[1], s[2]);
 			}
 			ImGui::Text("Relative");
 			{
 				bool recomposeMatrix = false;
 				drawEditableMatrix(transformation);
 				auto[t, r, s] = decomposeTransformation(transformation);
-				recomposeMatrix |= ImGui::DragFloat3("Translation", &t[0], 0.01f, 0, 0, "%.2f");
-				recomposeMatrix |= ImGui::DragFloat3("Scale", &s[0], 0.01f, 0, 0, "%.2f");
+				auto e = glm::eulerAngles(r);
+				recomposeMatrix |= ImGui::DragFloat3("T", &t[0], 0.01f, 0, 0, "%.2f");
+				recomposeMatrix |= ImGui::DragFloat3("R", &e[0], 0.01f, 0, 0, "%.2f");
+				recomposeMatrix |= ImGui::DragFloat3("S", &s[0], 0.01f, 0, 0, "%.2f");
 				if(recomposeMatrix)
 				{
-					transformation = glm::mat4(1.0f);
-					transformation = glm::translate(transformation, t);
-					transformation = glm::scale(transformation, s);
+					transformation = glm::translate(glm::mat4(1.0f), t) * glm::mat4_cast(r) * glm::scale(glm::mat4(1.0f), s);
 				}
 			}
 		}
@@ -71,13 +75,13 @@ void Node::drawUI()
 			bool recomposeMatrix = false;
 			drawEditableMatrix(transformation);
 			auto[t, r, s] = decomposeTransformation(transformation);
-			recomposeMatrix |= ImGui::DragFloat3("Translation", &t[0], 0.01f, 0, 0, "%.2f");
-			recomposeMatrix |= ImGui::DragFloat3("Scale", &s[0], 0.01f, 0, 0, "%.2f");
+			auto e = glm::eulerAngles(r);
+			recomposeMatrix |= ImGui::DragFloat3("T", &t[0], 0.01f, 0, 0, "%.2f");
+			recomposeMatrix |= ImGui::DragFloat3("R", &e[0], 0.01f, 0, 0, "%.2f");
+			recomposeMatrix |= ImGui::DragFloat3("S", &s[0], 0.01f, 0, 0, "%.2f");
 			if(recomposeMatrix)
 			{
-				transformation = glm::mat4(1.0f);
-				transformation = glm::translate(transformation, t);
-				transformation = glm::scale(transformation, s);
+				transformation = glm::translate(glm::mat4(1.0f), t) * glm::mat4_cast(r) * glm::scale(glm::mat4(1.0f), s);
 			}
 		}
 		ImGui::Unindent();

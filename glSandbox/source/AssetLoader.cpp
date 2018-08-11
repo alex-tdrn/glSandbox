@@ -24,6 +24,7 @@ void loadGLTF(std::string const& filename)
 	readQuota.MaxBufferByteLength = std::numeric_limits<uint32_t>::max();
 	gltf::Document doc = gltf::LoadFromText(filename, readQuota);
 	
+
 	auto [meshes, primitivesMap] = loadMeshes(doc);
 	if(doc.scenes.empty())
 	{
@@ -34,6 +35,7 @@ void loadGLTF(std::string const& filename)
 	}
 	else
 	{
+		resources::activeScene = resources::scenes.size() + doc.scene;
 		for(auto& scene : loadScenes(doc, meshes.size(), primitivesMap))
 			resources::scenes.emplace_back(std::move(scene));
 	}
@@ -73,7 +75,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, Primiti
 		}
 	}
 	glm::vec3 t{node.translation[0], node.translation[1], node.translation[2]};
-	glm::quat r{node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]};
+	glm::quat r{node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]};
 	glm::vec3 s{node.scale[0], node.scale[1], node.scale[2]};
 
 	transformation = glm::scale(transformation, s);

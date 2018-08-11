@@ -89,9 +89,6 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
-
-	//loadGLTF("models/Cube/Cube.gltf");
-	loadGLTF("models\\glTF-Sample-Models\\FlightHelmet\\glTF\\FlightHelmet.gltf");
 	renderer.init();
 	resources::init();
 	while(!glfwWindowShouldClose(window))
@@ -118,10 +115,42 @@ int main(int argc, char** argv)
 
 void drawFileBrowser(bool *open)
 {
+
 	if(!*open)
 		return;
 	ImGui::Begin("File Browser", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-
+	static std::filesystem::path path{std::filesystem::current_path()};
+	ImGui::Text(path.generic_string().data());
+	if(ImGui::Button(".."))
+		path = path.parent_path();
+	std::vector<std::filesystem::directory_entry> folders;
+	std::vector<std::filesystem::directory_entry> files;
+	for(auto const& part : std::filesystem::directory_iterator(path))
+	{
+		if(part.is_directory())
+			folders.push_back(part);
+		else
+			files.push_back(part);
+	}
+	for(auto const& folder : folders)
+	{
+		if(ImGui::Button(folder.path().filename().generic_string().data()))
+			path = folder.path();
+	}
+	ImGui::NewLine();
+	for(auto const& file: files)
+	{
+		std::string filename = file.path().filename().generic_string();
+		if(file.path().extension() == ".gltf")
+		{
+			if(ImGui::Button(filename.data()))
+				loadGLTF(file.path().generic_string());
+		}
+		else
+		{
+			ImGui::Text(filename.data());
+		}
+	}
 	ImGui::End();
 }
 
@@ -205,7 +234,7 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	yoffset *= -sensitivity;
 	if(resources::scenes.empty())
 		return;
-	resources::scenes[0].getCamera().adjustOrientation(xoffset, yoffset);
+	resources::scenes[resources::activeScene].getCamera().adjustOrientation(xoffset, yoffset);
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
@@ -249,7 +278,7 @@ void processInput(GLFWwindow* window)
 	float moveDistance = 2.5f * deltaTime; // adjust accordingly
 	if(resources::scenes.empty())
 		return;
-	Camera& cam = resources::scenes[0].getCamera();
+	Camera& cam = resources::scenes[resources::activeScene].getCamera();
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cam.dolly(+moveDistance);

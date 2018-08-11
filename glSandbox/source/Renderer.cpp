@@ -65,12 +65,12 @@ void Renderer::render()
 {
 	if(resources::scenes.empty())
 		return;
-	auto const& props = resources::scenes[0].getActiveProps();
-	auto const& camera = resources::scenes[0].getCamera();
-	auto const& backgroundColor = resources::scenes[0].getBackground();
-	auto const& directionalLights = resources::scenes[0].getDirectionalLights();
-	auto const& spotLights = resources::scenes[0].getSpotLights();
-	auto const& pointLights = resources::scenes[0].getPointLights();
+	auto const& props = resources::scenes[resources::activeScene].getActiveProps();
+	auto const& camera = resources::scenes[resources::activeScene].getCamera();
+	auto const& backgroundColor = resources::scenes[resources::activeScene].getBackground();
+	auto const& directionalLights = resources::scenes[resources::activeScene].getDirectionalLights();
+	auto const& spotLights = resources::scenes[resources::activeScene].getSpotLights();
+	auto const& pointLights = resources::scenes[resources::activeScene].getPointLights();
 	using namespace settings::rendering;
 	if(explicitRendering && !needRedraw)
 		return;
@@ -111,6 +111,7 @@ void Renderer::render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	camera.use();
 	resources::shaders::light.use();
 	glBindVertexArray(resources::boxVAO);

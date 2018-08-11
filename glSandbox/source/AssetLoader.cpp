@@ -6,6 +6,7 @@
 #include <fx/gltf.h>
 #include <numeric>
 #include <map>
+#include <glm/gtc/quaternion.hpp>
 
 using namespace fx;
 using PrimitivesMap = std::map<gltf::Primitive const*, unsigned int>;
@@ -63,6 +64,22 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, Primiti
 	{
 		n = std::make_unique<Node>();
 	}
+	glm::mat4 transformation{1.0f};
+	for(int row = 0; row < 4; row++)
+	{
+		for(int col = 0; col < 4; col++)
+		{
+			transformation[col][row] = node.matrix[col + row * 4];
+		}
+	}
+	glm::vec3 t{node.translation[0], node.translation[1], node.translation[2]};
+	glm::quat r{node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]};
+	glm::vec3 s{node.scale[0], node.scale[1], node.scale[2]};
+
+	transformation = glm::scale(transformation, s);
+	transformation *= glm::mat4_cast(r);
+	transformation = glm::translate(transformation, t);
+	n->setTransformation(std::move(transformation));
 
 	for(auto childIdx : node.children)
 		n->addChild(loadNode(doc, childIdx, primitivesMap));
@@ -91,6 +108,7 @@ std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc
 	PrimitivesMap primitivesMap;
 	for(auto const& mesh : doc.meshes)
 	{
+		int idx = 1;
 		for(auto const& primitive : mesh.primitives)
 		{
 			Mesh::Attributes attributes;
@@ -156,7 +174,8 @@ std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc
 				}
 			}();
 			Mesh m{drawMode, std::move(attributes), std::move(indices)};
-			m.name.set(mesh.name);
+			if(!mesh.name.empty())
+				m.name.set(mesh.name + "#" + std::to_string(idx++));
 			meshes.push_back(std::move(m));
 			primitivesMap[&primitive] = meshes.size() - 1;
 		}

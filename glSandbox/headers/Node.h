@@ -25,6 +25,7 @@ public:
 public:
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
 	void addChild(std::unique_ptr<Node>&& node);
+	void setTransformation(glm::mat4&& t);
 	glm::mat4 getTransformation() const;
 	virtual void drawUI();
 

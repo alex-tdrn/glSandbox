@@ -21,12 +21,17 @@ void Node::addChild(std::unique_ptr<Node>&& node)
 	children.push_back(std::move(node));
 }
 
+void Node::setTransformation(glm::mat4&& t)
+{
+	transformation = std::move(t);
+}
+
 glm::mat4 Node::getTransformation() const
 {
 	if(parent == nullptr)
 		return transformation;
 	else
-		return transformation * parent->getTransformation();
+		return parent->getTransformation() * transformation;
 }
 
 void Node::drawUI()
@@ -47,11 +52,12 @@ void Node::drawUI()
 			}
 			ImGui::Text("Relative");
 			{
-				bool valueChanged = !drawEditableMatrix(transformation);
+				bool recomposeMatrix = false;
+				drawEditableMatrix(transformation);
 				auto[t, r, s] = decomposeTransformation(transformation);
-				valueChanged |= ImGui::DragFloat3("Translation", &t[0], 0.01f, 0, 0, "%.2f");
-				valueChanged |= ImGui::DragFloat3("Scale", &s[0], 0.01f, 0, 0, "%.2f");
-				if(valueChanged)
+				recomposeMatrix |= ImGui::DragFloat3("Translation", &t[0], 0.01f, 0, 0, "%.2f");
+				recomposeMatrix |= ImGui::DragFloat3("Scale", &s[0], 0.01f, 0, 0, "%.2f");
+				if(recomposeMatrix)
 				{
 					transformation = glm::mat4(1.0f);
 					transformation = glm::translate(transformation, t);
@@ -62,11 +68,12 @@ void Node::drawUI()
 		else
 		{
 			ImGui::Text("Global");
-			bool valueChanged = !drawEditableMatrix(transformation);
+			bool recomposeMatrix = false;
+			drawEditableMatrix(transformation);
 			auto[t, r, s] = decomposeTransformation(transformation);
-			valueChanged |= ImGui::DragFloat3("Translation", &t[0], 0.01f, 0, 0, "%.2f");
-			valueChanged |= ImGui::DragFloat3("Scale", &s[0], 0.01f, 0, 0, "%.2f");
-			if(valueChanged)
+			recomposeMatrix |= ImGui::DragFloat3("Translation", &t[0], 0.01f, 0, 0, "%.2f");
+			recomposeMatrix |= ImGui::DragFloat3("Scale", &s[0], 0.01f, 0, 0, "%.2f");
+			if(recomposeMatrix)
 			{
 				transformation = glm::mat4(1.0f);
 				transformation = glm::translate(transformation, t);

@@ -87,7 +87,7 @@ inline void drawMatrix(glm::mat4 const& matrix)
 inline bool drawEditableMatrix(glm::mat4& matrix)
 {
 	bool valueChanged = false;
-	ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.2f);
+	ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.1f);
 	for(int row = 0; row < 4; row++)
 	{
 		for(int col = 0; col < 4; col++)

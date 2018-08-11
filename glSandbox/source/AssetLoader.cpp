@@ -5,11 +5,17 @@
 
 #include <fx/gltf.h>
 #include <numeric>
+#include <map>
+
 using namespace fx;
+using PrimitivesMap = std::map<gltf::Primitive const*, unsigned int>;
 
 uint32_t calculateElementSize(gltf::Accessor const& accessor);
 uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
+std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
+std::vector<Scene> loadScenes(gltf::Document const& doc, int const meshesCounter, PrimitivesMap const& primitivesMap);
+std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, PrimitivesMap const& primitivesMap);
 
 void loadGLTF(std::string const& filename)
 {
@@ -17,6 +23,72 @@ void loadGLTF(std::string const& filename)
 	readQuota.MaxBufferByteLength = std::numeric_limits<uint32_t>::max();
 	gltf::Document doc = gltf::LoadFromText(filename, readQuota);
 	
+	auto [meshes, primitivesMap] = loadMeshes(doc);
+	if(doc.scenes.empty())
+	{
+		std::vector<std::unique_ptr<Node>> rootNodes;
+		for(int i = 0; i < meshes.size(); i++)
+			rootNodes.push_back(std::make_unique<Prop>(resources::meshes.size() + i));
+		resources::scenes.emplace_back(std::move(rootNodes));
+	}
+	else
+	{
+		for(auto& scene : loadScenes(doc, meshes.size(), primitivesMap))
+			resources::scenes.emplace_back(std::move(scene));
+	}
+	for(auto& mesh : meshes)
+		resources::meshes.emplace_back(std::move(mesh));
+}
+
+std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, PrimitivesMap const& primitivesMap)
+{
+	auto const& node = doc.nodes[idx];
+	std::unique_ptr<Node> n;
+
+	if(node.mesh != -1)
+	{
+		auto const& mesh = doc.meshes[node.mesh];
+		if(mesh.primitives.size() == 1)
+		{
+			n = std::make_unique<Prop>(resources::meshes.size() + primitivesMap.at(&mesh.primitives[0]));
+		}
+		else
+		{
+			n = std::make_unique<Node>();
+			for(auto const& primitive :doc.meshes[node.mesh].primitives)
+				n->addChild(std::make_unique<Prop>(resources::meshes.size() + primitivesMap.at(&primitive)));
+		}
+	}
+	else
+	{
+		n = std::make_unique<Node>();
+	}
+
+	for(auto childIdx : node.children)
+		n->addChild(loadNode(doc, childIdx, primitivesMap));
+
+	return n;
+}
+
+std::vector<Scene> loadScenes(gltf::Document const& doc, int const meshesCounter, PrimitivesMap const& primitivesMap)
+{
+	std::vector<Scene> scenes;
+	for(auto const& scene : doc.scenes)
+	{
+		std::vector<std::unique_ptr<Node>> rootNodes;
+		for(auto const nodeIdx : scene.nodes)
+			rootNodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
+		Scene s{std::move(rootNodes)};
+		if(!scene.name.empty())
+			s.name.set(scene.name);
+		scenes.emplace_back(std::move(s));
+	}
+	return scenes;
+}
+std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc)
+{
+	std::vector<Mesh> meshes;
+	PrimitivesMap primitivesMap;
 	for(auto const& mesh : doc.meshes)
 	{
 		for(auto const& primitive : mesh.primitives)
@@ -83,15 +155,15 @@ void loadGLTF(std::string const& filename)
 						return GL_TRIANGLES;
 				}
 			}();
-
-			resources::meshes.emplace_back(drawMode, std::move(attributes), std::move(indices));
+			Mesh m{drawMode, std::move(attributes), std::move(indices)};
+			m.name.set(mesh.name);
+			meshes.push_back(std::move(m));
+			primitivesMap[&primitive] = meshes.size() - 1;
 		}
 	}
-	std::vector<std::unique_ptr<Node>> nodes;
-	for(int i = 0; i < resources::meshes.size(); i++)
-		nodes.emplace_back(new Prop{i});
-	resources::scenes.emplace_back(std::move(nodes));
+	return {std::move(meshes), primitivesMap};
 }
+
 GLenum gltfToGLType(gltf::Accessor::ComponentType type)
 {
 	switch(type)

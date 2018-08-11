@@ -148,8 +148,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="headers\Node.cpp" />
-    <ClCompile Include="headers\Prop.cpp" />
+    <ClCompile Include="source\Node.cpp" />
+    <ClCompile Include="source\Prop.cpp" />
     <ClCompile Include="source\AssetLoader.cpp" />
     <ClCompile Include="source\Cubemap.cpp" />
     <ClCompile Include="source\Camera.cpp" />

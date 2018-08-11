@@ -7,9 +7,6 @@
 
 class Mesh
 {
-private:
-	Name<Mesh> name{"mesh"};
-
 public:
 	enum AttributeType
 	{
@@ -54,6 +51,9 @@ private:
 	bool indexedDrawing;
 
 public:
+	Name<Mesh> name{"mesh"};
+
+public:
 	Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
 	Mesh(Mesh const&) = delete;
 	Mesh(Mesh&&);
@@ -63,5 +63,6 @@ public:
 
 public:
 	void use() const;
+	void drawUI();
 
 };

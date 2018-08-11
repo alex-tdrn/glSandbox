@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Prop.h"
+#include "Util.h"
 
 #include <imgui.h>
 
@@ -22,7 +23,7 @@ std::forward_list<Prop const*> collectActiveProps(std::vector<std::unique_ptr<No
 		Prop const* prop = dynamic_cast<Prop const*>(node.get());
 		if(prop)
 			activeProps.push_front(prop);
-		activeProps.splice_after(activeProps.cend(), collectActiveProps(node->getChildren()));
+		activeProps.splice_after(activeProps.cbefore_begin(), collectActiveProps(node->getChildren()));
 	}
 	return activeProps;
 }
@@ -31,7 +32,16 @@ std::forward_list<Prop const*> Scene::getActiveProps() const
 	return collectActiveProps(nodes);
 }
 
-
+void Scene::drawUI()
+{
+	IDGuard idGuard{this};
+	if(ImGui::TreeNode(name.get().data()))
+	{
+		for(auto& node : nodes)
+			node->drawUI();
+		ImGui::TreePop();
+	}
+}
 //void Scene::drawUI(bool const showHeader)
 //{
 //	IDGuard idGuard{this};

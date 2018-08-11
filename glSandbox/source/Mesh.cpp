@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "Util.h"
 
 #include <imgui.h>
 
@@ -70,19 +71,13 @@ void Mesh::use() const
 	glBindVertexArray(0);
 }
 
-//bool Mesh::drawUI()
-//{
-//	return false;
-//	//IDGuard idGuard{this};
-//
-//	//bool valueChanged = false;
-//	//if(ImGui::TreeNode(name.data()))
-//	//{
-//	//	//ImGui::Text("Vertices %i", vertices.size());
-//	//	ImGui::Text("Indices %i", indices.size());
-//	//	ImGui::Text("Triangles %i", indices.size() / 3);
-//	//	valueChanged |= material->drawUI();
-//	//	ImGui::TreePop();
-//	//}
-//	//return valueChanged;
-//}
+void Mesh::drawUI()
+{
+	IDGuard idGuard{this};
+
+	if(ImGui::TreeNode(name.get().data()))
+	{
+
+		ImGui::TreePop();
+	}
+}

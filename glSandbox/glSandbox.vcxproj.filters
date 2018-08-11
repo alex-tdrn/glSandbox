@@ -69,10 +69,10 @@
     <ClCompile Include="source\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="headers\Node.cpp">
+    <ClCompile Include="source\Prop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="headers\Prop.cpp">
+    <ClCompile Include="source\Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

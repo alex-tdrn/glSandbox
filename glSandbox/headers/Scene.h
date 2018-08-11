@@ -12,9 +12,11 @@ class Prop;
 class Scene
 {
 private:
-	Name<Scene> name{"scene"};
 	std::vector<std::unique_ptr<Node>> nodes;
 	Camera camera;
+
+public:
+	Name<Scene> name{"scene"};
 
 public:
 	Scene(std::vector<std::unique_ptr<Node>>&& nodes = {});
@@ -22,5 +24,6 @@ public:
 public:
 	Camera& getCamera();
 	std::forward_list<Prop const*> getActiveProps() const;
+	void drawUI();
 
 };

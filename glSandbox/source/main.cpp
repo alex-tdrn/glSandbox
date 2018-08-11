@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 
 	//loadGLTF("models/Cube/Cube.gltf");
-	loadGLTF("models/the_great_drawing_room/scene.gltf");
+	loadGLTF("models\\glTF-Sample-Models\\FlightHelmet\\glTF\\FlightHelmet.gltf");
 	renderer.init();
 	resources::init();
 	while(!glfwWindowShouldClose(window))

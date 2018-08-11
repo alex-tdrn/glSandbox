@@ -63,7 +63,7 @@ void Renderer::resizeFramebuffer()
 }
 void Renderer::render()
 {
-	static std::vector<DirectionalLight> directionalLights;
+	static std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({270, 60, 0}); return light; } ()};
 	static std::vector<PointLight> pointLights;
 	static std::vector<SpotLight> spotLights;
 	static glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
@@ -227,11 +227,9 @@ void Renderer::render()
 		activeShader.set("model", prop->getTransformation());
 		activeShader.set("material.hasDiffuseMap", true);
 		activeShader.set("material.diffuseMap", 1);
-		activeShader.set("material.hasSpecularMap", true);
-		activeShader.set("material.specularMap", 2);
+		activeShader.set("material.hasSpecularMap", false);
 		activeShader.set("material.hasOpacityMap", false);
 		resources::textures::placeholder.use(1);
-		resources::textures::placeholder.use(2);
 		if(prop->getMeshIndex())
 			resources::meshes[*prop->getMeshIndex()].use();
 	}

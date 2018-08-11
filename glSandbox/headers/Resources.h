@@ -183,12 +183,12 @@ void resources::drawUI(bool* open)
 
 	bool valueChanged = false;
 	ImGui::Indent();
-	if(ImGui::CollapsingHeader("Models"))
-	{
-		valueChanged |= models::bunny.drawUI();
-		valueChanged |= models::nanosuit.drawUI();
-		valueChanged |= models::sponza.drawUI();
-	}
+	if(ImGui::CollapsingHeader("Scenes"))
+		for(auto& scene : scenes)
+			scene.drawUI();
+	if(ImGui::CollapsingHeader("Meshes"))
+		for(auto& mesh : meshes)
+			mesh.drawUI();
 	if(ImGui::CollapsingHeader("Cubemaps"))
 	{
 		valueChanged |= cubemaps::skybox.drawUI();

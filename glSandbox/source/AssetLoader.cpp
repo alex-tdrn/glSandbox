@@ -71,7 +71,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, Primiti
 	{
 		for(int col = 0; col < 4; col++)
 		{
-			transformation[col][row] = node.matrix[col + row * 4];
+			transformation[col][row] = node.matrix[row + col * 4];
 		}
 	}
 	glm::vec3 t{node.translation[0], node.translation[1], node.translation[2]};
@@ -81,6 +81,10 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, Primiti
 	transformation = glm::scale(transformation, s);
 	transformation *= glm::mat4_cast(r);
 	transformation = glm::translate(transformation, t);
+	assert(transformation[0][3] == 0);
+	assert(transformation[1][3] == 0);
+	assert(transformation[2][3] == 0);
+	assert(transformation[3][3] == 1);
 	n->setTransformation(std::move(transformation));
 
 	for(auto childIdx : node.children)

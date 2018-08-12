@@ -70,6 +70,29 @@ Shader& PostProcessingStep::getActiveShader()
 	return ret;
 }
 
+//TODO
+//ImGui::Checkbox("Gamma Correction", &gammaCorrection);
+//if(gammaCorrection)
+//{
+//	ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f);
+//}
+//if(ImGui::CollapsingHeader("Tone Mapping"))
+//{
+//	ImGui::Indent();
+//
+//	ImGui::RadioButton("None", &tonemapping, tonemappingType::none);
+//	ImGui::SameLine();
+//	ImGui::RadioButton("Reinhard", &tonemapping, tonemappingType::reinhard);
+//	ImGui::SameLine();
+//	ImGui::RadioButton("Uncharted 2", &tonemapping, tonemappingType::uncharted2);
+//	ImGui::SameLine();
+//	ImGui::RadioButton("Hejl Burgess-Dawson", &tonemapping, tonemappingType::hejl_burgess_dawson);
+//	if(tonemapping)
+//	{
+//		ImGui::DragFloat("Exposure", &exposure, 0.1f);
+//	}
+//	ImGui::Unindent();
+//}
 void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targetFramebuffer)
 {
 	if(!initialized)
@@ -108,7 +131,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
 		else
 			resources::shaders::gammaHDR.set("gamma", 1.0f);
-		if(settings::rendering::tonemapping && settings::rendering::isLightingShaderActive())
+		if(settings::rendering::tonemapping)
 		{
 			resources::shaders::gammaHDR.set("tonemapping", settings::rendering::tonemapping);
 			resources::shaders::gammaHDR.set("exposure", settings::rendering::exposure);

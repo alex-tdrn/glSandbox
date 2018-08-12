@@ -194,7 +194,7 @@ void drawUI()
 	}
 	drawFileBrowser(&drawFileBrowserFlag);
 	resources::drawUI(&drawResources);
-	settings::rendering::drawUI(&drawRenderingSettings);
+	renderer.drawUI(&drawRenderingSettings);
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
 	info::drawUI(&drawStats);
 	if(drawImGuiDemo)

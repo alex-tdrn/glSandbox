@@ -73,7 +73,6 @@ void Scene::fitToBounds(float const idealSize)
 
 	glm::vec3 centroid = (min + max) * 0.5f;
 	glm::vec3 translation = -centroid;
-	Bounds test{min, max};
 	min += translation;
 	max += translation;
 
@@ -84,7 +83,6 @@ void Scene::fitToBounds(float const idealSize)
 	float const scale = idealSize / currentSize;
 	glm::mat4 t = glm::translate(glm::mat4{1.0f}, translation);
 	glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
-	test *= s * t;
 	for(auto& node : nodes)
 		node->setTransformation(s * t * node->getTransformation());
 }

@@ -3,8 +3,8 @@
 
 #include <imgui.h>
 
-Mesh::Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices)
-	: drawMode(drawMode), vertexCount(attributes.array[AttributeType::positions]->size / attributes.array[AttributeType::positions]->stride),
+Mesh::Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices)
+	: bounds(bounds), drawMode(drawMode), vertexCount(attributes.array[AttributeType::positions]->size / attributes.array[AttributeType::positions]->stride),
 	indexCount(indices? indices->count : 0), indexDataType(indices? indices->dataType : 0), indexedDrawing(indices)
 {
 	glGenVertexArrays(1, &VAO);
@@ -55,10 +55,15 @@ Mesh::Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&
 }
 
 Mesh::Mesh(Mesh&& other)
-	: drawMode(other.drawMode), vertexCount(other.vertexCount),
+	: bounds(other.bounds), drawMode(other.drawMode), vertexCount(other.vertexCount),
 	indexCount(other.indexCount), indexDataType(other.indexDataType), indexedDrawing(other.indexedDrawing),
 	VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 {
+}
+
+Bounds const& Mesh::getBounds() const
+{
+	return bounds;
 }
 
 void Mesh::use() const

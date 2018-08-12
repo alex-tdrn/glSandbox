@@ -34,6 +34,7 @@ public:
 	glm::vec3 const& getBackground() const;
 	Camera& getCamera();
 	std::forward_list<Prop const*> getActiveProps() const;
+	void fitToBounds(float const idealSize);
 	void drawUI();
 
 };

@@ -16,6 +16,7 @@ namespace resources
 	inline std::vector<Mesh> meshes;
 	inline std::vector<Scene> scenes;
 	inline int activeScene = -1;
+	inline float sceneSize = 2.0f;
 	namespace models
 	{
 		inline Model nanosuit{"models/nanosuit/nanosuit.obj", "Nanosuit"};
@@ -186,6 +187,12 @@ void resources::drawUI(bool* open)
 	ImGui::Indent();
 	if(ImGui::CollapsingHeader("Scenes"))
 	{
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.25f);
+		ImGui::InputFloat("Scene max size", &resources::sceneSize);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		if(ImGui::Button("Rescale"))
+			scenes[activeScene].fitToBounds(sceneSize);
 		ImGui::InputInt("Active scene", &resources::activeScene, 1, 1);
 		resources::activeScene = std::clamp<int>(resources::activeScene, 0, resources::scenes.size());
 		for(auto& scene : scenes)

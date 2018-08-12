@@ -118,11 +118,19 @@ std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc
 		for(auto const& primitive : mesh.primitives)
 		{
 			Mesh::Attributes attributes;
+			glm::vec3 min;
+			glm::vec3 max;
 			for(auto const& attribute : primitive.attributes)
 			{
 				Mesh::Attributes::AttributeBuffer attributeBuffer;
 				if(attribute.first == "POSITION")
+				{
 					attributeBuffer.attributeType = Mesh::AttributeType::positions;
+					auto const& aMin = doc.accessors[attribute.second].min;
+ 					min = glm::vec3(aMin[0], aMin[1], aMin[2]);
+					auto const& aMax = doc.accessors[attribute.second].max;
+					max = glm::vec3(aMax[0], aMax[1], aMax[2]);
+				}
 				else if(attribute.first == "NORMAL")
 					attributeBuffer.attributeType = Mesh::AttributeType::normals;
 				else if(attribute.first == "TEXCOORD_0")
@@ -179,7 +187,7 @@ std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc
 						return GL_TRIANGLES;
 				}
 			}();
-			Mesh m{drawMode, std::move(attributes), std::move(indices)};
+			Mesh m{{min, max}, drawMode, std::move(attributes), std::move(indices)};
 			if(!mesh.name.empty())
 				m.name.set(mesh.name + "#" + std::to_string(idx++));
 			meshes.push_back(std::move(m));

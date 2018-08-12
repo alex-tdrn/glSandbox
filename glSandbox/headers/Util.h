@@ -7,6 +7,76 @@
 #include <imgui.h>
 #include <string>
 #include <tuple>
+#include <algorithm>
+
+class Bounds
+{
+private:
+	glm::vec3 min{0};
+	glm::vec3 max{0};
+
+public:
+	Bounds() = default;
+	Bounds(glm::vec3 point1, glm::vec3 point2)
+		: min(point1), max(point2)
+	{
+		normalize();
+	}
+
+	Bounds& operator*(glm::mat4 const& rhs)
+	{
+		glm::vec4 min{this->min, 1.0f};
+		glm::vec4 max{this->max, 1.0f};
+		min = rhs * min;
+		max = rhs * max;
+		normalize();
+		return *this;
+	}
+	Bounds& operator+(Bounds const& rhs)
+	{
+		glm::vec3 min;
+		glm::vec3 max;
+		for(auto i = 0; i < 3; i++)
+		{
+			min[i] = std::min(this->min[i], rhs.min[i]);
+			max[i] = std::max(this->max[i], rhs.max[i]);
+		}
+		this->min = min;
+		this->max = max;
+		normalize();
+		return *this;
+	}
+	Bounds& operator*=(glm::mat4 const& rhs)
+	{
+		*this = *this * rhs;
+		return *this;
+	}
+	Bounds operator+=(Bounds const& rhs)
+	{
+		*this = *this + rhs;
+		return *this;
+	}
+
+private:
+	void normalize()
+	{
+		glm::vec3 realMin;
+		glm::vec3 realMax;
+		for(auto i = 0; i < 3; i++)
+		{
+			realMin[i] = std::min(min[i], max[i]);
+			realMax[i] = std::max(min[i], max[i]);
+		}
+		min = realMin;
+		max = realMax;
+	}
+
+public:
+	std::pair<glm::vec3, glm::vec3> getValues() const
+	{
+		return {min, max};
+	}
+};
 
 class IDGuard
 {

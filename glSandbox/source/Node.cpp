@@ -36,6 +36,14 @@ glm::mat4 Node::getTransformation() const
 		return parent->getTransformation() * transformation;
 }
 
+Bounds Node::getBounds() const
+{
+	Bounds bounds;
+	for(auto const& child : children)
+		bounds += child->getBounds();
+	return bounds;
+}
+
 void Node::drawUI()
 {
 	IDGuard idGuard{this};
@@ -57,14 +65,19 @@ void Node::drawUI()
 			ImGui::Text("Relative");
 			{
 				bool recomposeMatrix = false;
+				bool uniformScale = false;
 				drawEditableMatrix(transformation);
 				auto[t, r, s] = decomposeTransformation(transformation);
 				auto e = glm::eulerAngles(r);
+				float scale = 1.0f;
 				recomposeMatrix |= ImGui::DragFloat3("T", &t[0], 0.01f, 0, 0, "%.2f");
 				recomposeMatrix |= ImGui::DragFloat3("R", &e[0], 0.01f, 0, 0, "%.2f");
+				uniformScale |= ImGui::DragFloat("Scale uniformly", &scale, 0.01f, 0, 0, "%.2f");
 				recomposeMatrix |= ImGui::DragFloat3("S", &s[0], 0.01f, 0, 0, "%.2f");
-				if(recomposeMatrix)
+				if(recomposeMatrix | uniformScale)
 				{
+					if(uniformScale)
+						s = glm::vec3(scale);
 					transformation = glm::translate(glm::mat4(1.0f), t) * glm::mat4_cast(r) * glm::scale(glm::mat4(1.0f), s);
 				}
 			}
@@ -73,14 +86,19 @@ void Node::drawUI()
 		{
 			ImGui::Text("Global");
 			bool recomposeMatrix = false;
+			bool uniformScale = false;
 			drawEditableMatrix(transformation);
 			auto[t, r, s] = decomposeTransformation(transformation);
 			auto e = glm::eulerAngles(r);
+			float scale = 1.0f;
 			recomposeMatrix |= ImGui::DragFloat3("T", &t[0], 0.01f, 0, 0, "%.2f");
 			recomposeMatrix |= ImGui::DragFloat3("R", &e[0], 0.01f, 0, 0, "%.2f");
+			uniformScale |= ImGui::DragFloat("Scale uniformly", &scale, 0.01f, 0, 0, "%.2f");
 			recomposeMatrix |= ImGui::DragFloat3("S", &s[0], 0.01f, 0, 0, "%.2f");
-			if(recomposeMatrix)
+			if(recomposeMatrix | uniformScale)
 			{
+				if(uniformScale)
+					s = glm::vec3(scale);
 				transformation = glm::translate(glm::mat4(1.0f), t) * glm::mat4_cast(r) * glm::scale(glm::mat4(1.0f), s);
 			}
 		}

@@ -1,5 +1,6 @@
 #pragma once
 #include "Named.h"
+#include "Util.h"
 
 #include <glad/glad.h>
 #include <optional>
@@ -49,12 +50,12 @@ private:
 	uint32_t const indexCount;
 	GLenum const indexDataType;
 	bool indexedDrawing;
-
+	Bounds const bounds;
 public:
 	Name<Mesh> name{"mesh"};
 
 public:
-	Mesh(GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
+	Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
 	Mesh(Mesh const&) = delete;
 	Mesh(Mesh&&);
 	~Mesh() = default;
@@ -62,6 +63,7 @@ public:
 	Mesh& operator=(Mesh&&) = delete;
 
 public:
+	Bounds const& getBounds() const;
 	void use() const;
 	void drawUI();
 

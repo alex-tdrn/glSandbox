@@ -1,5 +1,6 @@
 #pragma once
 #include "Node.h"
+#include "Util.h"
 
 #include <optional>
 
@@ -17,6 +18,7 @@ public:
 
 public:
 	std::optional<unsigned int>const& getMeshIndex() const;
+	Bounds getBounds() const override;
 	//void drawUI() override;
 
 };

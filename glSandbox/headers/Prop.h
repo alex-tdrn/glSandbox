@@ -18,7 +18,7 @@ public:
 
 public:
 	std::optional<unsigned int>const& getMeshIndex() const;
-	Bounds getBounds() const override;
+	std::optional<Bounds> getBounds() const override;
 	//void drawUI() override;
 
 };

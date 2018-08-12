@@ -12,11 +12,13 @@ std::optional<unsigned int>const& Prop::getMeshIndex() const
 	return meshIndex;
 }
 
-Bounds Prop::getBounds() const
+std::optional<Bounds> Prop::getBounds() const
 {
-	Bounds bounds;
 	if(meshIndex)
-		bounds = resources::meshes[*meshIndex].getBounds();
-	auto const& t = getTransformation();
-	return bounds * t;
+	{
+		Bounds bounds{resources::meshes[*meshIndex].getBounds()};
+		auto const& t = getTransformation();
+		return bounds * t;
+	}
+	return std::nullopt;
 }

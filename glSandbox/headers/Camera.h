@@ -12,7 +12,7 @@ private:
 	bool initialized = false;
 	bool projectionOrtho = false;
 	Orientation orientation;
-	Position position = {{0.0f, 0.0f, 3.0f}};
+	Position position = {{0.0f, 0.0f, 4.0f}};
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 	float fov = 45.0f;

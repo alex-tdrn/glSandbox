@@ -27,8 +27,8 @@ public:
 	{
 		glm::vec4 min{this->min, 1.0f};
 		glm::vec4 max{this->max, 1.0f};
-		min = rhs * min;
-		max = rhs * max;
+		this->min = rhs * min;
+		this->max = rhs * max;
 		normalize();
 		return *this;
 	}

@@ -36,11 +36,20 @@ glm::mat4 Node::getTransformation() const
 		return parent->getTransformation() * transformation;
 }
 
-Bounds Node::getBounds() const
+std::optional<Bounds> Node::getBounds() const
 {
-	Bounds bounds;
+	std::optional<Bounds> bounds = std::nullopt;
 	for(auto const& child : children)
-		bounds += child->getBounds();
+	{
+		auto childBounds = child->getBounds();
+		if(childBounds)
+		{
+			if(!bounds)
+				bounds = childBounds;
+			else
+				*bounds += *childBounds;
+		}
+	}
 	return bounds;
 }
 

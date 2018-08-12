@@ -54,17 +54,37 @@ std::forward_list<Prop const*> Scene::getActiveProps() const
 
 void Scene::fitToBounds(float const idealSize)
 {
-	Bounds bounds;
+	std::optional<Bounds> bounds = std::nullopt;
 	for(auto const& node : nodes)
-		bounds += node->getBounds();
-	auto[min, max] = bounds.getValues();
+	{
+		auto nodeBounds = node->getBounds();
+		if(nodeBounds)
+		{
+			if(!bounds)
+				bounds = nodeBounds;
+			else
+				*bounds += *nodeBounds;
+		}
+	}
+	if(!bounds)
+		return;
+
+	auto[min, max] = bounds->getValues();
+
+	glm::vec3 centroid = (min + max) * 0.5f;
+	glm::vec3 translation = -centroid;
+	min += translation;
+	max += translation;
+
 	glm::vec3 absMax;
 	for(int i = 0; i < 3; i++)
 		absMax[i] = std::max(std::abs(min[i]), std::abs(max[i]));
 	float const currentSize = std::max({absMax[0], absMax[1], absMax[2]});
 	float const scale = idealSize / currentSize;
+	glm::mat4 t = glm::translate(glm::mat4{1.0f}, translation);
+	glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
 	for(auto& node : nodes)
-		node->setTransformation(glm::scale(node->getTransformation(), glm::vec3{scale}));
+		node->setTransformation(s * t * node->getTransformation());
 }
 
 void Scene::drawUI()

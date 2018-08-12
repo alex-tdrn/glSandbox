@@ -47,6 +47,19 @@ namespace resources
 		inline Shader invert("shaders/pp.vert", "shaders/ppInvert.frag");
 		inline Shader convolution("shaders/pp.vert", "shaders/ppConvolution.frag");
 
+		enum class type
+		{
+			blinn_phong,
+			phong,
+			gouraud,
+			flat,
+			reflection,
+			refraction,
+			debugNormals,
+			debugTexCoords,
+			debugDepthBuffer
+		};
+		inline Shader& get(type shaderType);
 		inline void reload();
 	}
 	namespace textures
@@ -151,6 +164,34 @@ void resources::init()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) (2 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+}
+
+Shader& resources::shaders::get(type shaderType)
+{
+	switch(shaderType)
+	{
+		case type::blinn_phong:
+			return blinn_phong;
+		case type::phong:
+			return phong;
+		case type::gouraud:
+			return gouraud;
+		case type::flat:
+			return flat;
+		case type::reflection:
+			return reflection;
+		case type::refraction:
+			return refraction;
+		case type::debugNormals:
+			return debugNormals;
+		case type::debugTexCoords:
+			return debugTexCoords;
+		case type::debugDepthBuffer:
+			return debugDepthBuffer;
+		default:
+			assert(false);
+			return blinn_phong;
+	}
 }
 
 void resources::shaders::reload()

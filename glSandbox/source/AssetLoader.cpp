@@ -25,22 +25,27 @@ void loadGLTF(std::string const& filename)
 	gltf::Document doc = gltf::LoadFromText(filename, readQuota);
 	
 
-	auto [meshes, primitivesMap] = loadMeshes(doc);
+	auto [loadedMeshes, primitivesMap] = loadMeshes(doc);
+	std::vector<Scene> loadedScenes;
 	if(doc.scenes.empty())
 	{
 		std::vector<std::unique_ptr<Node>> rootNodes;
-		for(int i = 0; i < meshes.size(); i++)
+		for(int i = 0; i < loadedMeshes.size(); i++)
 			rootNodes.push_back(std::make_unique<Prop>(resources::meshes.size() + i));
-		resources::scenes.emplace_back(std::move(rootNodes));
+		loadedScenes.emplace_back(std::move(rootNodes));
 	}
 	else
 	{
 		resources::activeScene = resources::scenes.size() + doc.scene;
-		for(auto& scene : loadScenes(doc, meshes.size(), primitivesMap))
-			resources::scenes.emplace_back(std::move(scene));
+		loadedScenes = loadScenes(doc, loadedMeshes.size(), primitivesMap);
 	}
-	for(auto& mesh : meshes)
+	for(auto& mesh : loadedMeshes)
 		resources::meshes.emplace_back(std::move(mesh));
+	for(auto& scene : loadedScenes)
+	{
+		scene.fitToBounds(resources::sceneSize);
+		resources::scenes.emplace_back(std::move(scene));
+	}
 }
 
 std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, PrimitivesMap const& primitivesMap)

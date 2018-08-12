@@ -78,7 +78,7 @@ void Node::drawUI()
 				drawEditableMatrix(transformation);
 				auto[t, r, s] = decomposeTransformation(transformation);
 				auto e = glm::eulerAngles(r);
-				float scale = 1.0f;
+				float scale = s[0];
 				recomposeMatrix |= ImGui::DragFloat3("T", &t[0], 0.01f, 0, 0, "%.2f");
 				recomposeMatrix |= ImGui::DragFloat3("R", &e[0], 0.01f, 0, 0, "%.2f");
 				uniformScale |= ImGui::DragFloat("Scale uniformly", &scale, 0.01f, 0, 0, "%.2f");
@@ -99,7 +99,7 @@ void Node::drawUI()
 			drawEditableMatrix(transformation);
 			auto[t, r, s] = decomposeTransformation(transformation);
 			auto e = glm::eulerAngles(r);
-			float scale = 1.0f;
+			float scale = s[0];
 			recomposeMatrix |= ImGui::DragFloat3("T", &t[0], 0.01f, 0, 0, "%.2f");
 			recomposeMatrix |= ImGui::DragFloat3("R", &e[0], 0.01f, 0, 0, "%.2f");
 			uniformScale |= ImGui::DragFloat("Scale uniformly", &scale, 0.01f, 0, 0, "%.2f");

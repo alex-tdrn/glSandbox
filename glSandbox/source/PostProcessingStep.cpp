@@ -69,11 +69,10 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 			break;
 	}
 
-	glBindVertexArray(resources::quadVAO);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	resources::primitives::quad->use();
 
 	if(doGammaHDR)
 	{
@@ -97,11 +96,10 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		else
 			resources::shaders::gammaHDR.set("tonemapping", 0);*/
 
-		glBindVertexArray(resources::quadVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorbuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		resources::primitives::quad->use();
 	}
 }
 

@@ -7,6 +7,9 @@
 class Prop : public Node
 {
 private:
+	bool enabled = true;
+	bool outlined = false;
+	//TODO^^^
 	std::optional<unsigned int> meshIndex;
 
 public:

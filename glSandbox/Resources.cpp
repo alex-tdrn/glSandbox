@@ -1,86 +1,139 @@
 #include "Resources.h"
 
+#include <glad/glad.h>
+#include <imgui.h>
+
 void resources::init()
 {
+	struct Vertex
+	{
+		float const position[3];
+		float const normal[3];
+		float const texcoords[2];
+	};
+	Mesh::Attributes::AttributeBuffer positions;
+	positions.attributeType = Mesh::AttributeType::positions;
+	positions.componentSize = 3;
+	positions.dataType = GL_FLOAT;
+	positions.stride = sizeof(Vertex);
+	positions.offset = offsetof(Vertex, position);
+
+	Mesh::Attributes::AttributeBuffer normals;
+	normals.attributeType = Mesh::AttributeType::normals;
+	normals.componentSize = 3;
+	normals.dataType = GL_FLOAT;
+	normals.stride = sizeof(Vertex);
+	normals.offset = offsetof(Vertex, normal);
+
+	Mesh::Attributes::AttributeBuffer texcoords;
+	texcoords.attributeType = Mesh::AttributeType::texcoords;
+	texcoords.componentSize = 2;
+	texcoords.dataType = GL_FLOAT;
+	texcoords.stride = sizeof(Vertex);
+	texcoords.offset = offsetof(Vertex, texcoords);
+
 	//create vertex data and buffer objects
-	float boxVertices[] = {
-		-1.0f, 1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, 1.0f, -1.0f,
-		-1.0f, 1.0f, -1.0f,
+	{
+		float boxVertices[] = {
+			-1.0f, 1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, 1.0f, -1.0f,
-		-1.0f, 1.0f, -1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, -1.0f, 1.0f,
+			-1.0f, -1.0f, 1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, 1.0f,
+			-1.0f, -1.0f, 1.0f,
 
-		1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
 
-		-1.0f, -1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, 1.0f,
+			-1.0f, -1.0f, 1.0f,
+			-1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 1.0f,
+			-1.0f, -1.0f, 1.0f,
 
-		-1.0f, 1.0f, -1.0f,
-		1.0f, 1.0f, -1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
+			1.0f, 1.0f, -1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, 1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, 1.0f,
-		1.0f, -1.0f, 1.0f
-	};
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f, 1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f, 1.0f,
+			1.0f, -1.0f, 1.0f
+		};
 
-	unsigned int boxVBO;
-	glGenBuffers(1, &boxVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, boxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
+		unsigned int boxVBO;
+		glGenBuffers(1, &boxVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, boxVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
 
-	glGenVertexArrays(1, &boxVAO);
-	glBindVertexArray(boxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, boxVBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-	glEnableVertexAttribArray(0);
+		glGenVertexArrays(1, &boxVAO);
+		glBindVertexArray(boxVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, boxVBO);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		glEnableVertexAttribArray(0);
+	}
 
-	float quadVertices[] = {
-		-1.0f, 1.0f, 0.0f, 1.0f,
-		-1.0f, -1.0f, 0.0f, 0.0f,
-		1.0f, -1.0f, 1.0f, 0.0f,
+	//Quad
+	{
+		Vertex const vertices[] = {
+			{
+				-1.0f, +1.0f, +0.0f,
+				+0.0f, +0.0f, +1.0f,
+				+0.0f, +1.0f
+			},
+			{
+				-1.0f, -1.0f, +0.0f,
+				+0.0f, +0.0f, +1.0f,
+				+0.0f, +0.0f
+			},
+			{
+				+1.0f, -1.0f, +0.0f,
+				+0.0f, +0.0f, +1.0f,
+				+1.0f, +0.0f
+			},
+			{
+				+1.0f, +1.0f, +0.0f,
+				+0.0f, +0.0f, +1.0f,
+				+1.0f, +1.0f
+			}
+		};
+		unsigned short const indices[] = {
+			0, 1, 2,
+			0, 2, 3
+		};
 
-		-1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, -1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 1.0f, 1.0f
-	};
-
-
-	unsigned int quadVBO;
-	glGenBuffers(1, &quadVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &quadVAO);
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) (2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+		Mesh::Attributes attributes;
+		attributes.array[Mesh::AttributeType::positions] = positions;
+		attributes.array[Mesh::AttributeType::normals] = normals;
+		attributes.array[Mesh::AttributeType::texcoords] = texcoords;
+		attributes.interleaved = true;
+		attributes.data = reinterpret_cast<uint8_t const*>(vertices);
+		attributes.size = sizeof(vertices);
+		Mesh::IndexBuffer indexBuffer;
+		indexBuffer.data = reinterpret_cast<uint8_t const*>(indices);
+		indexBuffer.count = 6;
+		indexBuffer.size = sizeof(indices);
+		indexBuffer.dataType = GL_UNSIGNED_SHORT;
+		Bounds bounds{glm::vec3{-1.0f, -1.0f, 0.0f}, glm::vec3{1.0f, 1.0f, 0.0f}};
+		primitives::quad = std::make_unique<Mesh>(bounds, GL_TRIANGLES, std::move(attributes), indexBuffer);
+	}
 
 	for(int i = 0; i < ShaderType::END; i++)
 	{

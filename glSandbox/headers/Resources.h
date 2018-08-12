@@ -4,16 +4,14 @@
 #include "Scene.h"
 #include "Cubemap.h"
 
-#include <glad/glad.h>
-#include <imgui.h>
 #include <vector>
 #include <memory>
 namespace resources
 {
-	inline unsigned int boxVAO;
-	inline unsigned int quadVAO;
-	inline std::vector<Mesh> meshes;
-	inline std::vector<Shader> shaders;
+	namespace primitives
+	{
+		inline std::unique_ptr<Mesh> quad;
+	}
 	enum ShaderType
 	{
 		blinn_phong,
@@ -37,6 +35,9 @@ namespace resources
 		convolution,
 		END
 	};
+	inline unsigned int boxVAO;
+	inline std::vector<Mesh> meshes;
+	inline std::vector<Shader> shaders;
 	namespace textures
 	{
 		inline Texture placeholder("textures/placeholder.png", true);

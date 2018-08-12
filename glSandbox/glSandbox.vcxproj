@@ -106,6 +106,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Libraries\fx-gltf\include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -139,6 +140,7 @@
       <AdditionalIncludeDirectories>C:\Libraries\fx-gltf\include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -162,7 +164,6 @@
     <ClCompile Include="source\Material.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
     <ClCompile Include="source\Model.cpp" />
-    <ClCompile Include="source\Actor.cpp" />
     <ClCompile Include="source\PostProcessingStep.cpp" />
     <ClCompile Include="source\Renderer.cpp" />
     <ClCompile Include="source\Scene.cpp" />
@@ -181,7 +182,6 @@
     <ClInclude Include="headers\Material.h" />
     <ClInclude Include="headers\Mesh.h" />
     <ClInclude Include="headers\Model.h" />
-    <ClInclude Include="headers\Actor.h" />
     <ClInclude Include="headers\Node.h" />
     <ClInclude Include="headers\PostProcessingStep.h" />
     <ClInclude Include="headers\Prop.h" />

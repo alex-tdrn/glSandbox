@@ -21,12 +21,14 @@
 #include <vector>
 #include <optional>
 #include <filesystem>
+#include <memory>
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float lastMouseX = 400;
 float lastMouseY = 300;
 bool mouseDrag = false;
+std::unique_ptr<Renderer> mainRenderer;
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam);
@@ -36,6 +38,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifier);
 void processInput(GLFWwindow* window);
 void drawUI();
+
 
 int main(int argc, char** argv)
 {
@@ -89,7 +92,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
-	renderer.init();
+	mainRenderer = std::make_unique<Renderer>();
 	resources::init();
 	while(!glfwWindowShouldClose(window))
 	{
@@ -102,8 +105,8 @@ int main(int argc, char** argv)
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		renderer.render();
-		settings::postprocessing::steps[0].draw(renderer.getOutput(), 0);
+		mainRenderer->render();
+		settings::postprocessing::steps[0].draw(mainRenderer->getOutput(), 0);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
@@ -194,7 +197,7 @@ void drawUI()
 	}
 	drawFileBrowser(&drawFileBrowserFlag);
 	resources::drawUI(&drawResources);
-	renderer.drawUI(&drawRenderingSettings);
+	mainRenderer->drawUI(&drawRenderingSettings);
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
 	info::drawUI(&drawStats);
 	if(drawImGuiDemo)
@@ -208,7 +211,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 	info::aspectRatio = float(info::windowWidth) / info::windowHeight;
 
 	glViewport(0, 0, width, height);
-	renderer.resizeFramebuffer();
+	mainRenderer->resizeViewport(width, height);
 	for(auto& step : settings::postprocessing::steps)
 		step.updateFramebuffer();
 }

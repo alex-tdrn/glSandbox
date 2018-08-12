@@ -59,6 +59,16 @@ Mesh::Mesh(Mesh&& other)
 	indexCount(other.indexCount), indexDataType(other.indexDataType), indexedDrawing(other.indexedDrawing),
 	VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 {
+	other.VAO = 0;
+	other.VBO = 0;
+	other.EBO = 0;
+}
+
+Mesh::~Mesh()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 }
 
 Bounds const& Mesh::getBounds() const

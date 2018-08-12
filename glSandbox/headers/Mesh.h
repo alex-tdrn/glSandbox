@@ -42,9 +42,9 @@ public:
 	};
 
 private:
-	mutable unsigned int VAO;
-	mutable unsigned int VBO;
-	mutable unsigned int EBO;
+	mutable unsigned int VAO = 0;
+	mutable unsigned int VBO = 0;
+	mutable unsigned int EBO = 0;
 	GLenum drawMode = GL_POINTS;
 	uint32_t const vertexCount;
 	uint32_t const indexCount;
@@ -58,7 +58,7 @@ public:
 	Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
 	Mesh(Mesh const&) = delete;
 	Mesh(Mesh&&);
-	~Mesh() = default;
+	~Mesh();
 	Mesh& operator=(Mesh const&) = delete;
 	Mesh& operator=(Mesh&&) = delete;
 

@@ -7,14 +7,14 @@ class Shader;
 class Renderer
 {
 private:
+	unsigned int multisampledFramebuffer = 0;
+	unsigned int multisampledColorbuffer = 0;
+	unsigned int multisampledRenderbuffer = 0;
+	unsigned int simpleFramebuffer = 0;
+	unsigned int simpleColorbuffer = 0;
 	int viewportWidth = 1920;
 	int viewportHeight = 960;
 	float aspectRatio = float(viewportWidth) / viewportHeight;
-	unsigned int framebuffer;
-	unsigned int colorbuffer;
-	unsigned int renderbuffer;
-	unsigned int simpleFramebuffer;
-	unsigned int simpleColorbuffer;
 	bool needRedraw = true;
 	enum type
 	{
@@ -59,16 +59,23 @@ private:
 	float debugNormalsLineLength = 0.015f;
 	glm::vec3 debugNormalsLineColor{1.0f, 1.0f, 1.0f};
 
+public:
+	Renderer();
+	Renderer(Renderer const&) = delete;
+	Renderer(Renderer&&) = delete;
+	Renderer& operator=(Renderer const&) = delete;
+	Renderer& operator=(Renderer&&) = delete;
+	~Renderer();
+
 private:
 	Shader& getActiveShader();
 	bool isLightingShaderActive();
+	void updateFramebuffers();
 
 public:
-	void init();
+	void resizeViewport(int width, int height);
 	void render();
-	void resizeFramebuffer();
 	unsigned int getOutput();
 	void drawUI(bool* open);
 
 };
-inline Renderer renderer;

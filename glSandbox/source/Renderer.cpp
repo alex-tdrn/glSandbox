@@ -3,61 +3,65 @@
 #include "Lights.h"
 #include "Prop.h"
 
-void Renderer::init()
+Renderer::Renderer()
 {
-	//TODO USE resize framebuffer here
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glGenTextures(1, &multisampledColorbuffer);
+	glGenRenderbuffers(1, &multisampledRenderbuffer);
+	glGenTextures(1, &simpleColorbuffer);
+	updateFramebuffers();
 
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &colorbuffer);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colorbuffer);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisamples, GL_RGB16F, viewportWidth, viewportHeight, GL_TRUE);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, colorbuffer, 0);
-
-	glGenRenderbuffers(1, &renderbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisamples, GL_DEPTH24_STENCIL8, viewportWidth, viewportHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
-
+	glGenFramebuffers(1, &multisampledFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFramebuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, multisampledColorbuffer, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, multisampledRenderbuffer);
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glGenFramebuffers(1, &simpleFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, simpleFramebuffer);
-
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &simpleColorbuffer);
-	glBindTexture(GL_TEXTURE_2D, simpleColorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, simpleColorbuffer, 0);
-
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Renderer::resizeFramebuffer()
+Renderer::~Renderer()
+{
+	glDeleteTextures(1, &multisampledColorbuffer);
+	glDeleteTextures(1, &simpleColorbuffer);
+	glDeleteRenderbuffers(1, &multisampledRenderbuffer);
+	glDeleteFramebuffers(1, &multisampledFramebuffer);
+	glDeleteFramebuffers(1, &simpleFramebuffer);
+}
+
+void Renderer::updateFramebuffers()
 {
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, colorbuffer);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorbuffer);
 	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisamples, GL_RGB16F, viewportWidth, viewportHeight, GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, multisampledRenderbuffer);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisamples, GL_DEPTH24_STENCIL8, viewportWidth, viewportHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, simpleColorbuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void Renderer::resizeViewport(int width, int height)
+{
+	viewportWidth = width;
+	viewportHeight = height;
+	aspectRatio = float(width) / height;
+	updateFramebuffers();
+}
+
 void Renderer::render()
 {
 	if(resources::scenes.empty())
@@ -75,7 +79,7 @@ void Renderer::render()
 	else
 		needRedraw = true;
 
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFramebuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
 
@@ -255,7 +259,7 @@ void Renderer::render()
 }
 unsigned int Renderer::getOutput()
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFramebuffer);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, simpleFramebuffer);
 	glBlitFramebuffer(0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	return simpleColorbuffer;
@@ -355,7 +359,7 @@ void Renderer::drawUI(bool* open)
 	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
 	ImGui::SameLine();
 	if(ImGui::SliderInt("Samples", &multisamples, 1, 16))
-		resizeFramebuffer();	
+		updateFramebuffers();	
 	valueChanged |= ImGui::Checkbox("Wireframe", &wireframe);
 	ImGui::SameLine();
 	valueChanged |= ImGui::Checkbox("Depth Testing", &depthTesting);

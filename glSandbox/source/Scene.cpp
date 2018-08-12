@@ -57,7 +57,7 @@ std::forward_list<Prop const*> Scene::getActiveProps() const
 	return collectActiveProps(nodes);
 }
 
-void Scene::fitToBounds(float const idealSize)
+void Scene::fitToIdealSize()
 {
 	std::optional<Bounds> bounds = std::nullopt;
 	for(auto const& node : nodes)

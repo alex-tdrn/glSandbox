@@ -18,7 +18,7 @@ std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc
 std::vector<Scene> loadScenes(gltf::Document const& doc, int const meshesCounter, PrimitivesMap const& primitivesMap);
 std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, PrimitivesMap const& primitivesMap);
 
-void loadGLTF(std::string const& filename)
+unsigned int loadGLTF(std::string const& filename)
 {
 	gltf::ReadQuotas readQuota;
 	readQuota.MaxBufferByteLength = std::numeric_limits<uint32_t>::max();
@@ -27,25 +27,28 @@ void loadGLTF(std::string const& filename)
 
 	auto [loadedMeshes, primitivesMap] = loadMeshes(doc);
 	std::vector<Scene> loadedScenes;
+	unsigned int activeScene = resources::scenes.size() - 1;
 	if(doc.scenes.empty())
 	{
 		std::vector<std::unique_ptr<Node>> rootNodes;
 		for(int i = 0; i < loadedMeshes.size(); i++)
 			rootNodes.push_back(std::make_unique<Prop>(resources::meshes.size() + i));
 		loadedScenes.emplace_back(std::move(rootNodes));
+		activeScene++;
 	}
 	else
 	{
-		resources::activeScene = resources::scenes.size() + doc.scene;
+		activeScene = resources::scenes.size() + doc.scene;
 		loadedScenes = loadScenes(doc, loadedMeshes.size(), primitivesMap);
 	}
 	for(auto& mesh : loadedMeshes)
 		resources::meshes.emplace_back(std::move(mesh));
 	for(auto& scene : loadedScenes)
 	{
-		scene.fitToBounds(resources::sceneSize);
-		resources::scenes.emplace_back(std::move(scene));
+		scene.fitToIdealSize();
+		resources::scenes.emplace_back(std::make_shared<Scene>(std::move(scene)));
 	}
+	return activeScene;
 }
 
 std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, PrimitivesMap const& primitivesMap)

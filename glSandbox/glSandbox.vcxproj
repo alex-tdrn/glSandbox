@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Resources.cpp" />
     <ClCompile Include="source\Node.cpp" />
     <ClCompile Include="source\Prop.cpp" />
     <ClCompile Include="source\AssetLoader.cpp" />

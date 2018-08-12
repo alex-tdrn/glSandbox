@@ -1,5 +1,6 @@
 #pragma once
 #include "Shader.h"
+#include "Resources.h"
 
 class PostProcessingStep
 {
@@ -8,15 +9,7 @@ private:
 	unsigned int inputColorbuffer;
 	unsigned int framebuffer;
 	unsigned int colorbuffer;
-	enum type
-	{
-		passthrough,
-		grayscale,
-		chromaticAberration,
-		invert,
-		convolution
-	};
-	int active = type::passthrough;
+	int currentShaderType = resources::ShaderType::passthrough;
 	float convolutionKernel[9];
 	float convolutionDivisor = 1.0f;
 	float convolutionOffset = 0.001f;
@@ -27,7 +20,6 @@ private:
 	bool floatImage = false;
 private:
 	void initFramebuffer();
-	Shader& getActiveShader();
 
 public:
 	void updateFramebuffer();

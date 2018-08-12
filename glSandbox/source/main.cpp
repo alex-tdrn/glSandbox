@@ -92,8 +92,10 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
-	mainRenderer = std::make_unique<Renderer>();
+	resources::IOScene = resources::scenes[loadGLTF("models/Cube/Cube.gltf")];
+	mainRenderer = std::make_unique<Renderer>(resources::IOScene);
 	resources::init();
+
 	while(!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
@@ -105,9 +107,10 @@ int main(int argc, char** argv)
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		if(!resources::scenes.empty())
-			mainRenderer->render(resources::scenes[resources::activeScene]);
+		mainRenderer->render();
+		glEnable(GL_FRAMEBUFFER_SRGB);
 		settings::postprocessing::steps[0].draw(mainRenderer->getOutput(), 0);
+		glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
@@ -148,7 +151,10 @@ void drawFileBrowser(bool *open)
 		if(file.path().extension() == ".gltf")
 		{
 			if(ImGui::Button(filename.data()))
-				loadGLTF(file.path().generic_string());
+			{
+				resources::IOScene = resources::scenes[loadGLTF(file.path().generic_string())];
+				mainRenderer->setScene(resources::IOScene);
+			}
 		}
 		else
 		{
@@ -238,7 +244,7 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	yoffset *= -sensitivity;
 	if(resources::scenes.empty())
 		return;
-	resources::scenes[resources::activeScene].getCamera().adjustOrientation(xoffset, yoffset);
+	resources::IOScene->getCamera().adjustOrientation(xoffset, yoffset);
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
@@ -282,7 +288,7 @@ void processInput(GLFWwindow* window)
 	float moveDistance = 2.5f * deltaTime; // adjust accordingly
 	if(resources::scenes.empty())
 		return;
-	Camera& cam = resources::scenes[resources::activeScene].getCamera();
+	Camera& cam = resources::IOScene->getCamera();
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cam.dolly(+moveDistance);

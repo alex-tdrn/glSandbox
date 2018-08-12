@@ -10,6 +10,7 @@ class Scene;
 class Renderer
 {
 private:
+	std::shared_ptr<Scene> scene;
 	unsigned int multisampledFramebuffer = 0;
 	unsigned int multisampledColorbuffer = 0;
 	unsigned int multisampledRenderbuffer = 0;
@@ -33,7 +34,7 @@ private:
 		int faceCullingOrdering = GL_CCW;
 	} pipeline;
 	struct{
-		resources::shaders::type active = resources::shaders::type::blinn_phong;
+		resources::ShaderType current = resources::ShaderType::blinn_phong;
 		struct
 		{
 			bool perChannel = false;
@@ -69,7 +70,7 @@ public:
 	Name<Renderer> name{"renderer"};
 
 public:
-	Renderer();
+	Renderer(std::shared_ptr<Scene>& scene);
 	Renderer(Renderer const&) = delete;
 	Renderer(Renderer&&) = delete;
 	Renderer& operator=(Renderer const&) = delete;
@@ -81,7 +82,8 @@ private:
 
 public:
 	void resizeViewport(int width, int height);
-	void render(Scene const& scene);
+	void setScene(std::shared_ptr<Scene>& scene);
+	void render();
 	unsigned int getOutput();
 	void drawUI(bool* open);
 

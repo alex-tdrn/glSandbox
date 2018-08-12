@@ -1,4 +1,4 @@
 #pragma once
 #include <string>
 
-void loadGLTF(std::string const& filename);
+unsigned int loadGLTF(std::string const& filename);

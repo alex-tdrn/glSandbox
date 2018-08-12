@@ -14,6 +14,7 @@ class Scene
 {
 private:
 	std::vector<std::unique_ptr<Node>> nodes;
+	float idealSize = 2.0f;
 	Camera camera;
 	std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({270, 60, 0}); return light; } ()};
 	std::vector<PointLight> pointLights;
@@ -35,7 +36,7 @@ public:
 	Camera& getCamera();
 	Camera const& getCamera() const;
 	std::forward_list<Prop const*> getActiveProps() const;
-	void fitToBounds(float const idealSize);
+	void fitToIdealSize();
 	void drawUI();
 
 };

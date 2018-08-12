@@ -1,9 +1,9 @@
 #include "Renderer.h"
-#include "Resources.h"
 #include "Lights.h"
 #include "Prop.h"
 
-Renderer::Renderer()
+Renderer::Renderer(std::shared_ptr<Scene>& scene)
+	:scene(scene)
 {
 	glGenTextures(1, &multisampledColorbuffer);
 	glGenRenderbuffers(1, &multisampledRenderbuffer);
@@ -70,7 +70,12 @@ void Renderer::resizeViewport(int width, int height)
 	updateFramebuffers();
 }
 
-void Renderer::render(Scene const& scene)
+void Renderer::setScene(std::shared_ptr<Scene>& scene)
+{
+	this->scene = scene;
+}
+
+void Renderer::render()
 {
 	if(explicitRendering && !needRedraw)
 		return;
@@ -78,7 +83,6 @@ void Renderer::render(Scene const& scene)
 		needRedraw = false;
 	else
 		needRedraw = true;
-
 	if(pipeline.samples > 0)
 	{
 		glEnable(GL_MULTISAMPLE);
@@ -114,16 +118,16 @@ void Renderer::render(Scene const& scene)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glClearColor(scene.getBackground().r, scene.getBackground().g, scene.getBackground().b, 1.0f);
+	glClearColor(scene->getBackground().r, scene->getBackground().g, scene->getBackground().b, 1.0f);
 
-	auto const& props = scene.getActiveProps();
-	auto const& camera = scene.getCamera();
-	auto const& directionalLights = scene.getDirectionalLights();
-	auto const& spotLights = scene.getSpotLights();
-	auto const& pointLights = scene.getPointLights();
+	auto const& props = scene->getActiveProps();
+	auto const& camera = scene->getCamera();
+	auto const& directionalLights = scene->getDirectionalLights();
+	auto const& spotLights = scene->getSpotLights();
+	auto const& pointLights = scene->getPointLights();
 
 	camera.use();
-	resources::shaders::light.use();
+	resources::shaders[resources::ShaderType::light].use();
 	glBindVertexArray(resources::boxVAO);
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
@@ -133,30 +137,30 @@ void Renderer::render(Scene const& scene)
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, light.getPosition());
 			model = glm::scale(model, glm::vec3{0.2f});
-			resources::shaders::light.set("model", model);
-			resources::shaders::light.set("lightColor", light.getColor() * light.getIntensity());
+			resources::shaders[resources::ShaderType::light].set("model", model);
+			resources::shaders[resources::ShaderType::light].set("lightColor", light.getColor() * light.getIntensity());
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 	};
 	drawLights(pointLights);
 	drawLights(spotLights);
 
-	Shader& activeShader = resources::shaders::get(shading.active);
+	Shader& activeShader = resources::shaders[shading.current];
 	activeShader.use();
 	glm::mat4 viewMatrix = camera.getViewMatrix();
-	switch(shading.active)
+	switch(shading.current)
 	{
-		case resources::shaders::type::blinn_phong:
-		case resources::shaders::type::phong:
-		case resources::shaders::type::gouraud:
-		case resources::shaders::type::flat:
+		case resources::ShaderType::blinn_phong:
+		case resources::ShaderType::phong:
+		case resources::ShaderType::gouraud:
+		case resources::ShaderType::flat:
 			activeShader.set("material.overrideDiffuse", shading.lighting.override.diffuse);
 			activeShader.set("material.overrideSpecular", shading.lighting.override.specular);
 			activeShader.set("material.overrideDiffuseColor", shading.lighting.override.diffuseColor);
 			activeShader.set("material.overrideSpecularColor", shading.lighting.override.specularColor);
 			activeShader.set("ambientStrength", shading.lighting.ambientStrength);
 			activeShader.set("material.shininess", shading.lighting.shininess);
-			activeShader.set("ambientColor", scene.getBackground());
+			activeShader.set("ambientColor", scene->getBackground());
 			//directional lights
 			{
 				int enabledLights = 0;
@@ -206,14 +210,14 @@ void Renderer::render(Scene const& scene)
 				activeShader.set("nSpotLights", enabledLights);
 			}
 			break;
-		case resources::shaders::type::refraction:
+		case resources::ShaderType::refraction:
 			activeShader.set("perChannel", shading.refraction.perChannel);
 			activeShader.set("n1", shading.refraction.n1);
 			activeShader.set("n1RGB", shading.refraction.n1RGB);
 			activeShader.set("n2", shading.refraction.n2);
 			activeShader.set("n2RGB", shading.refraction.n2RGB);
 			[[fallthrough]];
-		case resources::shaders::type::reflection:
+		case resources::ShaderType::reflection:
 			/*if(skybox)
 			{
 				skybox->use();
@@ -221,12 +225,12 @@ void Renderer::render(Scene const& scene)
 				activeShader.set("cameraPos", camera.getPosition());
 			}*/
 			break;
-		case resources::shaders::type::debugDepthBuffer:
+		case resources::ShaderType::debugDepthBuffer:
 			activeShader.set("linearize", shading.debugging.depthBufferLinear);
 			activeShader.set("nearPlane", camera.getNearPlane());
 			activeShader.set("farPlane", camera.getFarPlane());
 			break;
-		case resources::shaders::type::debugNormals:
+		case resources::ShaderType::debugNormals:
 			if(shading.debugging.normals.showLines)
 			{
 
@@ -242,12 +246,12 @@ void Renderer::render(Scene const& scene)
 			activeShader.set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 			if(shading.debugging.normals.showLines)
 			{
-				resources::shaders::debugNormalsShowLines.use();
-				resources::shaders::debugNormalsShowLines.set("lineLength", shading.debugging.normals.lineLength);
-				resources::shaders::debugNormalsShowLines.set("color", shading.debugging.normals.lineColor);
-				resources::shaders::debugNormalsShowLines.set("viewSpace", shading.debugging.normals.viewSpace);
-				resources::shaders::debugNormalsShowLines.set("faceNormals", shading.debugging.normals.faceNormals);
-				resources::shaders::debugNormalsShowLines.set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
+				resources::shaders[resources::ShaderType::debugNormalsShowLines].use();
+				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("lineLength", shading.debugging.normals.lineLength);
+				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("color", shading.debugging.normals.lineColor);
+				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("viewSpace", shading.debugging.normals.viewSpace);
+				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("faceNormals", shading.debugging.normals.faceNormals);
+				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 				activeShader.use();
 			}
 			break;

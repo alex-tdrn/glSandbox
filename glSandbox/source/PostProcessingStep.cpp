@@ -33,83 +33,41 @@ void PostProcessingStep::updateFramebuffer()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Shader& PostProcessingStep::getActiveShader()
-{
-	Shader& ret = [&]() -> Shader&{
-		switch(active)
-		{
-			case type::grayscale:
-				return resources::shaders::grayscale;
-			case type::chromaticAberration:
-				return resources::shaders::chromaticAberration;
-			case type::invert:
-				return resources::shaders::invert;
-			case type::convolution:
-				return resources::shaders::convolution;
-			default:
-				return resources::shaders::passthrough;
-		}
-	}();
-	ret.use();
-	ret.set("screenTexture", 0);
-
-	if(active == type::convolution)
-	{
-		ret.set("offset", convolutionOffset);
-		ret.set("divisor", convolutionDivisor);
-		for(int i = 0; i < 9; i++)
-			ret.set("kernel[" + std::to_string(i) + "]", convolutionKernel[i]);
-	}
-	if(active == type::chromaticAberration)
-	{
-		ret.set("intensity", chromaticAberrationIntensity);
-		ret.set("offsetR", chromaticAberrationOffsetR);
-		ret.set("offsetG", chromaticAberrationOffsetG);
-		ret.set("offsetB", chromaticAberrationOffsetB);
-	}
-	return ret;
-}
-
-//TODO
-//ImGui::Checkbox("Gamma Correction", &gammaCorrection);
-//if(gammaCorrection)
-//{
-//	ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f);
-//}
-//if(ImGui::CollapsingHeader("Tone Mapping"))
-//{
-//	ImGui::Indent();
-//
-//	ImGui::RadioButton("None", &tonemapping, tonemappingType::none);
-//	ImGui::SameLine();
-//	ImGui::RadioButton("Reinhard", &tonemapping, tonemappingType::reinhard);
-//	ImGui::SameLine();
-//	ImGui::RadioButton("Uncharted 2", &tonemapping, tonemappingType::uncharted2);
-//	ImGui::SameLine();
-//	ImGui::RadioButton("Hejl Burgess-Dawson", &tonemapping, tonemappingType::hejl_burgess_dawson);
-//	if(tonemapping)
-//	{
-//		ImGui::DragFloat("Exposure", &exposure, 0.1f);
-//	}
-//	ImGui::Unindent();
-//}
 void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targetFramebuffer)
 {
 	if(!initialized)
 		initFramebuffer();
 	inputColorbuffer = sourceColorbuffer;
 	bool doGammaHDR = false;
-	if(targetFramebuffer == 0 && (settings::rendering::gammaCorrection || settings::rendering::tonemapping))
+	/*if(targetFramebuffer == 0 && (settings::rendering::gammaCorrection || settings::rendering::tonemapping))
 	{
 		doGammaHDR = true;
 		targetFramebuffer = framebuffer;
-	}
+	}*/
 	glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	Shader& postprocessShader = getActiveShader();
+	Shader& currentShader = resources::shaders[currentShaderType];
+	currentShader.use();
+	currentShader.set("screenTexture", 0);
+
+	switch(currentShaderType)
+	{
+		case resources::ShaderType::convolution:
+			currentShader.set("offset", convolutionOffset);
+			currentShader.set("divisor", convolutionDivisor);
+			for(int i = 0; i < 9; i++)
+				currentShader.set("kernel[" + std::to_string(i) + "]", convolutionKernel[i]);
+			break;
+		case resources::ShaderType::chromaticAberration:
+			currentShader.set("intensity", chromaticAberrationIntensity);
+			currentShader.set("offsetR", chromaticAberrationOffsetR);
+			currentShader.set("offsetG", chromaticAberrationOffsetG);
+			currentShader.set("offsetB", chromaticAberrationOffsetB);
+			break;
+	}
 
 	glBindVertexArray(resources::quadVAO);
 	glActiveTexture(GL_TEXTURE0);
@@ -125,9 +83,9 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glDisable(GL_CULL_FACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		resources::shaders::gammaHDR.use();
-		resources::shaders::gammaHDR.set("screenTexture", 0);
-		if(settings::rendering::gammaCorrection)
+		resources::shaders[resources::ShaderType::gammaHDR].use();
+		resources::shaders[resources::ShaderType::gammaHDR].set("screenTexture", 0);
+		/*if(settings::rendering::gammaCorrection)
 			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
 		else
 			resources::shaders::gammaHDR.set("gamma", 1.0f);
@@ -137,7 +95,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 			resources::shaders::gammaHDR.set("exposure", settings::rendering::exposure);
 		}
 		else
-			resources::shaders::gammaHDR.set("tonemapping", 0);
+			resources::shaders::gammaHDR.set("tonemapping", 0);*/
 
 		glBindVertexArray(resources::quadVAO);
 		glActiveTexture(GL_TEXTURE0);
@@ -161,7 +119,30 @@ unsigned int PostProcessingStep::getColorbuffer()
 
 void PostProcessingStep::drawUI()
 {
-
+	//TODO
+	//ImGui::Checkbox("Gamma Correction", &gammaCorrection);
+	//if(gammaCorrection)
+	//{
+	//	ImGui::DragFloat("Gamma Exponent", &gammaExponent, 0.01f);
+	//}
+	//if(ImGui::CollapsingHeader("Tone Mapping"))
+	//{
+	//	ImGui::Indent();
+	//
+	//	ImGui::RadioButton("None", &tonemapping, tonemappingType::none);
+	//	ImGui::SameLine();
+	//	ImGui::RadioButton("Reinhard", &tonemapping, tonemappingType::reinhard);
+	//	ImGui::SameLine();
+	//	ImGui::RadioButton("Uncharted 2", &tonemapping, tonemappingType::uncharted2);
+	//	ImGui::SameLine();
+	//	ImGui::RadioButton("Hejl Burgess-Dawson", &tonemapping, tonemappingType::hejl_burgess_dawson);
+	//	if(tonemapping)
+	//	{
+	//		ImGui::DragFloat("Exposure", &exposure, 0.1f);
+	//	}
+	//	ImGui::Unindent();
+	//}
+/*
 	IDGuard idGuard{this};
 	if(!floatImage)
 	{
@@ -255,5 +236,5 @@ void PostProcessingStep::drawUI()
 			ImGui::DragFloat3("##2", &convolutionKernel[3], 0.01f);
 			ImGui::DragFloat3("##3", &convolutionKernel[6], 0.01f);
 			break;
-	}
+	}*/
 }

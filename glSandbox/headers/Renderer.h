@@ -1,8 +1,11 @@
 #pragma once
+#include "Named.h"
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
 class Shader;
+class Scene;
 
 class Renderer
 {
@@ -12,9 +15,12 @@ private:
 	unsigned int multisampledRenderbuffer = 0;
 	unsigned int simpleFramebuffer = 0;
 	unsigned int simpleColorbuffer = 0;
+	unsigned int simpleRenderbuffer = 0;
 	int viewportWidth = 1920;
 	int viewportHeight = 960;
 	float aspectRatio = float(viewportWidth) / viewportHeight;
+	int multisamples = 0;
+
 	bool needRedraw = true;
 	enum type
 	{
@@ -31,7 +37,6 @@ private:
 	int active = type::blinn_phong;
 
 	
-	int multisamples = 1;
 	
 	bool wireframe = false;
 	bool depthTesting = true;
@@ -60,6 +65,9 @@ private:
 	glm::vec3 debugNormalsLineColor{1.0f, 1.0f, 1.0f};
 
 public:
+	Name<Renderer> name{"renderer"};
+
+public:
 	Renderer();
 	Renderer(Renderer const&) = delete;
 	Renderer(Renderer&&) = delete;
@@ -74,7 +82,7 @@ private:
 
 public:
 	void resizeViewport(int width, int height);
-	void render();
+	void render(Scene const& scene);
 	unsigned int getOutput();
 	void drawUI(bool* open);
 

@@ -33,6 +33,7 @@ public:
 	std::vector<SpotLight> const& getSpotLights() const;
 	glm::vec3 const& getBackground() const;
 	Camera& getCamera();
+	Camera const& getCamera() const;
 	std::forward_list<Prop const*> getActiveProps() const;
 	void fitToBounds(float const idealSize);
 	void drawUI();

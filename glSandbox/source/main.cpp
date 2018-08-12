@@ -105,7 +105,8 @@ int main(int argc, char** argv)
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		mainRenderer->render();
+		if(!resources::scenes.empty())
+			mainRenderer->render(resources::scenes[resources::activeScene]);
 		settings::postprocessing::steps[0].draw(mainRenderer->getOutput(), 0);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());

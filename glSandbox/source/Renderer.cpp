@@ -8,6 +8,7 @@ Renderer::Renderer()
 	glGenTextures(1, &multisampledColorbuffer);
 	glGenRenderbuffers(1, &multisampledRenderbuffer);
 	glGenTextures(1, &simpleColorbuffer);
+	glGenRenderbuffers(1, &simpleRenderbuffer);
 	updateFramebuffers();
 
 	glGenFramebuffers(1, &multisampledFramebuffer);
@@ -21,6 +22,7 @@ Renderer::Renderer()
 	glGenFramebuffers(1, &simpleFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, simpleFramebuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, simpleColorbuffer, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, simpleRenderbuffer);
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -30,7 +32,10 @@ Renderer::~Renderer()
 {
 	glDeleteTextures(1, &multisampledColorbuffer);
 	glDeleteTextures(1, &simpleColorbuffer);
+
 	glDeleteRenderbuffers(1, &multisampledRenderbuffer);
+	glDeleteRenderbuffers(1, &simpleRenderbuffer);
+
 	glDeleteFramebuffers(1, &multisampledFramebuffer);
 	glDeleteFramebuffers(1, &simpleFramebuffer);
 }
@@ -39,11 +44,11 @@ void Renderer::updateFramebuffers()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorbuffer);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisamples, GL_RGB16F, viewportWidth, viewportHeight, GL_TRUE);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisamples > 0 && multisamples < 16? multisamples : 1, GL_RGB16F, viewportWidth, viewportHeight, GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, multisampledRenderbuffer);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisamples, GL_DEPTH24_STENCIL8, viewportWidth, viewportHeight);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisamples > 0 && multisamples < 16 ? multisamples : 1, GL_DEPTH24_STENCIL8, viewportWidth, viewportHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -52,6 +57,10 @@ void Renderer::updateFramebuffers()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, simpleRenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, viewportWidth, viewportHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void Renderer::resizeViewport(int width, int height)
@@ -62,16 +71,8 @@ void Renderer::resizeViewport(int width, int height)
 	updateFramebuffers();
 }
 
-void Renderer::render()
+void Renderer::render(Scene const& scene)
 {
-	if(resources::scenes.empty())
-		return;
-	auto const& props = resources::scenes[resources::activeScene].getActiveProps();
-	auto const& camera = resources::scenes[resources::activeScene].getCamera();
-	auto const& backgroundColor = resources::scenes[resources::activeScene].getBackground();
-	auto const& directionalLights = resources::scenes[resources::activeScene].getDirectionalLights();
-	auto const& spotLights = resources::scenes[resources::activeScene].getSpotLights();
-	auto const& pointLights = resources::scenes[resources::activeScene].getPointLights();
 	if(explicitRendering && !needRedraw)
 		return;
 	if(explicitRendering)
@@ -79,11 +80,20 @@ void Renderer::render()
 	else
 		needRedraw = true;
 
-	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFramebuffer);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
+	if(multisamples > 0)
+	{
+		glEnable(GL_MULTISAMPLE);
+		glBindFramebuffer(GL_FRAMEBUFFER, multisampledFramebuffer);
+	}
+	else
+	{
+		glDisable(GL_MULTISAMPLE);
+		glBindFramebuffer(GL_FRAMEBUFFER, simpleFramebuffer);
+	}
 
-	glEnable(GL_MULTISAMPLE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClearColor(scene.getBackground().r, scene.getBackground().g, scene.getBackground().b, 1.0f);
+
 	if(depthTesting)
 	{
 		glEnable(GL_DEPTH_TEST);
@@ -111,6 +121,12 @@ void Renderer::render()
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+
+	auto const& props = scene.getActiveProps();
+	auto const& camera = scene.getCamera();
+	auto const& directionalLights = scene.getDirectionalLights();
+	auto const& spotLights = scene.getSpotLights();
+	auto const& pointLights = scene.getPointLights();
 	camera.use();
 	resources::shaders::light.use();
 	glBindVertexArray(resources::boxVAO);
@@ -133,7 +149,7 @@ void Renderer::render()
 	glm::mat4 viewMatrix = camera.getViewMatrix();
 	if(isLightingShaderActive())
 	{
-		activeShader.set("ambientColor", backgroundColor);
+		activeShader.set("ambientColor", scene.getBackground());
 		//directional lights
 		{
 			int enabledLights = 0;
@@ -259,9 +275,12 @@ void Renderer::render()
 }
 unsigned int Renderer::getOutput()
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFramebuffer);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, simpleFramebuffer);
-	glBlitFramebuffer(0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	if(multisamples > 0)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFramebuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, simpleFramebuffer);
+		glBlitFramebuffer(0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	}
 	return simpleColorbuffer;
 }
 
@@ -357,8 +376,7 @@ void Renderer::drawUI(bool* open)
 	bool valueChanged = false;
 	ImGui::Indent();
 	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
-	ImGui::SameLine();
-	if(ImGui::SliderInt("Samples", &multisamples, 1, 16))
+	if(ImGui::InputInt("Samples", &multisamples))
 		updateFramebuffers();	
 	valueChanged |= ImGui::Checkbox("Wireframe", &wireframe);
 	ImGui::SameLine();

@@ -35,6 +35,11 @@ Camera& Scene::getCamera()
 	return camera;
 }
 
+Camera const& Scene::getCamera() const
+{
+	return camera;
+}
+
 std::forward_list<Prop const*> collectActiveProps(std::vector<std::unique_ptr<Node>> const& nodes)
 {
 	std::forward_list<Prop const*> activeProps;

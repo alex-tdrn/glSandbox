@@ -72,7 +72,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	resources::primitives::quad->use();
+	resources::quad().use();
 
 	if(doGammaHDR)
 	{
@@ -99,7 +99,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorbuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		resources::primitives::quad->use();
+		resources::quad().use();
 	}
 }
 

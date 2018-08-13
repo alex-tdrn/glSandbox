@@ -10,18 +10,18 @@ private:
 	bool enabled = true;
 	bool outlined = false;
 	//TODO^^^
-	std::optional<unsigned int> meshIndex;
+	std::optional<size_t> meshIndex;
 
 public:
 	Name<Prop> name{"prop"};
 
 public:
-	Prop(std::optional<unsigned int> meshIndex = std::nullopt);
+	Prop(std::optional<size_t> meshIndex = std::nullopt);
 	virtual ~Prop() = default;
 
 public:
-	std::optional<unsigned int>const& getMeshIndex() const;
-	std::optional<Bounds> getBounds() const override;
+	std::optional<size_t>const& getMeshIndex() const;
+	Bounds getBounds() const override;
 	//void drawUI() override;
 
 };

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -82,6 +82,7 @@
     <IncludePath>C:\Libraries\glad\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Libraries\glad\include;$(IncludePath)</IncludePath>
@@ -107,6 +108,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Libraries\fx-gltf\include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FloatingPointExceptions>true</FloatingPointExceptions>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -163,7 +166,6 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\Material.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
-    <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\PostProcessingStep.cpp" />
     <ClCompile Include="source\Renderer.cpp" />
     <ClCompile Include="source\Scene.cpp" />
@@ -181,7 +183,6 @@
     <ClInclude Include="headers\Lights.h" />
     <ClInclude Include="headers\Material.h" />
     <ClInclude Include="headers\Mesh.h" />
-    <ClInclude Include="headers\Model.h" />
     <ClInclude Include="headers\Node.h" />
     <ClInclude Include="headers\PostProcessingStep.h" />
     <ClInclude Include="headers\Prop.h" />

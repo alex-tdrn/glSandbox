@@ -27,12 +27,12 @@ Mesh::Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optiona
 	}
 	else
 	{
-		int bufferSize = 0;
+		size_t bufferSize = 0;
 		for(auto const& attribute : attributes.array)
 			bufferSize += attribute ? attribute->size : 0;
 		glBufferData(GL_ARRAY_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
 
-		int offset = 0;
+		size_t offset = 0;
 		for(auto const& attribute : attributes.array)
 		{
 			if(!attribute)
@@ -90,9 +90,9 @@ void Mesh::drawUI()
 {
 	IDGuard idGuard{this};
 
-	if(ImGui::TreeNode(name.get().data()))
-	{
+	//if(ImGui::TreeNode(name.get().data()))
+	//{
 
-		ImGui::TreePop();
-	}
+		//ImGui::TreePop();
+	//}
 }

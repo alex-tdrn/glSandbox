@@ -1,18 +1,18 @@
 #include "Prop.h"
 #include "Resources.h"
 
-Prop::Prop(std::optional<unsigned int> meshIndex)
+Prop::Prop(std::optional<size_t> meshIndex)
 	:meshIndex(meshIndex)
 {
 
 }
 
-std::optional<unsigned int>const& Prop::getMeshIndex() const
+std::optional<size_t>const& Prop::getMeshIndex() const
 {
 	return meshIndex;
 }
 
-std::optional<Bounds> Prop::getBounds() const
+Bounds Prop::getBounds() const
 {
 	if(meshIndex)
 	{
@@ -20,5 +20,5 @@ std::optional<Bounds> Prop::getBounds() const
 		auto const& t = getTransformation();
 		return bounds * t;
 	}
-	return std::nullopt;
+	return {};
 }

@@ -8,23 +8,71 @@
 #include <string>
 #include <tuple>
 #include <algorithm>
+#include <iostream>
+
+class LifetimeLogger
+{
+public:
+	LifetimeLogger()
+	{
+		std::cout << "Constructor " << this << '\n';
+	}
+	LifetimeLogger(LifetimeLogger const&)
+	{
+		std::cout << "Copy Constructor " << this << '\n';
+	}
+	LifetimeLogger(LifetimeLogger&&)
+	{
+		std::cout << "Move Constructor " << this << '\n';
+	}
+	LifetimeLogger& operator=(LifetimeLogger const&)
+	{
+		std::cout << "Copy Assignment " << this << '\n';
+	}
+	LifetimeLogger& operator=(LifetimeLogger&&)
+	{
+		std::cout << "Move Assignment " << this << '\n';
+	}
+	~LifetimeLogger()
+	{
+		std::cout << "Destructor " << this << '\n';
+	}
+};
 
 class Bounds
 {
 private:
+	bool _empty = false;
 	glm::vec3 min{0};
 	glm::vec3 max{0};
 
 public:
-	Bounds() = default;
+	Bounds()
+		:_empty{true}
+	{
+
+	}
 	Bounds(glm::vec3 point1, glm::vec3 point2)
-		: min(point1), max(point2)
+		: min{point1}, max{point2}
 	{
 		normalize();
 	}
-
-	Bounds& operator*(glm::mat4 const& rhs)
+	Bounds(glm::vec3 point)
+		: min{point}, max{point}
 	{
+	}
+	Bounds(float const point1[3], float const point2[3])
+		: min{point1[0], point1[1], point1[2]}, max{point2[0], point2[1], point2[2]}
+	{
+		normalize();
+	}
+	Bounds(float const point[3])
+		: min{point[0], point[1], point[2]}, max{min}
+	{
+	}
+	Bounds& operator*=(glm::mat4 const& rhs)
+	{
+		assert(!_empty);
 		glm::vec4 min{this->min, 1.0f};
 		glm::vec4 max{this->max, 1.0f};
 		this->min = rhs * min;
@@ -32,30 +80,28 @@ public:
 		normalize();
 		return *this;
 	}
-	Bounds& operator+(Bounds const& rhs)
+	Bounds& operator+=(Bounds const& rhs)
 	{
-		glm::vec3 min;
-		glm::vec3 max;
-		for(auto i = 0; i < 3; i++)
+		if(_empty && !rhs._empty)
 		{
-			min[i] = std::min(this->min[i], rhs.min[i]);
-			max[i] = std::max(this->max[i], rhs.max[i]);
+			_empty = false;
+			*this = rhs;
 		}
-		this->min = min;
-		this->max = max;
-		normalize();
+		else if(!_empty && !rhs._empty)
+		{
+			glm::vec3 min;
+			glm::vec3 max;
+			for(auto i = 0; i < 3; i++)
+			{
+				this->min[i] = std::min(this->min[i], rhs.min[i]);
+				this->max[i] = std::max(this->max[i], rhs.max[i]);
+			}
+			normalize();
+		}
 		return *this;
 	}
-	Bounds& operator*=(glm::mat4 const& rhs)
-	{
-		*this = *this * rhs;
-		return *this;
-	}
-	Bounds operator+=(Bounds const& rhs)
-	{
-		*this = *this + rhs;
-		return *this;
-	}
+	friend Bounds operator*(Bounds const& lhs, glm::mat4 const& rhs);
+	friend Bounds operator+(Bounds const& lhs, Bounds const& rhs);
 
 private:
 	void normalize()
@@ -72,11 +118,42 @@ private:
 	}
 
 public:
+	bool empty() const
+	{
+		return _empty;
+	}
 	std::pair<glm::vec3, glm::vec3> getValues() const
 	{
 		return {min, max};
 	}
 };
+
+inline Bounds operator*(Bounds const& lhs, glm::mat4 const& rhs)
+{
+	assert(!lhs._empty);
+	glm::vec4 min{lhs.min, 1.0f};
+	glm::vec4 max{lhs.max, 1.0f};
+	return {rhs * min, rhs * max};
+}
+
+inline Bounds operator+(Bounds const& lhs, Bounds const& rhs)
+{
+	if(lhs._empty && !rhs._empty)
+		return rhs;
+	if(!lhs._empty && rhs._empty)
+		return lhs;
+	if(lhs._empty && rhs._empty)
+		return {};
+
+	glm::vec3 min;
+	glm::vec3 max;
+	for(auto i = 0; i < 3; i++)
+	{
+		min[i] = std::min(lhs.min[i], rhs.min[i]);
+		max[i] = std::max(lhs.max[i], rhs.max[i]);
+	}
+	return {min, max};
+}
 
 class IDGuard
 {

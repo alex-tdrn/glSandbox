@@ -59,22 +59,13 @@ std::forward_list<Prop const*> Scene::getActiveProps() const
 
 void Scene::fitToIdealSize()
 {
-	std::optional<Bounds> bounds = std::nullopt;
+	Bounds bounds;
 	for(auto const& node : nodes)
-	{
-		auto nodeBounds = node->getBounds();
-		if(nodeBounds)
-		{
-			if(!bounds)
-				bounds = nodeBounds;
-			else
-				*bounds += *nodeBounds;
-		}
-	}
-	if(!bounds)
+		bounds += node->getBounds();
+	if(bounds.empty())
 		return;
 
-	auto[min, max] = bounds->getValues();
+	auto[min, max] = bounds.getValues();
 
 	glm::vec3 centroid = (min + max) * 0.5f;
 	glm::vec3 translation = -centroid;

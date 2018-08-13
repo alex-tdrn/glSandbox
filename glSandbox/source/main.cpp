@@ -1,5 +1,4 @@
-#include "Model.h"
-#include "Shader.h"
+﻿#include "Shader.h"
 #include "Camera.h"
 #include "Lights.h"
 #include "Globals.h"
@@ -22,10 +21,10 @@
 #include <filesystem>
 #include <memory>
 
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
-float lastMouseX = 400;
-float lastMouseY = 300;
+double deltaTime = 0.0f;
+double lastFrame = 0.0f;
+double lastMouseX = 400;
+double lastMouseY = 300;
 bool mouseDrag = false;
 std::unique_ptr<Renderer> mainRenderer;
 
@@ -93,7 +92,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 	resources::IOScene = resources::scenes[loadGLTF("models/Cube/Cube.gltf")];
 	mainRenderer = std::make_unique<Renderer>(resources::IOScene);
-	resources::init();
+	resources::loadShaders();
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -103,7 +102,7 @@ int main(int argc, char** argv)
 		processInput(window);
 		drawUI();
 		glfwSwapInterval(settings::rendering::vsync);
-		float currentFrame = glfwGetTime();
+		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		mainRenderer->render();
@@ -225,8 +224,8 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
 
 	static bool firstMouse = true;
-	float xoffset = xpos - lastMouseX;
-	float yoffset = ypos - lastMouseY;
+	double xoffset = xpos - lastMouseX;
+	double yoffset = ypos - lastMouseY;
 	lastMouseX = xpos;
 	lastMouseY = ypos;
 	if(!mouseDrag || firstMouse)

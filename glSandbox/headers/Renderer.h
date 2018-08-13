@@ -23,6 +23,10 @@ private:
 	struct {
 		int width = 1920;
 		int height = 960;
+		float aspect()
+		{
+			return float(width) / height;
+		}
 	} viewport;
 	struct{
 		int samples = 0;

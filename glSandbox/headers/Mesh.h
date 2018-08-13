@@ -21,22 +21,22 @@ public:
 		struct AttributeBuffer
 		{
 			uint8_t const* data;
-			uint32_t size;
+			uint64_t size;
 			uint32_t stride;
-			uint32_t offset;
-			GLenum dataType;
+			uint64_t offset;
 			uint32_t componentSize;
+			GLenum dataType;
 			AttributeType attributeType;
 		};
 		std::array<std::optional<AttributeBuffer>, AttributeType::N> array;
 		bool interleaved = false;
 		uint8_t const* data;
-		uint32_t size;
+		uint64_t size;
 	};
 	struct IndexBuffer
 	{
 		uint8_t const* data;
-		uint32_t size;
+		uint64_t size;
 		uint32_t count;
 		GLenum dataType;
 	};

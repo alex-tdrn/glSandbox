@@ -3,14 +3,14 @@
 #include <glad/glad.h>
 #include <imgui.h>
 
-void resources::init()
+struct Vertex
 {
-	struct Vertex
-	{
-		float const position[3];
-		float const normal[3];
-		float const texcoords[2];
-	};
+	float const position[3];
+	float const normal[3];
+	float const texcoords[2];
+};
+Mesh buildMesh(std::vector<Vertex>&& vertices, std::optional<std::vector<uint8_t>>&& indices = std::nullopt)
+{
 	Mesh::Attributes::AttributeBuffer positions;
 	positions.attributeType = Mesh::AttributeType::positions;
 	positions.componentSize = 3;
@@ -32,109 +32,226 @@ void resources::init()
 	texcoords.stride = sizeof(Vertex);
 	texcoords.offset = offsetof(Vertex, texcoords);
 
-	//create vertex data and buffer objects
+	Mesh::Attributes attributes;
+	attributes.array[Mesh::AttributeType::positions] = positions;
+	attributes.array[Mesh::AttributeType::normals] = normals;
+	attributes.array[Mesh::AttributeType::texcoords] = texcoords;
+	attributes.interleaved = true;
+	attributes.data = reinterpret_cast<uint8_t const*>(vertices.data());
+	attributes.size = vertices.size() * sizeof(Vertex);
+
+	std::optional<Mesh::IndexBuffer> indexBuffer;
+	if(indices)
 	{
-		float boxVertices[] = {
-			-1.0f, 1.0f, -1.0f,
-			-1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, 1.0f, -1.0f,
-			-1.0f, 1.0f, -1.0f,
-
-			-1.0f, -1.0f, 1.0f,
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, 1.0f, -1.0f,
-			-1.0f, 1.0f, -1.0f,
-			-1.0f, 1.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,
-
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-
-			-1.0f, -1.0f, 1.0f,
-			-1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, -1.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,
-
-			-1.0f, 1.0f, -1.0f,
-			1.0f, 1.0f, -1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			-1.0f, 1.0f, 1.0f,
-			-1.0f, 1.0f, -1.0f,
-
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f, 1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f, 1.0f,
-			1.0f, -1.0f, 1.0f
-		};
-
-		unsigned int boxVBO;
-		glGenBuffers(1, &boxVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, boxVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
-
-		glGenVertexArrays(1, &boxVAO);
-		glBindVertexArray(boxVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, boxVBO);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-		glEnableVertexAttribArray(0);
+		indexBuffer.emplace();
+		indexBuffer->data = reinterpret_cast<uint8_t const*>(indices->data());
+		indexBuffer->count = 6;
+		indexBuffer->size = indices->size() * sizeof(uint8_t);
+		indexBuffer->dataType = GL_UNSIGNED_BYTE;
 	}
+	Bounds bounds;
+	for(auto vertex : vertices)
+		bounds += vertex.position;
+	return {bounds, GL_TRIANGLES, std::move(attributes), std::move(indexBuffer)};
+}
 
-	//Quad
-	{
-		Vertex const vertices[] = {
-			{
+Mesh& resources::quad()
+{
+	static Mesh quad = []() -> Mesh{
+		std::vector<Vertex> vertices = {
+			{//top left
 				-1.0f, +1.0f, +0.0f,
 				+0.0f, +0.0f, +1.0f,
 				+0.0f, +1.0f
 			},
-			{
+			{//bottom left
 				-1.0f, -1.0f, +0.0f,
 				+0.0f, +0.0f, +1.0f,
 				+0.0f, +0.0f
 			},
-			{
+			{//bottm right
 				+1.0f, -1.0f, +0.0f,
 				+0.0f, +0.0f, +1.0f,
 				+1.0f, +0.0f
 			},
-			{
+			{//top right
 				+1.0f, +1.0f, +0.0f,
 				+0.0f, +0.0f, +1.0f,
 				+1.0f, +1.0f
 			}
 		};
-		unsigned short const indices[] = {
+		std::vector<uint8_t> indices = {
 			0, 1, 2,
 			0, 2, 3
 		};
+		return buildMesh(std::move(vertices), std::move(indices));
+	}();
+	return quad;
+}
 
-		Mesh::Attributes attributes;
-		attributes.array[Mesh::AttributeType::positions] = positions;
-		attributes.array[Mesh::AttributeType::normals] = normals;
-		attributes.array[Mesh::AttributeType::texcoords] = texcoords;
-		attributes.interleaved = true;
-		attributes.data = reinterpret_cast<uint8_t const*>(vertices);
-		attributes.size = sizeof(vertices);
-		Mesh::IndexBuffer indexBuffer;
-		indexBuffer.data = reinterpret_cast<uint8_t const*>(indices);
-		indexBuffer.count = 6;
-		indexBuffer.size = sizeof(indices);
-		indexBuffer.dataType = GL_UNSIGNED_SHORT;
-		Bounds bounds{glm::vec3{-1.0f, -1.0f, 0.0f}, glm::vec3{1.0f, 1.0f, 0.0f}};
-		primitives::quad = std::make_unique<Mesh>(bounds, GL_TRIANGLES, std::move(attributes), indexBuffer);
-	}
+Mesh& resources::box()
+{
+	static Mesh box = []() -> Mesh{
+		std::vector<Vertex> vertices = {
+			//front face
+			{//top left
+				-1.0f, +1.0f, +1.0f,
+				+0.0f, +0.0f, +1.0f,
+				+0.0f, +1.0f
+			},
+			{//bottom left
+				-1.0f, -1.0f, +1.0f,
+				+0.0f, +0.0f, +1.0f,
+				+0.0f, +0.0f
+			},
+			{//bottom right
+				+1.0f, -1.0f, +1.0f,
+				+0.0f, +0.0f, +1.0f,
+				+1.0f, +0.0f
+			},
+			{//top right
+				+1.0f, +1.0f, +1.0f,
+				+0.0f, +0.0f, +1.0f,
+				+1.0f, +1.0f
+			},
 
+			//left face
+			{//top left
+				-1.0f, +1.0f, -1.0f,
+				-1.0f, +0.0f, +0.0f,
+				+0.0f, +1.0f
+			},
+			{//bottom left
+				-1.0f, -1.0f, -1.0f,
+				-1.0f, +0.0f, +0.0f,
+				+0.0f, +0.0f
+			},
+			{//bottom right
+				-1.0f, -1.0f, +1.0f,
+				-1.0f, +0.0f, +0.0f,
+				+1.0f, +0.0f
+			},
+			{//top right
+				-1.0f, +1.0f, +1.0f,
+				-1.0f, +0.0f, +0.0f,
+				+1.0f, +1.0f
+			},
+			
+			//back face
+			{//top left
+				+1.0f, +1.0f, -1.0f,
+				+0.0f, +0.0f, -1.0f,
+				+0.0f, +1.0f
+			},
+			{//bottom left
+				+1.0f, -1.0f, -1.0f,
+				+0.0f, +0.0f, -1.0f,
+				+0.0f, +0.0f
+			},
+			{//bottom right
+				-1.0f, -1.0f, -1.0f,
+				+0.0f, +0.0f, -1.0f,
+				+1.0f, +0.0f
+			},
+			{//top right
+				-1.0f, +1.0f, -1.0f,
+				+0.0f, +0.0f, -1.0f,
+				+1.0f, +1.0f
+			},
+			
+			//right face
+			{//top left
+				+1.0f, +1.0f, +1.0f,
+				+1.0f, +0.0f, +0.0f,
+				+0.0f, +1.0f
+			},
+			{//bottom left
+				+1.0f, -1.0f, +1.0f,
+				+1.0f, +0.0f, +0.0f,
+				+0.0f, +0.0f
+			},
+			{//bottom right
+				+1.0f, -1.0f, -1.0f,
+				+1.0f, +0.0f, +0.0f,
+				+1.0f, +0.0f
+			},
+			{//top right
+				+1.0f, +1.0f, -1.0f,
+				+1.0f, +0.0f, +0.0f,
+				+1.0f, +1.0f
+			},
+			
+			//top face
+			{//top left
+				-1.0f, +1.0f, -1.0f,
+				+0.0f, +1.0f, +0.0f,
+				+0.0f, +1.0f
+			},
+			{//bottom left
+				-1.0f, +1.0f, +1.0f,
+				+0.0f, +1.0f, +0.0f,
+				+0.0f, +0.0f
+			},
+			{//bottom right
+				+1.0f, +1.0f, +1.0f,
+				+0.0f, +1.0f, +0.0f,
+				+1.0f, +0.0f
+			},
+			{//top right
+				+1.0f, +1.0f, -1.0f,
+				+0.0f, +1.0f, +0.0f,
+				+1.0f, +1.0f
+			},
+
+			//bottom face
+			{//top left
+				+1.0f, +1.0f, -1.0f,
+				+0.0f, -1.0f, +0.0f,
+				+1.0f, +1.0f
+			},
+			{//bottom left
+				+1.0f, +1.0f, +1.0f,
+				+0.0f, -1.0f, +0.0f,
+				+1.0f, +0.0f
+			},
+			{//bottom right
+				-1.0f, +1.0f, +1.0f,
+				+0.0f, -1.0f, +0.0f,
+				+0.0f, +0.0f
+			},
+			{//top right
+				-1.0f, +1.0f, -1.0f,
+				+0.0f, -1.0f, +0.0f,
+				+0.0f, +1.0f
+			},
+		};
+		std::vector<uint8_t> indices = {
+			//front face
+			0, 1, 2,
+			0, 2, 3,
+			//left face
+			4, 5, 6,
+			4, 6, 7,
+			//back face
+			8, 9, 10,
+			8, 10, 11,
+			//right face
+			12, 13, 14,
+			12, 14, 15,
+			//top face
+			16, 17, 18,
+			16, 18, 19,
+			//bottom face
+			20, 21, 22,
+			20, 22, 23
+		};
+		return buildMesh(std::move(vertices), std::move(indices));
+	}();
+	return box;
+}
+
+void resources::loadShaders()
+{
 	for(int i = 0; i < ShaderType::END; i++)
 	{
 		switch(i)

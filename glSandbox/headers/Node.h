@@ -4,7 +4,6 @@
 
 #include <vector>
 #include <memory>
-#include <optional>
 
 class Node
 {
@@ -29,7 +28,7 @@ public:
 	void addChild(std::unique_ptr<Node>&& node);
 	void setTransformation(glm::mat4&& t);
 	glm::mat4 getTransformation() const;
-	virtual std::optional<Bounds> getBounds() const;
+	virtual Bounds getBounds() const;
 	virtual void drawUI();
 
 };

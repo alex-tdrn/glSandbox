@@ -9,16 +9,16 @@
 #include <glm/gtc/quaternion.hpp>
 
 using namespace fx;
-using PrimitivesMap = std::map<gltf::Primitive const*, unsigned int>;
+using PrimitivesMap = std::map<gltf::Primitive const*, size_t>;
 
 uint32_t calculateElementSize(gltf::Accessor const& accessor);
 uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
-std::vector<Scene> loadScenes(gltf::Document const& doc, int const meshesCounter, PrimitivesMap const& primitivesMap);
-std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, PrimitivesMap const& primitivesMap);
+std::vector<Scene> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap);
+std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, PrimitivesMap const& primitivesMap);
 
-unsigned int loadGLTF(std::string const& filename)
+size_t loadGLTF(std::string const& filename)
 {
 	gltf::ReadQuotas readQuota;
 	readQuota.MaxBufferByteLength = std::numeric_limits<uint32_t>::max();
@@ -27,7 +27,7 @@ unsigned int loadGLTF(std::string const& filename)
 
 	auto [loadedMeshes, primitivesMap] = loadMeshes(doc);
 	std::vector<Scene> loadedScenes;
-	unsigned int activeScene = resources::scenes.size() - 1;
+	size_t activeScene = resources::scenes.size() - 1;
 	if(doc.scenes.empty())
 	{
 		std::vector<std::unique_ptr<Node>> rootNodes;
@@ -39,7 +39,7 @@ unsigned int loadGLTF(std::string const& filename)
 	else
 	{
 		activeScene = resources::scenes.size() + doc.scene;
-		loadedScenes = loadScenes(doc, loadedMeshes.size(), primitivesMap);
+		loadedScenes = loadScenes(doc, primitivesMap);
 	}
 	for(auto& mesh : loadedMeshes)
 		resources::meshes.emplace_back(std::move(mesh));
@@ -51,7 +51,7 @@ unsigned int loadGLTF(std::string const& filename)
 	return activeScene;
 }
 
-std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, PrimitivesMap const& primitivesMap)
+std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, PrimitivesMap const& primitivesMap)
 {
 	auto const& node = doc.nodes[idx];
 	std::unique_ptr<Node> n;
@@ -101,7 +101,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, int const idx, Primiti
 	return n;
 }
 
-std::vector<Scene> loadScenes(gltf::Document const& doc, int const meshesCounter, PrimitivesMap const& primitivesMap)
+std::vector<Scene> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap)
 {
 	std::vector<Scene> scenes;
 	for(auto const& scene : doc.scenes)
@@ -196,8 +196,8 @@ std::pair<std::vector<Mesh>, PrimitivesMap> loadMeshes(gltf::Document const& doc
 				}
 			}();
 			Mesh m{{min, max}, drawMode, std::move(attributes), std::move(indices)};
-			if(!mesh.name.empty())
-				m.name.set(mesh.name + "#" + std::to_string(idx++));
+			//if(!mesh.name.empty())
+				//m.name.set(mesh.name + "#" + std::to_string(idx++));
 			meshes.push_back(std::move(m));
 			primitivesMap[&primitive] = meshes.size() - 1;
 		}
@@ -223,6 +223,7 @@ GLenum gltfToGLType(gltf::Accessor::ComponentType type)
 			return GL_UNSIGNED_INT;
 	}
 	assert(0);
+	return 0;
 }
 
 uint32_t componentSize(gltf::Accessor::Type type)
@@ -244,6 +245,7 @@ uint32_t componentSize(gltf::Accessor::Type type)
 			return 16;
 	}
 	assert(0);
+	return 0;
 }
 uint32_t calculateElementSize(gltf::Accessor const& accessor)
 {

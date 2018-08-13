@@ -128,7 +128,6 @@ void Renderer::render()
 
 	camera.use();
 	resources::shaders[resources::ShaderType::light].use();
-	glBindVertexArray(resources::boxVAO);
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
 		{
@@ -139,7 +138,7 @@ void Renderer::render()
 			model = glm::scale(model, glm::vec3{0.2f});
 			resources::shaders[resources::ShaderType::light].set("model", model);
 			resources::shaders[resources::ShaderType::light].set("lightColor", light.getColor() * light.getIntensity());
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			resources::box().use();
 		}
 	};
 	drawLights(pointLights);
@@ -314,8 +313,11 @@ unsigned int Renderer::getOutput()
 
 void Renderer::drawUI(bool* open)
 {
-	//if(!*open)
-	//	return;
+	if(!*open)
+		return;
+	ImGui::Begin(name.get().data(), open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Image(ImTextureID(getOutput()), ImVec2(512, 512 / viewport.aspect()), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::End();
 	//ImGui::Begin("Rendering", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	//bool valueChanged = false;
 	//ImGui::Indent();

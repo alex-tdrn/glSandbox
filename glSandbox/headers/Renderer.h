@@ -18,8 +18,8 @@ private:
 	unsigned int simpleColorbuffer = 0;
 	unsigned int simpleRenderbuffer = 0;
 	bool explicitRendering = true;
-	bool needToRender = true;
-	bool needToRenderSecondary = true;
+	bool _shouldRender = true;
+	bool shouldRenderSecondary = true;
 	struct {
 		int width = 1920;
 		int height = 960;
@@ -92,6 +92,7 @@ public:
 	void resizeViewport(int width, int height);
 	void setScene(std::shared_ptr<Scene>&& scene);
 	Scene& getScene();
+	void shouldRender();
 	void render();
 	unsigned int getOutput();
 	void drawUI(bool* open);

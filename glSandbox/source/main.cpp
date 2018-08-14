@@ -245,6 +245,7 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	xoffset *= sensitivity;
 	yoffset *= -sensitivity;
 	mainRenderer->getScene().getCamera().adjustOrientation(xoffset, yoffset);
+	mainRenderer->shouldRender();
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
@@ -290,32 +291,32 @@ void processInput(GLFWwindow* window)
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cam.dolly(+moveDistance);
-		//activeScene.update();
+		mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		cam.dolly(-moveDistance);
-		//activeScene.update();
+		mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		cam.pan({+moveDistance, 0.0f});
-		//activeScene.update();
+		mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		cam.pan({-moveDistance, 0.0f});
-		//activeScene.update();
+		mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
 		cam.pan({0.0f, +moveDistance});
-		//activeScene.update();
+		mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		cam.pan({0.0f, -moveDistance});
-		//activeScene.update();
+		mainRenderer->shouldRender();
 	}
 }
 

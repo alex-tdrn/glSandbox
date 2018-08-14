@@ -80,18 +80,23 @@ Scene& Renderer::getScene()
 	return *this->scene;
 }
 
+void Renderer::shouldRender()
+{
+	_shouldRender = true;
+}
+
 void Renderer::render()
 {
 	if(explicitRendering)
 	{
-		if(needToRender)
+		if(_shouldRender)
 		{
-			needToRender = false;
-			needToRenderSecondary = true;
+			_shouldRender = false;
+			shouldRenderSecondary = true;
 		}
-		else if(needToRenderSecondary)
+		else if(shouldRenderSecondary)
 		{
-			needToRenderSecondary = false;
+			shouldRenderSecondary = false;
 		}
 		else
 		{
@@ -100,7 +105,7 @@ void Renderer::render()
 	}
 	else
 	{
-		needToRender = true;
+		_shouldRender = true;
 	}
 
 	if(pipeline.samples > 0)
@@ -490,10 +495,10 @@ void Renderer::drawUI(bool* open)
 		}
 	}
 	if(ImGui::IsAnyItemActive())
-		needToRender = true;
+		_shouldRender = true;
 	ImGui::Text("Status: ");
 	ImGui::SameLine();
-	if(needToRender)
+	if(_shouldRender)
 		ImGui::Text("rendering...");
 	else
 		ImGui::Text("idle...");

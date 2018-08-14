@@ -7,16 +7,30 @@
 
 #include <vector>
 
-namespace resources
+namespace res
 {
-	Mesh& quad();
-	Mesh& box();
+	namespace meshes
+	{
+		std::vector<std::shared_ptr<Mesh>> getAll();
+		void add(std::shared_ptr<Mesh>);
+		void add(std::vector<std::shared_ptr<Mesh>>&&);
+		std::shared_ptr<Mesh> const& quad();
+		std::shared_ptr<Mesh> const& box();
 
-	inline std::vector<Mesh> meshes;
+	}
+	namespace scenes
+	{
+		std::vector<std::shared_ptr<Scene>> getAll();
+		void add(std::shared_ptr<Scene>);
+		void add(std::vector<std::shared_ptr<Scene>>&&);
+
+	}
+
 	inline std::vector<Shader> shaders;
 	namespace textures
 	{
 		inline Texture placeholder("textures/placeholder.png", true);
+
 	}
 	namespace cubemaps
 	{
@@ -30,10 +44,9 @@ namespace resources
 			"cubemaps/mp_blizzard/blizzard_up.tga", "cubemaps/mp_blizzard/blizzard_dn.tga",
 			"cubemaps/mp_blizzard/blizzard_ft.tga", "cubemaps/mp_blizzard/blizzard_bk.tga"
 			});
+
 	}
 
-	inline std::vector<std::shared_ptr<Scene>> scenes;
-	inline std::shared_ptr<Scene> IOScene;
 	enum ShaderType
 	{
 		blinn_phong,
@@ -60,4 +73,5 @@ namespace resources
 	void loadShaders();
 	void reloadShaders();
 	void drawUI(bool* open);
+	std::shared_ptr<Scene> importGLTF(std::string_view const filename);
 }

@@ -1,7 +1,30 @@
 #include "Resources.h"
+#include "ImportGLTF.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
+
+static std::vector<std::shared_ptr<Mesh>> meshes;
+
+std::vector<std::shared_ptr<Mesh>> res::meshes::getAll()
+{
+	auto meshes = ::meshes;
+	meshes.push_back(quad());
+	meshes.push_back(box());
+	return meshes;
+}
+
+void res::meshes::add(std::shared_ptr<Mesh> mesh)
+{
+	::meshes.push_back(std::move(mesh));
+}
+
+void res::meshes::add(std::vector<std::shared_ptr<Mesh>>&& meshes)
+{
+	::meshes.resize(::meshes.size() + meshes.size());
+	for(auto& mesh : meshes)
+		::meshes.push_back(std::move(mesh));
+}
 
 struct Vertex
 {
@@ -55,9 +78,9 @@ Mesh buildMesh(std::vector<Vertex>&& vertices, std::optional<std::vector<uint8_t
 	return {bounds, GL_TRIANGLES, std::move(attributes), std::move(indexBuffer)};
 }
 
-Mesh& resources::quad()
+std::shared_ptr<Mesh> const& res::meshes::quad()
 {
-	static Mesh quad = []() -> Mesh{
+	static std::shared_ptr<Mesh> quad = []() -> std::shared_ptr<Mesh>{
 		std::vector<Vertex> vertices = {
 			{//top left
 				-1.0f, +1.0f, +0.0f,
@@ -84,14 +107,14 @@ Mesh& resources::quad()
 			0, 1, 2,
 			0, 2, 3
 		};
-		return buildMesh(std::move(vertices), std::move(indices));
+		return std::make_shared<Mesh>(buildMesh(std::move(vertices), std::move(indices)));
 	}();
 	return quad;
 }
-
-Mesh& resources::box()
+					  
+std::shared_ptr<Mesh> const& res::meshes::box()
 {
-	static Mesh box = []() -> Mesh{
+	static std::shared_ptr<Mesh> box = []() -> std::shared_ptr<Mesh>{
 		std::vector<Vertex> vertices = {
 			//front face
 			{//top left
@@ -245,12 +268,31 @@ Mesh& resources::box()
 			20, 21, 22,
 			20, 22, 23
 		};
-		return buildMesh(std::move(vertices), std::move(indices));
+		return std::make_shared<Mesh>(buildMesh(std::move(vertices), std::move(indices)));
 	}();
 	return box;
 }
 
-void resources::loadShaders()
+static std::vector<std::shared_ptr<Scene>> scenes;
+
+std::vector<std::shared_ptr<Scene>> res::scenes::getAll()
+{
+	return ::scenes;
+}
+
+void res::scenes::add(std::shared_ptr<Scene> scene)
+{
+	::scenes.push_back(std::move(scene));
+}
+
+void res::scenes::add(std::vector<std::shared_ptr<Scene>>&& scenes)
+{
+	::scenes.resize(::scenes.size() + scenes.size());
+	for(auto& scene : scenes)
+		::scenes.push_back(std::move(scene));
+}
+
+void res::loadShaders()
 {
 	for(int i = 0; i < ShaderType::END; i++)
 	{
@@ -319,44 +361,53 @@ void resources::loadShaders()
 	}
 }
 
-void resources::reloadShaders()
+void res::reloadShaders()
 {
 	for(int i = 0; i < ShaderType::END; i++)
 		shaders[i].reload();
 }
 
-void resources::drawUI(bool* open)
+void res::drawUI(bool* open)
 {
 	if(!*open)
 		return;
 	ImGui::Begin("Resources", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-	bool valueChanged = false;
-	ImGui::Indent();
-	if(ImGui::CollapsingHeader("Scenes"))
-	{
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.25f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-		for(auto& scene : scenes)
-			scene->drawUI();
-	}
-	if(ImGui::CollapsingHeader("Meshes"))
-		for(auto& mesh : meshes)
-			mesh.drawUI();
-	if(ImGui::CollapsingHeader("Cubemaps"))
-	{
-		valueChanged |= cubemaps::skybox.drawUI();
-		valueChanged |= cubemaps::mp_blizzard.drawUI();
-	}
-	if(ImGui::Button("Reload Shaders"))
-	{
-		reloadShaders();
-		valueChanged = true;
-	}
-	ImGui::Unindent();
-	//if(valueChanged)
-	//scenes::getActiveScene().update();
+	//bool valueChanged = false;
+	//ImGui::Indent();
+	//if(ImGui::CollapsingHeader("Scenes"))
+	//{
+	//	ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.25f);
+	//	ImGui::PopItemWidth();
+	//	ImGui::SameLine();
+	//	for(auto& scene : ::scenes)
+	//		scene->drawUI();
+	//}
+	//if(ImGui::CollapsingHeader("Meshes"))
+	//	for(auto& mesh : meshes)
+	//		mesh.drawUI();
+	//if(ImGui::CollapsingHeader("Cubemaps"))
+	//{
+	//	valueChanged |= cubemaps::skybox.drawUI();
+	//	valueChanged |= cubemaps::mp_blizzard.drawUI();
+	//}
+	//if(ImGui::Button("Reload Shaders"))
+	//{
+	//	reloadShaders();
+	//	valueChanged = true;
+	//}
+	//ImGui::Unindent();
+	////if(valueChanged)
+	////scenes::getActiveScene().update();
 
 	ImGui::End();
+}
+
+std::shared_ptr<Scene> res::importGLTF(std::string_view const filename)
+{
+	auto asset = import(filename);
+	auto ret = asset.scenes[0];//active scene
+	scenes::add(std::move(asset.scenes));
+	meshes::add(std::move(asset.meshes));
+	return ret;
 }

@@ -2,7 +2,7 @@
 #include "Lights.h"
 #include "Prop.h"
 
-Renderer::Renderer(std::shared_ptr<Scene>& scene)
+Renderer::Renderer(std::shared_ptr<Scene>&& scene)
 	:scene(scene)
 {
 	glGenTextures(1, &multisampledColorbuffer);
@@ -70,9 +70,14 @@ void Renderer::resizeViewport(int width, int height)
 	updateFramebuffers();
 }
 
-void Renderer::setScene(std::shared_ptr<Scene>& scene)
+void Renderer::setScene(std::shared_ptr<Scene>&& scene)
 {
-	this->scene = scene;
+	this->scene = std::move(scene);
+}
+
+Scene& Renderer::getScene()
+{
+	return *this->scene;
 }
 
 void Renderer::render()
@@ -149,7 +154,7 @@ void Renderer::render()
 	auto const& pointLights = scene->getPointLights();
 
 	camera.use();
-	resources::shaders[resources::ShaderType::light].use();
+	res::shaders[res::ShaderType::light].use();
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
 		{
@@ -158,23 +163,23 @@ void Renderer::render()
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, light.getPosition());
 			model = glm::scale(model, glm::vec3{0.2f});
-			resources::shaders[resources::ShaderType::light].set("model", model);
-			resources::shaders[resources::ShaderType::light].set("lightColor", light.getColor() * light.getIntensity());
-			resources::box().use();
+			res::shaders[res::ShaderType::light].set("model", model);
+			res::shaders[res::ShaderType::light].set("lightColor", light.getColor() * light.getIntensity());
+			res::meshes::box()->use();
 		}
 	};
 	drawLights(pointLights);
 	drawLights(spotLights);
 
-	Shader& activeShader = resources::shaders[shading.current];
+	Shader& activeShader = res::shaders[shading.current];
 	activeShader.use();
 	glm::mat4 viewMatrix = camera.getViewMatrix();
 	switch(shading.current)
 	{
-		case resources::ShaderType::blinn_phong:
-		case resources::ShaderType::phong:
-		case resources::ShaderType::gouraud:
-		case resources::ShaderType::flat:
+		case res::ShaderType::blinn_phong:
+		case res::ShaderType::phong:
+		case res::ShaderType::gouraud:
+		case res::ShaderType::flat:
 			activeShader.set("material.overrideDiffuse", shading.lighting.override.diffuse);
 			activeShader.set("material.overrideSpecular", shading.lighting.override.specular);
 			activeShader.set("material.overrideDiffuseColor", shading.lighting.override.diffuseColor);
@@ -231,14 +236,14 @@ void Renderer::render()
 				activeShader.set("nSpotLights", enabledLights);
 			}
 			break;
-		case resources::ShaderType::refraction:
+		case res::ShaderType::refraction:
 			activeShader.set("perChannel", shading.refraction.perChannel);
 			activeShader.set("n1", shading.refraction.n1);
 			activeShader.set("n1RGB", shading.refraction.n1RGB);
 			activeShader.set("n2", shading.refraction.n2);
 			activeShader.set("n2RGB", shading.refraction.n2RGB);
 			[[fallthrough]];
-		case resources::ShaderType::reflection:
+		case res::ShaderType::reflection:
 			/*if(skybox)
 			{
 				skybox->use();
@@ -246,12 +251,12 @@ void Renderer::render()
 				activeShader.set("cameraPos", camera.getPosition());
 			}*/
 			break;
-		case resources::ShaderType::debugDepthBuffer:
+		case res::ShaderType::debugDepthBuffer:
 			activeShader.set("linearize", shading.debugging.depthBufferLinear);
 			activeShader.set("nearPlane", camera.getNearPlane());
 			activeShader.set("farPlane", camera.getFarPlane());
 			break;
-		case resources::ShaderType::debugNormals:
+		case res::ShaderType::debugNormals:
 			if(shading.debugging.normals.showLines)
 			{
 
@@ -267,12 +272,12 @@ void Renderer::render()
 			activeShader.set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 			if(shading.debugging.normals.showLines)
 			{
-				resources::shaders[resources::ShaderType::debugNormalsShowLines].use();
-				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("lineLength", shading.debugging.normals.lineLength);
-				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("color", shading.debugging.normals.lineColor);
-				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("viewSpace", shading.debugging.normals.viewSpace);
-				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("faceNormals", shading.debugging.normals.faceNormals);
-				resources::shaders[resources::ShaderType::debugNormalsShowLines].set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
+				res::shaders[res::ShaderType::debugNormalsShowLines].use();
+				res::shaders[res::ShaderType::debugNormalsShowLines].set("lineLength", shading.debugging.normals.lineLength);
+				res::shaders[res::ShaderType::debugNormalsShowLines].set("color", shading.debugging.normals.lineColor);
+				res::shaders[res::ShaderType::debugNormalsShowLines].set("viewSpace", shading.debugging.normals.viewSpace);
+				res::shaders[res::ShaderType::debugNormalsShowLines].set("faceNormals", shading.debugging.normals.faceNormals);
+				res::shaders[res::ShaderType::debugNormalsShowLines].set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 				activeShader.use();
 			}
 			break;
@@ -292,9 +297,8 @@ void Renderer::render()
 		activeShader.set("material.diffuseMap", 1);
 		activeShader.set("material.hasSpecularMap", false);
 		activeShader.set("material.hasOpacityMap", false);
-		resources::textures::placeholder.use(1);
-		if(prop->getMeshIndex())
-			resources::meshes[*prop->getMeshIndex()].use();
+		res::textures::placeholder.use(1);
+		prop->getMesh().use();
 	}
 	//for(auto& actor : actors)
 	//actor.draw(activeShader);
@@ -404,28 +408,28 @@ void Renderer::drawUI(bool* open)
 	{
 		ImGui::Columns(3, nullptr, true);
 		ImGui::Text("Lighting");
-		ImGui::RadioButton("Blinn-Phong", reinterpret_cast<int*>(&shading.current), resources::ShaderType::blinn_phong);
-		ImGui::RadioButton("Phong", reinterpret_cast<int*>(&shading.current), resources::ShaderType::phong);
-		ImGui::RadioButton("Gouraud", reinterpret_cast<int*>(&shading.current), resources::ShaderType::gouraud);
-		ImGui::RadioButton("Flat", reinterpret_cast<int*>(&shading.current), resources::ShaderType::flat);
+		ImGui::RadioButton("Blinn-Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::blinn_phong);
+		ImGui::RadioButton("Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::phong);
+		ImGui::RadioButton("Gouraud", reinterpret_cast<int*>(&shading.current), res::ShaderType::gouraud);
+		ImGui::RadioButton("Flat", reinterpret_cast<int*>(&shading.current), res::ShaderType::flat);
 		ImGui::NextColumn();
 		ImGui::Text("Debugging");
-		ImGui::RadioButton("Normals", reinterpret_cast<int*>(&shading.current), resources::ShaderType::debugNormals);
-		ImGui::RadioButton("Texture Coordinates", reinterpret_cast<int*>(&shading.current), resources::ShaderType::debugTexCoords);
-		ImGui::RadioButton("Depth Buffer", reinterpret_cast<int*>(&shading.current), resources::ShaderType::debugDepthBuffer);
+		ImGui::RadioButton("Normals", reinterpret_cast<int*>(&shading.current), res::ShaderType::debugNormals);
+		ImGui::RadioButton("Texture Coordinates", reinterpret_cast<int*>(&shading.current), res::ShaderType::debugTexCoords);
+		ImGui::RadioButton("Depth Buffer", reinterpret_cast<int*>(&shading.current), res::ShaderType::debugDepthBuffer);
 		ImGui::NextColumn();
 		ImGui::Text("Experimental");
-		ImGui::RadioButton("Reflection", reinterpret_cast<int*>(&shading.current), resources::ShaderType::reflection);
-		ImGui::RadioButton("Refraction", reinterpret_cast<int*>(&shading.current), resources::ShaderType::refraction);
+		ImGui::RadioButton("Reflection", reinterpret_cast<int*>(&shading.current), res::ShaderType::reflection);
+		ImGui::RadioButton("Refraction", reinterpret_cast<int*>(&shading.current), res::ShaderType::refraction);
 		ImGui::Columns(1);
 		ImGui::Separator();
 
 		switch(shading.current)
 		{
-			case resources::ShaderType::blinn_phong:
-			case resources::ShaderType::phong:
-			case resources::ShaderType::gouraud:
-			case resources::ShaderType::flat:
+			case res::ShaderType::blinn_phong:
+			case res::ShaderType::phong:
+			case res::ShaderType::gouraud:
+			case res::ShaderType::flat:
 				ImGui::Checkbox("Override Diffuse", &shading.lighting.override.diffuse);
 				if(shading.lighting.override.diffuse)
 				{
@@ -449,7 +453,7 @@ void Renderer::drawUI(bool* open)
 				ImGui::PushItemWidth(-1);
 				ImGui::SliderFloat("###Ambient Strength", &shading.lighting.ambientStrength, 0.0f, 1.0f);
 				break;
-			case resources::ShaderType::refraction:
+			case res::ShaderType::refraction:
 				ImGui::Checkbox("Per Channel", &shading.refraction.perChannel);
 				if(!shading.refraction.perChannel)
 				{
@@ -464,7 +468,7 @@ void Renderer::drawUI(bool* open)
 					ImGui::DragFloat3("Second Medium", &shading.refraction.n2RGB.x, 0.001f);
 				}
 				break;
-			case resources::ShaderType::debugNormals:
+			case res::ShaderType::debugNormals:
 				ImGui::Checkbox("View Space", &shading.debugging.normals.viewSpace);
 				ImGui::SameLine();
 				ImGui::Checkbox("Show Lines", &shading.debugging.normals.showLines);
@@ -477,10 +481,10 @@ void Renderer::drawUI(bool* open)
 					ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs);
 				}
 				break;
-			case resources::ShaderType::debugTexCoords:
+			case res::ShaderType::debugTexCoords:
 
 				break;
-			case resources::ShaderType::debugDepthBuffer:
+			case res::ShaderType::debugDepthBuffer:
 				ImGui::Checkbox("Linearize", &shading.debugging.depthBufferLinear);
 				break;
 		}

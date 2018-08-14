@@ -7,7 +7,7 @@
 Scene::Scene(std::vector<std::unique_ptr<Node>>&& nodes)
 	:nodes(std::move(nodes))
 {
-
+	fitToIdealSize();
 }
 
 std::vector<DirectionalLight> const& Scene::getDirectionalLights() const

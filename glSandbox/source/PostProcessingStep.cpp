@@ -49,19 +49,19 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	Shader& currentShader = resources::shaders[currentShaderType];
+	Shader& currentShader = res::shaders[currentShaderType];
 	currentShader.use();
 	currentShader.set("screenTexture", 0);
 
 	switch(currentShaderType)
 	{
-		case resources::ShaderType::convolution:
+		case res::ShaderType::convolution:
 			currentShader.set("offset", convolutionOffset);
 			currentShader.set("divisor", convolutionDivisor);
 			for(int i = 0; i < 9; i++)
 				currentShader.set("kernel[" + std::to_string(i) + "]", convolutionKernel[i]);
 			break;
-		case resources::ShaderType::chromaticAberration:
+		case res::ShaderType::chromaticAberration:
 			currentShader.set("intensity", chromaticAberrationIntensity);
 			currentShader.set("offsetR", chromaticAberrationOffsetR);
 			currentShader.set("offsetG", chromaticAberrationOffsetG);
@@ -72,7 +72,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	resources::quad().use();
+	res::meshes::quad()->use();
 
 	if(doGammaHDR)
 	{
@@ -82,8 +82,8 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glDisable(GL_CULL_FACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		resources::shaders[resources::ShaderType::gammaHDR].use();
-		resources::shaders[resources::ShaderType::gammaHDR].set("screenTexture", 0);
+		res::shaders[res::ShaderType::gammaHDR].use();
+		res::shaders[res::ShaderType::gammaHDR].set("screenTexture", 0);
 		/*if(settings::rendering::gammaCorrection)
 			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
 		else
@@ -99,7 +99,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorbuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		resources::quad().use();
+		res::meshes::quad()->use();
 	}
 }
 

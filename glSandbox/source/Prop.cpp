@@ -1,24 +1,24 @@
 #include "Prop.h"
 #include "Resources.h"
 
-Prop::Prop(std::optional<size_t> meshIndex)
-	:meshIndex(meshIndex)
+Prop::Prop(std::shared_ptr<Mesh> const& mesh)
+	:mesh(mesh)
 {
 
 }
 
-std::optional<size_t>const& Prop::getMeshIndex() const
+Prop::Prop(std::shared_ptr<Mesh>&& mesh)
+	:mesh(std::move(mesh))
 {
-	return meshIndex;
+
+}
+
+Mesh& Prop::getMesh() const
+{
+	return *mesh;
 }
 
 Bounds Prop::getBounds() const
 {
-	if(meshIndex)
-	{
-		Bounds bounds{resources::meshes[*meshIndex].getBounds()};
-		auto const& t = getTransformation();
-		return bounds * t;
-	}
-	return {};
+	return mesh->getBounds() * getTransformation();
 }

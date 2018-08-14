@@ -3,7 +3,6 @@
 #include "Lights.h"
 #include "Globals.h"
 #include "Scene.h"
-#include "AssetLoader.h"
 #include "Renderer.h"
 
 #include <glm/glm.hpp>
@@ -91,11 +90,10 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
-	resources::IOScene = resources::scenes[loadGLTF("models/Cube/Cube.gltf")];
-	mainRenderer = std::make_unique<Renderer>(resources::IOScene);
 	//renderers.emplace_back(std::make_unique<Renderer>(resources::IOScene));
 	//renderers.emplace_back(std::make_unique<Renderer>(resources::IOScene));
-	resources::loadShaders();
+	res::loadShaders();
+	mainRenderer = std::make_unique<Renderer>(res::importGLTF("models/Cube/Cube.gltf"));
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -151,17 +149,10 @@ void drawFileBrowser(bool *open)
 	{
 		std::string filename = file.path().filename().generic_string();
 		if(file.path().extension() == ".gltf")
-		{
 			if(ImGui::Button(filename.data()))
-			{
-				resources::IOScene = resources::scenes[loadGLTF(file.path().generic_string())];
-				mainRenderer->setScene(resources::IOScene);
-			}
-		}
+				mainRenderer->setScene(res::importGLTF(file.path().generic_string()));
 		else
-		{
 			ImGui::Text(filename.data());
-		}
 	}
 	ImGui::End();
 }
@@ -205,7 +196,7 @@ void drawUI()
 		ImGui::EndMainMenuBar();
 	}
 	drawFileBrowser(&drawFileBrowserFlag);
-	resources::drawUI(&drawResources);
+	res::drawUI(&drawResources);
 	{
 		mainRenderer->drawUI(&drawRenderingSettings);
 		if(drawRenderingSettings)
@@ -253,9 +244,7 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= -sensitivity;
-	if(resources::scenes.empty())
-		return;
-	resources::IOScene->getCamera().adjustOrientation(xoffset, yoffset);
+	mainRenderer->getScene().getCamera().adjustOrientation(xoffset, yoffset);
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
@@ -297,9 +286,7 @@ void processInput(GLFWwindow* window)
 {
 
 	float moveDistance = 2.5f * deltaTime; // adjust accordingly
-	if(resources::scenes.empty())
-		return;
-	Camera& cam = resources::IOScene->getCamera();
+	Camera& cam = mainRenderer->getScene().getCamera();
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cam.dolly(+moveDistance);

@@ -156,7 +156,7 @@
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="source\Node.cpp" />
     <ClCompile Include="source\Prop.cpp" />
-    <ClCompile Include="source\AssetLoader.cpp" />
+    <ClCompile Include="source\ImportGLTF.cpp" />
     <ClCompile Include="source\Cubemap.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Components.cpp" />
@@ -174,7 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\Named.h" />
-    <ClInclude Include="headers\AssetLoader.h" />
+    <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />
     <ClInclude Include="headers\Components.h" />

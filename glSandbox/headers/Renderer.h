@@ -42,7 +42,7 @@ private:
 		int faceCullingOrdering = GL_CCW;
 	} pipeline;
 	struct{
-		resources::ShaderType current = resources::ShaderType::blinn_phong;
+		res::ShaderType current = res::ShaderType::blinn_phong;
 		struct
 		{
 			bool perChannel = false;
@@ -78,7 +78,7 @@ public:
 	Name<Renderer> name{"renderer"};
 
 public:
-	Renderer(std::shared_ptr<Scene>& scene);
+	Renderer(std::shared_ptr<Scene>&& scene);
 	Renderer(Renderer const&) = delete;
 	Renderer(Renderer&&) = delete;
 	Renderer& operator=(Renderer const&) = delete;
@@ -90,7 +90,8 @@ private:
 
 public:
 	void resizeViewport(int width, int height);
-	void setScene(std::shared_ptr<Scene>& scene);
+	void setScene(std::shared_ptr<Scene>&& scene);
+	Scene& getScene();
 	void render();
 	unsigned int getOutput();
 	void drawUI(bool* open);

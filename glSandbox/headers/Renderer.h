@@ -30,7 +30,11 @@ private:
 	} viewport;
 	struct{
 		int samples = 0;
-		bool wireframe = false;
+		struct{
+			int mode = GL_FILL;
+			float lineWidth = 1.0f;
+			float pointSize = 1.0f;
+		}polygon;
 		bool depthTesting = true;
 		int depthFunction = GL_LESS;
 		bool faceCulling = false;
@@ -55,7 +59,7 @@ private:
 				glm::vec3 specularColor{1.0f, 1.0f, 1.0f};
 			}override;
 			float ambientStrength = 0.025f;
-			float shininess = 8;
+			float shininess = 128;
 		}lighting;
 		struct{
 			struct{

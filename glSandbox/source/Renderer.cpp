@@ -112,11 +112,18 @@ void Renderer::render()
 	{
 		glDisable(GL_CULL_FACE);
 	}
-	if(pipeline.wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+	glPolygonMode(GL_FRONT_AND_BACK, pipeline.polygon.mode);
+	switch(pipeline.polygon.mode)
+	{
+		case GL_FILL:
+			break;
+		case GL_LINE:
+			glLineWidth(pipeline.polygon.lineWidth);
+			break;
+		case GL_POINT:
+			glPointSize(pipeline.polygon.pointSize);
+			break;
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(scene->getBackground().r, scene->getBackground().g, scene->getBackground().b, 1.0f);
 
@@ -317,122 +324,155 @@ void Renderer::drawUI(bool* open)
 		return;
 	ImGui::Begin(name.get().data(), open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	ImGui::Image(ImTextureID(getOutput()), ImVec2(512, 512 / viewport.aspect()), ImVec2(0, 1), ImVec2(1, 0));
+
+	bool valueChanged = false;
+	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
+	ImGui::NewLine();
+	if(ImGui::CollapsingHeader("Pipeline", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Text("Samples");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(-1);
+		if(ImGui::SliderInt("###Samples", &pipeline.samples, 0, 8))
+			updateFramebuffers();
+		ImGui::PopItemWidth();
+		ImGui::Columns(3, nullptr, true);
+		ImGui::Text("Polygon Mode");
+		ImGui::NextColumn();
+		valueChanged |= ImGui::Checkbox("Depth Testing", &pipeline.depthTesting);
+		ImGui::NextColumn();
+		valueChanged |= ImGui::Checkbox("Face Culling", &pipeline.faceCulling);
+		ImGui::Separator();
+		ImGui::NextColumn();
+		ImGui::Text("Mode");
+		valueChanged |= ImGui::RadioButton("GL_FILL", &pipeline.polygon.mode, GL_FILL);
+		valueChanged |= ImGui::RadioButton("GL_LINE", &pipeline.polygon.mode, GL_LINE);
+		valueChanged |= ImGui::RadioButton("GL_POINT", &pipeline.polygon.mode, GL_POINT);
+		ImGui::NewLine();
+		switch(pipeline.polygon.mode)
+		{
+			case GL_FILL:
+				break;
+			case GL_LINE:
+				ImGui::Text("Width");
+				ImGui::PushItemWidth(-1);
+				ImGui::SliderFloat("###Width", &pipeline.polygon.lineWidth, 0.1f, 32.0f);
+				break;
+			case GL_POINT:
+				ImGui::Text("Size");
+				ImGui::PushItemWidth(-1);
+				ImGui::SliderFloat("###Size", &pipeline.polygon.pointSize, 0.1f, 256.0f);
+				break;
+		}
+		ImGui::NextColumn();
+		ImGui::Text("Function");
+		valueChanged |= ImGui::RadioButton("GL_ALWAYS", &pipeline.depthFunction, GL_ALWAYS);
+		valueChanged |= ImGui::RadioButton("GL_NEVER", &pipeline.depthFunction, GL_NEVER);
+		valueChanged |= ImGui::RadioButton("GL_LESS", &pipeline.depthFunction, GL_LESS);
+		valueChanged |= ImGui::RadioButton("GL_EQUAL", &pipeline.depthFunction, GL_EQUAL);
+		valueChanged |= ImGui::RadioButton("GL_LEQUAL", &pipeline.depthFunction, GL_LEQUAL);
+		valueChanged |= ImGui::RadioButton("GL_GREATER", &pipeline.depthFunction, GL_GREATER);
+		valueChanged |= ImGui::RadioButton("GL_NOTEQUAL", &pipeline.depthFunction, GL_NOTEQUAL);
+		valueChanged |= ImGui::RadioButton("GL_GEQUAL", &pipeline.depthFunction, GL_GEQUAL);
+		ImGui::NextColumn();
+
+		ImGui::Text("Mode");
+		valueChanged |= ImGui::RadioButton("GL_FRONT_AND_BACK", &pipeline.faceCullingMode, GL_FRONT_AND_BACK);
+		valueChanged |= ImGui::RadioButton("GL_FRONT", &pipeline.faceCullingMode, GL_FRONT);
+		valueChanged |= ImGui::RadioButton("GL_BACK", &pipeline.faceCullingMode, GL_BACK);
+		ImGui::NewLine();
+		ImGui::Text("Ordering");
+		valueChanged |= ImGui::RadioButton("GL_CCW", &pipeline.faceCullingOrdering, GL_CCW);
+		valueChanged |= ImGui::RadioButton("GL_CW ", &pipeline.faceCullingOrdering, GL_CW);
+		ImGui::Columns(1);
+
+	}
+	if(ImGui::CollapsingHeader("Shaders", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Columns(3, nullptr, true);
+		ImGui::Text("Lighting");
+		valueChanged |= ImGui::RadioButton("Blinn-Phong", reinterpret_cast<int*>(&shading.current), resources::ShaderType::blinn_phong);
+		valueChanged |= ImGui::RadioButton("Phong", reinterpret_cast<int*>(&shading.current), resources::ShaderType::phong);
+		valueChanged |= ImGui::RadioButton("Gouraud", reinterpret_cast<int*>(&shading.current), resources::ShaderType::gouraud);
+		valueChanged |= ImGui::RadioButton("Flat", reinterpret_cast<int*>(&shading.current), resources::ShaderType::flat);
+		ImGui::NextColumn();
+		ImGui::Text("Debugging");
+		valueChanged |= ImGui::RadioButton("Normals", reinterpret_cast<int*>(&shading.current), resources::ShaderType::debugNormals);
+		valueChanged |= ImGui::RadioButton("Texture Coordinates", reinterpret_cast<int*>(&shading.current), resources::ShaderType::debugTexCoords);
+		valueChanged |= ImGui::RadioButton("Depth Buffer", reinterpret_cast<int*>(&shading.current), resources::ShaderType::debugDepthBuffer);
+		ImGui::NextColumn();
+		ImGui::Text("Experimental");
+		valueChanged |= ImGui::RadioButton("Reflection", reinterpret_cast<int*>(&shading.current), resources::ShaderType::reflection);
+		valueChanged |= ImGui::RadioButton("Refraction", reinterpret_cast<int*>(&shading.current), resources::ShaderType::refraction);
+		ImGui::Columns(1);
+		ImGui::Separator();
+
+		switch(shading.current)
+		{
+			case resources::ShaderType::blinn_phong:
+			case resources::ShaderType::phong:
+			case resources::ShaderType::gouraud:
+			case resources::ShaderType::flat:
+				valueChanged |= ImGui::Checkbox("Override Diffuse", &shading.lighting.override.diffuse);
+				if(shading.lighting.override.diffuse)
+				{
+					ImGui::SameLine();
+					valueChanged |= ImGui::ColorEdit3("Diffuse", &shading.lighting.override.diffuseColor.x, ImGuiColorEditFlags_NoInputs);
+
+				}
+				ImGui::SameLine();
+				valueChanged |= ImGui::Checkbox("Override Specular", &shading.lighting.override.specular);
+				if(shading.lighting.override.specular)
+				{
+					ImGui::SameLine();
+					valueChanged |= ImGui::ColorEdit3("Specular", &shading.lighting.override.specularColor.x, ImGuiColorEditFlags_NoInputs);
+				}
+				ImGui::Text("Shininess");
+				ImGui::SameLine();
+				ImGui::PushItemWidth(-1);
+				ImGui::SliderFloat("###Shininess", &shading.lighting.shininess, 0, 512);
+				ImGui::Text("Ambient Strength");
+				ImGui::SameLine();
+				ImGui::PushItemWidth(-1);
+				ImGui::SliderFloat("###Ambient Strength", &shading.lighting.ambientStrength, 0.0f, 1.0f);
+				break;
+			case resources::ShaderType::refraction:
+				ImGui::Checkbox("Per Channel", &shading.refraction.perChannel);
+				if(!shading.refraction.perChannel)
+				{
+					valueChanged |= ImGui::DragFloat("First Medium", &shading.refraction.n1, 0.001f);
+					valueChanged |= ImGui::DragFloat("Second Medium", &shading.refraction.n2, 0.001f);
+					shading.refraction.n1RGB = glm::vec3(shading.refraction.n1);
+					shading.refraction.n2RGB = glm::vec3(shading.refraction.n2);
+				}
+				else
+				{
+					valueChanged |= ImGui::DragFloat3("First Medium", &shading.refraction.n1RGB.x, 0.001f);
+					valueChanged |= ImGui::DragFloat3("Second Medium", &shading.refraction.n2RGB.x, 0.001f);
+				}
+				break;
+			case resources::ShaderType::debugNormals:
+				valueChanged |= ImGui::Checkbox("View Space", &shading.debugging.normals.viewSpace);
+				ImGui::SameLine();
+				valueChanged |= ImGui::Checkbox("Show Lines", &shading.debugging.normals.showLines);
+				ImGui::SameLine();
+				valueChanged |= ImGui::Checkbox("Face Normals", &shading.debugging.normals.faceNormals);
+				valueChanged |= ImGui::DragFloat("Explode Magnitude", &shading.debugging.normals.explodeMagnitude, 0.01f);
+				if(shading.debugging.normals.showLines)
+				{
+					valueChanged |= ImGui::DragFloat("Line length", &shading.debugging.normals.lineLength, 0.001f);
+					valueChanged |= ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs);
+				}
+				break;
+			case resources::ShaderType::debugTexCoords:
+
+				break;
+			case resources::ShaderType::debugDepthBuffer:
+				valueChanged |= ImGui::Checkbox("Linearize", &shading.debugging.depthBufferLinear);
+				break;
+		}
+	}
+	//if(valueChanged)//TODO
+	//resources::scenes::getActiveScene().update();
 	ImGui::End();
-	//ImGui::Begin("Rendering", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	//bool valueChanged = false;
-	//ImGui::Indent();
-	//ImGui::Checkbox("Explicit Rendering", &explicitRendering);
-	//if(ImGui::InputInt("Samples", &multisamples))
-	//	updateFramebuffers();	
-	//valueChanged |= ImGui::Checkbox("Wireframe", &wireframe);
-	//ImGui::SameLine();
-	//valueChanged |= ImGui::Checkbox("Depth Testing", &depthTesting);
-	//if(depthTesting && ImGui::CollapsingHeader("Depth Function"))
-	//{
-	//	ImGui::Indent();
-	//	valueChanged |= ImGui::RadioButton("GL_ALWAYS", &depthFunction, GL_ALWAYS);
-	//	ImGui::SameLine();
-	//	valueChanged |= ImGui::RadioButton("GL_NEVER", &depthFunction, GL_NEVER);
-	//	valueChanged |= ImGui::RadioButton("GL_LESS", &depthFunction, GL_LESS);
-	//	ImGui::SameLine();
-	//	valueChanged |= ImGui::RadioButton("GL_EQUAL", &depthFunction, GL_EQUAL);
-	//	valueChanged |= ImGui::RadioButton("GL_LEQUAL", &depthFunction, GL_LEQUAL);
-	//	ImGui::SameLine();
-	//	valueChanged |= ImGui::RadioButton("GL_GREATER", &depthFunction, GL_GREATER);
-	//	valueChanged |= ImGui::RadioButton("GL_NOTEQUAL", &depthFunction, GL_NOTEQUAL);
-	//	ImGui::SameLine();
-	//	valueChanged |= ImGui::RadioButton("GL_GEQUAL", &depthFunction, GL_GEQUAL);
-	//	ImGui::Unindent();
-	//}
-	//valueChanged |= ImGui::Checkbox("Face Culling", &faceCulling);
-
-	//if(faceCulling)
-	//{
-	//	ImGui::Indent();
-	//	ImGui::Text("Face Culling Mode");
-	//	valueChanged |= ImGui::RadioButton("GL_BACK", &faceCullingMode, GL_BACK);
-	//	ImGui::SameLine();
-	//	valueChanged |= ImGui::RadioButton("GL_FRONT", &faceCullingMode, GL_FRONT);
-	//	valueChanged |= ImGui::RadioButton("GL_FRONT_AND_BACK", &faceCullingMode, GL_FRONT_AND_BACK);
-	//	ImGui::Text("Face Culling Ordering");
-	//	valueChanged |= ImGui::RadioButton("GL_CCW", &faceCullingOrdering, GL_CCW);
-	//	ImGui::SameLine();
-	//	valueChanged |= ImGui::RadioButton("GL_CW ", &faceCullingOrdering, GL_CW);
-	//	ImGui::Unindent();
-	//}
-	//valueChanged |= ImGui::RadioButton("Blinn-Phong", &active, type::blinn_phong);
-	//ImGui::SameLine();
-	//valueChanged |= ImGui::RadioButton("Phong", &active, type::phong);
-	//valueChanged |= ImGui::RadioButton("Gouraud", &active, type::gouraud);
-	//ImGui::SameLine();
-	//valueChanged |= ImGui::RadioButton("Flat", &active, type::flat);
-	//valueChanged |= ImGui::RadioButton("Reflection", &active, type::reflection);
-	//ImGui::SameLine();
-	//valueChanged |= ImGui::RadioButton("Refraction", &active, type::refraction);
-	//valueChanged |= ImGui::RadioButton("Normals", &active, type::debugNormals);
-	//ImGui::SameLine();
-	//valueChanged |= ImGui::RadioButton("Texture Coordinates", &active, type::debugTexCoords);
-	//valueChanged |= ImGui::RadioButton("Depth Buffer", &active, type::debugDepthBuffer);
-
-	//switch(active)
-	//{
-	//	case type::blinn_phong:
-	//	case type::phong:
-	//	case type::gouraud:
-	//	case type::flat:
-	//		valueChanged |= ImGui::Checkbox("Override Diffuse", &overrideDiffuse);
-	//		if(overrideDiffuse)
-	//		{
-	//			ImGui::SameLine();
-	//			valueChanged |= ImGui::ColorEdit3("Diffuse", &overrideDiffuseColor.x, ImGuiColorEditFlags_NoInputs);
-
-	//		}
-	//		valueChanged |= ImGui::Checkbox("Override Specular", &overrideSpecular);
-	//		if(overrideSpecular)
-	//		{
-	//			ImGui::SameLine();
-	//			valueChanged |= ImGui::ColorEdit3("Specular", &overrideSpecularColor.x, ImGuiColorEditFlags_NoInputs);
-	//		}
-	//		valueChanged |= ImGui::SliderFloat("Shininess", &shininess, 0, 128);
-	//		valueChanged |= ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
-	//		break;
-	//	case type::refraction:
-	//		ImGui::Checkbox("Per Channel", &refractionPerChannel);
-	//		if(!refractionPerChannel)
-	//		{
-	//			valueChanged |= ImGui::DragFloat("First Medium", &refractionN1, 0.001f);
-	//			valueChanged |= ImGui::DragFloat("Second Medium", &refractionN2, 0.001f);
-	//			refractionN1RGB = glm::vec3(refractionN1);
-	//			refractionN2RGB = glm::vec3(refractionN2);
-	//		}
-	//		else
-	//		{
-	//			valueChanged |= ImGui::DragFloat3("First Medium", &refractionN1RGB.x, 0.001f);
-	//			valueChanged |= ImGui::DragFloat3("Second Medium", &refractionN2RGB.x, 0.001f);
-	//		}
-	//		break;
-	//	case type::debugNormals:
-	//		valueChanged |= ImGui::Checkbox("View Space", &debugNormalsViewSpace);
-	//		ImGui::SameLine();
-	//		valueChanged |= ImGui::Checkbox("Show Lines", &debugNormalsShowLines);
-	//		ImGui::SameLine();
-	//		valueChanged |= ImGui::Checkbox("Face Normals", &debugNormalsFaceNormals);
-	//		valueChanged |= ImGui::DragFloat("Explode Magnitude", &debugNormalsExplodeMagnitude, 0.01f);
-	//		if(debugNormalsShowLines)
-	//		{
-	//			valueChanged |= ImGui::DragFloat("Line length", &debugNormalsLineLength, 0.001f);
-	//			valueChanged |= ImGui::ColorEdit3("Line color", &debugNormalsLineColor.x, ImGuiColorEditFlags_NoInputs);
-	//		}
-	//		break;
-	//	case type::debugTexCoords:
-
-	//		break;
-	//	case type::debugDepthBuffer:
-	//		valueChanged |= ImGui::Checkbox("Linearize", &debugDepthBufferLinear);
-	//		break;
-	//}
-	//ImGui::Unindent();
-	////if(valueChanged)//TODO
-	////resources::scenes::getActiveScene().update();
-	//ImGui::End();
 }

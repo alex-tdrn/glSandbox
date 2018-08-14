@@ -13,7 +13,10 @@ namespace info
 {
 	inline int windowWidth = 1920;
 	inline int windowHeight = 960;
-	inline float aspectRatio = float(windowWidth) / windowHeight;
+	inline float aspect()
+	{
+		return float(windowWidth) / windowHeight;
+	}
 	inline bool rendering = false;
 	inline void drawUI(bool* open);
 }

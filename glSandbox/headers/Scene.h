@@ -16,7 +16,7 @@ private:
 	std::vector<std::unique_ptr<Node>> nodes;
 	float idealSize = 2.0f;
 	Camera camera;
-	std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({270, 60, 0}); return light; } ()};
+	std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({-30, -30, 0}); return light; } ()};
 	std::vector<PointLight> pointLights;
 	std::vector<SpotLight> spotLights;
 	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};

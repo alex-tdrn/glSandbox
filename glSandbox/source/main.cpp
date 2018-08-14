@@ -27,6 +27,7 @@ double lastMouseX = 400;
 double lastMouseY = 300;
 bool mouseDrag = false;
 std::unique_ptr<Renderer> mainRenderer;
+std::vector<std::unique_ptr<Renderer>> renderers;
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam);
@@ -92,6 +93,8 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 	resources::IOScene = resources::scenes[loadGLTF("models/Cube/Cube.gltf")];
 	mainRenderer = std::make_unique<Renderer>(resources::IOScene);
+	//renderers.emplace_back(std::make_unique<Renderer>(resources::IOScene));
+	//renderers.emplace_back(std::make_unique<Renderer>(resources::IOScene));
 	resources::loadShaders();
 
 	while(!glfwWindowShouldClose(window))
@@ -106,6 +109,7 @@ int main(int argc, char** argv)
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		mainRenderer->render();
+		
 		glEnable(GL_FRAMEBUFFER_SRGB);
 		settings::postprocessing::steps[0].draw(mainRenderer->getOutput(), 0);
 		glDisable(GL_FRAMEBUFFER_SRGB);
@@ -202,7 +206,17 @@ void drawUI()
 	}
 	drawFileBrowser(&drawFileBrowserFlag);
 	resources::drawUI(&drawResources);
-	mainRenderer->drawUI(&drawRenderingSettings);
+	{
+		mainRenderer->drawUI(&drawRenderingSettings);
+		if(drawRenderingSettings)
+		{
+			for(auto& renderer : renderers)
+			{
+				renderer->render();
+				renderer->drawUI(&drawRenderingSettings);
+			}
+		}
+	}
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
 	info::drawUI(&drawStats);
 	if(drawImGuiDemo)
@@ -213,7 +227,6 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
 	info::windowWidth = width;
 	info::windowHeight = height;
-	info::aspectRatio = float(info::windowWidth) / info::windowHeight;
 
 	glViewport(0, 0, width, height);
 	mainRenderer->resizeViewport(width, height);
@@ -322,7 +335,7 @@ void processInput(GLFWwindow* window)
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam)
 {
-	if(type == GL_DEBUG_TYPE_PERFORMANCE)
+	if(type == GL_DEBUG_TYPE_PERFORMANCE || type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR)
 		return;
 	std::cout << "-----------------------------------\n"
 		<< "OpenGL Debug Message (" << id << "): \n" << message << '\n';

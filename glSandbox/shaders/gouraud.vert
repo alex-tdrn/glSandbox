@@ -88,7 +88,7 @@ void main()
 	else if(material.overrideSpecular)
 		specularColor = material.overrideSpecularColor;
 	else
-		specularColor = vec3(0.0f);
+		specularColor = vec3(1.0f);
 
 	vec3 result = vec3(0,0,0);
 

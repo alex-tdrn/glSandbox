@@ -27,6 +27,11 @@ public:
 
 	void set(std::string name)
 	{
+		this->name = std::move(name);
+	}
+
+	void set(std::string_view const& name)
+	{
 		this->name = name;
 	}
 

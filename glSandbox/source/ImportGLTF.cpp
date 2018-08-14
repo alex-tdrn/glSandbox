@@ -5,6 +5,7 @@
 #include <fx/gltf.h>
 #include <numeric>
 #include <glm/gtc/quaternion.hpp>
+#include <filesystem>
 
 using namespace fx;
 using PrimitivesMap = std::map<gltf::Primitive const*, std::shared_ptr<Mesh>>;
@@ -24,6 +25,15 @@ Asset import(std::string_view const& filename)
 	
 	auto [meshes, primitivesMap] = loadMeshes(doc);
 	auto scenes = loadScenes(doc, primitivesMap, meshes);
+	std::filesystem::path file(filename);
+	std::string name = file.stem().string();
+	for(int i = 0; i < scenes.size(); i++)
+	{
+		if(i > 0)
+			scenes[i]->name.set(name + "#" + std::to_string(i));
+		else
+			scenes[i]->name.set(name);
+	}
 	return {std::move(scenes), std::move(meshes)};
 }
 
@@ -95,8 +105,8 @@ std::vector<std::shared_ptr<Scene>> loadScenes(gltf::Document const& doc, Primit
 			for(auto const nodeIdx : scene.nodes)
 				rootNodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
 			auto s = std::make_shared<Scene>(std::move(rootNodes));
-			if(!scene.name.empty())
-				s->name.set(scene.name);
+			/*if(!scene.name.empty())
+				s->name.set(scene.name);*/
 			scenes.emplace_back(std::move(s));
 		}
 	}

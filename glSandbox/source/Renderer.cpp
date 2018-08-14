@@ -348,7 +348,26 @@ void Renderer::drawUI(bool* open)
 		return;
 	ImGui::Begin(name.get().data(), open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	ImGui::Image(ImTextureID(getOutput()), ImVec2(512, 512 / viewport.aspect()), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::NewLine();
+	ImGui::Columns(2, nullptr, true);
 	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
+	ImGui::NextColumn();
+	ImGui::Text("Scene");
+	ImGui::SameLine();
+	ImGui::PushItemWidth(-1);
+	if(ImGui::BeginCombo("###Scene", scene->name.get().data()))
+	{
+		for(auto& s : res::scenes::getAll())
+		{
+			bool isSelected = scene.get() == s.get();
+			if(ImGui::Selectable(s->name.get().data(), &isSelected))
+				scene = s;
+			if(isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::Columns(1);
 	ImGui::NewLine();
 	if(ImGui::CollapsingHeader("Pipeline", ImGuiTreeNodeFlags_DefaultOpen))
 	{

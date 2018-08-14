@@ -21,7 +21,7 @@ void res::meshes::add(std::shared_ptr<Mesh> mesh)
 
 void res::meshes::add(std::vector<std::shared_ptr<Mesh>>&& meshes)
 {
-	::meshes.resize(::meshes.size() + meshes.size());
+	::meshes.reserve(::meshes.size() + meshes.size());
 	for(auto& mesh : meshes)
 		::meshes.push_back(std::move(mesh));
 }
@@ -287,7 +287,7 @@ void res::scenes::add(std::shared_ptr<Scene> scene)
 
 void res::scenes::add(std::vector<std::shared_ptr<Scene>>&& scenes)
 {
-	::scenes.resize(::scenes.size() + scenes.size());
+	::scenes.reserve(::scenes.size() + scenes.size());
 	for(auto& scene : scenes)
 		::scenes.push_back(std::move(scene));
 }

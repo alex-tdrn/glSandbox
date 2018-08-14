@@ -17,9 +17,9 @@ private:
 	unsigned int simpleFramebuffer = 0;
 	unsigned int simpleColorbuffer = 0;
 	unsigned int simpleRenderbuffer = 0;
-	bool explicitRendering = false;
-	bool needRedraw = true;
-
+	bool explicitRendering = true;
+	bool needToRender = true;
+	bool needToRenderSecondary = true;
 	struct {
 		int width = 1920;
 		int height = 960;

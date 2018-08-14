@@ -352,18 +352,22 @@ void Renderer::drawUI(bool* open)
 	ImGui::Columns(2, nullptr, true);
 	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
 	ImGui::NextColumn();
+	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Scene");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
 	if(ImGui::BeginCombo("###Scene", scene->name.get().data()))
 	{
+		int id = 0;
 		for(auto& s : res::scenes::getAll())
 		{
+			ImGui::PushID(id++);
 			bool isSelected = scene.get() == s.get();
 			if(ImGui::Selectable(s->name.get().data(), &isSelected))
 				scene = s;
 			if(isSelected)
 				ImGui::SetItemDefaultFocus();
+			ImGui::PopID();
 		}
 		ImGui::EndCombo();
 	}
@@ -371,6 +375,7 @@ void Renderer::drawUI(bool* open)
 	ImGui::NewLine();
 	if(ImGui::CollapsingHeader("Pipeline", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Samples");
 		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
@@ -395,11 +400,13 @@ void Renderer::drawUI(bool* open)
 			case GL_FILL:
 				break;
 			case GL_LINE:
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Width");
 				ImGui::PushItemWidth(-1);
 				ImGui::SliderFloat("###Width", &pipeline.polygon.lineWidth, 0.1f, 32.0f);
 				break;
 			case GL_POINT:
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Size");
 				ImGui::PushItemWidth(-1);
 				ImGui::SliderFloat("###Size", &pipeline.polygon.pointSize, 0.1f, 256.0f);
@@ -468,10 +475,12 @@ void Renderer::drawUI(bool* open)
 					ImGui::SameLine();
 					ImGui::ColorEdit3("Specular", &shading.lighting.override.specularColor.x, ImGuiColorEditFlags_NoInputs);
 				}
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Shininess");
 				ImGui::SameLine();
 				ImGui::PushItemWidth(-1);
 				ImGui::SliderFloat("###Shininess", &shading.lighting.shininess, 0, 512);
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Ambient Strength");
 				ImGui::SameLine();
 				ImGui::PushItemWidth(-1);

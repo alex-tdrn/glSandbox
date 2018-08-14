@@ -1,8 +1,12 @@
 #include "Resources.h"
 #include "ImportGLTF.h"
+#include "Globals.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
+#include <variant>
+#include <algorithm>
+#include <filesystem>
 
 static std::vector<std::shared_ptr<Mesh>> meshes;
 
@@ -285,6 +289,11 @@ void res::scenes::add(std::shared_ptr<Scene> scene)
 	::scenes.push_back(std::move(scene));
 }
 
+void removeScene(Scene* scene)
+{
+	scenes.erase(std::remove_if(scenes.begin(), scenes.end(), [&](std::shared_ptr<Scene>& val){ return val.get() == scene; }), scenes.end());
+}
+
 void res::scenes::add(std::vector<std::shared_ptr<Scene>>&& scenes)
 {
 	::scenes.reserve(::scenes.size() + scenes.size());
@@ -367,39 +376,136 @@ void res::reloadShaders()
 		shaders[i].reload();
 }
 
+void drawImportWindow(bool *open)
+{
+
+	if(!*open)
+		return;
+	ImGui::Begin("Import", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+	static std::filesystem::path path{std::filesystem::current_path()};
+	ImGui::Text(path.generic_string().data());
+	if(ImGui::Selectable(".."))
+		path = path.parent_path();
+	std::vector<std::filesystem::directory_entry> folders;
+	std::vector<std::filesystem::directory_entry> files;
+	for(auto const& part : std::filesystem::directory_iterator(path))
+	{
+		if(part.is_directory())
+			folders.push_back(part);
+		else
+			files.push_back(part);
+	}
+	ImVec2 elementSize{ImGui::GetContentRegionAvail().x, 0.0f};
+	for(auto const& folder : folders)
+	{
+		if(ImGui::Selectable(folder.path().filename().generic_string().data()))
+			path = folder.path();
+	}
+	ImGui::Separator();
+	for(auto const& file : files)
+	{
+		std::string filename = file.path().filename().generic_string();
+		if(file.path().extension() == ".gltf")
+		{
+			if(ImGui::Selectable(filename.data()))
+				settings::mainRenderer->setScene(res::importGLTF(file.path().generic_string()));
+		}
+		else
+		{
+			ImGui::Text(filename.data());
+		}
+	}
+	ImGui::End();
+}
+
 void res::drawUI(bool* open)
 {
 	if(!*open)
 		return;
 	ImGui::Begin("Resources", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-	//bool valueChanged = false;
-	//ImGui::Indent();
-	//if(ImGui::CollapsingHeader("Scenes"))
-	//{
-	//	ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.25f);
-	//	ImGui::PopItemWidth();
-	//	ImGui::SameLine();
-	//	for(auto& scene : ::scenes)
-	//		scene->drawUI();
-	//}
-	//if(ImGui::CollapsingHeader("Meshes"))
-	//	for(auto& mesh : meshes)
-	//		mesh.drawUI();
-	//if(ImGui::CollapsingHeader("Cubemaps"))
-	//{
-	//	valueChanged |= cubemaps::skybox.drawUI();
-	//	valueChanged |= cubemaps::mp_blizzard.drawUI();
-	//}
-	//if(ImGui::Button("Reload Shaders"))
-	//{
-	//	reloadShaders();
-	//	valueChanged = true;
-	//}
-	//ImGui::Unindent();
-	////if(valueChanged)
-	////scenes::getActiveScene().update();
+	float const scrollAreaHeight = ImGui::GetTextLineHeight() * 10;
+	float const scrollAreaWidth = ImGui::GetTextLineHeight() * 20;
+	ImGui::Columns(2, nullptr, false);
+	ImGui::SetColumnWidth(-1, scrollAreaWidth);
+	static bool importWindowOpen = false;
+	if(ImGui::Button("Import"))
+		importWindowOpen = true;
+	drawImportWindow(&importWindowOpen);
+	ImGui::SameLine();
+	if(ImGui::Button("Reload Shaders"))
+		reloadShaders();
+	static std::variant<Scene*, Mesh*> selected;
+	ImGui::BeginChild("###Resources");
 
+	ImGui::Text("Scenes");
+	ImGui::SameLine();
+	if(ImGui::SmallButton("New"))
+		scenes::add(std::make_shared<Scene>());
+	ImGui::BeginChild("###Scenes", {0, scrollAreaHeight}, true);
+	int id = 0;
+	for(auto& scene : scenes::getAll())
+	{
+		ImGui::PushID(id++);
+		bool active = false;
+		if(std::holds_alternative<Scene*>(selected))
+			active = std::get<Scene*>(selected) == scene.get();
+		if(ImGui::Selectable(scene->name.get().data(), active))
+			selected = scene.get();
+		if(ImGui::BeginPopupContextItem())
+		{
+			bool showRemoveModal = ImGui::Selectable("Remove");
+			ImGui::EndPopup();
+			if(showRemoveModal) ImGui::OpenPopup("Are you sure?");
+		}
+		if(ImGui::BeginPopupModal("Are you sure?", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
+		{
+			ImGui::SetWindowSize({100, ImGui::GetTextLineHeight() * 5});
+			ImVec2 buttonSize{ImGui::GetContentRegionAvailWidth() * 0.5f, ImGui::GetContentRegionAvail().y};
+			if(ImGui::Button("Yes", buttonSize))
+			{
+				if(active)
+					selected = static_cast<Scene*>(nullptr);
+				removeScene(scene.get());
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if(ImGui::Button("No", buttonSize))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+	}
+	ImGui::EndChild();
+	ImGui::NewLine();
+
+	ImGui::Text("Meshes");
+	ImGui::BeginChild("###Meshes", {0, scrollAreaHeight}, true);
+	for(auto& mesh : meshes::getAll())
+	{
+		ImGui::PushID(id++);
+		bool active = false;
+		if(std::holds_alternative<Mesh*>(selected))
+			active = std::get<Mesh*>(selected) == mesh.get();
+		if(ImGui::Selectable(mesh->name.get().data(), active))
+			selected = mesh.get();
+		ImGui::PopID();
+	}
+	ImGui::EndChild();
+
+	ImGui::EndChild();
+
+	ImGui::NextColumn();
+	std::visit([](auto selected){
+		ImGui::Text(selected ? selected->name.get().data() : "No selection...");
+		ImGui::BeginChild("###Edit Resource", {0, 0}, true);
+		if(selected) selected->drawUI();
+		ImGui::EndChild();
+	}, selected);
+
+	ImGui::Columns(1);
 	ImGui::End();
 }
 

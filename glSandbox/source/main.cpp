@@ -17,7 +17,6 @@
 #include <array>
 #include <vector>
 #include <optional>
-#include <filesystem>
 #include <memory>
 
 double deltaTime = 0.0f;
@@ -26,7 +25,6 @@ double lastMouseX = 400;
 double lastMouseY = 300;
 bool mouseDrag = false;
 std::unique_ptr<Renderer> mainRenderer;
-std::vector<std::unique_ptr<Renderer>> renderers;
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam);
@@ -90,10 +88,8 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
-	//renderers.emplace_back(std::make_unique<Renderer>(resources::IOScene));
-	//renderers.emplace_back(std::make_unique<Renderer>(resources::IOScene));
 	res::loadShaders();
-	mainRenderer = std::make_unique<Renderer>(res::importGLTF("models/Cube/Cube.gltf"));
+	settings::mainRenderer = std::make_unique<Renderer>(res::importGLTF("models/Cube/Cube.gltf"));
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -106,10 +102,10 @@ int main(int argc, char** argv)
 		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		mainRenderer->render();
+		settings::mainRenderer->render();
 		
 		glEnable(GL_FRAMEBUFFER_SRGB);
-		settings::postprocessing::steps[0].draw(mainRenderer->getOutput(), 0);
+		settings::postprocessing::steps[0].draw(settings::mainRenderer->getOutput(), 0);
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -118,43 +114,6 @@ int main(int argc, char** argv)
 
 	glfwTerminate();
 	return 0;
-}
-
-void drawFileBrowser(bool *open)
-{
-
-	if(!*open)
-		return;
-	ImGui::Begin("File Browser", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	static std::filesystem::path path{std::filesystem::current_path()};
-	ImGui::Text(path.generic_string().data());
-	if(ImGui::Button(".."))
-		path = path.parent_path();
-	std::vector<std::filesystem::directory_entry> folders;
-	std::vector<std::filesystem::directory_entry> files;
-	for(auto const& part : std::filesystem::directory_iterator(path))
-	{
-		if(part.is_directory())
-			folders.push_back(part);
-		else
-			files.push_back(part);
-	}
-	for(auto const& folder : folders)
-	{
-		if(ImGui::Button(folder.path().filename().generic_string().data()))
-			path = folder.path();
-	}
-	ImGui::NewLine();
-	for(auto const& file: files)
-	{
-		std::string filename = file.path().filename().generic_string();
-		if(file.path().extension() == ".gltf")
-			if(ImGui::Button(filename.data()))
-				mainRenderer->setScene(res::importGLTF(file.path().generic_string()));
-		else
-			ImGui::Text(filename.data());
-	}
-	ImGui::End();
 }
 
 void drawUI()
@@ -171,8 +130,6 @@ void drawUI()
 	{
 		if(ImGui::BeginMenu("View"))
 		{
-			if(ImGui::MenuItem("File Browser"))
-				drawFileBrowserFlag = true;
 			if(ImGui::MenuItem("Resources"))
 				drawResources = true;
 			if(ImGui::BeginMenu("Settings"))
@@ -195,18 +152,9 @@ void drawUI()
 		}
 		ImGui::EndMainMenuBar();
 	}
-	drawFileBrowser(&drawFileBrowserFlag);
 	res::drawUI(&drawResources);
 	{
-		mainRenderer->drawUI(&drawRenderingSettings);
-		if(drawRenderingSettings)
-		{
-			for(auto& renderer : renderers)
-			{
-				renderer->render();
-				renderer->drawUI(&drawRenderingSettings);
-			}
-		}
+		settings::mainRenderer->drawUI(&drawRenderingSettings);
 	}
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
 	info::drawUI(&drawStats);
@@ -220,7 +168,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 	info::windowHeight = height;
 
 	glViewport(0, 0, width, height);
-	mainRenderer->resizeViewport(width, height);
+	settings::mainRenderer->resizeViewport(width, height);
 	for(auto& step : settings::postprocessing::steps)
 		step.updateFramebuffer();
 }
@@ -244,8 +192,8 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= -sensitivity;
-	mainRenderer->getScene().getCamera().adjustOrientation(xoffset, yoffset);
-	mainRenderer->shouldRender();
+	settings::mainRenderer->getScene().getCamera().adjustOrientation(xoffset, yoffset);
+	settings::mainRenderer->shouldRender();
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
@@ -287,36 +235,36 @@ void processInput(GLFWwindow* window)
 {
 
 	float moveDistance = 2.5f * deltaTime; // adjust accordingly
-	Camera& cam = mainRenderer->getScene().getCamera();
+	Camera& cam = settings::mainRenderer->getScene().getCamera();
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cam.dolly(+moveDistance);
-		mainRenderer->shouldRender();
+		settings::mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		cam.dolly(-moveDistance);
-		mainRenderer->shouldRender();
+		settings::mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		cam.pan({+moveDistance, 0.0f});
-		mainRenderer->shouldRender();
+		settings::mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		cam.pan({-moveDistance, 0.0f});
-		mainRenderer->shouldRender();
+		settings::mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
 		cam.pan({0.0f, +moveDistance});
-		mainRenderer->shouldRender();
+		settings::mainRenderer->shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		cam.pan({0.0f, -moveDistance});
-		mainRenderer->shouldRender();
+		settings::mainRenderer->shouldRender();
 	}
 }
 

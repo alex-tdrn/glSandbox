@@ -3,6 +3,7 @@
 #include "Resources.h"
 #include "PostProcessingStep.h"
 #include "Shader.h"
+#include "Renderer.h"
 
 #include <glm/glm.hpp>
 #include <imgui.h>
@@ -23,6 +24,7 @@ namespace info
 
 namespace settings
 {
+	static std::unique_ptr<Renderer> mainRenderer;
 
 	namespace rendering
 	{

@@ -10,6 +10,7 @@ class Scene;
 class Node
 {
 	friend class Scene;
+	friend class std::unique_ptr<Node>;
 
 private:
 	Scene* scene = nullptr;
@@ -32,12 +33,16 @@ public:
 private:
 	void invalidateSceneCache(int id);
 	void setScene(Scene* scene);
-	void enable();
-	void disable();
+	void removeFromParent();
+	void remove(Node* node);
 
 public:
+	void enable();
+	void disable();
+	void deleteAndTransferChildNodes();
+	void deleteRecursively();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
-	void addChild(std::unique_ptr<Node>&& node);
+	void add(std::unique_ptr<Node>&& node);
 	void setTransformation(glm::mat4&& t);
 	glm::mat4 getTransformation() const;
 	virtual Bounds getBounds() const;

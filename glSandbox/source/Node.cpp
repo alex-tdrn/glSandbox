@@ -45,12 +45,42 @@ void Node::disable()
 	invalidateSceneCache(2);
 }
 
+void Node::removeFromParent()
+{
+	if(parent)
+		parent->remove(this);
+	else if(scene)
+		scene->remove(this);
+}
+
+void Node::remove(Node* node)
+{
+	children.erase(std::remove_if(children.begin(), children.end(), [&](std::unique_ptr<Node> const& val){ return val.get() == node; }), children.end());
+	invalidateSceneCache(1);
+}
+
+void Node::deleteAndTransferChildNodes()
+{
+	if(parent)
+		for(auto& childNode : children)
+			parent->add(std::move(childNode));
+	else if(scene)
+		for(auto& childNode : children)
+			scene->add(std::move(childNode));
+	removeFromParent();
+}
+
+void Node::deleteRecursively()
+{
+	removeFromParent();
+}
+
 std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
 {
 	return children;
 }
 
-void Node::addChild(std::unique_ptr<Node>&& node)
+void Node::add(std::unique_ptr<Node>&& node)
 {
 	node->parent = this;
 	node->setScene(scene);

@@ -46,6 +46,19 @@ void Scene::updateSecondaryCache() const
 
 }
 
+void Scene::add(std::unique_ptr<Node>&& node)
+{
+	node->setScene(this);
+	rootNodes.push_back(std::move(node));
+	primaryCache.dirty = true;
+}
+
+void Scene::remove(Node* node)
+{
+	rootNodes.erase(std::remove_if(rootNodes.begin(), rootNodes.end(), [&](std::unique_ptr<Node> const& val){ return val.get() == node; }), rootNodes.end());
+	primaryCache.dirty = true;
+}
+
 std::vector<DirectionalLight> const& Scene::getDirectionalLights() const
 {
 	return directionalLights;
@@ -128,6 +141,27 @@ void Scene::drawUI()
 	}
 	else
 	{
+		auto areYouSureModal = [](bool justActivated, auto yes) -> bool{
+			bool choice = false;
+			if(justActivated) 
+				ImGui::OpenPopup("Are you sure?");
+			if(ImGui::BeginPopupModal("Are you sure?", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
+			{
+				ImGui::SetWindowSize({100, ImGui::GetTextLineHeight() * 5});
+				ImVec2 buttonSize{ImGui::GetContentRegionAvailWidth() * 0.5f, ImGui::GetContentRegionAvail().y};
+				if(ImGui::Button("Yes", buttonSize))
+				{
+					yes();
+					ImGui::CloseCurrentPopup();
+					choice = true;
+				}
+				ImGui::SameLine();
+				if(ImGui::Button("No", buttonSize))
+					ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+			}
+			return choice;
+		};
 		int id = 0;
 		ImGui::Text("Abstract Nodes");
 		ImGui::BeginChild("###Abstract Nodes", {0, scrollAreaHeight}, true);
@@ -139,6 +173,40 @@ void Scene::drawUI()
 				active = std::get<Node*>(selected) == node;
 			if(ImGui::Selectable(node->name.get().data(), active))
 				selected = node;
+
+			if(ImGui::BeginPopupContextItem())
+			{
+				if(ImGui::Selectable("Add"))
+					node->add(std::make_unique<Node>());
+				ImGui::EndPopup();
+			}
+
+			bool deleteAndTransferChildNodes = false;
+			if(ImGui::BeginPopupContextItem())
+			{
+				deleteAndTransferChildNodes = ImGui::Selectable("Delete and transfer child nodes");
+				ImGui::EndPopup();
+			}
+			if(areYouSureModal(deleteAndTransferChildNodes, [&](){
+				if(active)
+					selected = static_cast<Node*>(nullptr);
+				node->deleteAndTransferChildNodes();
+			}))
+				break;
+
+			bool deleteRecursively = false;
+			if(ImGui::BeginPopupContextItem())
+			{
+				deleteRecursively = ImGui::Selectable("Delete recursively");
+				ImGui::EndPopup();
+			}
+			if(areYouSureModal(deleteRecursively, [&](){
+				if(active)
+					selected = static_cast<Node*>(nullptr);
+				node->deleteRecursively();
+			}))
+				break;
+
 			ImGui::PopID();
 		}
 		ImGui::EndChild();

@@ -38,8 +38,10 @@ public:
 private:
 	void updatePrimaryCache() const;
 	void updateSecondaryCache() const;
+	void remove(Node* node);
 
 public:
+	void add(std::unique_ptr<Node>&& node);
 	template<typename T>
 	std::vector<T*> const& getAll() const;
 	template<typename T>

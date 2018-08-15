@@ -53,7 +53,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 		{
 			n = std::make_unique<Node>();
 			for(auto const& primitive :doc.meshes[node.mesh].primitives)
-				n->addChild(std::make_unique<Prop>(primitivesMap.at(&primitive)));
+				n->add(std::make_unique<Prop>(primitivesMap.at(&primitive)));
 		}
 	}
 	else
@@ -82,7 +82,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	n->setTransformation(std::move(transformation));
 
 	for(auto childIdx : node.children)
-		n->addChild(loadNode(doc, childIdx, primitivesMap));
+		n->add(loadNode(doc, childIdx, primitivesMap));
 
 	return n;
 }

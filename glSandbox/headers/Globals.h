@@ -9,7 +9,6 @@
 #include <imgui.h>
 #include <vector>
 
-
 namespace info
 {
 	inline int windowWidth = 1920;
@@ -24,7 +23,7 @@ namespace info
 
 namespace settings
 {
-	static std::unique_ptr<Renderer> mainRenderer;
+	Renderer& mainRenderer();
 
 	namespace rendering
 	{

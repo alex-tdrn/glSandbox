@@ -24,7 +24,11 @@ double lastFrame = 0.0f;
 double lastMouseX = 400;
 double lastMouseY = 300;
 bool mouseDrag = false;
-std::unique_ptr<Renderer> mainRenderer;
+Renderer& settings::mainRenderer()
+{
+	static Renderer r{res::importGLTF("models/Cube/Cube.gltf")};
+	return r;
+}
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam);
@@ -77,7 +81,6 @@ int main(int argc, char** argv)
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetScrollCallback(window, ImGui_ImplGlfw_ScrollCallback);
 	glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
-
 	//setup ImGui
 	//IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -89,7 +92,6 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
 	res::loadShaders();
-	settings::mainRenderer = std::make_unique<Renderer>(res::importGLTF("models/Cube/Cube.gltf"));
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -102,10 +104,10 @@ int main(int argc, char** argv)
 		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		settings::mainRenderer->render();
+		settings::mainRenderer().render();
 		
 		glEnable(GL_FRAMEBUFFER_SRGB);
-		settings::postprocessing::steps[0].draw(settings::mainRenderer->getOutput(), 0);
+		settings::postprocessing::steps[0].draw(settings::mainRenderer().getOutput(), 0);
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -154,7 +156,7 @@ void drawUI()
 	}
 	res::drawUI(&drawResources);
 	{
-		settings::mainRenderer->drawUI(&drawRenderingSettings);
+		settings::mainRenderer().drawUI(&drawRenderingSettings);
 	}
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
 	info::drawUI(&drawStats);
@@ -168,7 +170,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 	info::windowHeight = height;
 
 	glViewport(0, 0, width, height);
-	settings::mainRenderer->resizeViewport(width, height);
+	settings::mainRenderer().resizeViewport(width, height);
 	for(auto& step : settings::postprocessing::steps)
 		step.updateFramebuffer();
 }
@@ -192,8 +194,8 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= -sensitivity;
-	settings::mainRenderer->getScene().getCamera().adjustOrientation(xoffset, yoffset);
-	settings::mainRenderer->shouldRender();
+	settings::mainRenderer().getScene().getCamera().adjustOrientation(xoffset, yoffset);
+	settings::mainRenderer().shouldRender();
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
@@ -235,36 +237,36 @@ void processInput(GLFWwindow* window)
 {
 
 	float moveDistance = 2.5f * deltaTime; // adjust accordingly
-	Camera& cam = settings::mainRenderer->getScene().getCamera();
+	Camera& cam = settings::mainRenderer().getScene().getCamera();
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cam.dolly(+moveDistance);
-		settings::mainRenderer->shouldRender();
+		settings::mainRenderer().shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		cam.dolly(-moveDistance);
-		settings::mainRenderer->shouldRender();
+		settings::mainRenderer().shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		cam.pan({+moveDistance, 0.0f});
-		settings::mainRenderer->shouldRender();
+		settings::mainRenderer().shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		cam.pan({-moveDistance, 0.0f});
-		settings::mainRenderer->shouldRender();
+		settings::mainRenderer().shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
 		cam.pan({0.0f, +moveDistance});
-		settings::mainRenderer->shouldRender();
+		settings::mainRenderer().shouldRender();
 	}
 	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		cam.pan({0.0f, -moveDistance});
-		settings::mainRenderer->shouldRender();
+		settings::mainRenderer().shouldRender();
 	}
 }
 

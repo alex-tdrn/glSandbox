@@ -8,9 +8,6 @@
 class Prop : public Node
 {
 private:
-	bool enabled = true;
-	bool outlined = false;
-	//TODO^^^
 	std::shared_ptr<Mesh> mesh;
 
 public:

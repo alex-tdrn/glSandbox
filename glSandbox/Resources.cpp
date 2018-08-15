@@ -378,7 +378,6 @@ void res::reloadShaders()
 
 void drawImportWindow(bool *open)
 {
-
 	if(!*open)
 		return;
 	ImGui::Begin("Import", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
@@ -408,7 +407,7 @@ void drawImportWindow(bool *open)
 		if(file.path().extension() == ".gltf")
 		{
 			if(ImGui::Selectable(filename.data()))
-				settings::mainRenderer->setScene(res::importGLTF(file.path().generic_string()));
+				settings::mainRenderer().setScene(res::importGLTF(file.path().generic_string()));
 		}
 		else
 		{

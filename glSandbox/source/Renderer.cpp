@@ -73,6 +73,7 @@ void Renderer::resizeViewport(int width, int height)
 void Renderer::setScene(std::shared_ptr<Scene>&& scene)
 {
 	this->scene = std::move(scene);
+	shouldRender();
 }
 
 Scene& Renderer::getScene()
@@ -152,7 +153,7 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(scene->getBackground().r, scene->getBackground().g, scene->getBackground().b, 1.0f);
 
-	auto const& props = scene->getActiveProps();
+	auto const& props = scene->getEnabled<Prop>();
 	auto const& camera = scene->getCamera();
 	auto const& directionalLights = scene->getDirectionalLights();
 	auto const& spotLights = scene->getSpotLights();

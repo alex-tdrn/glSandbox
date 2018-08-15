@@ -89,8 +89,6 @@ public:
 		}
 		else if(!_empty && !rhs._empty)
 		{
-			glm::vec3 min;
-			glm::vec3 max;
 			for(auto i = 0; i < 3; i++)
 			{
 				this->min[i] = std::min(this->min[i], rhs.min[i]);

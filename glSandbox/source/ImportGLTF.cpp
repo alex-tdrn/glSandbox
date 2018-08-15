@@ -15,7 +15,6 @@ uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 std::pair<std::vector<std::shared_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
 std::vector<std::shared_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::shared_ptr<Mesh>>& loadedMeshes);
-std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx);
 
 Asset import(std::string_view const& filename)
 {
@@ -53,7 +52,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 		{
 			n = std::make_unique<Node>();
 			for(auto const& primitive :doc.meshes[node.mesh].primitives)
-				n->add(std::make_unique<Prop>(primitivesMap.at(&primitive)));
+				n->addChild(std::make_unique<Prop>(primitivesMap.at(&primitive)));
 		}
 	}
 	else
@@ -82,7 +81,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	n->setTransformation(std::move(transformation));
 
 	for(auto childIdx : node.children)
-		n->add(loadNode(doc, childIdx, primitivesMap));
+		n->addChild(loadNode(doc, childIdx, primitivesMap));
 
 	return n;
 }
@@ -92,19 +91,19 @@ std::vector<std::shared_ptr<Scene>> loadScenes(gltf::Document const& doc, Primit
 	std::vector<std::shared_ptr<Scene>> scenes;
 	if(doc.scenes.empty())
 	{
-		std::vector<std::unique_ptr<Node>> rootNodes;
+		std::vector<std::unique_ptr<Node>> nodes;
 		for(auto mesh : loadedMeshes)
-			rootNodes.push_back(std::make_unique<Prop>(std::move(mesh)));
-		scenes.emplace_back(std::make_unique<Scene>(std::move(rootNodes)));
+			nodes.push_back(std::make_unique<Prop>(std::move(mesh)));
+		scenes.emplace_back(std::make_unique<Scene>(std::make_unique<Node>(std::move(nodes))));
 	}
 	else
 	{
 		for(auto const& scene : doc.scenes)
 		{
-			std::vector<std::unique_ptr<Node>> rootNodes;
+			std::vector<std::unique_ptr<Node>> nodes;
 			for(auto const nodeIdx : scene.nodes)
-				rootNodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
-			auto s = std::make_shared<Scene>(std::move(rootNodes));
+				nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
+			auto s = std::make_shared<Scene>(std::make_unique<Node>(std::move(nodes)));
 			/*if(!scene.name.empty())
 				s->name.set(scene.name);*/
 			scenes.emplace_back(std::move(s));

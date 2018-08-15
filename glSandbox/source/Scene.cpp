@@ -5,58 +5,33 @@
 #include <imgui.h>
 #include <variant>
 
-Scene::Scene(std::vector<std::unique_ptr<Node>>&& rootNodes)
-	:rootNodes(std::move(rootNodes))
+Scene::Scene(std::unique_ptr<Node>&& root)
+	:root(std::move(root))
 {
-	for(auto& node : rootNodes)
-		node->setScene(this);
-
+	this->root->setScene(this);
 	fitToIdealSize();
 }
 
-void Scene::updatePrimaryCache() const
+void Scene::updateCache() const
 {
-	auto fillCache = [&](std::vector<std::unique_ptr<Node>> const& nodes, auto& fillCache) -> void{
-		for(auto& node : nodes)
-		{
-			if(auto prop = dynamic_cast<Prop*>(node.get()); prop)
-				primaryCache.props.push_back(prop);
-			else
-				primaryCache.abstractNodes.push_back(node.get());
-			fillCache(node->getChildren(), fillCache);
-		}
+	cache.abstractNodes.clear();
+	cache.props.clear();
+	auto fillCache = [&](std::unique_ptr<Node> const& node, auto& fillCache) -> void{
+		if(auto prop = dynamic_cast<Prop*>(node.get()); prop)
+			cache.props.push_back(prop);
+		else
+			cache.abstractNodes.push_back(node.get());
+
+		for(auto const& child : node->children)
+			fillCache(child, fillCache);
 	};
-	fillCache(rootNodes, fillCache);
-	primaryCache.dirty = false;
+	fillCache(root, fillCache);
+	cache.dirty = false;
 }
 
-void Scene::updateSecondaryCache() const
+void Scene::cacheOutdated() const
 {
-	if(primaryCache.dirty)
-		updatePrimaryCache();
-
-	auto copyActiveNodes = [](auto& primaryVec, auto& secondaryVec){
-		secondaryVec.clear();
-		for(auto elem : primaryVec)
-			if(elem->enabled)
-				secondaryVec.push_back(elem);
-	};
-	copyActiveNodes(primaryCache.abstractNodes, secondaryCache.abstractNodes);
-	copyActiveNodes(primaryCache.props, secondaryCache.props);
-
-}
-
-void Scene::add(std::unique_ptr<Node>&& node)
-{
-	node->setScene(this);
-	rootNodes.push_back(std::move(node));
-	primaryCache.dirty = true;
-}
-
-void Scene::remove(Node* node)
-{
-	rootNodes.erase(std::remove_if(rootNodes.begin(), rootNodes.end(), [&](std::unique_ptr<Node> const& val){ return val.get() == node; }), rootNodes.end());
-	primaryCache.dirty = true;
+	cache.dirty = true;
 }
 
 std::vector<DirectionalLight> const& Scene::getDirectionalLights() const
@@ -89,11 +64,9 @@ Camera const& Scene::getCamera() const
 	return camera;
 }
 
-void Scene::fitToIdealSize()
+void Scene::fitToIdealSize() const
 {
-	Bounds bounds;
-	for(auto const& node : rootNodes)
-		bounds += node->getBounds();
+	Bounds bounds = root->getBounds();
 	if(bounds.empty())
 		return;
 
@@ -111,8 +84,8 @@ void Scene::fitToIdealSize()
 	float const scale = idealSize / currentSize;
 	glm::mat4 t = glm::translate(glm::mat4{1.0f}, translation);
 	glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
-	for(auto& node : rootNodes)
-		node->setTransformation(s * t * node->getTransformation());
+
+	root->setTransformation(s * t * root->getTransformation());
 }
 
 void Scene::drawUI()
@@ -141,6 +114,8 @@ void Scene::drawUI()
 	}
 	else
 	{
+		std::vector<Node*> nodesMarkedShallowRemove;
+
 		auto areYouSureModal = [](bool justActivated, auto yes) -> bool{
 			bool choice = false;
 			if(justActivated) 
@@ -176,36 +151,22 @@ void Scene::drawUI()
 
 			if(ImGui::BeginPopupContextItem())
 			{
-				if(ImGui::Selectable("Add"))
-					node->add(std::make_unique<Node>());
+				if(ImGui::Selectable("Add..."))
+					node->addChild(std::make_unique<Node>());
 				ImGui::EndPopup();
 			}
 
 			bool deleteAndTransferChildNodes = false;
 			if(ImGui::BeginPopupContextItem())
 			{
-				deleteAndTransferChildNodes = ImGui::Selectable("Delete and transfer child nodes");
+				deleteAndTransferChildNodes = ImGui::Selectable("Shallow remove");
 				ImGui::EndPopup();
 			}
-			if(areYouSureModal(deleteAndTransferChildNodes, [&](){
+			areYouSureModal(deleteAndTransferChildNodes, [&, node]()mutable{
 				if(active)
 					selected = static_cast<Node*>(nullptr);
-				node->deleteAndTransferChildNodes();
-			}))
-				break;
-
-			bool deleteRecursively = false;
-			if(ImGui::BeginPopupContextItem())
-			{
-				deleteRecursively = ImGui::Selectable("Delete recursively");
-				ImGui::EndPopup();
-			}
-			if(areYouSureModal(deleteRecursively, [&](){
-				if(active)
-					selected = static_cast<Node*>(nullptr);
-				node->deleteRecursively();
-			}))
-				break;
+				nodesMarkedShallowRemove.push_back(node);
+			});
 
 			ImGui::PopID();
 		}
@@ -240,6 +201,9 @@ void Scene::drawUI()
 		ImGui::Text("Point Lights");
 		ImGui::BeginChild("###Point Lights", {0, scrollAreaHeight}, true);
 		ImGui::EndChild();
+
+		for(auto node : nodesMarkedShallowRemove)
+			node->release();
 	}
 
 	ImGui::EndChild();

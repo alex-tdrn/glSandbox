@@ -11,17 +11,16 @@ class Prop;
 
 class Scene
 {
-	friend class Node;
 
 private:
 	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
-	std::vector<std::unique_ptr<Node>> rootNodes;
+	std::unique_ptr<Node> root;
 	float idealSize = 2.0f;
 	mutable struct{
 		bool dirty = true;
 		std::vector<Node*> abstractNodes;
 		std::vector<Prop*> props;
-	}primaryCache, secondaryCache;
+	}cache;
 
 	Camera camera;
 	std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({-30, -30, 0}); return light; } ()};
@@ -33,26 +32,23 @@ public:
 	Name<Scene> name{"scene"};
 
 public:
-	Scene(std::vector<std::unique_ptr<Node>>&& rootNodes = {});
+	Scene(std::unique_ptr<Node>&& root = {});
 
 private:
-	void updatePrimaryCache() const;
-	void updateSecondaryCache() const;
-	void remove(Node* node);
+	void updateCache() const;
 
 public:
-	void add(std::unique_ptr<Node>&& node);
+	void cacheOutdated() const;
 	template<typename T>
 	std::vector<T*> const& getAll() const;
-	template<typename T>
-	std::vector<T*> const& getEnabled() const;
+
 	std::vector<DirectionalLight> const& getDirectionalLights() const;
 	std::vector<PointLight> const& getPointLights() const;
 	std::vector<SpotLight> const& getSpotLights() const;
 	glm::vec3 const& getBackground() const;
 	Camera& getCamera();
 	Camera const& getCamera() const;
-	void fitToIdealSize();
+	void fitToIdealSize() const;
 	void drawUI();
 
 };
@@ -60,21 +56,11 @@ public:
 template<typename T>
 std::vector<T*> const& Scene::getAll() const
 {
-	if(primaryCache.dirty)
-		updatePrimaryCache();
+	if(cache.dirty)
+		updateCache();
 	if constexpr(std::is_same<T, Node>())
-		return primaryCache.abstractNodes;
+		return cache.abstractNodes;
 	if constexpr(std::is_same<T, Prop>())
-		return primaryCache.props;
+		return cache.props;
 }
 
-template<typename T>
-std::vector<T*> const& Scene::getEnabled() const
-{
-	if(primaryCache.dirty || secondaryCache.dirty)
-		updateSecondaryCache();
-	if constexpr(std::is_same<T, Node>())
-		return secondaryCache.abstractNodes;
-	if constexpr(std::is_same<T, Prop>())
-		return secondaryCache.props;
-}

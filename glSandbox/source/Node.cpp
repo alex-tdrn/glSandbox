@@ -4,75 +4,48 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
-#include <algorithm>
 
 Node::Node(Node&& other)
-	:children(std::move(other.children))
+	:parent(other.parent), scene(other.scene)
 {
-	for(auto& child : children)
-		child->parent = this;
+	addChildren(std::move(other.children));
 }
 
-void Node::invalidateSceneCache(int id)
+Node::Node(std::vector<std::unique_ptr<Node>>&& nodes)
+{
+	addChildren(std::move(nodes));
+}
+
+void Node::invalidateSceneCache()
 {
 	if(scene)
-	{
-		if(id == 1)
-			scene->primaryCache.dirty = true;
-		else if(id == 2)
-			scene->secondaryCache.dirty = true;
-	}
+		scene->cacheOutdated();
 }
 
 void Node::setScene(Scene * scene)
 {
 	this->scene = scene;
+	for(auto const& child : children)
+		child->setScene(scene);
 }
 
-void Node::enable()
+std::unique_ptr<Node> Node::releaseChild(Node * node)
 {
-	enabled = true;
-	for(auto& child : children)
-		child->enable();
-	invalidateSceneCache(2);
-}
+	invalidateSceneCache();
+	for(auto it = children.begin(); it != children.end(); it++)
+	{
+		if(it->get() == node)
+		{
+			std::unique_ptr<Node> ret = std::move(*it);
+			children.erase(it);
 
-void Node::disable()
-{
-	enabled = false;
-	for(auto& child : children)
-		child->disable();
-	invalidateSceneCache(2);
-}
+			for(auto& grandchild : ret->children)
+				addChild(std::move(grandchild));
 
-void Node::removeFromParent()
-{
-	if(parent)
-		parent->remove(this);
-	else if(scene)
-		scene->remove(this);
-}
-
-void Node::remove(Node* node)
-{
-	children.erase(std::remove_if(children.begin(), children.end(), [&](std::unique_ptr<Node> const& val){ return val.get() == node; }), children.end());
-	invalidateSceneCache(1);
-}
-
-void Node::deleteAndTransferChildNodes()
-{
-	if(parent)
-		for(auto& childNode : children)
-			parent->add(std::move(childNode));
-	else if(scene)
-		for(auto& childNode : children)
-			scene->add(std::move(childNode));
-	removeFromParent();
-}
-
-void Node::deleteRecursively()
-{
-	removeFromParent();
+			return ret;
+		}
+	}
+	assert(0);
 }
 
 std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
@@ -80,12 +53,26 @@ std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
 	return children;
 }
 
-void Node::add(std::unique_ptr<Node>&& node)
+void Node::addChild(std::unique_ptr<Node>&& node)
 {
 	node->parent = this;
 	node->setScene(scene);
 	children.push_back(std::move(node));
-	invalidateSceneCache(1);
+	invalidateSceneCache();
+}
+
+void Node::addChildren(std::vector<std::unique_ptr<Node>>&& nodes)
+{
+	children.reserve(children.size() + nodes.size());
+	for(auto& node : nodes)
+		addChild(std::move(node));
+}
+
+std::unique_ptr<Node> Node::release()
+{
+	if(!parent)
+		assert(0);
+	return parent->releaseChild(this);
 }
 
 void Node::setTransformation(glm::mat4&& t)

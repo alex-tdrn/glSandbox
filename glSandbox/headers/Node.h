@@ -13,15 +13,13 @@ class Node
 	friend class std::unique_ptr<Node>;
 
 private:
+	Name<Node> name{"node"};
 	Scene* scene = nullptr;
 	Node* parent = nullptr;
 	bool enabled = true;
 	bool highlighted = false;
 	std::vector<std::unique_ptr<Node>> children;
 	glm::mat4 transformation{1.0f};
-
-public:
-	Name<Node> name{"node"};
 
 public:
 	Node() = default;
@@ -48,6 +46,7 @@ public:
 	std::unique_ptr<Node> release();
 	std::vector<std::unique_ptr<Node>> releaseChildren();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
+	virtual std::string_view getName() const;
 	template<typename Callable>
 	void recursive(Callable operation);
 	void setTransformation(glm::mat4&& t);

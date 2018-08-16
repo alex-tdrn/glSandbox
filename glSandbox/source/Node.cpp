@@ -53,6 +53,11 @@ std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
 	return children;
 }
 
+std::string_view Node::getName() const
+{
+	return name.get();
+}
+
 bool Node::isEnabled() const
 {
 	return enabled;

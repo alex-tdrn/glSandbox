@@ -93,19 +93,41 @@ void Scene::fitToIdealSize() const
 	root->setTransformation(s * t * root->getTransformation());
 }
 
-template <typename T>
-void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Node*>& nodesMarkedForHighlighting)
+void Scene::drawUI()
 {
-	auto areYouSureModal = [](bool justActivated, auto yes){
+	IDGuard idGuard{this};
+	
+	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::NewLine();
+
+	float const scrollAreaWidth = ImGui::GetTextLineHeight() * 20;
+	static bool hierarchyView = false;
+
+	ImGui::Columns(2, nullptr, false);
+	ImGui::SetColumnWidth(-1, scrollAreaWidth);
+
+	static Node* selected;
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Nodes");
+	ImGui::SameLine();
+	if(ImGui::Checkbox("Hierarchy View", &hierarchyView))
+		selected = nullptr;
+	ImGui::BeginChild("###Nodes");
+
+	std::set<Node*> nodesMarkedForHighlighting;
+	std::set<Node*> nodesMarkedForShallowRemove;
+	auto modal = [](bool justActivated, std::string_view title){
+		bool answer = false;
 		if(justActivated)
-			ImGui::OpenPopup("Are you sure?");
-		if(ImGui::BeginPopupModal("Are you sure?", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
+			ImGui::OpenPopup(title.data());
+		if(ImGui::BeginPopupModal(title.data(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
 		{
 			ImGui::SetWindowSize({100, ImGui::GetTextLineHeight() * 5});
+			ImGui::Text("Are you sure?");
 			ImVec2 buttonSize{ImGui::GetContentRegionAvailWidth() * 0.5f, ImGui::GetContentRegionAvail().y};
 			if(ImGui::Button("Yes", buttonSize))
 			{
-				yes();
+				answer = true;
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
@@ -113,171 +135,161 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Nod
 				ImGui::CloseCurrentPopup();
 			ImGui::EndPopup();
 		}
+		return answer;
 	};
-	std::vector<Node*> nodesMarkedForRecursiveRemove;
-	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())//check for mouse click inside window
-		selected = static_cast<Node*>(nullptr);
-	int id = 0;
-	if(std::is_same_v<T, Node>)//draw root node first
-	{
-		Node* root = scene->getRoot();
-		bool current = false;
-		if(std::holds_alternative<Node*>(selected))
-			current = std::get<Node*>(selected) == root;
-		if(ImGui::Selectable("Root Node", current))
-			selected = root;
-		if(ImGui::IsItemHovered() || current)
-			nodesMarkedForHighlighting.push_back(root);
-		else
-			root->setHighlighted(false);
-
+	auto actionsAdd = [](Node* node){
+		if(ImGui::BeginMenu("Add..."))
+		{
+			if(ImGui::MenuItem("Abstract Node"))
+				node->addChild(std::make_unique<Node>());
+			if(ImGui::MenuItem("Prop"))
+				node->addChild(std::make_unique<Prop>());
+			ImGui::EndMenu();
+		}
+	};
+	auto actionsEnableDisable = [](Node* node){
+		if(ImGui::Selectable("Enable"))
+			node->enable();
+		if(ImGui::Selectable("Disable"))
+			node->disable();
+		if(ImGui::Selectable("Recursive Enable"))
+			node->recursive(&Node::enable);
+		if(ImGui::Selectable("Recursive Disable"))
+			node->recursive(&Node::disable);
+	};
+	auto drawRootContextMenu = [&](){
 		bool removeAllChildren = false;
 		if(ImGui::BeginPopupContextItem())
 		{
-			if(ImGui::BeginMenu("Add..."))
-			{
-				if(ImGui::MenuItem("Abstract Node"))
-					root->addChild(std::make_unique<Node>());
-				if(ImGui::MenuItem("Prop"))
-					root->addChild(std::make_unique<Prop>());
-				ImGui::EndMenu();
-			}
-			if(ImGui::Selectable("Enable"))
-				root->enable();
-			if(ImGui::Selectable("Disable"))
-				root->disable();
-			if(ImGui::Selectable("Recursive Enable"))
-				root->recursive(&Node::enable);
-			if(ImGui::Selectable("Recursive Disable"))
-				root->recursive(&Node::disable);
+			actionsAdd(root.get());
+			actionsEnableDisable(root.get());
 			ImGui::Separator();
 			removeAllChildren = ImGui::Selectable("Remove All Children");
 			ImGui::EndPopup();
 		}
-		ImGui::PushID("Remove All Children");
-		areYouSureModal(removeAllChildren, [&, root]()mutable{
-			root->releaseChildren();
-		});
-		ImGui::PopID();
-	}
-	for(auto node : scene->getAll<T>())
-	{
-		ImGui::PushID(id++);
-		bool current = false;
-		if(std::holds_alternative<T*>(selected))
-			current = std::get<T*>(selected) == node;
-		if(ImGui::Selectable(node->name.get().data(), current))
-			selected = node;
-		if(ImGui::IsItemHovered() || current)
-			nodesMarkedForHighlighting.push_back(node);
-		else
-			node->setHighlighted(false);
-
+		if(modal(removeAllChildren, "Remove All Children"))
+		{
+			for(auto& child : root->getChildren())
+			{
+				child->recursive([&](Node* node){
+					nodesMarkedForShallowRemove.insert(node);
+				});
+			}
+		}
+	};
+	auto drawNodeContextMenu = [&](Node* node){		
 		bool remove = false;
-		bool recursiveRemove = false;
-		bool removeAllChildren = false;
+		bool removeRecursive = false;
+		bool removeChildren = false;
 		if(ImGui::BeginPopupContextItem())
 		{
-			if(ImGui::BeginMenu("Add..."))
-			{
-				if(ImGui::MenuItem("Abstract Node"))
-					node->addChild(std::make_unique<Node>());
-				if(ImGui::MenuItem("Prop"))
-					node->addChild(std::make_unique<Prop>());
-				ImGui::EndMenu();
-			}
-			if(ImGui::Selectable("Enable"))
-				node->enable();
-			if(ImGui::Selectable("Disable"))
-				node->disable();
-			if(ImGui::Selectable("Recursive Enable"))
-				node->recursive(&Node::enable);
-			if(ImGui::Selectable("Recursive Disable"))
-				node->recursive(&Node::disable);
+			actionsAdd(node);
+			actionsEnableDisable(node);
 			ImGui::Separator();
 			remove = ImGui::Selectable("Remove");
-			recursiveRemove = ImGui::Selectable("Recursive Remove");
-			removeAllChildren = ImGui::Selectable("Remove All Children");
+			removeRecursive = ImGui::Selectable("Recursive Remove");
+			removeChildren = ImGui::Selectable("Remove All Children");
 			ImGui::EndPopup();
 		}
-		ImGui::PushID("Remove");
-		areYouSureModal(remove, [&, node]()mutable{
-			if(current)
-				selected = static_cast<Node*>(nullptr);
-			node->release();
-		});
-		ImGui::PopID();
-		ImGui::PushID("Recursive Remove");
-		areYouSureModal(recursiveRemove, [&, node]()mutable{
-			if(current)
-				selected = static_cast<Node*>(nullptr);
-			nodesMarkedForRecursiveRemove.push_back(node);
-		});
-		ImGui::PopID();
-		ImGui::PushID("Remove All Children");
-		areYouSureModal(removeAllChildren, [&, node]()mutable{
-			for(auto& childNode : node->getChildren())
-				nodesMarkedForRecursiveRemove.push_back(childNode.get());
-		});
-		ImGui::PopID();
-
-		ImGui::PopID();
-	}
-
-	if(!nodesMarkedForRecursiveRemove.empty())
-	{
-		std::set<Node*> nodesMarkedForShallowRemove;
-		for(auto node : nodesMarkedForRecursiveRemove)
-			node->recursive([&](Node* node){ nodesMarkedForShallowRemove.insert(node); });
-
-		for(auto node : nodesMarkedForShallowRemove)
-			node->release();
-	}
-	
-
-}
-
-void Scene::drawUI()
-{
-	static std::variant<Node*, Prop*> selected;
-	
-	IDGuard idGuard{this};
-	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
-	ImGui::NewLine();
-
+		if(modal(remove, "Remove"))
+		{
+			nodesMarkedForShallowRemove.insert(node);
+		}
+		if(modal(removeRecursive, "Recursive Remove"))
+		{
+			node->recursive([&](Node* node){
+				nodesMarkedForShallowRemove.insert(node); 
+			});
+		}
+		if(modal(removeChildren, "Remove All Children"))
+		{
+			for(auto& child : node->getChildren())
+			{
+				child->recursive([&](Node* node){ 
+					nodesMarkedForShallowRemove.insert(node); 
+				});
+			}
+		}
+	};
 	root->recursive([](Node* node){ node->setHighlighted(false); });
-
-	float const scrollAreaHeight = ImGui::GetTextLineHeight() * 10;
-	float const scrollAreaWidth = ImGui::GetTextLineHeight() * 20;
-	static bool hierarchyView = false;
-
-	ImGui::Columns(2, nullptr, false);
-	ImGui::SetColumnWidth(-1, scrollAreaWidth);
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::Text("Nodes");
-	ImGui::SameLine();
-	if(ImGui::Checkbox("Hierarchy View", &hierarchyView))
-		selected = static_cast<Node*>(nullptr);
-	ImGui::BeginChild("###Nodes");
-	if(ImGui::IsItemActive())//check for mouse click inside window
-		selected = static_cast<Node*>(nullptr);
 	if(hierarchyView)
 	{
+		auto drawNode = [&](Node* node, bool root = false){
+			int flags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			if(root)
+				flags = flags | ImGuiTreeNodeFlags_DefaultOpen;
+			if(node->getChildren().empty())
+				flags = flags | ImGuiTreeNodeFlags_Leaf;
+			if(selected == node)
+				flags = flags | ImGuiTreeNodeFlags_Selected;
+			bool expandNode = ImGui::TreeNodeEx(root ? "Root Node" : node->getName().data(), flags);
+			if(ImGui::IsItemClicked())
+				selected = node;
+			if(ImGui::IsItemHovered() || selected == node)
+				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
+			else
+				node->setHighlighted(false);
+			return expandNode;
+		};
+		auto drawSubtree = [&, id = 0](Node* node, auto& drawSubtree)mutable -> void{
+			ImGui::PushID(id++);
+			bool expandNode = drawNode(node);
+			drawNodeContextMenu(node);
+			ImGui::PopID();
+			if(expandNode)
+			{
+				for(auto& child : node->getChildren())
+					drawSubtree(child.get(), drawSubtree);
+				ImGui::TreePop();
+			}
+		};
 
+		bool expandNode = drawNode(root.get(), true);
+		drawRootContextMenu();
+		if(expandNode)
+		{
+			for(auto& node : root->getChildren())
+				drawSubtree(node.get(), drawSubtree);
+			ImGui::TreePop();
+		}
 	}
 	else
 	{
-		std::vector<Node*> nodesMarkedForHighlighting;
+		auto drawNode = [&](Node* node, bool root = false){
+			if(ImGui::Selectable(root ? "Root Node" : node->getName().data(), selected == node))
+				selected = node;
+			if(ImGui::IsItemHovered() || selected == node)
+				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
+			else
+				node->setHighlighted(false);
+		};
+		auto drawList = [&](auto const& nodes){
+
+			if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow() && !ImGui::IsMouseDragging())//check for mouse click inside window
+				selected = nullptr;
+
+			int id = 0;
+			for(auto node : nodes)
+			{
+				ImGui::PushID(id++);
+				drawNode(node);
+				drawNodeContextMenu(node);
+				ImGui::PopID();
+			}
+			
+		};
+		float const scrollAreaHeight = ImGui::GetTextLineHeight() * 10;
 
 		ImGui::Text("Abstract Nodes");
 		ImGui::BeginChild("###Abstract Nodes", {0, scrollAreaHeight}, true);
-		drawAll<Node>(this, selected, nodesMarkedForHighlighting);
+		drawNode(root.get(), true);
+		drawRootContextMenu();
+		drawList(getAll<Node>());
 		ImGui::EndChild();
 
 		ImGui::Text("Props");
 		ImGui::BeginChild("###Props", {0, scrollAreaHeight}, true);
-		drawAll<Prop>(this, selected, nodesMarkedForHighlighting);
+		drawList(getAll<Prop>());
 		ImGui::EndChild();
 
 		ImGui::Text("Cameras");
@@ -295,20 +307,25 @@ void Scene::drawUI()
 		ImGui::Text("Point Lights");
 		ImGui::BeginChild("###Point Lights", {0, scrollAreaHeight}, true);
 		ImGui::EndChild();
-		for(auto node : nodesMarkedForHighlighting)
-			node->recursive([](Node* node){ node->setHighlighted(true); });
+	}
+	for(auto node : nodesMarkedForHighlighting)
+		node->setHighlighted(true);
+	for(auto node : nodesMarkedForShallowRemove)
+	{
+		if(selected == node)
+			selected = nullptr;
+		node->release();
 	}
 
-	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())//check for mouse click inside window
-		selected = static_cast<Node*>(nullptr);
+	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow() && !ImGui::IsMouseDragging())//check for mouse click inside window
+		selected = nullptr;
 	ImGui::EndChild();
+
 	ImGui::NextColumn();
-	std::visit([&](auto selected){
-		ImGui::Text(selected ? selected->name.get().data() : "No selection...");
-		ImGui::BeginChild("###Edit Node", {0, 0}, true);
-		if(selected) selected->drawUI();
-		ImGui::EndChild();
-	}, selected);
+	ImGui::Text(selected ? selected->getName().data() : "No selection...");
+	ImGui::BeginChild("###Edit Node", {0, 0}, true);
+	if(selected) selected->drawUI();
+	ImGui::EndChild();
 
 	ImGui::Columns(1);
 }

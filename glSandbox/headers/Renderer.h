@@ -37,7 +37,7 @@ private:
 		}polygon;
 		bool depthTesting = true;
 		int depthFunction = GL_LESS;
-		bool faceCulling = false;
+		bool faceCulling = true;
 		int faceCullingMode = GL_BACK;
 		int faceCullingOrdering = GL_CCW;
 	} pipeline;

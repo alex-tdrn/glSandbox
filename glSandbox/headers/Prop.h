@@ -8,10 +8,8 @@
 class Prop : public Node
 {
 private:
-	std::shared_ptr<Mesh> mesh = res::meshes::quad();
-
-public:
 	Name<Prop> name{"prop"};
+	std::shared_ptr<Mesh> mesh = res::meshes::quad();
 
 public:
 	Prop() = default;
@@ -22,6 +20,7 @@ public:
 public:
 	Mesh& getMesh() const;
 	Bounds getBounds() const override;
+	virtual std::string_view getName() const override;
 	//void drawUI() override;
 
 };

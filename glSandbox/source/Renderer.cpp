@@ -153,7 +153,7 @@ void Renderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(scene->getBackground().r, scene->getBackground().g, scene->getBackground().b, 1.0f);
 
-	auto const& props = scene->getAllEnabled<Prop>();
+	auto const& props = scene->getAll<Prop>();
 	auto const& camera = scene->getCamera();
 	auto const& directionalLights = scene->getDirectionalLights();
 	auto const& spotLights = scene->getSpotLights();
@@ -316,7 +316,7 @@ void Renderer::render()
 	activeShader.use();
 	for(auto const& prop : props)
 	{
-		if(!prop->isHighlighted())
+		if(!prop->isHighlighted() && prop->isEnabled())
 		{
 			activeShader.set("model", prop->getTransformation());
 			activeShader.set("material.hasDiffuseMap", true);

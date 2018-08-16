@@ -6,6 +6,16 @@
 #include <variant>
 #include <set>
 
+Scene::Scene()
+{
+	root->setScene(this);
+}
+
+Scene::Scene(Scene &&other)
+	:root(std::move(other.root))
+{
+	root->setScene(this);
+}
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
 {

@@ -14,7 +14,7 @@ class Scene
 
 private:
 	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
-	std::unique_ptr<Node> root;
+	std::unique_ptr<Node> root = std::make_unique<Node>();
 	float idealSize = 2.0f;
 	mutable struct{
 		bool dirty = true;
@@ -32,7 +32,13 @@ public:
 	Name<Scene> name{"scene"};
 
 public:
-	Scene(std::unique_ptr<Node>&& root = {});
+	Scene();
+	Scene(Scene const&) = delete;
+	Scene(Scene&&);
+	Scene(std::unique_ptr<Node>&& root);
+	Scene& operator=(Scene const&) = delete;
+	Scene& operator=(Scene&&) = delete;
+	~Scene() = default;
 
 private:
 	void updateCache() const;

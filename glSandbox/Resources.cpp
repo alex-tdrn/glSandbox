@@ -440,7 +440,7 @@ void res::drawUI(bool* open)
 	ImGui::Text("Scenes");
 	ImGui::SameLine();
 	if(ImGui::SmallButton("New"))
-		scenes::add(std::make_shared<Scene>());
+		scenes::add(std::shared_ptr<Scene>(std::make_shared<Scene>()));
 	ImGui::BeginChild("###Scenes", {0, scrollAreaHeight}, true);
 	int id = 0;
 	for(auto& scene : scenes::getAll())

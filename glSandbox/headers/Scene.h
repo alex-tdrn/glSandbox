@@ -41,7 +41,8 @@ public:
 	void cacheOutdated() const;
 	template<typename T>
 	std::vector<T*> const& getAll() const;
-
+	template<typename T>
+	std::vector<T*> getAllEnabled() const;
 	std::vector<DirectionalLight> const& getDirectionalLights() const;
 	std::vector<PointLight> const& getPointLights() const;
 	std::vector<SpotLight> const& getSpotLights() const;
@@ -64,3 +65,12 @@ std::vector<T*> const& Scene::getAll() const
 		return cache.props;
 }
 
+template<typename T>
+std::vector<T*> Scene::getAllEnabled() const
+{
+	std::vector<T*> ret;
+	for(auto n : getAll<T>())
+		if(n->isEnabled())
+			ret.push_back(n);
+	return ret;
+}

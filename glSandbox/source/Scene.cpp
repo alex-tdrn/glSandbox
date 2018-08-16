@@ -122,6 +122,8 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
 		if(ImGui::Selectable(node->name.get().data(), active))
 			selected = node;
 
+		bool remove = false;
+		bool recursiveRemove = false;
 		if(ImGui::BeginPopupContextItem())
 		{
 			if(ImGui::BeginMenu("Add..."))
@@ -132,13 +134,17 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
 					node->addChild(std::make_unique<Prop>());
 				ImGui::EndMenu();
 			}
-			ImGui::EndPopup();
-		}
-
-		bool remove = false;
-		if(ImGui::BeginPopupContextItem())
-		{
+			if(ImGui::Selectable("Enable"))
+				node->enable();
+			if(ImGui::Selectable("Disable"))
+				node->disable();
+			if(ImGui::Selectable("Recursive Enable"))
+				node->recursive(&Node::enable);
+			if(ImGui::Selectable("Recursive Disable"))
+				node->recursive(&Node::disable);
+			ImGui::Separator();
 			remove = ImGui::Selectable("Remove");
+			recursiveRemove = ImGui::Selectable("Recursive Remove");
 			ImGui::EndPopup();
 		}
 		ImGui::PushID("Remove");
@@ -148,13 +154,6 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
 			node->release();
 		});
 		ImGui::PopID();
-
-		bool recursiveRemove = false;
-		if(ImGui::BeginPopupContextItem())
-		{
-			recursiveRemove = ImGui::Selectable("Recursive Remove");
-			ImGui::EndPopup();
-		}
 		ImGui::PushID("Recursive Remove");
 		areYouSureModal(recursiveRemove, [&, node]()mutable{
 			if(active)

@@ -53,6 +53,21 @@ std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
 	return children;
 }
 
+bool Node::isEnabled() const
+{
+	return enabled;
+}
+
+void Node::enable()
+{
+	enabled = true;
+}
+
+void Node::disable()
+{
+	enabled = false;
+}
+
 void Node::addChild(std::unique_ptr<Node>&& node)
 {
 	node->parent = this;

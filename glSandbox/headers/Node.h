@@ -15,6 +15,7 @@ class Node
 private:
 	Scene* scene = nullptr;
 	Node* parent = nullptr;
+	bool enabled = true;
 	std::vector<std::unique_ptr<Node>> children;
 	glm::mat4 transformation{1.0f};
 
@@ -36,6 +37,9 @@ private:
 	std::unique_ptr<Node> releaseChild(Node* node);
 
 public:
+	bool isEnabled() const;
+	void enable();
+	void disable();
 	void addChild(std::unique_ptr<Node>&& node);
 	void addChildren(std::vector<std::unique_ptr<Node>>&& nodes);
 	std::unique_ptr<Node> release();

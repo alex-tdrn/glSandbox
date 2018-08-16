@@ -16,6 +16,7 @@ private:
 	Scene* scene = nullptr;
 	Node* parent = nullptr;
 	bool enabled = true;
+	bool highlighted = false;
 	std::vector<std::unique_ptr<Node>> children;
 	glm::mat4 transformation{1.0f};
 
@@ -38,6 +39,8 @@ private:
 
 public:
 	bool isEnabled() const;
+	bool isHighlighted() const;
+	void setHighlighted(bool);
 	void enable();
 	void disable();
 	void addChild(std::unique_ptr<Node>&& node);

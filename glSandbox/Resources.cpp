@@ -325,8 +325,8 @@ void res::loadShaders()
 			case ShaderType::refraction:
 				shaders.emplace_back("shaders/refraction.vert", "shaders/refraction.frag");
 				break;
-			case ShaderType::outline:
-				shaders.emplace_back("shaders/outline.vert", "shaders/outline.frag");
+			case ShaderType::highlighting:
+				shaders.emplace_back("shaders/highlighting.vert", "shaders/highlighting.frag");
 				break;
 			case ShaderType::debugNormals:
 				shaders.emplace_back("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");

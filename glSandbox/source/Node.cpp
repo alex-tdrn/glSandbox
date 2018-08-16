@@ -58,6 +58,15 @@ bool Node::isEnabled() const
 	return enabled;
 }
 
+bool Node::isHighlighted() const
+{
+	return highlighted;
+}
+
+void Node::setHighlighted(bool b)
+{
+	highlighted = b;
+}
 void Node::enable()
 {
 	enabled = true;

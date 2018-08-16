@@ -90,7 +90,7 @@ void Scene::fitToIdealSize() const
 }
 
 template <typename T>
-void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
+void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Node*>& nodesMarkedForHighlighting)
 {
 	auto areYouSureModal = [](bool justActivated, auto yes){
 		if(justActivated)
@@ -116,11 +116,15 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
 	for(auto node : scene->getAll<T>())
 	{
 		ImGui::PushID(id++);
-		bool active = false;
+		bool current = false;
 		if(std::holds_alternative<T*>(selected))
-			active = std::get<T*>(selected) == node;
-		if(ImGui::Selectable(node->name.get().data(), active))
+			current = std::get<T*>(selected) == node;
+		if(ImGui::Selectable(node->name.get().data(), current))
 			selected = node;
+		if(ImGui::IsItemHovered() || current)
+			nodesMarkedForHighlighting.push_back(node);
+		else
+			node->setHighlighted(false);
 
 		bool remove = false;
 		bool recursiveRemove = false;
@@ -149,14 +153,14 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
 		}
 		ImGui::PushID("Remove");
 		areYouSureModal(remove, [&, node]()mutable{
-			if(active)
+			if(current)
 				selected = static_cast<Node*>(nullptr);
 			node->release();
 		});
 		ImGui::PopID();
 		ImGui::PushID("Recursive Remove");
 		areYouSureModal(recursiveRemove, [&, node]()mutable{
-			if(active)
+			if(current)
 				selected = static_cast<Node*>(nullptr);
 			nodesMarkedForRecursiveRemove.push_back(node);
 		});
@@ -173,6 +177,7 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
 		for(auto node : nodesMarkedForShallowRemove)
 			node->release();
 	}
+	
 
 }
 
@@ -203,15 +208,16 @@ void Scene::drawUI()
 	else
 	{
 
-		
+		std::vector<Node*> nodesMarkedForHighlighting;
+
 		ImGui::Text("Abstract Nodes");
 		ImGui::BeginChild("###Abstract Nodes", {0, scrollAreaHeight}, true);
-		drawAll<Node>(this, selected);
+		drawAll<Node>(this, selected, nodesMarkedForHighlighting);
 		ImGui::EndChild();
 
 		ImGui::Text("Props");
 		ImGui::BeginChild("###Props", {0, scrollAreaHeight}, true);
-		drawAll<Prop>(this, selected);
+		drawAll<Prop>(this, selected, nodesMarkedForHighlighting);
 		ImGui::EndChild();
 
 		ImGui::Text("Cameras");
@@ -229,6 +235,8 @@ void Scene::drawUI()
 		ImGui::Text("Point Lights");
 		ImGui::BeginChild("###Point Lights", {0, scrollAreaHeight}, true);
 		ImGui::EndChild();
+		for(auto node : nodesMarkedForHighlighting)
+			node->recursive([](Node* node){ node->setHighlighted(true); });
 	}
 
 	ImGui::EndChild();

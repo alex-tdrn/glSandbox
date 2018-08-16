@@ -157,12 +157,6 @@
     <None Include="shaders\debugDepthBuffer.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\outline.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\outline.frag">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\ppBW.frag">
       <Filter>shaders</Filter>
     </None>
@@ -236,6 +230,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\blinn-phong.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\highlighting.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\highlighting.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

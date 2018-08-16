@@ -150,7 +150,7 @@ void Renderer::render()
 			glPointSize(pipeline.polygon.pointSize);
 			break;
 	}
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(scene->getBackground().r, scene->getBackground().g, scene->getBackground().b, 1.0f);
 
 	auto const& props = scene->getAllEnabled<Prop>();
@@ -288,35 +288,47 @@ void Renderer::render()
 			}
 			break;
 	}
-
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-	//glBindVertexArray(resources::boxVAO);
-	//glDrawArrays(GL_TRIANGLES, 0, 36);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glStencilMask(0xFF);
+	
+	if(highlighting.overlay)
+	{
+		glEnable(GL_STENCIL_TEST);
+		glStencilMask(0xFF);
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	}
+	res::shaders[res::ShaderType::highlighting].use();
+	res::shaders[res::ShaderType::highlighting].set("color", highlighting.color);
 	for(auto const& prop : props)
 	{
-		activeShader.set("model", prop->getTransformation());
-		activeShader.set("material.hasDiffuseMap", true);
-		activeShader.set("material.diffuseMap", 1);
-		activeShader.set("material.hasSpecularMap", false);
-		activeShader.set("material.hasOpacityMap", false);
-		res::textures::placeholder.use(1);
-		prop->getMesh().use();
+		if(prop->isHighlighted())
+		{
+			res::shaders[res::ShaderType::highlighting].set("model", prop->getTransformation());
+			prop->getMesh().use();
+		}
 	}
-	//for(auto& actor : actors)
-	//actor.draw(activeShader);
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilMask(0x00);
-	glDisable(GL_DEPTH_TEST);
-	//resources::shaders::outline.use();
-	//for(auto& actor : actors)
-	//actor.drawOutline(resources::shaders::outline);
-	glStencilMask(0xFF);
-	glDisable(GL_STENCIL_TEST);
 
+	if(highlighting.overlay)
+	{
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+	}
+	activeShader.use();
+	for(auto const& prop : props)
+	{
+		if(!prop->isHighlighted())
+		{
+			activeShader.set("model", prop->getTransformation());
+			activeShader.set("material.hasDiffuseMap", true);
+			activeShader.set("material.diffuseMap", 1);
+			activeShader.set("material.hasSpecularMap", false);
+			activeShader.set("material.hasOpacityMap", false);
+			res::textures::placeholder.use(1);
+			prop->getMesh().use();
+		}
+
+	}
+	glDisable(GL_STENCIL_TEST);
 	//draw skybox
 	/*if(skybox)
 	{
@@ -373,6 +385,12 @@ void Renderer::drawUI(bool* open)
 		ImGui::EndCombo();
 	}
 	ImGui::Columns(1);
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Highlighting");
+	ImGui::SameLine();
+	ImGui::ColorEdit3("###Highlighting", &highlighting.color[0], ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine();
+	ImGui::Checkbox("Overlay", &highlighting.overlay);
 	ImGui::NewLine();
 	if(ImGui::CollapsingHeader("Pipeline", ImGuiTreeNodeFlags_DefaultOpen))
 	{

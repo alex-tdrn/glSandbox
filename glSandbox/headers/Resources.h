@@ -55,7 +55,7 @@ namespace res
 		flat,
 		reflection,
 		refraction,
-		outline,
+		highlighting,
 		debugNormals,
 		debugNormalsShowLines,
 		debugTexCoords,

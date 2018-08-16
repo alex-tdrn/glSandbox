@@ -42,6 +42,10 @@ private:
 		int faceCullingOrdering = GL_CCW;
 	} pipeline;
 	struct{
+		glm::vec3 color{1.0f};
+		bool overlay = false;
+	}highlighting;
+	struct{
 		res::ShaderType current = res::ShaderType::blinn_phong;
 		struct
 		{

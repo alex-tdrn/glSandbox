@@ -263,16 +263,6 @@ void Renderer::render()
 			activeShader.set("farPlane", camera.getFarPlane());
 			break;
 		case res::ShaderType::debugNormals:
-			if(shading.debugging.normals.showLines)
-			{
-
-				//resources::shaders::debugNormalsShowLines.use();
-				//resources::shaders::debugNormalsShowLines.set("model", model);
-
-				//for(auto const& mesh : resources::meshes)
-					//mesh.use();
-				//activeShader.use();
-			}
 			activeShader.set("viewSpace", shading.debugging.normals.viewSpace);
 			activeShader.set("faceNormals", shading.debugging.normals.faceNormals);
 			activeShader.set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
@@ -284,6 +274,14 @@ void Renderer::render()
 				res::shaders[res::ShaderType::debugNormalsShowLines].set("viewSpace", shading.debugging.normals.viewSpace);
 				res::shaders[res::ShaderType::debugNormalsShowLines].set("faceNormals", shading.debugging.normals.faceNormals);
 				res::shaders[res::ShaderType::debugNormalsShowLines].set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
+				for(auto const& prop : props)
+				{
+					if(prop->isEnabled())
+					{
+						res::shaders[res::ShaderType::debugNormalsShowLines].set("model", prop->getTransformation());
+						prop->getMesh().use();
+					}
+				}
 				activeShader.use();
 			}
 			break;

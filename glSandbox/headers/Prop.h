@@ -9,7 +9,7 @@ class Prop : public Node
 {
 private:
 	Name<Prop> name{"prop"};
-	std::shared_ptr<Mesh> mesh = res::meshes::quad();
+	std::shared_ptr<Mesh> mesh = res::meshes::box();
 
 public:
 	Prop() = default;

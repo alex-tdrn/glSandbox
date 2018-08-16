@@ -72,7 +72,7 @@ Mesh buildMesh(std::vector<Vertex>&& vertices, std::optional<std::vector<uint8_t
 	{
 		indexBuffer.emplace();
 		indexBuffer->data = reinterpret_cast<uint8_t const*>(indices->data());
-		indexBuffer->count = 6;
+		indexBuffer->count = indices->size();
 		indexBuffer->size = indices->size() * sizeof(uint8_t);
 		indexBuffer->dataType = GL_UNSIGNED_BYTE;
 	}
@@ -232,22 +232,22 @@ std::shared_ptr<Mesh> const& res::meshes::box()
 
 			//bottom face
 			{//top left
-				+1.0f, +1.0f, -1.0f,
+				+1.0f, -1.0f, -1.0f,
 				+0.0f, -1.0f, +0.0f,
 				+1.0f, +1.0f
 			},
 			{//bottom left
-				+1.0f, +1.0f, +1.0f,
+				+1.0f, -1.0f, +1.0f,
 				+0.0f, -1.0f, +0.0f,
 				+1.0f, +0.0f
 			},
 			{//bottom right
-				-1.0f, +1.0f, +1.0f,
+				-1.0f, -1.0f, +1.0f,
 				+0.0f, -1.0f, +0.0f,
 				+0.0f, +0.0f
 			},
 			{//top right
-				-1.0f, +1.0f, -1.0f,
+				-1.0f, -1.0f, -1.0f,
 				+0.0f, -1.0f, +0.0f,
 				+0.0f, +1.0f
 			},

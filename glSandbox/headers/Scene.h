@@ -39,6 +39,7 @@ private:
 
 public:
 	void cacheOutdated() const;
+	Node* getRoot() const;
 	template<typename T>
 	std::vector<T*> const& getAll() const;
 	template<typename T>

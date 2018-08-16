@@ -17,22 +17,26 @@ void Scene::updateCache() const
 {
 	cache.abstractNodes.clear();
 	cache.props.clear();
-	auto fillCache = [&](std::unique_ptr<Node> const& node, auto& fillCache) -> void{
-		if(auto prop = dynamic_cast<Prop*>(node.get()); prop)
-			cache.props.push_back(prop);
-		else
-			cache.abstractNodes.push_back(node.get());
-
-		for(auto const& child : node->children)
-			fillCache(child, fillCache);
-	};
-	fillCache(root, fillCache);
+	for(auto& node : root->getChildren())
+	{
+		node.get()->recursive([&](Node* node){
+			if(auto prop = dynamic_cast<Prop*>(node); prop)
+				cache.props.push_back(prop);
+			else
+				cache.abstractNodes.push_back(node);
+		});
+	}
 	cache.dirty = false;
 }
 
 void Scene::cacheOutdated() const
 {
 	cache.dirty = true;
+}
+
+Node * Scene::getRoot() const
+{
+	return root.get();
 }
 
 std::vector<DirectionalLight> const& Scene::getDirectionalLights() const
@@ -111,8 +115,51 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Nod
 		}
 	};
 	std::vector<Node*> nodesMarkedForRecursiveRemove;
-
+	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())//check for mouse click inside window
+		selected = static_cast<Node*>(nullptr);
 	int id = 0;
+	if(std::is_same_v<T, Node>)//draw root node first
+	{
+		Node* root = scene->getRoot();
+		bool current = false;
+		if(std::holds_alternative<Node*>(selected))
+			current = std::get<Node*>(selected) == root;
+		if(ImGui::Selectable("Root Node", current))
+			selected = root;
+		if(ImGui::IsItemHovered() || current)
+			nodesMarkedForHighlighting.push_back(root);
+		else
+			root->setHighlighted(false);
+
+		bool removeAllChildren = false;
+		if(ImGui::BeginPopupContextItem())
+		{
+			if(ImGui::BeginMenu("Add..."))
+			{
+				if(ImGui::MenuItem("Abstract Node"))
+					root->addChild(std::make_unique<Node>());
+				if(ImGui::MenuItem("Prop"))
+					root->addChild(std::make_unique<Prop>());
+				ImGui::EndMenu();
+			}
+			if(ImGui::Selectable("Enable"))
+				root->enable();
+			if(ImGui::Selectable("Disable"))
+				root->disable();
+			if(ImGui::Selectable("Recursive Enable"))
+				root->recursive(&Node::enable);
+			if(ImGui::Selectable("Recursive Disable"))
+				root->recursive(&Node::disable);
+			ImGui::Separator();
+			removeAllChildren = ImGui::Selectable("Remove All Children");
+			ImGui::EndPopup();
+		}
+		ImGui::PushID("Remove All Children");
+		areYouSureModal(removeAllChildren, [&, root]()mutable{
+			root->releaseChildren();
+		});
+		ImGui::PopID();
+	}
 	for(auto node : scene->getAll<T>())
 	{
 		ImGui::PushID(id++);
@@ -128,6 +175,7 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Nod
 
 		bool remove = false;
 		bool recursiveRemove = false;
+		bool removeAllChildren = false;
 		if(ImGui::BeginPopupContextItem())
 		{
 			if(ImGui::BeginMenu("Add..."))
@@ -149,6 +197,7 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Nod
 			ImGui::Separator();
 			remove = ImGui::Selectable("Remove");
 			recursiveRemove = ImGui::Selectable("Recursive Remove");
+			removeAllChildren = ImGui::Selectable("Remove All Children");
 			ImGui::EndPopup();
 		}
 		ImGui::PushID("Remove");
@@ -165,9 +214,16 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Nod
 			nodesMarkedForRecursiveRemove.push_back(node);
 		});
 		ImGui::PopID();
+		ImGui::PushID("Remove All Children");
+		areYouSureModal(removeAllChildren, [&, node]()mutable{
+			for(auto& childNode : node->getChildren())
+				nodesMarkedForRecursiveRemove.push_back(childNode.get());
+		});
+		ImGui::PopID();
 
 		ImGui::PopID();
 	}
+
 	if(!nodesMarkedForRecursiveRemove.empty())
 	{
 		std::set<Node*> nodesMarkedForShallowRemove;
@@ -183,13 +239,16 @@ void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected, std::vector<Nod
 
 void Scene::drawUI()
 {
+	static std::variant<Node*, Prop*> selected;
+	
 	IDGuard idGuard{this};
 	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
 	ImGui::NewLine();
 
+	root->recursive([](Node* node){ node->setHighlighted(false); });
+
 	float const scrollAreaHeight = ImGui::GetTextLineHeight() * 10;
 	float const scrollAreaWidth = ImGui::GetTextLineHeight() * 20;
-	static std::variant<Node*, Prop*> selected;
 	static bool hierarchyView = false;
 
 	ImGui::Columns(2, nullptr, false);
@@ -201,13 +260,14 @@ void Scene::drawUI()
 	if(ImGui::Checkbox("Hierarchy View", &hierarchyView))
 		selected = static_cast<Node*>(nullptr);
 	ImGui::BeginChild("###Nodes");
+	if(ImGui::IsItemActive())//check for mouse click inside window
+		selected = static_cast<Node*>(nullptr);
 	if(hierarchyView)
 	{
 
 	}
 	else
 	{
-
 		std::vector<Node*> nodesMarkedForHighlighting;
 
 		ImGui::Text("Abstract Nodes");
@@ -239,10 +299,11 @@ void Scene::drawUI()
 			node->recursive([](Node* node){ node->setHighlighted(true); });
 	}
 
+	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())//check for mouse click inside window
+		selected = static_cast<Node*>(nullptr);
 	ImGui::EndChild();
-
 	ImGui::NextColumn();
-	std::visit([](auto selected){
+	std::visit([&](auto selected){
 		ImGui::Text(selected ? selected->name.get().data() : "No selection...");
 		ImGui::BeginChild("###Edit Node", {0, 0}, true);
 		if(selected) selected->drawUI();

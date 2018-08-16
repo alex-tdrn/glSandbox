@@ -99,6 +99,12 @@ std::unique_ptr<Node> Node::release()
 	return parent->releaseChild(this);
 }
 
+std::vector<std::unique_ptr<Node>> Node::releaseChildren()
+{
+	invalidateSceneCache();
+	return std::move(children);
+}
+
 void Node::setTransformation(glm::mat4&& t)
 {
 	transformation = std::move(t);

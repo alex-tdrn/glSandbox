@@ -46,6 +46,7 @@ public:
 	void addChild(std::unique_ptr<Node>&& node);
 	void addChildren(std::vector<std::unique_ptr<Node>>&& nodes);
 	std::unique_ptr<Node> release();
+	std::vector<std::unique_ptr<Node>> releaseChildren();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
 	template<typename Callable>
 	void recursive(Callable operation);

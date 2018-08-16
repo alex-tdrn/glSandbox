@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <memory>
-
+#include <type_traits>
 class Scene;
 
 class Node
@@ -40,9 +40,22 @@ public:
 	void addChildren(std::vector<std::unique_ptr<Node>>&& nodes);
 	std::unique_ptr<Node> release();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
+	template<typename Callable>
+	void recursive(Callable operation);
 	void setTransformation(glm::mat4&& t);
 	glm::mat4 getTransformation() const;
 	virtual Bounds getBounds() const;
 	virtual void drawUI();
 
 };
+
+template<typename Callable>
+void Node::recursive(Callable operation)
+{
+	for(auto const& child : children)
+		child.get()->recursive(operation);
+	if constexpr(std::is_member_function_pointer_v<Callable>)
+		(this->*operation)();
+	else
+		operation(this);
+}

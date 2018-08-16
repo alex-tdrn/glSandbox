@@ -60,7 +60,7 @@ std::vector<T*> const& Scene::getAll() const
 		updateCache();
 	if constexpr(std::is_same<T, Node>())
 		return cache.abstractNodes;
-	if constexpr(std::is_same<T, Prop>())
+	else if constexpr(std::is_same<T, Prop>())
 		return cache.props;
 }
 

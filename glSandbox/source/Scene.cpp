@@ -4,6 +4,7 @@
 
 #include <imgui.h>
 #include <variant>
+#include <set>
 
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
@@ -88,6 +89,94 @@ void Scene::fitToIdealSize() const
 	root->setTransformation(s * t * root->getTransformation());
 }
 
+template <typename T>
+void drawAll(Scene* scene, std::variant<Node*, Prop*>& selected)
+{
+	auto areYouSureModal = [](bool justActivated, auto yes){
+		if(justActivated)
+			ImGui::OpenPopup("Are you sure?");
+		if(ImGui::BeginPopupModal("Are you sure?", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
+		{
+			ImGui::SetWindowSize({100, ImGui::GetTextLineHeight() * 5});
+			ImVec2 buttonSize{ImGui::GetContentRegionAvailWidth() * 0.5f, ImGui::GetContentRegionAvail().y};
+			if(ImGui::Button("Yes", buttonSize))
+			{
+				yes();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if(ImGui::Button("No", buttonSize))
+				ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
+		}
+	};
+	std::vector<Node*> nodesMarkedForRecursiveRemove;
+
+	int id = 0;
+	for(auto node : scene->getAll<T>())
+	{
+		ImGui::PushID(id++);
+		bool active = false;
+		if(std::holds_alternative<T*>(selected))
+			active = std::get<T*>(selected) == node;
+		if(ImGui::Selectable(node->name.get().data(), active))
+			selected = node;
+
+		if(ImGui::BeginPopupContextItem())
+		{
+			if(ImGui::BeginMenu("Add..."))
+			{
+				if(ImGui::MenuItem("Abstract Node"))
+					node->addChild(std::make_unique<Node>());
+				if(ImGui::MenuItem("Prop"))
+					node->addChild(std::make_unique<Prop>());
+				ImGui::EndMenu();
+			}
+			ImGui::EndPopup();
+		}
+
+		bool remove = false;
+		if(ImGui::BeginPopupContextItem())
+		{
+			remove = ImGui::Selectable("Remove");
+			ImGui::EndPopup();
+		}
+		ImGui::PushID("Remove");
+		areYouSureModal(remove, [&, node]()mutable{
+			if(active)
+				selected = static_cast<Node*>(nullptr);
+			node->release();
+		});
+		ImGui::PopID();
+
+		bool recursiveRemove = false;
+		if(ImGui::BeginPopupContextItem())
+		{
+			recursiveRemove = ImGui::Selectable("Recursive Remove");
+			ImGui::EndPopup();
+		}
+		ImGui::PushID("Recursive Remove");
+		areYouSureModal(recursiveRemove, [&, node]()mutable{
+			if(active)
+				selected = static_cast<Node*>(nullptr);
+			nodesMarkedForRecursiveRemove.push_back(node);
+		});
+		ImGui::PopID();
+
+		ImGui::PopID();
+	}
+	if(!nodesMarkedForRecursiveRemove.empty())
+	{
+		std::set<Node*> nodesMarkedForShallowRemove;
+		for(auto node : nodesMarkedForRecursiveRemove)
+			node->recursive([&](Node* node){ nodesMarkedForShallowRemove.insert(node); });
+
+		for(auto node : nodesMarkedForShallowRemove)
+			node->release();
+	}
+
+}
+
 void Scene::drawUI()
 {
 	IDGuard idGuard{this};
@@ -114,76 +203,16 @@ void Scene::drawUI()
 	}
 	else
 	{
-		std::vector<Node*> nodesMarkedShallowRemove;
 
-		auto areYouSureModal = [](bool justActivated, auto yes) -> bool{
-			bool choice = false;
-			if(justActivated) 
-				ImGui::OpenPopup("Are you sure?");
-			if(ImGui::BeginPopupModal("Are you sure?", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
-			{
-				ImGui::SetWindowSize({100, ImGui::GetTextLineHeight() * 5});
-				ImVec2 buttonSize{ImGui::GetContentRegionAvailWidth() * 0.5f, ImGui::GetContentRegionAvail().y};
-				if(ImGui::Button("Yes", buttonSize))
-				{
-					yes();
-					ImGui::CloseCurrentPopup();
-					choice = true;
-				}
-				ImGui::SameLine();
-				if(ImGui::Button("No", buttonSize))
-					ImGui::CloseCurrentPopup();
-				ImGui::EndPopup();
-			}
-			return choice;
-		};
-		int id = 0;
+		
 		ImGui::Text("Abstract Nodes");
 		ImGui::BeginChild("###Abstract Nodes", {0, scrollAreaHeight}, true);
-		for(auto node : getAll<Node>())
-		{
-			ImGui::PushID(id++);
-			bool active = false;
-			if(std::holds_alternative<Node*>(selected))
-				active = std::get<Node*>(selected) == node;
-			if(ImGui::Selectable(node->name.get().data(), active))
-				selected = node;
-
-			if(ImGui::BeginPopupContextItem())
-			{
-				if(ImGui::Selectable("Add..."))
-					node->addChild(std::make_unique<Node>());
-				ImGui::EndPopup();
-			}
-
-			bool deleteAndTransferChildNodes = false;
-			if(ImGui::BeginPopupContextItem())
-			{
-				deleteAndTransferChildNodes = ImGui::Selectable("Shallow remove");
-				ImGui::EndPopup();
-			}
-			areYouSureModal(deleteAndTransferChildNodes, [&, node]()mutable{
-				if(active)
-					selected = static_cast<Node*>(nullptr);
-				nodesMarkedShallowRemove.push_back(node);
-			});
-
-			ImGui::PopID();
-		}
+		drawAll<Node>(this, selected);
 		ImGui::EndChild();
 
 		ImGui::Text("Props");
 		ImGui::BeginChild("###Props", {0, scrollAreaHeight}, true);
-		for(auto prop : getAll<Prop>())
-		{
-			ImGui::PushID(id++);
-			bool active = false;
-			if(std::holds_alternative<Prop*>(selected))
-				active = std::get<Prop*>(selected) == prop;
-			if(ImGui::Selectable(prop->name.get().data(), active))
-				selected = prop;
-			ImGui::PopID();
-		}
+		drawAll<Prop>(this, selected);
 		ImGui::EndChild();
 
 		ImGui::Text("Cameras");
@@ -201,9 +230,6 @@ void Scene::drawUI()
 		ImGui::Text("Point Lights");
 		ImGui::BeginChild("###Point Lights", {0, scrollAreaHeight}, true);
 		ImGui::EndChild();
-
-		for(auto node : nodesMarkedShallowRemove)
-			node->release();
 	}
 
 	ImGui::EndChild();

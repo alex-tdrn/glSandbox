@@ -6,6 +6,7 @@
 
 void Camera::init() const
 {
+	initialized = true;
 	glGenBuffers(1, &ubo);
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 	glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STREAM_DRAW);

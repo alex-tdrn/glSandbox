@@ -9,7 +9,7 @@ class Camera
 {
 private:
 	mutable unsigned int ubo;
-	bool initialized = false;
+	mutable bool initialized = false;
 	bool projectionOrtho = false;
 	Orientation orientation;
 	Position position = {{0.0f, 0.0f, 8.0f}};

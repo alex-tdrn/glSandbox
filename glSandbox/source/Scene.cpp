@@ -110,8 +110,8 @@ void Scene::drawUI()
 	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
 	ImGui::NewLine();
 
-	float const scrollAreaWidth = ImGui::GetTextLineHeight() * 20;
-	static bool hierarchyView = false;
+	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
+	static int hierarchyView = 0;
 
 	ImGui::Columns(2, nullptr, false);
 	ImGui::SetColumnWidth(-1, scrollAreaWidth);
@@ -120,7 +120,10 @@ void Scene::drawUI()
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Nodes");
 	ImGui::SameLine();
-	if(ImGui::Checkbox("Hierarchy View", &hierarchyView))
+	if(ImGui::RadioButton("Category", &hierarchyView, 0))
+		selected = nullptr;
+	ImGui::SameLine();
+	if(ImGui::RadioButton("Hierarchy", &hierarchyView, 1))
 		selected = nullptr;
 	ImGui::BeginChild("###Nodes");
 
@@ -288,7 +291,7 @@ void Scene::drawUI()
 			}
 			
 		};
-		float const scrollAreaHeight = ImGui::GetTextLineHeight() * 10;
+		float const scrollAreaHeight = ImGui::GetTextLineHeightWithSpacing() * 8;
 
 		ImGui::Text("Abstract Nodes");
 		ImGui::BeginChild("###Abstract Nodes", {0, scrollAreaHeight}, true);

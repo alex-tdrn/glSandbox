@@ -423,8 +423,8 @@ void res::drawUI(bool* open)
 		return;
 	ImGui::Begin("Resources", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-	float const scrollAreaHeight = ImGui::GetTextLineHeight() * 10;
-	float const scrollAreaWidth = ImGui::GetTextLineHeight() * 20;
+	float const scrollAreaHeight = ImGui::GetTextLineHeightWithSpacing() * 8;
+	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
 	ImGui::Columns(2, nullptr, false);
 	ImGui::SetColumnWidth(-1, scrollAreaWidth);
 	static bool importWindowOpen = false;

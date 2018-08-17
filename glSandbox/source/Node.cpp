@@ -136,7 +136,7 @@ void Node::drawUI()
 	IDGuard idGuard{this};
 	static bool showMatrix = true;
 	static int relative = true;
-	static bool uniformScale = true;
+	ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, 0});
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Transformation");
 	ImGui::SameLine();
@@ -145,7 +145,7 @@ void Node::drawUI()
 	ImGui::RadioButton("Relative", &relative, 1);
 	ImGui::SameLine();
 	ImGui::Checkbox("Show Matrix", &showMatrix);
-	ImGui::BeginChild("###Transformation", {ImGui::GetTextLineHeightWithSpacing() * 22, 0}, true);
+	ImGui::BeginChild("###Transformation", {0, ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 9.5f : 5)}, true);
 	{
 		glm::mat4 const& matrix = relative ? transformation : getTransformation();
 		if(showMatrix)
@@ -171,70 +171,99 @@ void Node::drawUI()
 		glm::vec4 perspective;
 		glm::decompose(matrix, scale, rotation, translation, skew, perspective);
 		glm::vec4 angleAxis{glm::axis(rotation), glm::degrees(glm::angle(rotation))};
-		if(relative)
+
+		float availWidth = ImGui::GetContentRegionAvailWidth() - ImGui::GetTextLineHeightWithSpacing() * 2;
+		ImGui::PushItemWidth(-1);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Tr");
+		ImGui::PushItemWidth(availWidth / 3.0);
+		for(int i = 0 ; i < 3; i++)
 		{
-			float availWidth = ImGui::GetContentRegionAvailWidth() - ImGui::GetTextLineHeightWithSpacing() * 2;
-			ImGui::PushItemWidth(-1);
-			ImGui::AlignTextToFramePadding();
-			ImGui::Text("Tr");
-			ImGui::PushItemWidth(availWidth / 3.0);
-			for(int i = 0 ; i < 3; i++)
-			{
-				ImGui::PushID(i);
-				ImGui::SameLine();
-				ImGui::DragFloat("###Tr", &translation[i], 0.01f);
-				ImGui::PopID();
-				if(i == 2)
-					ImGui::PopItemWidth();
-			}
-
-			ImGui::AlignTextToFramePadding();
-			ImGui::Text("Ro");
+			ImGui::PushID(i);
 			ImGui::SameLine();
-			ImGui::PushItemWidth(availWidth / 4.0);
+			if(relative)
+				ImGui::DragFloat("###Tr", &translation[i], 0.01f);
+			else
+				ImGui::Text("%.3f", translation[i]);
+			ImGui::PopID();
+			if(i == 2)
+				ImGui::PopItemWidth();
+		}
+
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Ro");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(availWidth / 4.0);
+		if(relative)
 			ImGui::DragFloat("###RoAngle", &angleAxis[3], 1.00f);
-			for(int i = 0; i < 3; i++)
-			{
-				ImGui::PushID(i);
-				ImGui::SameLine();
+		else
+			ImGui::Text("%.3f", angleAxis[3]);
+
+		for(int i = 0; i < 3; i++)
+		{
+			ImGui::PushID(i);
+			ImGui::SameLine();
+			if(relative)
 				ImGui::DragFloat("###Ro", &angleAxis[i], 0.01f);
-				ImGui::PopID();
-				if(i == 2)
-					ImGui::PopItemWidth();
-			}
+			else
+				ImGui::Text("%.3f", angleAxis[i]);
 
-			ImGui::AlignTextToFramePadding();
-			ImGui::Text("Sc");
-			ImGui::PushItemWidth(availWidth / 3.0);
-			for(int i = 0; i < 3; i++)
-			{
-				ImGui::PushID(i);
-				ImGui::SameLine();
+			ImGui::PopID();
+			if(i == 2)
+				ImGui::PopItemWidth();
+		}
+
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Sc");
+		ImGui::PushItemWidth(availWidth / 3.0);
+		for(int i = 0; i < 3; i++)
+		{
+			ImGui::PushID(i);
+			ImGui::SameLine();
+			if(relative)
 				ImGui::DragFloat("###Sc", &scale[i], 0.01f);
-				if(ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
-					scale = glm::vec3(scale[i]);
-				ImGui::PopID();
-				if(i == 2)
-					ImGui::PopItemWidth();
-			}
-			ImGui::PopItemWidth();
+			else
+				ImGui::Text("%.3f", scale[i]);
 
-			if(ImGui::IsAnyItemActive())
-			{
-				glm::mat4 Tr = glm::translate(glm::mat4(1.0f), translation);
-				glm::mat4 Ro = glm::mat4_cast(glm::angleAxis(glm::radians(angleAxis[3]), glm::normalize(glm::vec3(angleAxis))));
-				for(int i = 0; i < 3; i++)
-					if(scale[i] == 0.0f)
-						scale[i] = 0.01f;
-				glm::mat4 Sc = glm::scale(glm::mat4(1.0f), scale);
-				transformation = Tr * Ro * Sc;
-			}
+			if(relative && ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
+				scale = glm::vec3(scale[i]);
+			ImGui::PopID();
+			if(i == 2)
+				ImGui::PopItemWidth();
+		}
+		ImGui::PopItemWidth();
+
+		if(relative && ImGui::IsAnyItemActive())
+		{
+			glm::mat4 Tr = glm::translate(glm::mat4(1.0f), translation);
+			glm::mat4 Ro = glm::mat4_cast(glm::angleAxis(glm::radians(angleAxis[3]), glm::normalize(glm::vec3(angleAxis))));
+			for(int i = 0; i < 3; i++)
+				if(scale[i] == 0.0f)
+					scale[i] = 0.01f;
+			glm::mat4 Sc = glm::scale(glm::mat4(1.0f), scale);
+			transformation = Tr * Ro * Sc;
 		}
 	}
 	ImGui::EndChild();
 	
 	if(!children.empty())
 	{
-		ImGui::Text("Children");
+		ImGui::Columns(2, nullptr, false);
+		static int ctAllSubNodes = 0;
+		ImGui::Text("All Sub Nodes (%i)", ctAllSubNodes);
+		ImGui::BeginChild("###SubNodes", {-1, ImGui::GetTextLineHeightWithSpacing() * 5}, true);
+		ctAllSubNodes = 0;
+		for(auto& node : children)
+			node->recursive([&](Node* node){ ImGui::BulletText(node->getName().data()); ctAllSubNodes++; });
+		ImGui::EndChild();
+
+		ImGui::NextColumn();
+		ImGui::Text("Direct Sub Nodes (%i)", children.size());
+		ImGui::BeginChild("###DirectSubNodes", {-1, ImGui::GetTextLineHeightWithSpacing() * 5}, true);
+		for(auto& node : children)
+			ImGui::BulletText(node->getName().data());
+		ImGui::EndChild();
+		ImGui::Columns(1);
 	}
+	ImGui::EndChild();
 }

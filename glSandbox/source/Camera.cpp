@@ -4,13 +4,18 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
-void Camera::init() const
+unsigned int Camera::ubo()
 {
-	initialized = true;
-	glGenBuffers(1, &ubo);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STREAM_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+	static unsigned int ubo = [](){
+		unsigned int ubo;
+		glGenBuffers(1, &ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+		glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STREAM_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+		return ubo;
+	}();
+
+	return ubo;
 }
 
 void Camera::update()
@@ -20,14 +25,12 @@ void Camera::update()
 	up = glm::normalize(glm::cross(-front, right));
 }
 
+
 void Camera::use() const
 {
-	if(!initialized)
-		init();
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo());
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 64, glm::value_ptr(getProjectionMatrix()));
 	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, glm::value_ptr(getViewMatrix()));
-	
 }
 
 float Camera::getNearPlane() const

@@ -136,7 +136,9 @@ void Node::drawUI()
 	IDGuard idGuard{this};
 	static bool showMatrix = true;
 	static int relative = true;
-	ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, 0});
+	static float heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 10.5f : 6);
+	const float heightSubNodes = ImGui::GetTextLineHeightWithSpacing() * 5;
+	ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, heightTransformation + heightSubNodes + ImGui::GetTextLineHeightWithSpacing() * 3});
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Transformation");
 	ImGui::SameLine();
@@ -145,7 +147,8 @@ void Node::drawUI()
 	ImGui::RadioButton("Relative", &relative, 1);
 	ImGui::SameLine();
 	ImGui::Checkbox("Show Matrix", &showMatrix);
-	ImGui::BeginChild("###Transformation", {0, ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 9.5f : 5)}, true);
+	heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 9.5f : 5);
+	ImGui::BeginChild("###Transformation", {0, heightTransformation}, true);
 	{
 		glm::mat4 const& matrix = relative ? transformation : getTransformation();
 		if(showMatrix)
@@ -243,6 +246,8 @@ void Node::drawUI()
 			glm::mat4 Sc = glm::scale(glm::mat4(1.0f), scale);
 			transformation = Tr * Ro * Sc;
 		}
+		auto[bMin, bMax] = getBounds().getValues();
+		ImGui::Text("Bounds (%.1f, %.1f, %.1f) - (%.1f, %.1f, %.1f)", bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
 	}
 	ImGui::EndChild();
 	
@@ -251,7 +256,7 @@ void Node::drawUI()
 		ImGui::Columns(2, nullptr, false);
 		static int ctAllSubNodes = 0;
 		ImGui::Text("All Sub Nodes (%i)", ctAllSubNodes);
-		ImGui::BeginChild("###SubNodes", {-1, ImGui::GetTextLineHeightWithSpacing() * 5}, true);
+		ImGui::BeginChild("###SubNodes", {-1, heightSubNodes}, true);
 		ctAllSubNodes = 0;
 		for(auto& node : children)
 			node->recursive([&](Node* node){ ImGui::BulletText(node->getName().data()); ctAllSubNodes++; });
@@ -259,7 +264,7 @@ void Node::drawUI()
 
 		ImGui::NextColumn();
 		ImGui::Text("Direct Sub Nodes (%i)", children.size());
-		ImGui::BeginChild("###DirectSubNodes", {-1, ImGui::GetTextLineHeightWithSpacing() * 5}, true);
+		ImGui::BeginChild("###DirectSubNodes", {-1, heightSubNodes}, true);
 		for(auto& node : children)
 			ImGui::BulletText(node->getName().data());
 		ImGui::EndChild();

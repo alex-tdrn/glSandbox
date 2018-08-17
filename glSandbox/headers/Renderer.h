@@ -42,6 +42,7 @@ private:
 		int faceCullingOrdering = GL_CCW;
 	} pipeline;
 	struct{
+		bool enabled = true;
 		glm::vec3 color{1.0f};
 		bool overlay = false;
 	}highlighting;

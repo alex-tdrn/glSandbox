@@ -108,6 +108,9 @@ void Scene::drawUI()
 	IDGuard idGuard{this};
 	
 	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine();
+	if(ImGui::Button("Fit To Ideal Size"))
+		fitToIdealSize();
 	ImGui::NewLine();
 
 	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;

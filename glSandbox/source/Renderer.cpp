@@ -287,30 +287,33 @@ void Renderer::render()
 			break;
 	}
 	
-	if(highlighting.overlay)
+	if(highlighting.enabled)
 	{
-		glEnable(GL_STENCIL_TEST);
-		glStencilMask(0xFF);
-		glClear(GL_STENCIL_BUFFER_BIT);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	}
-	res::shaders[res::ShaderType::highlighting].use();
-	res::shaders[res::ShaderType::highlighting].set("color", highlighting.color);
-	for(auto const& prop : props)
-	{
-		if(prop->isHighlighted())
+		if(highlighting.overlay)
 		{
-			res::shaders[res::ShaderType::highlighting].set("model", prop->getTransformation());
-			prop->getMesh().use();
+			glEnable(GL_STENCIL_TEST);
+			glStencilMask(0xFF);
+			glClear(GL_STENCIL_BUFFER_BIT);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		}
+		res::shaders[res::ShaderType::highlighting].use();
+		res::shaders[res::ShaderType::highlighting].set("color", highlighting.color);
+		for(auto const& prop : props)
+		{
+			if(prop->isHighlighted())
+			{
+				res::shaders[res::ShaderType::highlighting].set("model", prop->getTransformation());
+				prop->getMesh().use();
+			}
+		}
+		if(highlighting.overlay)
+		{
+			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilMask(0x00);
 		}
 	}
 
-	if(highlighting.overlay)
-	{
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-	}
 	activeShader.use();
 	for(auto const& prop : props)
 	{
@@ -375,7 +378,7 @@ void Renderer::drawUI(bool* open)
 			ImGui::PushID(id++);
 			bool isSelected = scene.get() == s.get();
 			if(ImGui::Selectable(s->name.get().data(), &isSelected))
-				scene = s;
+				setScene(std::move(s));
 			if(isSelected)
 				ImGui::SetItemDefaultFocus();
 			ImGui::PopID();
@@ -384,7 +387,7 @@ void Renderer::drawUI(bool* open)
 	}
 	ImGui::Columns(1);
 	ImGui::AlignTextToFramePadding();
-	ImGui::Text("Highlighting");
+	ImGui::Checkbox("Highlighting", &highlighting.enabled);
 	ImGui::SameLine();
 	ImGui::ColorEdit3("###Highlighting", &highlighting.color[0], ImGuiColorEditFlags_NoInputs);
 	ImGui::SameLine();

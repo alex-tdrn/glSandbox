@@ -8,8 +8,6 @@
 class Camera
 {
 private:
-	mutable unsigned int ubo;
-	mutable bool initialized = false;
 	bool projectionOrtho = false;
 	Orientation orientation;
 	Position position = {{0.0f, 0.0f, 8.0f}};
@@ -22,7 +20,7 @@ private:
 
 private:
 	void update();
-	void init() const;
+	static unsigned int ubo();
 
 public:
 	void use() const;

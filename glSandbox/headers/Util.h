@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
-
+#include <glad/glad.h>
 #include <imgui.h>
 #include <string>
 #include <tuple>
@@ -206,3 +206,34 @@ inline bool drag2(const char* title, float const sensitivity, float& x, float& y
 	return ret;
 }
 
+inline std::string glEnumToString(GLenum e)
+{
+	switch(e)
+	{
+		case GL_POINTS:
+			return "GL_POINTS";
+		case GL_LINES:
+			return "GL_LINES";
+		case GL_LINE_LOOP:
+			return "GL_LINE_LOOP";
+		case GL_TRIANGLE_FAN:
+			return "GL_TRIANGLE_FAN";
+		case GL_TRIANGLE_STRIP:
+			return "GL_TRIANGLE_STRIP";
+		case GL_TRIANGLES:
+			return "GL_TRIANGLES";
+		case GL_BYTE:
+			return "GL_BYTE";
+		case GL_UNSIGNED_BYTE:
+			return "GL_UNSIGNED_BYTE";
+		case GL_SHORT:
+			return "GL_SHORT";
+		case GL_UNSIGNED_SHORT:
+			return "GL_UNSIGNED_SHORT";
+		case GL_FLOAT:
+			return "GL_FLOAT";
+		case GL_UNSIGNED_INT:
+			return "GL_UNSIGNED_INT";
+	}
+	return "Unrecognized GL enum";
+}

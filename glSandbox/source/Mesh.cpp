@@ -4,7 +4,8 @@
 #include <imgui.h>
 
 Mesh::Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices)
-	: bounds(bounds), drawMode(drawMode), vertexCount(attributes.array[AttributeType::positions]->size / attributes.array[AttributeType::positions]->stride),
+	: bounds(bounds), drawMode(drawMode), 
+	vertexCount((attributes.interleaved ? attributes.size : attributes.array[AttributeType::positions]->size) / attributes.array[AttributeType::positions]->stride),
 	indexCount(indices? indices->count : 0), indexDataType(indices? indices->dataType : 0), indexedDrawing(indices)
 {
 	glGenVertexArrays(1, &VAO);
@@ -90,9 +91,27 @@ void Mesh::drawUI()
 {
 	IDGuard idGuard{this};
 
-	//if(ImGui::TreeNode(name.get().data()))
-	//{
-
-		//ImGui::TreePop();
-	//}
+	ImGui::BeginChild("###Mesh");
+	ImGui::Value("VAO", VAO);
+	ImGui::SameLine();
+	ImGui::Value("VBO", VBO);
+	if(indexedDrawing)
+	{
+		ImGui::SameLine();
+		ImGui::Value("EBO", EBO);
+	}
+	ImGui::Value("vertices", vertexCount);
+	if(indexedDrawing)
+	{
+		ImGui::Value("indices", indexCount);
+		ImGui::Text("Index Datatype");
+		ImGui::SameLine();
+		ImGui::Text(glEnumToString(indexDataType).data());
+	}
+	ImGui::Text("Draw Mode:");
+	ImGui::SameLine();
+	ImGui::Text(glEnumToString(drawMode).data());
+	auto[bMin, bMax] = getBounds().getValues();
+	ImGui::Text("Bounds (%.1f, %.1f, %.1f) - (%.1f, %.1f, %.1f)", bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
+	ImGui::EndChild();
 }

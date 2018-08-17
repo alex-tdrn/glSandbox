@@ -23,7 +23,7 @@ Bounds Prop::getBounds() const
 	return mesh->getBounds() * getTransformation();
 }
 
-std::string_view Prop::getName() const
+std::string const& Prop::getName() const
 {
 	return name.get();
 }

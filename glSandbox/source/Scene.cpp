@@ -235,7 +235,7 @@ void Scene::drawUI()
 				flags = flags | ImGuiTreeNodeFlags_Leaf;
 			if(selected == node)
 				flags = flags | ImGuiTreeNodeFlags_Selected;
-			bool expandNode = ImGui::TreeNodeEx(root ? "Root Node" : node->getName().data(), flags);
+			bool expandNode = ImGui::TreeNodeEx(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), flags);
 			if(ImGui::IsItemClicked())
 				selected = node;
 			if(ImGui::IsItemHovered() || selected == node)
@@ -269,7 +269,7 @@ void Scene::drawUI()
 	else
 	{
 		auto drawNode = [&](Node* node, bool root = false){
-			if(ImGui::Selectable(root ? "Root Node" : node->getName().data(), selected == node))
+			if(ImGui::Selectable(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), selected == node))
 				selected = node;
 			if(ImGui::IsItemHovered() || selected == node)
 				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });

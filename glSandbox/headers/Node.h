@@ -46,7 +46,7 @@ public:
 	std::unique_ptr<Node> release();
 	std::vector<std::unique_ptr<Node>> releaseChildren();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
-	virtual std::string_view getName() const;
+	virtual std::string const& getName() const;
 	template<typename Callable>
 	void recursive(Callable operation);
 	void setTransformation(glm::mat4&& t);

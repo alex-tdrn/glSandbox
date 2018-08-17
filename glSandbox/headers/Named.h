@@ -20,7 +20,7 @@ public:
 	Name& operator=(Name&&) = default;
 	~Name() = default;
 public:
-	std::string_view get() const
+	std::string const& get() const
 	{
 		return name;
 	}

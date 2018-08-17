@@ -20,7 +20,7 @@ public:
 public:
 	Mesh& getMesh() const;
 	Bounds getBounds() const override;
-	virtual std::string_view getName() const override;
+	virtual std::string const& getName() const override;
 	//void drawUI() override;
 
 };

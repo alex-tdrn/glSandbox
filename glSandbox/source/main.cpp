@@ -187,10 +187,6 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 		firstMouse = false;
 		return;
 	}
-	//TODO
-	/*Scene& activeScene = resources::scenes::getActiveScene();
-	activeScene.update();
-	*/
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= -sensitivity;
@@ -201,8 +197,6 @@ void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
 	if(ImGuiIO& io = ImGui::GetIO(); io.WantCaptureMouse)
 		return ImGui_ImplGlfw_MouseButtonCallback(window, button, mode, modifier);
-	//resources::scenes::getActiveScene().update();
-	//TODO
 
 	if(button == GLFW_MOUSE_BUTTON_1)
 	{
@@ -220,18 +214,12 @@ void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 }
 void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifier)
 {
-	if(ImGuiIO& io = ImGui::GetIO(); io.WantCaptureKeyboard)
-		return ImGui_ImplGlfw_KeyCallback(window, key, keycode, mode, modifier);
-	if(mode != GLFW_PRESS)
-		return;
-	//resources::scenes::getActiveScene().update();
-	//TODO
-	switch(key)
+	if(key == GLFW_KEY_ESCAPE && mode == GLFW_PRESS)
 	{
-		case GLFW_KEY_ESCAPE:
-			glfwSetWindowShouldClose(window, true);
-			break;
+		glfwSetWindowShouldClose(window, true);
+		return;
 	}
+	return ImGui_ImplGlfw_KeyCallback(window, key, keycode, mode, modifier);
 }
 void processInput(GLFWwindow* window)
 {

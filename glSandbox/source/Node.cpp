@@ -211,6 +211,8 @@ void Node::drawUI()
 				ImGui::PushID(i);
 				ImGui::SameLine();
 				ImGui::DragFloat("###Sc", &scale[i], 0.01f);
+				if(ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
+					scale = glm::vec3(scale[i]);
 				ImGui::PopID();
 				if(i == 2)
 					ImGui::PopItemWidth();
@@ -230,43 +232,6 @@ void Node::drawUI()
 		}
 	}
 	ImGui::EndChild();
-	/*if(parent != nullptr)
-	{
-		ImGui::Columns(2);
-		ImGui::Text("Global Transformation");
-		ImGui::NextColumn();
-		ImGui::Text("Relative Transformation");
-		ImGui::NextColumn();
-		ImGui::Separator();
-		{
-			drawMatrix(getTransformation());
-			auto [t, r, s] = decomposeTransformation(getTransformation());
-			auto e = glm::eulerAngles(r);
-			ImGui::Text("%.2f %.2f %.2f T", t[0], t[1], t[2]);
-			ImGui::Text("%.2f %.2f %.2f R", e[0], e[1], e[2]);
-			ImGui::Text("%.2f %.2f %.2f S", s[0], s[1], s[2]);
-		}
-		ImGui::NextColumn();
-
-		{
-			bool recomposeMatrix = false;
-			bool uniformScale = false;
-			drawEditableMatrix(transformation);
-			auto[t, r, s] = decomposeTransformation(transformation);
-			auto e = glm::eulerAngles(r);
-			float scale = s[0];
-			recomposeMatrix |= ImGui::DragFloat3("T", &t[0], 0.01f, 0, 0, "%.2f");
-			recomposeMatrix |= ImGui::DragFloat3("R", &e[0], 0.01f, 0, 0, "%.2f");
-			uniformScale |= ImGui::DragFloat("Scale uniformly", &scale, 0.01f, 0, 0, "%.2f");
-			recomposeMatrix |= ImGui::DragFloat3("S", &s[0], 0.01f, 0, 0, "%.2f");
-			if(recomposeMatrix | uniformScale)
-			{
-				if(uniformScale)
-					s = glm::vec3(scale);
-				transformation = glm::translate(glm::mat4(1.0f), t) * glm::mat4_cast(r) * glm::scale(glm::mat4(1.0f), s);
-			}
-		}
-	}*/
 	
 	if(!children.empty())
 	{

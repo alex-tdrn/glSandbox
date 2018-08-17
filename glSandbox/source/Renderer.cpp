@@ -539,7 +539,7 @@ void Renderer::drawUI(bool* open)
 				break;
 		}
 	}
-	if(ImGui::IsAnyItemActive())
+	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())
 		_shouldRender = true;
 	ImGui::Text("Status: ");
 	ImGui::SameLine();

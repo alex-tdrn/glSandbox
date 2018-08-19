@@ -112,11 +112,7 @@ std::vector<std::unique_ptr<Node>> Node::releaseChildren()
 
 void Node::setLocalTransformation(glm::mat4&& matrix)
 {
-	std::tie(localTranslation, localRotation, localScale) = matrixToComponents(matrix);
-	auto l = componentsToMatrix(localTranslation, localRotation, localScale);
-	//for(int i = 0; i < 4; i++)
-		//for(int j = 0; j < 4; j++)
-			//assert(std::abs(matrix[i][j] - l[i][j]) < 0.000'000'000'1f);
+	std::tie(localTranslation, localRotation, localScale) = decomposeTransformation(matrix);
 }
 
 void Node::setLocalTransformation(glm::vec3 && t, glm::vec3 && r, glm::vec3 && s)
@@ -128,7 +124,7 @@ void Node::setLocalTransformation(glm::vec3 && t, glm::vec3 && r, glm::vec3 && s
 
 glm::mat4 Node::getLocalTransformation() const
 {
-	return componentsToMatrix(localTranslation, localRotation, localScale);
+	return composeTransformation(localTranslation, localRotation, localScale);
 }
 
 glm::mat4 Node::getGlobalTransformation() const
@@ -184,7 +180,7 @@ void Node::drawUI()
 			ImGui::Separator();
 		}
 
-		auto[globalTranslation, globalRotation, globalScale] = matrixToComponents(getGlobalTransformation());
+		auto[globalTranslation, globalRotation, globalScale] = decomposeTransformation(getGlobalTransformation());
 		float availWidth = ImGui::GetContentRegionAvailWidth() - ImGui::GetTextLineHeightWithSpacing() * 2;
 		ImGui::PushItemWidth(-1);
 		ImGui::AlignTextToFramePadding();
@@ -235,6 +231,8 @@ void Node::drawUI()
 
 			if(local && ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
 				localScale = glm::vec3(localScale[i]);
+			if(localScale[i] == 0.0f)
+					localScale[i] = 0.01f;
 			ImGui::PopID();
 			if(i == 2)
 				ImGui::PopItemWidth();

@@ -5,6 +5,11 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <imgui.h>
 
+Camera::Camera()
+{
+	localTranslation = {0.0f, 0.0f, 8.0f};
+}
+
 unsigned int Camera::ubo()
 {
 	static unsigned int ubo = [](){
@@ -18,14 +23,6 @@ unsigned int Camera::ubo()
 
 	return ubo;
 }
-
-void Camera::update()
-{
-	/*front = orientation.getDirectionVector();
-	right = glm::normalize(glm::cross(-front, {0.0f, -1.0f, 0.0f}));
-	up = glm::normalize(glm::cross(-front, right));*/
-}
-
 
 void Camera::use() const
 {
@@ -44,6 +41,18 @@ float Camera::getFarPlane() const
 	return farPlane;
 }
 
+std::tuple<glm::vec3, glm::vec3, glm::vec3> Camera::getCameraVectors() const
+{
+	static const glm::vec4 front{0.0f, 0.0f, -1.0f, 0.0f};
+	static const glm::vec4 right{1.0f, 0.0f, 0.0f, 0.0f};
+	static const glm::vec4 up{0.0f, 1.0f, 0.0f, 0.0f};
+	glm::mat4 localTransformation = getLocalTransformation();
+	glm::vec3 localFront = glm::normalize(glm::vec3(front * localTransformation));
+	glm::vec3 localRight = glm::normalize(glm::cross(localFront, {0.0f, 1.0f, 0.0f}));
+	glm::vec3 localUp = glm::normalize(glm::cross(localRight, localFront));
+	return {std::move(localFront), std::move(localRight), std::move(localUp)};
+}
+
 glm::mat4 Camera::getProjectionMatrix() const
 {
 	if(projectionOrtho)
@@ -52,50 +61,41 @@ glm::mat4 Camera::getProjectionMatrix() const
 		return glm::perspective(glm::radians(fov), static_cast<float>(info::windowWidth) / info::windowHeight, nearPlane, farPlane);
 }
 
+glm::mat4 Camera::getLocalTransformation() const
+{
+	return glm::eulerAngleXY(glm::radians(localRotation.x), glm::radians(localRotation.y)) * glm::translate(glm::mat4(1.0f), localTranslation);
+}
 glm::mat4 Camera::getViewMatrix() const
 {
-	return glm::translate(glm::mat4(1.0f), -position.position) * glm::eulerAngleXY(glm::radians(pitch), glm::radians(yaw));
-	//return glm::lookAt(position.position, position.position + front, up);
+	glm::mat4 viewMatrix = glm::eulerAngleXY(glm::radians(localRotation.x), glm::radians(localRotation.y)) * glm::translate(glm::mat4(1.0f), -localTranslation);
+	if(parent != nullptr)
+		return parent->getGlobalTransformation() * viewMatrix;
+	return viewMatrix;
 }
 
 glm::vec3 Camera::getPosition() const
 {
-	return position.position;
+	auto[globalTranslation, globalRotation, globalScale] = decomposeTransformation(getGlobalTransformation());
+	return globalTranslation;
 }
 
-void Camera::setPosition(Position position)
+void Camera::move(glm::vec3 amount)
 {
-	this->position = position;
-	update();
+	auto[localFront, localRight, localUp] = getCameraVectors();
+	localTranslation += localFront * amount.z + localRight * amount.x + localUp * amount.y;
 }
 
-void Camera::dolly(float amount)
+void Camera::rotate(float yawAmount, float pitchAmount)
 {
-	position.position += front * amount;
-	update();
-}
-
-void Camera::pan(glm::vec2 amount)
-{
-	position.position += right * amount.x;
-	position.position += up * amount.y;
-	update();
-}
-
-void Camera::adjustOrientation(float yawAmount, float pitchAmount)
-{
-	yaw += yawAmount;
-	yaw -= int(yaw) / 360 * 360;
-	if(yaw < 0)
-		yaw += 360;
-	pitch += pitchAmount;
-	if(pitch > 89.0f)
-		pitch = 89.0f;
-	else if(pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::quat diff{glm::vec3{glm::radians(pitch), glm::radians(yaw), 0}};
-	orientation = glm::normalize(diff * orientation);
+	localRotation.y += yawAmount;
+	localRotation.y -= int(localRotation.y) / 360 * 360;
+	if(localRotation.y < 0)
+		localRotation.y += 360;
+	localRotation.x += pitchAmount;
+	if(localRotation.x > 89.0f)
+		localRotation.x = 89.0f;
+	else if(localRotation.x < -89.0f)
+		localRotation.x = -89.0f;
 }
 
 void Camera::drawUI()

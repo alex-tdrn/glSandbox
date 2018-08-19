@@ -190,7 +190,7 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
-	settings::mainRenderer().getScene().getCamera().adjustOrientation(xoffset, yoffset);
+	settings::mainRenderer().getScene().getCamera().rotate(xoffset, yoffset);
 	settings::mainRenderer().shouldRender();
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
@@ -224,36 +224,23 @@ void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifie
 void processInput(GLFWwindow* window)
 {
 
-	float moveDistance = 2.5f * deltaTime; // adjust accordingly
-	Camera& cam = settings::mainRenderer().getScene().getCamera();
+	float distance = 2.5f * deltaTime; // adjust accordingly
+	glm::vec3 direction{0.0f};
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		cam.dolly(+moveDistance);
-		settings::mainRenderer().shouldRender();
-	}
+		direction.z += 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		cam.dolly(-moveDistance);
-		settings::mainRenderer().shouldRender();
-	}
+		direction.z -= 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		cam.pan({+moveDistance, 0.0f});
-		settings::mainRenderer().shouldRender();
-	}
+		direction.x += 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		cam.pan({-moveDistance, 0.0f});
-		settings::mainRenderer().shouldRender();
-	}
+		direction.x -= 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-	{
-		cam.pan({0.0f, +moveDistance});
-		settings::mainRenderer().shouldRender();
-	}
+		direction.y += 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		direction.y -= 1.0f;
+	if(direction != glm::vec3{0.0f})
 	{
-		cam.pan({0.0f, -moveDistance});
+		settings::mainRenderer().getScene().getCamera().move(direction * distance);
 		settings::mainRenderer().shouldRender();
 	}
 }

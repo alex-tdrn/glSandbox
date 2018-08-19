@@ -15,10 +15,12 @@ class Node
 private:
 	Name<Node> name{"node"};
 	Scene* scene = nullptr;
-	Node* parent = nullptr;
 	bool enabled = true;
 	bool highlighted = false;
 	std::vector<std::unique_ptr<Node>> children;
+
+protected:
+	Node* parent = nullptr;
 	glm::vec3 localTranslation{0.0f};
 	glm::vec3 localRotation{0.0f};
 	glm::vec3 localScale{1.0f};
@@ -53,7 +55,7 @@ public:
 	void recursive(Callable operation);
 	void setLocalTransformation(glm::mat4&& t);
 	void setLocalTransformation(glm::vec3&& t, glm::vec3&& r, glm::vec3&& s);
-	glm::mat4 getLocalTransformation() const;
+	virtual glm::mat4 getLocalTransformation() const;
 	glm::mat4 getGlobalTransformation() const;
 	virtual Bounds getBounds() const;
 	virtual void drawUI();

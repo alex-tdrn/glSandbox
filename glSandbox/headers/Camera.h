@@ -3,13 +3,16 @@
 #include "Shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc\quaternion.hpp>
 #include <tuple>
 
 class Camera
 {
 private:
 	bool projectionOrtho = false;
-	Orientation orientation;
+	glm::quat orientation = glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0));
+	float yaw = 0.0f;
+	float pitch = 0.0f;
 	Position position = {{0.0f, 0.0f, 8.0f}};
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
@@ -30,9 +33,9 @@ public:
 	float getNearPlane() const;
 	float getFarPlane() const;
 	void setPosition(Position position);
-	void setOrientation(Orientation orientation);
+	//void setOrientation(Orientation orientation);
 	void dolly(float amount);
 	void pan(glm::vec2 amount);
 	void adjustOrientation(float yaw, float pitch);
-	[[nodiscard]]bool drawUI();
+	void drawUI();
 };

@@ -78,8 +78,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	assert(transformation[1][3] == 0);
 	assert(transformation[2][3] == 0);
 	assert(transformation[3][3] == 1);
-	n->setTransformation(std::move(transformation));
-
+	n->setLocalTransformation(std::move(transformation));
 	for(auto childIdx : node.children)
 		n->addChild(loadNode(doc, childIdx, primitivesMap));
 

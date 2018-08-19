@@ -278,7 +278,7 @@ void Renderer::render()
 				{
 					if(prop->isEnabled())
 					{
-						res::shaders[res::ShaderType::debugNormalsShowLines].set("model", prop->getTransformation());
+						res::shaders[res::ShaderType::debugNormalsShowLines].set("model", prop->getGlobalTransformation());
 						prop->getMesh().use();
 					}
 				}
@@ -303,7 +303,7 @@ void Renderer::render()
 		{
 			if(prop->isHighlighted())
 			{
-				res::shaders[res::ShaderType::highlighting].set("model", prop->getTransformation());
+				res::shaders[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
 				prop->getMesh().use();
 			}
 		}
@@ -317,9 +317,9 @@ void Renderer::render()
 	activeShader.use();
 	for(auto const& prop : props)
 	{
-		if(!prop->isHighlighted() && prop->isEnabled())
+		if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 		{
-			activeShader.set("model", prop->getTransformation());
+			activeShader.set("model", prop->getGlobalTransformation());
 			activeShader.set("material.hasDiffuseMap", true);
 			activeShader.set("material.diffuseMap", 1);
 			activeShader.set("material.hasSpecularMap", false);

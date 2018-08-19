@@ -20,7 +20,7 @@ Mesh& Prop::getMesh() const
 
 Bounds Prop::getBounds() const
 {
-	return mesh->getBounds() * getTransformation();
+	return mesh->getBounds() * getGlobalTransformation();
 }
 
 std::string const& Prop::getName() const

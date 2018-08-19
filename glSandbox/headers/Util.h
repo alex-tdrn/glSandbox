@@ -3,6 +3,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
+#include<glm/gtx/euler_angles.hpp>
 #include <glad/glad.h>
 #include <imgui.h>
 #include <string>
@@ -204,6 +205,37 @@ inline bool drag2(const char* title, float const sensitivity, float& x, float& y
 	wrapAround(x, xmin, xmax);
 	wrapAround(y, ymin, ymax);
 	return ret;
+}
+
+inline glm::mat4 componentsToMatrix(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scale)
+{
+	glm::mat4 Tr = glm::translate(glm::mat4(1.0f), translation);
+	glm::mat4 Ro = glm::eulerAngleZYX(glm::radians(rotation.z), glm::radians(rotation.y), glm::radians(rotation.x));
+	for(int i = 0; i < 3; i++)
+		if(scale[i] == 0.0f)
+			scale[i] = 0.01f;
+	glm::mat4 Sc = glm::scale(glm::mat4(1.0f), scale);
+	return Tr * Ro * Sc;
+}
+
+inline std::tuple<glm::vec3, glm::vec3, glm::vec3> matrixToComponents(glm::dmat4 const& matrix)
+{
+	//glm::vec3 translation{matrix[3]};
+	//glm::vec3 scale;
+	//glm::mat4 rot{1.0f};
+	//for(int i = 0; i < 3; i++)
+	//{
+	//	scale[i] = glm::length(matrix[i]);
+	//	rot[i] = matrix[i] / scale[i];
+	//}
+	//return {translation, glm::degrees(glm::eulerAngles(glm::quat_cast(rot))), scale};
+	glm::dvec3 t;
+	glm::dvec3 r;
+	glm::dvec3 s;
+	glm::dvec4 p;
+	glm::dvec3 sh;
+	glm::decompose(matrix, s, r, t, sh, p);
+	return {t, glm::degrees(r), s};
 }
 
 inline std::string glEnumToString(GLenum e)

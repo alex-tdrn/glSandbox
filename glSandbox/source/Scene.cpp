@@ -100,7 +100,7 @@ void Scene::fitToIdealSize() const
 	glm::mat4 t = glm::translate(glm::mat4{1.0f}, translation);
 	glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
 
-	root->setTransformation(s * t * root->getTransformation());
+	root->setLocalTransformation(s * t * glm::mat4(1.0f));// root->getGlobalTransformation());
 }
 
 void Scene::drawUI()

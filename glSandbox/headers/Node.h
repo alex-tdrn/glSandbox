@@ -19,7 +19,9 @@ private:
 	bool enabled = true;
 	bool highlighted = false;
 	std::vector<std::unique_ptr<Node>> children;
-	glm::mat4 transformation{1.0f};
+	glm::vec3 localTranslation{0.0f};
+	glm::vec3 localRotation{0.0f};
+	glm::vec3 localScale{1.0f};
 
 public:
 	Node() = default;
@@ -49,8 +51,10 @@ public:
 	virtual std::string const& getName() const;
 	template<typename Callable>
 	void recursive(Callable operation);
-	void setTransformation(glm::mat4&& t);
-	glm::mat4 getTransformation() const;
+	void setLocalTransformation(glm::mat4&& t);
+	void setLocalTransformation(glm::vec3&& t, glm::vec3&& r, glm::vec3&& s);
+	glm::mat4 getLocalTransformation() const;
+	glm::mat4 getGlobalTransformation() const;
 	virtual Bounds getBounds() const;
 	virtual void drawUI();
 

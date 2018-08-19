@@ -2,6 +2,7 @@
 #include "Globals.h"
 #include "Util.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <imgui.h>
 
 unsigned int Camera::ubo()
@@ -20,9 +21,9 @@ unsigned int Camera::ubo()
 
 void Camera::update()
 {
-	front = orientation.getDirectionVector();
+	/*front = orientation.getDirectionVector();
 	right = glm::normalize(glm::cross(-front, {0.0f, -1.0f, 0.0f}));
-	up = glm::normalize(glm::cross(-front, right));
+	up = glm::normalize(glm::cross(-front, right));*/
 }
 
 
@@ -53,7 +54,8 @@ glm::mat4 Camera::getProjectionMatrix() const
 
 glm::mat4 Camera::getViewMatrix() const
 {
-	return glm::lookAt(position.position, position.position + front, up);
+	return glm::translate(glm::mat4(1.0f), -position.position) * glm::eulerAngleXY(glm::radians(pitch), glm::radians(yaw));
+	//return glm::lookAt(position.position, position.position + front, up);
 }
 
 glm::vec3 Camera::getPosition() const
@@ -64,12 +66,6 @@ glm::vec3 Camera::getPosition() const
 void Camera::setPosition(Position position)
 {
 	this->position = position;
-	update();
-}
-
-void Camera::setOrientation(Orientation orientation)
-{
-	this->orientation = orientation;
 	update();
 }
 
@@ -88,21 +84,23 @@ void Camera::pan(glm::vec2 amount)
 
 void Camera::adjustOrientation(float yawAmount, float pitchAmount)
 {
-	orientation.yaw += yawAmount;
-	orientation.yaw -= int(orientation.yaw) / 360 * 360;
-	if(orientation.yaw < 0)
-		orientation.yaw += 360;
-	orientation.pitch += pitchAmount;
-	if(orientation.pitch > 89.0f)
-		orientation.pitch = 89.0f;
-	else if(orientation.pitch < -89.0f)
-		orientation.pitch = -89.0f;
-	update();
+	yaw += yawAmount;
+	yaw -= int(yaw) / 360 * 360;
+	if(yaw < 0)
+		yaw += 360;
+	pitch += pitchAmount;
+	if(pitch > 89.0f)
+		pitch = 89.0f;
+	else if(pitch < -89.0f)
+		pitch = -89.0f;
+
+	glm::quat diff{glm::vec3{glm::radians(pitch), glm::radians(yaw), 0}};
+	orientation = glm::normalize(diff * orientation);
 }
 
-bool Camera::drawUI()
+void Camera::drawUI()
 {
-	IDGuard idGuard{this};
+	/*IDGuard idGuard{this};
 
 	bool valueChanged = false;
 	if(ImGui::CollapsingHeader("Camera"))
@@ -127,5 +125,5 @@ bool Camera::drawUI()
 	}
 	if(valueChanged) 
 		update();
-	return valueChanged;
+	return valueChanged;*/
 }

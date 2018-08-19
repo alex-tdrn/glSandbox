@@ -110,17 +110,33 @@ std::vector<std::unique_ptr<Node>> Node::releaseChildren()
 	return std::move(children);
 }
 
-void Node::setTransformation(glm::mat4&& t)
+void Node::setLocalTransformation(glm::mat4&& matrix)
 {
-	transformation = std::move(t);
+	std::tie(localTranslation, localRotation, localScale) = matrixToComponents(matrix);
+	auto l = componentsToMatrix(localTranslation, localRotation, localScale);
+	//for(int i = 0; i < 4; i++)
+		//for(int j = 0; j < 4; j++)
+			//assert(std::abs(matrix[i][j] - l[i][j]) < 0.000'000'000'1f);
 }
 
-glm::mat4 Node::getTransformation() const
+void Node::setLocalTransformation(glm::vec3 && t, glm::vec3 && r, glm::vec3 && s)
+{
+	localTranslation = std::move(t);
+	localRotation = std::move(r);
+	localScale = std::move(s);
+}
+
+glm::mat4 Node::getLocalTransformation() const
+{
+	return componentsToMatrix(localTranslation, localRotation, localScale);
+}
+
+glm::mat4 Node::getGlobalTransformation() const
 {
 	if(parent == nullptr)
-		return transformation;
+		return getLocalTransformation();
 	else
-		return parent->getTransformation() * transformation;
+		return parent->getGlobalTransformation() * getLocalTransformation();
 }
 
 Bounds Node::getBounds() const
@@ -135,22 +151,22 @@ void Node::drawUI()
 {
 	IDGuard idGuard{this};
 	static bool showMatrix = true;
-	static int relative = true;
+	static int local = true;
 	static float heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 10.5f : 6);
 	const float heightSubNodes = ImGui::GetTextLineHeightWithSpacing() * 5;
 	ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, heightTransformation + heightSubNodes + ImGui::GetTextLineHeightWithSpacing() * 3});
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Transformation");
 	ImGui::SameLine();
-	ImGui::RadioButton("Global", &relative, 0);
+	ImGui::RadioButton("Global", &local, 0);
 	ImGui::SameLine();
-	ImGui::RadioButton("Relative", &relative, 1);
+	ImGui::RadioButton("Relative", &local, 1);
 	ImGui::SameLine();
 	ImGui::Checkbox("Show Matrix", &showMatrix);
-	heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 9.5f : 5);
+	heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 10.5f : 6);
 	ImGui::BeginChild("###Transformation", {0, heightTransformation}, true);
 	{
-		glm::mat4 const& matrix = relative ? transformation : getTransformation();
+		glm::mat4 const& matrix = local ? getLocalTransformation() : getGlobalTransformation();
 		if(showMatrix)
 		{
 			ImGui::BeginChild("###Matrix", {0, ImGui::GetTextLineHeightWithSpacing() * 4}, false);
@@ -167,14 +183,8 @@ void Node::drawUI()
 			ImGui::EndChild();
 			ImGui::Separator();
 		}
-		glm::vec3 translation;
-		glm::quat rotation;
-		glm::vec3 scale;
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::decompose(matrix, scale, rotation, translation, skew, perspective);
-		glm::vec4 angleAxis{glm::axis(rotation), glm::degrees(glm::angle(rotation))};
 
+		auto[globalTranslation, globalRotation, globalScale] = matrixToComponents(getGlobalTransformation());
 		float availWidth = ImGui::GetContentRegionAvailWidth() - ImGui::GetTextLineHeightWithSpacing() * 2;
 		ImGui::PushItemWidth(-1);
 		ImGui::AlignTextToFramePadding();
@@ -184,10 +194,10 @@ void Node::drawUI()
 		{
 			ImGui::PushID(i);
 			ImGui::SameLine();
-			if(relative)
-				ImGui::DragFloat("###Tr", &translation[i], 0.01f);
+			if(local)
+				ImGui::DragFloat("###Tr", &localTranslation[i], 0.01f);
 			else
-				ImGui::Text("%.3f", translation[i]);
+				ImGui::Text("%.3f", globalTranslation[i]);
 			ImGui::PopID();
 			if(i == 2)
 				ImGui::PopItemWidth();
@@ -196,20 +206,15 @@ void Node::drawUI()
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Ro");
 		ImGui::SameLine();
-		ImGui::PushItemWidth(availWidth / 4.0);
-		if(relative)
-			ImGui::DragFloat("###RoAngle", &angleAxis[3], 1.00f);
-		else
-			ImGui::Text("%.3f", angleAxis[3]);
-
+		ImGui::PushItemWidth(availWidth / 3.0);
 		for(int i = 0; i < 3; i++)
 		{
 			ImGui::PushID(i);
 			ImGui::SameLine();
-			if(relative)
-				ImGui::DragFloat("###Ro", &angleAxis[i], 0.01f);
+			if(local)
+				ImGui::DragFloat("###Ro", &localRotation[i], 1.0f);
 			else
-				ImGui::Text("%.3f", angleAxis[i]);
+				ImGui::Text("%.3f", globalRotation[i]);
 
 			ImGui::PopID();
 			if(i == 2)
@@ -223,29 +228,19 @@ void Node::drawUI()
 		{
 			ImGui::PushID(i);
 			ImGui::SameLine();
-			if(relative)
-				ImGui::DragFloat("###Sc", &scale[i], 0.01f);
+			if(local)
+				ImGui::DragFloat("###Sc", &localScale[i], 0.01f);
 			else
-				ImGui::Text("%.3f", scale[i]);
+				ImGui::Text("%.3f", globalScale[i]);
 
-			if(relative && ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
-				scale = glm::vec3(scale[i]);
+			if(local && ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
+				localScale = glm::vec3(localScale[i]);
 			ImGui::PopID();
 			if(i == 2)
 				ImGui::PopItemWidth();
 		}
 		ImGui::PopItemWidth();
 
-		if(relative && ImGui::IsAnyItemActive())
-		{
-			glm::mat4 Tr = glm::translate(glm::mat4(1.0f), translation);
-			glm::mat4 Ro = glm::mat4_cast(glm::angleAxis(glm::radians(angleAxis[3]), glm::normalize(glm::vec3(angleAxis))));
-			for(int i = 0; i < 3; i++)
-				if(scale[i] == 0.0f)
-					scale[i] = 0.01f;
-			glm::mat4 Sc = glm::scale(glm::mat4(1.0f), scale);
-			transformation = Tr * Ro * Sc;
-		}
 		auto[bMin, bMax] = getBounds().getValues();
 		ImGui::Text("Bounds (%.1f, %.1f, %.1f) - (%.1f, %.1f, %.1f)", bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
 	}

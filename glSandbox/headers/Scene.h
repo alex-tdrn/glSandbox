@@ -8,6 +8,7 @@
 #include <memory>
 
 class Prop;
+class Camera;
 
 class Scene
 {
@@ -19,10 +20,10 @@ private:
 	mutable struct{
 		bool dirty = true;
 		std::vector<Node*> abstractNodes;
+		std::vector<Camera*> cameras;
 		std::vector<Prop*> props;
 	}cache;
 
-	Camera camera;
 	std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({-30, -30, 0}); return light; } ()};
 	std::vector<PointLight> pointLights;
 	std::vector<SpotLight> spotLights;
@@ -54,8 +55,6 @@ public:
 	std::vector<PointLight> const& getPointLights() const;
 	std::vector<SpotLight> const& getSpotLights() const;
 	glm::vec3 const& getBackground() const;
-	Camera& getCamera();
-	Camera const& getCamera() const;
 	void fitToIdealSize() const;
 	void drawUI();
 
@@ -68,6 +67,8 @@ std::vector<T*> const& Scene::getAll() const
 		updateCache();
 	if constexpr(std::is_same<T, Node>())
 		return cache.abstractNodes;
+	else if constexpr(std::is_same<T, Camera>())
+		return cache.cameras;
 	else if constexpr(std::is_same<T, Prop>())
 		return cache.props;
 }

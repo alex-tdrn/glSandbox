@@ -7,7 +7,7 @@
 #include <memory>
 struct Asset
 {
-	std::vector<std::shared_ptr<Scene>> scenes;
+	std::vector<std::unique_ptr<Scene>> scenes;
 	std::vector<std::shared_ptr<Mesh>> meshes;
 };
 

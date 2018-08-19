@@ -14,7 +14,7 @@ uint32_t calculateElementSize(gltf::Accessor const& accessor);
 uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 std::pair<std::vector<std::shared_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
-std::vector<std::shared_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::shared_ptr<Mesh>>& loadedMeshes);
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::shared_ptr<Mesh>>& loadedMeshes);
 
 Asset import(std::string_view const& filename)
 {
@@ -85,9 +85,9 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	return n;
 }
 
-std::vector<std::shared_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::shared_ptr<Mesh>>& loadedMeshes)
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::shared_ptr<Mesh>>& loadedMeshes)
 {
-	std::vector<std::shared_ptr<Scene>> scenes;
+	std::vector<std::unique_ptr<Scene>> scenes;
 	if(doc.scenes.empty())
 	{
 		std::vector<std::unique_ptr<Node>> nodes;
@@ -102,7 +102,7 @@ std::vector<std::shared_ptr<Scene>> loadScenes(gltf::Document const& doc, Primit
 			std::vector<std::unique_ptr<Node>> nodes;
 			for(auto const nodeIdx : scene.nodes)
 				nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
-			auto s = std::make_shared<Scene>(std::make_unique<Node>(std::move(nodes)));
+			auto s = std::make_unique<Scene>(std::make_unique<Node>(std::move(nodes)));
 			/*if(!scene.name.empty())
 				s->name.set(scene.name);*/
 			scenes.emplace_back(std::move(s));

@@ -20,9 +20,9 @@ namespace res
 	}
 	namespace scenes
 	{
-		std::vector<std::shared_ptr<Scene>> getAll();
-		void add(std::shared_ptr<Scene>);
-		void add(std::vector<std::shared_ptr<Scene>>&&);
+		std::vector<std::unique_ptr<Scene>> const& getAll();
+		void add(std::unique_ptr<Scene>&&);
+		void add(std::vector<std::unique_ptr<Scene>>&&);
 
 	}
 
@@ -73,5 +73,5 @@ namespace res
 	void loadShaders();
 	void reloadShaders();
 	void drawUI(bool* open);
-	std::shared_ptr<Scene> importGLTF(std::string_view const filename);
+	Scene& importGLTF(std::string_view const filename);
 }

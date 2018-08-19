@@ -277,24 +277,24 @@ std::shared_ptr<Mesh> const& res::meshes::box()
 	return box;
 }
 
-static std::vector<std::shared_ptr<Scene>> scenes;
+static std::vector<std::unique_ptr<Scene>> scenes;
 
-std::vector<std::shared_ptr<Scene>> res::scenes::getAll()
+std::vector<std::unique_ptr<Scene>> const& res::scenes::getAll()
 {
 	return ::scenes;
 }
 
-void res::scenes::add(std::shared_ptr<Scene> scene)
+void res::scenes::add(std::unique_ptr<Scene>&& scene)
 {
 	::scenes.push_back(std::move(scene));
 }
 
 void removeScene(Scene* scene)
 {
-	scenes.erase(std::remove_if(scenes.begin(), scenes.end(), [&](std::shared_ptr<Scene>& val){ return val.get() == scene; }), scenes.end());
+	scenes.erase(std::remove_if(scenes.begin(), scenes.end(), [&](std::unique_ptr<Scene>& val){ return val.get() == scene; }), scenes.end());
 }
 
-void res::scenes::add(std::vector<std::shared_ptr<Scene>>&& scenes)
+void res::scenes::add(std::vector<std::unique_ptr<Scene>>&& scenes)
 {
 	::scenes.reserve(::scenes.size() + scenes.size());
 	for(auto& scene : scenes)
@@ -407,7 +407,7 @@ void drawImportWindow(bool *open)
 		if(file.path().extension() == ".gltf")
 		{
 			if(ImGui::Selectable(filename.data()))
-				settings::mainRenderer().setScene(res::importGLTF(file.path().generic_string()));
+				settings::mainRenderer().setCamera(res::importGLTF(file.path().generic_string()).getAll<Camera>()[0]);
 		}
 		else
 		{
@@ -440,7 +440,7 @@ void res::drawUI(bool* open)
 	ImGui::Text("Scenes");
 	ImGui::SameLine();
 	if(ImGui::SmallButton("New"))
-		scenes::add(std::shared_ptr<Scene>(std::make_shared<Scene>()));
+		scenes::add(std::make_unique<Scene>());
 	ImGui::BeginChild("###Scenes", {0, scrollAreaHeight}, true);
 	int id = 0;
 	for(auto& scene : scenes::getAll())
@@ -508,11 +508,11 @@ void res::drawUI(bool* open)
 	ImGui::End();
 }
 
-std::shared_ptr<Scene> res::importGLTF(std::string_view const filename)
+Scene& res::importGLTF(std::string_view const filename)
 {
 	auto asset = import(filename);
-	auto ret = asset.scenes[0];//active scene
+	auto ret = asset.scenes[0].get();//active scene
 	scenes::add(std::move(asset.scenes));
 	meshes::add(std::move(asset.meshes));
-	return ret;
+	return *ret;
 }

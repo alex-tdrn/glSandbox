@@ -26,7 +26,7 @@ double lastMouseY = 300;
 bool mouseDrag = false;
 Renderer& settings::mainRenderer()
 {
-	static Renderer r{res::importGLTF("models/Cube/Cube.gltf")};
+	static Renderer r{res::importGLTF("models/Cube/Cube.gltf").getAll<Camera>()[0]};
 	return r;
 }
 
@@ -190,7 +190,7 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	float sensitivity = 0.05f;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
-	settings::mainRenderer().getScene().getCamera().rotate(xoffset, yoffset);
+	settings::mainRenderer().getCamera()->rotate(xoffset, yoffset);
 	settings::mainRenderer().shouldRender();
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
@@ -240,7 +240,7 @@ void processInput(GLFWwindow* window)
 		direction.y -= 1.0f;
 	if(direction != glm::vec3{0.0f})
 	{
-		settings::mainRenderer().getScene().getCamera().move(direction * distance);
+		settings::mainRenderer().getCamera()->move(direction * distance);
 		settings::mainRenderer().shouldRender();
 	}
 }

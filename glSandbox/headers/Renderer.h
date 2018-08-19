@@ -5,12 +5,12 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-class Scene;
+class Camera;
 
 class Renderer
 {
 private:
-	std::shared_ptr<Scene> scene;
+	Camera* camera = nullptr;
 	unsigned int multisampledFramebuffer = 0;
 	unsigned int multisampledColorbuffer = 0;
 	unsigned int multisampledRenderbuffer = 0;
@@ -83,7 +83,7 @@ public:
 	Name<Renderer> name{"renderer"};
 
 public:
-	Renderer(std::shared_ptr<Scene>&& scene);
+	Renderer(Camera* camera = nullptr);
 	Renderer(Renderer const&) = delete;
 	Renderer(Renderer&&) = delete;
 	Renderer& operator=(Renderer const&) = delete;
@@ -95,8 +95,8 @@ private:
 
 public:
 	void resizeViewport(int width, int height);
-	void setScene(std::shared_ptr<Scene>&& scene);
-	Scene& getScene();
+	void setCamera(Camera* camera);
+	Camera* getCamera();
 	void shouldRender();
 	void render();
 	unsigned int getOutput();

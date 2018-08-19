@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "Prop.h"
 #include "Util.h"
+#include "Camera.h"
 
 #include <imgui.h>
 #include <variant>
@@ -9,29 +10,37 @@
 Scene::Scene()
 {
 	root->setScene(this);
+	root->addChild(std::make_unique<Camera>());
 }
 
 Scene::Scene(Scene &&other)
 	:root(std::move(other.root))
 {
 	root->setScene(this);
+	if(getAll<Camera>().empty())
+		root->addChild(std::make_unique<Camera>());
 }
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
 {
 	this->root->setScene(this);
+	if(getAll<Camera>().empty())
+		this->root->addChild(std::make_unique<Camera>());
 	fitToIdealSize();
 }
 
 void Scene::updateCache() const
 {
 	cache.abstractNodes.clear();
+	cache.cameras.clear();
 	cache.props.clear();
 	for(auto& node : root->getChildren())
 	{
 		node.get()->recursive([&](Node* node){
 			if(auto prop = dynamic_cast<Prop*>(node); prop)
 				cache.props.push_back(prop);
+			else if(auto camera = dynamic_cast<Camera*>(node); camera)
+				cache.cameras.push_back(camera);
 			else
 				cache.abstractNodes.push_back(node);
 		});
@@ -67,16 +76,6 @@ std::vector<SpotLight> const& Scene::getSpotLights() const
 glm::vec3 const& Scene::getBackground() const
 {
 	return backgroundColor;
-}
-
-Camera& Scene::getCamera()
-{
-	return camera;
-}
-
-Camera const& Scene::getCamera() const
-{
-	return camera;
 }
 
 void Scene::fitToIdealSize() const
@@ -310,6 +309,7 @@ void Scene::drawUI()
 
 		ImGui::Text("Cameras");
 		ImGui::BeginChild("###Cameras", {0, scrollAreaHeight}, true);
+		drawList(getAll<Camera>());
 		ImGui::EndChild();
 
 		ImGui::Text("Directional Lights");

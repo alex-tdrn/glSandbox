@@ -2,8 +2,8 @@
 #include "Lights.h"
 #include "Prop.h"
 
-Renderer::Renderer(std::shared_ptr<Scene>&& scene)
-	:scene(scene)
+Renderer::Renderer(Camera* camera)
+	:camera(camera)
 {
 	glGenTextures(1, &multisampledColorbuffer);
 	glGenRenderbuffers(1, &multisampledRenderbuffer);
@@ -70,15 +70,15 @@ void Renderer::resizeViewport(int width, int height)
 	updateFramebuffers();
 }
 
-void Renderer::setScene(std::shared_ptr<Scene>&& scene)
+void Renderer::setCamera(Camera* camera)
 {
-	this->scene = std::move(scene);
+	this->camera = camera;
 	shouldRender();
 }
 
-Scene& Renderer::getScene()
+Camera* Renderer::getCamera()
 {
-	return *this->scene;
+	return camera;
 }
 
 void Renderer::shouldRender()
@@ -88,6 +88,8 @@ void Renderer::shouldRender()
 
 void Renderer::render()
 {
+	if(!camera)
+		return;
 	if(explicitRendering)
 	{
 		if(_shouldRender)
@@ -151,15 +153,15 @@ void Renderer::render()
 			break;
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(scene->getBackground().r, scene->getBackground().g, scene->getBackground().b, 1.0f);
+	auto const& scene = camera->getScene();
+	glClearColor(scene.getBackground().r, scene.getBackground().g, scene.getBackground().b, 1.0f);
 
-	auto const& props = scene->getAll<Prop>();
-	auto const& camera = scene->getCamera();
-	auto const& directionalLights = scene->getDirectionalLights();
-	auto const& spotLights = scene->getSpotLights();
-	auto const& pointLights = scene->getPointLights();
+	auto const& props = scene.getAll<Prop>();
+	auto const& directionalLights = scene.getDirectionalLights();
+	auto const& spotLights = scene.getSpotLights();
+	auto const& pointLights = scene.getPointLights();
 
-	camera.use();
+	camera->use();
 	res::shaders[res::ShaderType::light].use();
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
@@ -179,7 +181,7 @@ void Renderer::render()
 
 	Shader& activeShader = res::shaders[shading.current];
 	activeShader.use();
-	glm::mat4 viewMatrix = camera.getViewMatrix();
+	glm::mat4 viewMatrix = camera->getViewMatrix();
 	switch(shading.current)
 	{
 		case res::ShaderType::blinn_phong:
@@ -192,7 +194,7 @@ void Renderer::render()
 			activeShader.set("material.overrideSpecularColor", shading.lighting.override.specularColor);
 			activeShader.set("ambientStrength", shading.lighting.ambientStrength);
 			activeShader.set("material.shininess", shading.lighting.shininess);
-			activeShader.set("ambientColor", scene->getBackground());
+			activeShader.set("ambientColor", scene.getBackground());
 			//directional lights
 			{
 				int enabledLights = 0;
@@ -254,13 +256,13 @@ void Renderer::render()
 			{
 				skybox->use();
 				activeShader.set("skybox", 0);
-				activeShader.set("cameraPos", camera.getPosition());
+				activeShader.set("camera->os", camera->getPosition());
 			}*/
 			break;
 		case res::ShaderType::debugDepthBuffer:
 			activeShader.set("linearize", shading.debugging.depthBufferLinear);
-			activeShader.set("nearPlane", camera.getNearPlane());
-			activeShader.set("farPlane", camera.getFarPlane());
+			activeShader.set("nearPlane", camera->getNearPlane());
+			activeShader.set("farPlane", camera->getFarPlane());
 			break;
 		case res::ShaderType::debugNormals:
 			activeShader.set("viewSpace", shading.debugging.normals.viewSpace);
@@ -367,21 +369,24 @@ void Renderer::drawUI(bool* open)
 	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
 	ImGui::NextColumn();
 	ImGui::AlignTextToFramePadding();
-	ImGui::Text("Scene");
+	ImGui::Text("Camera");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	if(ImGui::BeginCombo("###Scene", scene->name.get().data()))
+	if(ImGui::BeginCombo("###Camera", camera->getName().data()))
 	{
 		int id = 0;
 		for(auto& s : res::scenes::getAll())
 		{
-			ImGui::PushID(id++);
-			bool isSelected = scene.get() == s.get();
-			if(ImGui::Selectable(s->name.get().data(), &isSelected))
-				setScene(std::move(s));
-			if(isSelected)
-				ImGui::SetItemDefaultFocus();
-			ImGui::PopID();
+			for(auto& c : s->getAll<Camera>())
+			{
+				ImGui::PushID(id++);
+				bool isSelected = camera == c;
+				if(ImGui::Selectable((c->getName() + "(" + s->name.get() + ")").data(), &isSelected))
+					setCamera(c);
+				if(isSelected)
+					ImGui::SetItemDefaultFocus();
+				ImGui::PopID();
+			}
 		}
 		ImGui::EndCombo();
 	}

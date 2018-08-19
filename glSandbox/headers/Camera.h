@@ -9,6 +9,7 @@
 class Camera : public Node
 {
 private:
+	Name<Camera> name{"camera"};
 	bool projectionOrtho = false;
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
@@ -25,6 +26,7 @@ private:
 
 public:
 	void use() const;
+	std::string const& getName() const override;
 	glm::mat4 getLocalTransformation() const override;
 	glm::mat4 getViewMatrix() const;
 	glm::vec3 getPosition() const;
@@ -32,6 +34,6 @@ public:
 	float getFarPlane() const;
 	void move(glm::vec3 amount);
 	void rotate(float yaw, float pitch);
-	void drawUI();
+	void drawUI() override;
 
 };

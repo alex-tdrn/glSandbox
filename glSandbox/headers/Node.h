@@ -40,6 +40,7 @@ private:
 	std::unique_ptr<Node> releaseChild(Node* node);
 
 public:
+	Scene& getScene() const;
 	bool isEnabled() const;
 	bool isHighlighted() const;
 	void setHighlighted(bool);

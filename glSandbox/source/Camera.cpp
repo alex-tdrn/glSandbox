@@ -31,6 +31,11 @@ void Camera::use() const
 	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, glm::value_ptr(getViewMatrix()));
 }
 
+std::string const& Camera::getName() const
+{
+	return name.get();
+}
+
 float Camera::getNearPlane() const
 {
 	return nearPlane;
@@ -68,8 +73,12 @@ glm::mat4 Camera::getLocalTransformation() const
 glm::mat4 Camera::getViewMatrix() const
 {
 	glm::mat4 viewMatrix = glm::eulerAngleXY(glm::radians(localRotation.x), glm::radians(localRotation.y)) * glm::translate(glm::mat4(1.0f), -localTranslation);
+
 	if(parent != nullptr)
-		return parent->getGlobalTransformation() * viewMatrix;
+	{
+		auto[globalTranslation, globalRotation, globalScale] = decomposeTransformation(parent->getGlobalTransformation());
+		return composeTransformation(globalTranslation, globalRotation, glm::vec3(1.0f)) * viewMatrix;
+	}
 	return viewMatrix;
 }
 
@@ -100,6 +109,7 @@ void Camera::rotate(float yawAmount, float pitchAmount)
 
 void Camera::drawUI()
 {
+	Node::drawUI();
 	/*IDGuard idGuard{this};
 
 	bool valueChanged = false;

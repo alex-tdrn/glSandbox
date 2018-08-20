@@ -46,8 +46,8 @@ public:
 	void setHighlighted(bool);
 	void enable();
 	void disable();
-	void addChild(std::unique_ptr<Node>&& node);
-	void addChildren(std::vector<std::unique_ptr<Node>>&& nodes);
+	void addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation = false);
+	void addChildren(std::vector<std::unique_ptr<Node>>&& nodes, bool retainGlobalTransformation = false);
 	std::unique_ptr<Node> release();
 	std::vector<std::unique_ptr<Node>> releaseChildren();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
@@ -57,7 +57,7 @@ public:
 	void setLocalTransformation(glm::mat4&& t);
 	void setLocalTransformation(glm::vec3&& t, glm::vec3&& r, glm::vec3&& s);
 	virtual glm::mat4 getLocalTransformation() const;
-	glm::mat4 getGlobalTransformation() const;
+	virtual glm::mat4 getGlobalTransformation() const;
 	virtual Bounds getBounds() const;
 	virtual void drawUI();
 

@@ -51,8 +51,8 @@ std::tuple<glm::vec3, glm::vec3, glm::vec3> Camera::getCameraVectors() const
 	static const glm::vec4 front{0.0f, 0.0f, -1.0f, 0.0f};
 	static const glm::vec4 right{1.0f, 0.0f, 0.0f, 0.0f};
 	static const glm::vec4 up{0.0f, 1.0f, 0.0f, 0.0f};
-	glm::mat4 localTransformation = getLocalTransformation();
-	glm::vec3 localFront = glm::normalize(glm::vec3(front * localTransformation));
+	glm::mat4 localCameraTransformation = glm::eulerAngleXY(glm::radians(localRotation.x), glm::radians(localRotation.y)) * glm::translate(glm::mat4(1.0f), localTranslation);
+	glm::vec3 localFront = glm::normalize(glm::vec3(front * localCameraTransformation));
 	glm::vec3 localRight = glm::normalize(glm::cross(localFront, {0.0f, 1.0f, 0.0f}));
 	glm::vec3 localUp = glm::normalize(glm::cross(localRight, localFront));
 	return {std::move(localFront), std::move(localRight), std::move(localUp)};
@@ -68,24 +68,32 @@ glm::mat4 Camera::getProjectionMatrix() const
 
 glm::mat4 Camera::getLocalTransformation() const
 {
-	return glm::eulerAngleXY(glm::radians(localRotation.x), glm::radians(localRotation.y)) * glm::translate(glm::mat4(1.0f), localTranslation);
+	return glm::translate(glm::mat4(1.0f), localTranslation) * glm::eulerAngleYX(glm::radians(-localRotation.y), glm::radians(-localRotation.x));
 }
+
+glm::mat4 Camera::getGlobalTransformation() const
+{
+	glm::mat4 localTransformation = getLocalTransformation();
+
+	if(parent != nullptr)
+		return removeScaling(parent->getGlobalTransformation()) * localTransformation;
+	return localTransformation;
+}
+
 glm::mat4 Camera::getViewMatrix() const
 {
 	glm::mat4 viewMatrix = glm::eulerAngleXY(glm::radians(localRotation.x), glm::radians(localRotation.y)) * glm::translate(glm::mat4(1.0f), -localTranslation);
-
 	if(parent != nullptr)
 	{
-		auto[globalTranslation, globalRotation, globalScale] = decomposeTransformation(parent->getGlobalTransformation());
-		return composeTransformation(globalTranslation, globalRotation, glm::vec3(1.0f)) * viewMatrix;
+		auto globalTransformation = parent->getGlobalTransformation();
+		return  viewMatrix * glm::inverse(extractRotationMatrix(parent->getGlobalTransformation())) * glm::translate(glm::mat4(1.0f), -extractTranslationVector(globalTransformation));
 	}
 	return viewMatrix;
 }
 
 glm::vec3 Camera::getPosition() const
 {
-	auto[globalTranslation, globalRotation, globalScale] = decomposeTransformation(getGlobalTransformation());
-	return globalTranslation;
+	return extractTranslationVector(getGlobalTransformation());
 }
 
 void Camera::move(glm::vec3 amount)

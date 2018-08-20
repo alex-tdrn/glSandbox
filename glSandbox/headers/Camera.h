@@ -28,6 +28,7 @@ public:
 	void use() const;
 	std::string const& getName() const override;
 	glm::mat4 getLocalTransformation() const override;
+	glm::mat4 getGlobalTransformation() const override;
 	glm::mat4 getViewMatrix() const;
 	glm::vec3 getPosition() const;
 	float getNearPlane() const;

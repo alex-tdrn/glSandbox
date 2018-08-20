@@ -10,7 +10,7 @@
 Scene::Scene()
 {
 	root->setScene(this);
-	root->addChild(std::make_unique<Camera>());
+	root->addChild(std::make_unique<Camera>(), true);
 }
 
 Scene::Scene(Scene &&other)
@@ -18,15 +18,15 @@ Scene::Scene(Scene &&other)
 {
 	root->setScene(this);
 	if(getAll<Camera>().empty())
-		root->addChild(std::make_unique<Camera>());
+		root->addChild(std::make_unique<Camera>(), true);
 }
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
 {
 	this->root->setScene(this);
-	if(getAll<Camera>().empty())
-		this->root->addChild(std::make_unique<Camera>());
 	fitToIdealSize();
+	if(getAll<Camera>().empty())
+		this->root->addChild(std::make_unique<Camera>(), true);
 }
 
 void Scene::updateCache() const
@@ -98,7 +98,6 @@ void Scene::fitToIdealSize() const
 	float const scale = idealSize / currentSize;
 	glm::mat4 t = glm::translate(glm::mat4{1.0f}, translation);
 	glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
-
 	root->setLocalTransformation(s * t * glm::mat4(1.0f));// root->getGlobalTransformation());
 }
 
@@ -157,6 +156,8 @@ void Scene::drawUI()
 		{
 			if(ImGui::MenuItem("Abstract Node"))
 				node->addChild(std::make_unique<Node>());
+			if(ImGui::MenuItem("Camera"))
+				node->addChild(std::make_unique<Camera>());
 			if(ImGui::MenuItem("Prop"))
 				node->addChild(std::make_unique<Prop>());
 			ImGui::EndMenu();

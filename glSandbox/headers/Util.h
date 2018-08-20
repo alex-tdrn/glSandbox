@@ -226,6 +226,26 @@ inline std::tuple<glm::vec3, glm::vec3, glm::vec3> decomposeTransformation(glm::
 	}
 	return {matrix[3], glm::degrees(glm::eulerAngles(glm::quat_cast(rot))), std::move(scale)};
 }
+inline glm::vec3 extractTranslationVector(glm::mat4 const& matrix)
+{
+	return matrix[3];
+}
+
+inline glm::mat4 extractRotationMatrix(glm::mat4 matrix)
+{
+	matrix[3] = glm::vec4{0.0f, 0.0f, 0.0f, 1.0f};
+	for(int i = 0; i < 3; i++)
+		matrix[i] = glm::normalize(matrix[i]);
+
+	return matrix;
+}
+
+inline glm::mat4 removeScaling(glm::mat4 matrix)
+{
+	for(int i = 0; i < 3; i++)
+		matrix[i] = glm::normalize(matrix[i]);
+	return matrix;
+}
 
 inline std::string glEnumToString(GLenum e)
 {

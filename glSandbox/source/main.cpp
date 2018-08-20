@@ -18,6 +18,7 @@
 #include <vector>
 #include <optional>
 #include <memory>
+#include <deque>
 
 double deltaTime = 0.0f;
 double lastFrame = 0.0f;
@@ -122,10 +123,11 @@ void drawUI()
 {
 	static bool drawFileBrowserFlag = false;
 	static bool drawResources = false;
-	static bool drawRenderingSettings = false;
+	static bool drawMainRenderer = false;
 	static bool drawPostprocessingSettings = false;
 	static bool drawStats = false;
 	static bool drawImGuiDemo = false;
+	static std::deque<bool> drawRenderer;
 
 	ImGui_ImplGlfwGL3_NewFrame();
 	if(ImGui::BeginMainMenuBar())
@@ -134,10 +136,22 @@ void drawUI()
 		{
 			if(ImGui::MenuItem("Resources"))
 				drawResources = true;
+			if(ImGui::BeginMenu("Rendering"))
+			{
+				if(ImGui::MenuItem("Main Renderer"))
+					drawMainRenderer = true;
+				for(int i = 0; i < settings::getAllRenderers().size(); i++)
+					if(ImGui::MenuItem(("Secondary Renderer " + std::to_string(i)).data()))
+						drawRenderer[i] = true;
+				if(ImGui::MenuItem("Add Secondary Renderer"))
+				{
+					settings::addRenderer(std::make_unique<Renderer>());
+					drawRenderer.push_back(true);
+				}
+				ImGui::EndMenu();
+			}
 			if(ImGui::BeginMenu("Settings"))
 			{
-				if(ImGui::MenuItem("Rendering"))
-					drawRenderingSettings = true;
 				if(ImGui::MenuItem("Postprocessing"))
 					drawPostprocessingSettings = true;
 				ImGui::EndMenu();
@@ -155,8 +169,12 @@ void drawUI()
 		ImGui::EndMainMenuBar();
 	}
 	res::drawUI(&drawResources);
+	settings::mainRenderer().drawUI(&drawMainRenderer);
+	for(int i = 0; i < drawRenderer.size(); i++)
 	{
-		settings::mainRenderer().drawUI(&drawRenderingSettings);
+		settings::getAllRenderers()[i]->drawUI(&drawRenderer[i]);
+		if(drawRenderer[i])
+			settings::getAllRenderers()[i]->render();
 	}
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
 	info::drawUI(&drawStats);

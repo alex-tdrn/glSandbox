@@ -86,7 +86,7 @@ glm::mat4 Camera::getViewMatrix() const
 	if(parent != nullptr)
 	{
 		auto globalTransformation = parent->getGlobalTransformation();
-		return  viewMatrix * glm::inverse(extractRotationMatrix(parent->getGlobalTransformation())) * glm::translate(glm::mat4(1.0f), -extractTranslationVector(globalTransformation));
+		return  viewMatrix * glm::inverse(extractRotationMatrix(globalTransformation)) * glm::translate(glm::mat4(1.0f), -extractTranslationVector(globalTransformation));
 	}
 	return viewMatrix;
 }

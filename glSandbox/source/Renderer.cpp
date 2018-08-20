@@ -372,16 +372,17 @@ void Renderer::drawUI(bool* open)
 	ImGui::Text("Camera");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	if(ImGui::BeginCombo("###Camera", camera->getName().data()))
+	if(ImGui::BeginCombo("###Camera", camera ? camera->getName().data() : "-"))
 	{
 		int id = 0;
 		for(auto& s : res::scenes::getAll())
 		{
+			ImGui::Text(("Scene " + s->name.get()).data());
 			for(auto& c : s->getAll<Camera>())
 			{
 				ImGui::PushID(id++);
 				bool isSelected = camera == c;
-				if(ImGui::Selectable((c->getName() + "(" + s->name.get() + ")").data(), &isSelected))
+				if(ImGui::Selectable(c->getName().data(), &isSelected))
 					setCamera(c);
 				if(isSelected)
 					ImGui::SetItemDefaultFocus();

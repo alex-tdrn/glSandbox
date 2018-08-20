@@ -24,7 +24,8 @@ namespace info
 namespace settings
 {
 	Renderer& mainRenderer();
-
+	std::vector<std::unique_ptr<Renderer>> const& getAllRenderers();
+	void addRenderer(std::unique_ptr<Renderer>&&);
 	namespace rendering
 	{
 		inline bool vsync = true;

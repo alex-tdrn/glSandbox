@@ -125,6 +125,9 @@ void Camera::drawUI()
 	ImGui::RadioButton("FPS", reinterpret_cast<int*>(&orbital), 0);
 	ImGui::SameLine();
 	ImGui::RadioButton("Orbital", reinterpret_cast<int*>(&orbital), 1);
+	glm::vec3 move{0.0f};
+	if(ImGui::DragFloat3("Move", &move[0], 0.01f))
+		this->move(move);
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Projection");
 	ImGui::SameLine();

@@ -61,7 +61,7 @@ std::tuple<glm::vec3, glm::vec3, glm::vec3> Camera::getCameraVectors() const
 glm::mat4 Camera::getProjectionMatrix() const
 {
 	if(projectionOrtho)
-		return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
+		return glm::ortho(-info::windowWidth * 0.5f * orthoScale, +info::windowWidth * 0.5f * orthoScale, -info::windowHeight* 0.5f * orthoScale, +info::windowHeight* 0.5f * orthoScale, nearPlane, farPlane);
 	else
 		return glm::perspective(glm::radians(fov), static_cast<float>(info::windowWidth) / info::windowHeight, nearPlane, farPlane);
 }
@@ -118,30 +118,23 @@ void Camera::rotate(float yawAmount, float pitchAmount)
 void Camera::drawUI()
 {
 	Node::drawUI();
-	/*IDGuard idGuard{this};
-
-	bool valueChanged = false;
-	if(ImGui::CollapsingHeader("Camera"))
-	{
-		ImGui::Indent();
-
-		ImGui::Text("Projection");
-		ImGui::SameLine();
-		valueChanged |= ImGui::RadioButton("Perspective", reinterpret_cast<int*>(&projectionOrtho), 0);
-		ImGui::SameLine();
-		valueChanged |= ImGui::RadioButton("Orthographic", reinterpret_cast<int*>(&projectionOrtho), 1);
-		valueChanged |= ImGui::DragFloat("FOV", &fov, 0.1f);
-		valueChanged |= ImGui::DragFloat("Near Plane", &nearPlane, 0.01f);
-		valueChanged |= ImGui::DragFloat("Far Plane", &farPlane, 0.1f);
-		valueChanged |= orientation.drawUI();
-		valueChanged |= position.drawUI();
-		ImGui::Text("Front: (%.2f, %.2f, %.2f)", front.x, front.y, front.z);
-		ImGui::Text("Right: (%.2f, %.2f, %.2f)", right.x, right.y, right.z);
-		ImGui::Text("Up: (%.2f, %.2f, %.2f)", up.x, up.y, up.z);
-
-		ImGui::Unindent();
-	}
-	if(valueChanged) 
-		update();
-	return valueChanged;*/
+	IDGuard idGuard{this};
+	ImGui::BeginChild("Camera", {ImGui::GetTextLineHeightWithSpacing() * 22, ImGui::GetTextLineHeightWithSpacing() * 9});
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Projection");
+	ImGui::SameLine();
+	ImGui::RadioButton("Perspective", reinterpret_cast<int*>(&projectionOrtho), 0);
+	ImGui::SameLine();
+	ImGui::RadioButton("Orthographic", reinterpret_cast<int*>(&projectionOrtho), 1);
+	if(projectionOrtho)
+		ImGui::DragFloat("Scale", &orthoScale, 0.0001f);
+	else
+		ImGui::DragFloat("FOV", &fov, 0.1f);
+	ImGui::DragFloat("Near Plane", &nearPlane, 0.01f);
+	ImGui::DragFloat("Far Plane", &farPlane, 0.1f);
+	auto[localFront, localRight, localUp] = getCameraVectors();
+	ImGui::Text("Front: (%.2f, %.2f, %.2f)", localFront.x, localFront.y, localFront.z);
+	ImGui::Text("Right: (%.2f, %.2f, %.2f)", localRight.x, localRight.y, localRight.z);
+	ImGui::Text("Up: (%.2f, %.2f, %.2f)", localUp.x, localUp.y, localUp.z);
+	ImGui::EndChild();
 }

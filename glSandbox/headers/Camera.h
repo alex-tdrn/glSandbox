@@ -14,6 +14,7 @@ private:
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 	float fov = 45.0f;
+	float orthoScale = 0.005f;
 
 public:
 	Camera();

@@ -157,8 +157,9 @@ void Node::drawUI()
 	static bool showMatrix = true;
 	static int local = true;
 	static float heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 10.5f : 6);
-	const float heightSubNodes = ImGui::GetTextLineHeightWithSpacing() * 5;
-	ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, heightTransformation + heightSubNodes + ImGui::GetTextLineHeightWithSpacing() * 3});
+	const float heightSubNodes = !children.empty() ? ImGui::GetTextLineHeightWithSpacing() * 5 : 0;
+	const float heightSpacing = ImGui::GetTextLineHeightWithSpacing() * (children.empty() ? 2 : 3);
+	ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, heightTransformation + heightSubNodes + heightSpacing});
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Transformation");
 	ImGui::SameLine();

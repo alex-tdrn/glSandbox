@@ -11,6 +11,7 @@ class Camera : public Node
 private:
 	Name<Camera> name{"camera"};
 	bool projectionOrtho = false;
+	bool orbital = true;
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 	float fov = 45.0f;
@@ -22,7 +23,6 @@ public:
 
 private:
 	static unsigned int ubo();
-	std::tuple<glm::vec3, glm::vec3, glm::vec3> getCameraVectors() const;
 	glm::mat4 getProjectionMatrix() const;
 
 public:

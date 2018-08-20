@@ -63,7 +63,7 @@ private:
 				glm::vec3 diffuseColor{1.0f, 1.0f, 1.0f};
 				glm::vec3 specularColor{1.0f, 1.0f, 1.0f};
 			}override;
-			float ambientStrength = 0.025f;
+			float ambientStrength = 1.0f;
 			float shininess = 128;
 		}lighting;
 		struct{

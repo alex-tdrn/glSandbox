@@ -206,8 +206,8 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 		return;
 	}
 	float sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
+	xoffset *= -sensitivity;
+	yoffset *= -sensitivity;
 	settings::mainRenderer().getCamera()->rotate(xoffset, yoffset);
 	settings::mainRenderer().shouldRender();
 }

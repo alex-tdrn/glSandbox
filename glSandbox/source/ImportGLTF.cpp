@@ -50,14 +50,14 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 		}
 		else
 		{
-			n = std::make_unique<Node>();
+			n = std::make_unique<TransformedNode>();
 			for(auto const& primitive :doc.meshes[node.mesh].primitives)
 				n->addChild(std::make_unique<Prop>(primitivesMap.at(&primitive)));
 		}
 	}
 	else
 	{
-		n = std::make_unique<Node>();
+		n = std::make_unique<TransformedNode>();
 	}
 	glm::mat4 transformation{1.0f};
 	for(int row = 0; row < 4; row++)
@@ -93,7 +93,7 @@ std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, Primit
 		std::vector<std::unique_ptr<Node>> nodes;
 		for(auto mesh : loadedMeshes)
 			nodes.push_back(std::make_unique<Prop>(std::move(mesh)));
-		scenes.emplace_back(std::make_unique<Scene>(std::make_unique<Node>(std::move(nodes))));
+		scenes.emplace_back(std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes))));
 	}
 	else
 	{
@@ -102,7 +102,7 @@ std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, Primit
 			std::vector<std::unique_ptr<Node>> nodes;
 			for(auto const nodeIdx : scene.nodes)
 				nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
-			auto s = std::make_unique<Scene>(std::make_unique<Node>(std::move(nodes)));
+			auto s = std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes)));
 			/*if(!scene.name.empty())
 				s->name.set(scene.name);*/
 			scenes.emplace_back(std::move(s));

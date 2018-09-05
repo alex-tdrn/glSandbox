@@ -1,5 +1,4 @@
 #include "Node.h"
-#include "Util.h"
 #include "Scene.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -92,7 +91,7 @@ void Node::addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformatio
 	node->parent = this;
 	node->setScene(scene);
 	if(retainGlobalTransformation)
-		node->setLocalTransformation(glm::inverse(removeScaling(getGlobalTransformation())) * node->getLocalTransformation());
+		node->setLocalTransformation(glm::inverse(getGlobalTransformation()) * node->getLocalTransformation());
 	children.push_back(std::move(node));
 
 	invalidateSceneCache();
@@ -116,31 +115,6 @@ std::vector<std::unique_ptr<Node>> Node::releaseChildren()
 {
 	invalidateSceneCache();
 	return std::move(children);
-}
-
-void Node::setLocalTransformation(glm::mat4&& matrix)
-{
-	std::tie(localTranslation, localRotation, localScale) = decomposeTransformation(matrix);
-}
-
-void Node::setLocalTransformation(glm::vec3 && t, glm::vec3 && r, glm::vec3 && s)
-{
-	localTranslation = std::move(t);
-	localRotation = std::move(r);
-	localScale = std::move(s);
-}
-
-glm::mat4 Node::getLocalTransformation() const
-{
-	return composeTransformation(localTranslation, localRotation, localScale);
-}
-
-glm::mat4 Node::getGlobalTransformation() const
-{
-	if(parent == nullptr)
-		return getLocalTransformation();
-	else
-		return parent->getGlobalTransformation() * getLocalTransformation();
 }
 
 Bounds Node::getBounds() const
@@ -169,7 +143,7 @@ void Node::drawUI()
 	ImGui::SameLine();
 	ImGui::Checkbox("Show Matrix", &showMatrix);
 	heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 10.5f : 6);
-	ImGui::BeginChild("###Transformation", {0, heightTransformation}, true);
+	/*ImGui::BeginChild("###Transformation", {0, heightTransformation}, true);
 	{
 		glm::mat4 const& matrix = local ? getLocalTransformation() : getGlobalTransformation();
 		if(showMatrix)
@@ -200,7 +174,7 @@ void Node::drawUI()
 			ImGui::PushID(i);
 			ImGui::SameLine();
 			if(local)
-				ImGui::DragFloat("###Tr", &localTranslation[i], 0.01f);
+				ImGui::DragFloat("###Tr", &translation[i], 0.01f);
 			else
 				ImGui::Text("%.3f", globalTranslation[i]);
 			ImGui::PopID();
@@ -234,14 +208,14 @@ void Node::drawUI()
 			ImGui::PushID(i);
 			ImGui::SameLine();
 			if(local)
-				ImGui::DragFloat("###Sc", &localScale[i], 0.01f);
+				ImGui::DragFloat("###Sc", &scale[i], 0.01f);
 			else
 				ImGui::Text("%.3f", globalScale[i]);
 
 			if(local && ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
-				localScale = glm::vec3(localScale[i]);
-			if(localScale[i] == 0.0f)
-					localScale[i] = 0.01f;
+				scale = glm::vec3(scale[i]);
+			if(scale[i] == 0.0f)
+					scale[i] = 0.01f;
 			ImGui::PopID();
 			if(i == 2)
 				ImGui::PopItemWidth();
@@ -252,7 +226,7 @@ void Node::drawUI()
 		ImGui::Text("Bounds (%.1f, %.1f, %.1f) - (%.1f, %.1f, %.1f)", bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
 	}
 	ImGui::EndChild();
-	
+	*/
 	if(!children.empty())
 	{
 		ImGui::Columns(2, nullptr, false);

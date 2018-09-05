@@ -1,12 +1,12 @@
 #pragma once
-#include "Node.h"
+#include "TransformedNode.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc\quaternion.hpp>
 #include <tuple>
 
-class Camera : public Node
+class Camera : public Transformed<Translation, Rotation>
 {
 private:
 	Name<Camera> name{"camera"};
@@ -28,10 +28,7 @@ private:
 public:
 	void use() const;
 	std::string const& getName() const override;
-	glm::mat4 getLocalTransformation() const override;
-	glm::mat4 getGlobalTransformation() const override;
 	glm::mat4 getViewMatrix() const;
-	glm::vec3 getPosition() const;
 	float getNearPlane() const;
 	float getFarPlane() const;
 	void move(glm::vec3 amount);

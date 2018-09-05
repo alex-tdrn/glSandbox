@@ -21,9 +21,6 @@
     <ClCompile Include="source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Components.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
     <ClCompile Include="source\Prop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\ImportGLTF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,12 +69,12 @@
     <ClCompile Include="Globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\Globals.h">
@@ -125,13 +119,16 @@
     <ClInclude Include="headers\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="headers\Prop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\ImportGLTF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\TransformedNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

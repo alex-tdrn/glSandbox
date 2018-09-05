@@ -1,6 +1,5 @@
 #pragma once
 #include "Named.h"
-#include "Node.h"
 #include "Camera.h"
 #include "Lights.h"
 
@@ -9,17 +8,18 @@
 
 class Prop;
 class Camera;
+class Node;
 
 class Scene
 {
 
 private:
 	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
-	std::unique_ptr<Node> root = std::make_unique<Node>();
+	std::unique_ptr<Node> root = std::make_unique<TransformedNode>();
 	float idealSize = 2.0f;
 	mutable struct{
 		bool dirty = true;
-		std::vector<Node*> abstractNodes;
+		std::vector<TransformedNode*> transformedNodes;
 		std::vector<Camera*> cameras;
 		std::vector<Prop*> props;
 	}cache;
@@ -65,8 +65,8 @@ std::vector<T*> const& Scene::getAll() const
 {
 	if(cache.dirty)
 		updateCache();
-	if constexpr(std::is_same<T, Node>())
-		return cache.abstractNodes;
+	if constexpr(std::is_same<T, TransformedNode>())
+		return cache.transformedNodes;
 	else if constexpr(std::is_same<T, Camera>())
 		return cache.cameras;
 	else if constexpr(std::is_same<T, Prop>())

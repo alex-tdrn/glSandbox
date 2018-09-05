@@ -1,5 +1,4 @@
 #pragma once
-#include "Components.h"
 #include <glm/glm.hpp>
 
 class Light
@@ -22,8 +21,6 @@ public:
 };
 class DirectionalLight : public Light
 {
-private:
-	Orientation orientation{120.0f, -60.0f, 0.0f};
 
 public:
 	void setOrientation(glm::vec3 orientation);
@@ -34,8 +31,6 @@ public:
 
 class PointLight : public Light
 {
-private:
-	Position position = {{-1.0f, 0.0f, 2.0f}};
 
 public:
 	void setPosition(glm::vec3 position);
@@ -46,9 +41,6 @@ public:
 
 class SpotLight : public Light
 {
-private:
-	Position position = {{1.0f, 0.0f, 3.0f}};
-	Orientation orientation;
 	float innerCutoff = 15.0f;
 	float outerCutoff = 20.0f;
 

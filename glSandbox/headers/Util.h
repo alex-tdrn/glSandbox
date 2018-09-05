@@ -215,7 +215,7 @@ inline glm::mat4 composeTransformation(glm::vec3 const& translation, glm::vec3 c
 	return Tr * Ro * Sc;
 }
 
-inline std::tuple<glm::vec3, glm::vec3, glm::vec3> decomposeTransformation(glm::mat4 const& matrix)
+inline std::tuple<glm::vec3, glm::quat, glm::vec3> decomposeTransformation(glm::mat4 const& matrix)
 {
 	glm::vec3 scale;
 	glm::mat4 rot{1.0f};
@@ -224,7 +224,7 @@ inline std::tuple<glm::vec3, glm::vec3, glm::vec3> decomposeTransformation(glm::
 		scale[i] = glm::length(matrix[i]);
 		rot[i] = matrix[i] / scale[i];
 	}
-	return {matrix[3], glm::degrees(glm::eulerAngles(glm::quat_cast(rot))), std::move(scale)};
+	return {matrix[3], glm::quat_cast(rot), std::move(scale)};
 }
 inline glm::vec3 extractTranslationVector(glm::mat4 const& matrix)
 {

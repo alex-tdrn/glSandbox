@@ -161,7 +161,6 @@
     <ClCompile Include="source\ImportGLTF.cpp" />
     <ClCompile Include="source\Cubemap.cpp" />
     <ClCompile Include="source\Camera.cpp" />
-    <ClCompile Include="source\Components.cpp" />
     <ClCompile Include="source\glad.c" />
     <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="source\Lights.cpp" />
@@ -179,7 +178,6 @@
     <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />
-    <ClInclude Include="headers\Components.h" />
     <ClInclude Include="headers\Globals.h" />
     <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="headers\Lights.h" />
@@ -194,6 +192,7 @@
     <ClInclude Include="headers\Shader.h" />
     <ClInclude Include="headers\Texture.h" />
     <ClInclude Include="headers\Util.h" />
+    <ClInclude Include="headers\TransformedNode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\blinn-phong.frag" />

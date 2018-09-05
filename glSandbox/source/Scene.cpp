@@ -31,7 +31,7 @@ Scene::Scene(std::unique_ptr<Node>&& root)
 
 void Scene::updateCache() const
 {
-	cache.abstractNodes.clear();
+	cache.transformedNodes.clear();
 	cache.cameras.clear();
 	cache.props.clear();
 	for(auto& node : root->getChildren())
@@ -41,8 +41,8 @@ void Scene::updateCache() const
 				cache.props.push_back(prop);
 			else if(auto camera = dynamic_cast<Camera*>(node); camera)
 				cache.cameras.push_back(camera);
-			else
-				cache.abstractNodes.push_back(node);
+			else if(auto transformedNode = dynamic_cast<TransformedNode*>(node); transformedNode)
+				cache.transformedNodes.push_back(transformedNode);
 		});
 	}
 	cache.dirty = false;
@@ -53,7 +53,7 @@ void Scene::cacheOutdated() const
 	cache.dirty = true;
 }
 
-Node * Scene::getRoot() const
+Node* Scene::getRoot() const
 {
 	return root.get();
 }
@@ -154,8 +154,8 @@ void Scene::drawUI()
 	auto actionsAdd = [](Node* node){
 		if(ImGui::BeginMenu("Add..."))
 		{
-			if(ImGui::MenuItem("Abstract Node"))
-				node->addChild(std::make_unique<Node>());
+			if(ImGui::MenuItem("Transformed Node"))
+				node->addChild(std::make_unique<TransformedNode>());
 			if(ImGui::MenuItem("Camera"))
 				node->addChild(std::make_unique<Camera>());
 			if(ImGui::MenuItem("Prop"))
@@ -300,7 +300,7 @@ void Scene::drawUI()
 		ImGui::BeginChild("###Abstract Nodes", {0, scrollAreaHeight}, true);
 		drawNode(root.get(), true);
 		drawRootContextMenu();
-		drawList(getAll<Node>());
+		drawList(getAll<TransformedNode>());
 		ImGui::EndChild();
 
 		ImGui::Text("Props");

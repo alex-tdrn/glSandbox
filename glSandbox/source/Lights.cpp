@@ -48,57 +48,40 @@ bool Light::drawUI()
 
 void DirectionalLight::setOrientation(glm::vec3 orientation)
 {
-	this->orientation.yaw = orientation.x;
-	this->orientation.pitch = orientation.y;
-	this->orientation.roll = orientation.z;
 }
 
 glm::vec3 const DirectionalLight::getDirection() const
 {
-	return orientation.getDirectionVector();
+	return {};
 }
 
 
 bool DirectionalLight::drawUI()
 {
-	IDGuard idGuard{this};
-
-	bool valueChanged = false;
-	valueChanged |= Light::drawUI();
-	valueChanged |= orientation.drawUI();
-	return valueChanged;
+	return true;
 }
 
 void PointLight::setPosition(glm::vec3 position)
 {
-	this->position.position = position;
 }
 
 glm::vec3 const& PointLight::getPosition() const
 {
-	return position.position;
+	return {};
 }
 
 bool PointLight::drawUI()
 {
-	IDGuard idGuard{this};
+	return true;
 
-	bool valueChanged = false;
-	valueChanged |= Light::drawUI();
-	valueChanged |= position.drawUI();
-	return valueChanged;
 }
 
 void SpotLight::setOrientation(glm::vec3 orientation)
 {
-	this->orientation.yaw = orientation.x;
-	this->orientation.pitch = orientation.y;
-	this->orientation.roll = orientation.z;
 }
 
 void SpotLight::setPosition(glm::vec3 position)
 {
-	this->position.position = position;
 }
 
 void SpotLight::setCutoff(float inner, float outer)
@@ -109,12 +92,14 @@ void SpotLight::setCutoff(float inner, float outer)
 
 glm::vec3 const& SpotLight::getPosition() const
 {
-	return position.position;
+	return {};
+
 }
 
 glm::vec3 const SpotLight::getDirection() const
 {
-	return orientation.getDirectionVector();
+	return {};
+
 }
 
 float SpotLight::getInnerCutoff() const
@@ -129,13 +114,6 @@ float SpotLight::getOuterCutoff() const
 
 bool SpotLight::drawUI()
 {
-	IDGuard idGuard{this};
+	return true;
 
-	bool valueChanged = false;
-	valueChanged |= Light::drawUI();
-	valueChanged |= ImGui::DragFloat("Inner Cutoff", &innerCutoff, 0.02f);
-	valueChanged |= ImGui::DragFloat("Outer Cutoff", &outerCutoff, 0.02f);
-	valueChanged |= orientation.drawUI();
-	valueChanged |= position.drawUI();
-	return valueChanged;
 }

@@ -377,7 +377,8 @@ void Renderer::drawUI(bool* open)
 		int id = 0;
 		for(auto& s : res::scenes::getAll())
 		{
-			ImGui::Text(("Scene " + s->name.get()).data());
+			ImGui::Text(("Scene: " + s->name.get()).data());
+			ImGui::Separator();
 			for(auto& c : s->getAll<Camera>())
 			{
 				ImGui::PushID(id++);

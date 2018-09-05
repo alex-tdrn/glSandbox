@@ -1,11 +1,11 @@
 #pragma once
-#include "Node.h"
+#include "TransformedNode.h"
 #include "Util.h"
 #include "Mesh.h"
 #include "Resources.h"
 #include <optional>
 
-class Prop : public Node
+class Prop : public Transformed<Translation, Rotation, Scale>
 {
 private:
 	Name<Prop> name{"prop"};

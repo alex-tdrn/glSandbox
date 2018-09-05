@@ -7,7 +7,7 @@
 
 Camera::Camera()
 {
-	localTranslation = {0.0f, 0.0f, 8.0f};
+	setLocalTranslation(glm::vec3{0.0f, 0.0f, 8.0f});
 }
 
 unsigned int Camera::ubo()
@@ -54,64 +54,60 @@ glm::mat4 Camera::getProjectionMatrix() const
 		return glm::perspective(glm::radians(fov), static_cast<float>(info::windowWidth) / info::windowHeight, nearPlane, farPlane);
 }
 
-glm::mat4 Camera::getLocalTransformation() const
-{
-	if(orbital)
-		return glm::eulerAngleYX(glm::radians(localRotation.y), glm::radians(localRotation.x)) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, localTranslation.z));
-	else
-		return glm::translate(glm::mat4(1.0f), localTranslation) * glm::eulerAngleYX(glm::radians(localRotation.y), glm::radians(localRotation.x));
-}
-
-glm::mat4 Camera::getGlobalTransformation() const
-{
-	glm::mat4 localTransformation = getLocalTransformation();
-
-	if(parent != nullptr)
-		return removeScaling(parent->getGlobalTransformation()) * localTransformation;
-	return localTransformation;
-}
-
 glm::mat4 Camera::getViewMatrix() const
 {
-	glm::mat4 viewMatrix; 
-	if(orbital)
-		viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -localTranslation.z)) * glm::eulerAngleXY(glm::radians(-localRotation.x), glm::radians(-localRotation.y));
-	else
-		viewMatrix = glm::eulerAngleXY(glm::radians(-localRotation.x), glm::radians(-localRotation.y)) * glm::translate(glm::mat4(1.0f), -localTranslation);
-
-	if(parent != nullptr)
-	{
-		auto globalTransformation = parent->getGlobalTransformation();
-		return  viewMatrix * glm::inverse(extractRotationMatrix(globalTransformation)) * glm::translate(glm::mat4(1.0f), -extractTranslationVector(globalTransformation));
-	}
-	return viewMatrix;
-}
-
-glm::vec3 Camera::getPosition() const
-{
-	return extractTranslationVector(getGlobalTransformation());
+	return glm::inverse(getGlobalTransformation());
 }
 
 void Camera::move(glm::vec3 amount)
 {
 	amount[2] *= -1;
-	if(orbital)
-		localTranslation.z += amount.z;
-	else
-		localTranslation += glm::mat3(glm::eulerAngleYX(glm::radians(localRotation.y), glm::radians(localRotation.x))) * amount;
+	//if(orbital)
+		//localTranslation.z += amount.z;
+	//else
+		localTranslation += glm::mat3(getLocalRotationMatrix()) * amount;
 }
 
 void Camera::rotate(float yawAmount, float pitchAmount)
 {
-	localRotation.y += yawAmount;
-	localRotation.y -= int(localRotation.y) / 360 * 360;
+	if(orbital)
+	{
+		float const d = 2.0;
+		glm::vec3 pivot = glm::vec4{0.0f, 0.0f, d, 1.0f} * glm::inverse(getLocalRotationMatrix());
+		localRotation = glm::angleAxis(glm::radians(yawAmount), glm::vec3{0.0f, 1.0f, 0.0f}) * localRotation * glm::angleAxis(glm::radians(pitchAmount), glm::vec3{1.0f, 0.0f, 0.0f});
+		glm::vec3 rotatedPivot = glm::vec4{0.0f, 0.0f, d, 1.0f} * glm::inverse(getLocalRotationMatrix());
+		glm::vec3 diff = rotatedPivot - pivot;
+		localTranslation += diff;
+		/*glm::vec3 centerOfRotation = glm::vec4{localTranslation, 1.0f} - glm::vec4{0.0f, 0.0f, d, 1.0f} *glm::mat4_cast(localRotation);
+		localTranslation -= centerOfRotation;
+		float dist = glm::length(localTranslation);
+		auto gggg = glm::angleAxis(glm::radians(0.0f), glm::vec3{0.0f, 1.0f, 0.0f}) * localRotation * glm::angleAxis(glm::radians(0.0f), glm::vec3{1.0f, 0.0f, 0.0f});
+		localTranslation = glm::vec4{0.0f, 0.0f, glm::length(localTranslation), 1.0f} * glm::inverse(glm::mat4_cast(localRotation));
+
+		localTranslation += centerOfRotation;*/
+
+		//glm::vec3 rotatedPivot = glm::vec4{0.0f, 0.0f, pivotDistance, 1.0f} *getLocalRotationMatrix();
+		//auto t = localTranslation - glm::vec3{pivot.x, pivot.y, pivot.z};
+
+		//localTranslation -= rotatedPivot - pivot;
+		//localTranslation = glm::vec3{pivot.x, pivot.y, pivot.z} + t;
+		//auto diff = pivotDistance*(transformedPivot - pivot);
+		//localTranslation += glm::vec3{diff.x, 0, -diff.z};
+	}
+	else
+	{
+		localRotation = glm::angleAxis(glm::radians(yawAmount), glm::vec3{0.0f, 1.0f, 0.0f}) * localRotation * glm::angleAxis(glm::radians(pitchAmount), glm::vec3{1.0f, 0.0f, 0.0f});
+
+	}
+
+
+	/*localRotation.y -= glm::radians(int(glm::degrees(localRotation.y)) / 360 * 360.0f);
 	if(localRotation.y < 0)
-		localRotation.y += 360;
-	localRotation.x += pitchAmount;
-	if(localRotation.x > 89.0f)
-		localRotation.x = 89.0f;
-	else if(localRotation.x < -89.0f)
-		localRotation.x = -89.0f;
+		localRotation.y += glm::radians(360.0f);
+	if(localRotation.x > glm::radians(89.0f))
+		localRotation.x = glm::radians(89.0f);
+	else if(localRotation.x < glm::radians(-89.0f))
+		localRotation.x = glm::radians(-89.0f);*/
 }
 
 void Camera::drawUI()

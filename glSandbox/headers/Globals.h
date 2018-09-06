@@ -44,7 +44,11 @@ namespace settings
 
 	namespace postprocessing
 	{
-		inline std::vector<PostProcessingStep> steps(1);
+		inline std::vector<PostProcessingStep>& steps()
+		{
+			static std::vector<PostProcessingStep> _steps(1);
+			return _steps;
+		}
 		inline void drawUI(bool* open);
 	}
 }
@@ -58,21 +62,21 @@ void settings::postprocessing::drawUI(bool* open)
 	ImGui::Begin("Post Processing", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 	if(ImGui::Button("Add step"))
-		steps.emplace_back();
+		steps().emplace_back();
 	int removeIdx = -1;
-	for(int i = 0; i < steps.size(); i++)
+	for(int i = 0; i < steps().size(); i++)
 	{
 		if(ImGui::TreeNode(("Step " + std::to_string(i)).c_str()))
 		{
-			if(steps.size() > 1)
+			if(steps().size() > 1)
 				if(ImGui::Button("Remove step"))
 					removeIdx = i;
-			steps[i].drawUI();
+			steps()[i].drawUI();
 			ImGui::TreePop();
 		}
 	}
 	if(removeIdx != -1)
-		steps.erase(steps.begin() + removeIdx);
+		steps().erase(steps().begin() + removeIdx);
 
 	ImGui::End();
 }

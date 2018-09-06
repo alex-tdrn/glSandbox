@@ -19,6 +19,7 @@
 #include <optional>
 #include <memory>
 #include <deque>
+#include <vld.h>
 
 double deltaTime = 0.0f;
 double lastFrame = 0.0f;
@@ -108,7 +109,7 @@ int main(int argc, char** argv)
 		settings::mainRenderer().render();
 		
 		glEnable(GL_FRAMEBUFFER_SRGB);
-		settings::postprocessing::steps[0].draw(settings::mainRenderer().getOutput(), 0);
+		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -189,7 +190,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 
 	glViewport(0, 0, width, height);
 	settings::mainRenderer().resizeViewport(width, height);
-	for(auto& step : settings::postprocessing::steps)
+	for(auto& step : settings::postprocessing::steps())
 		step.updateFramebuffer();
 }
 void mouseCallback(GLFWwindow* window, double xpos, double ypos)

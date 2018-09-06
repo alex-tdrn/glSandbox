@@ -7,6 +7,7 @@
 
 Camera::Camera()
 {
+	setLimitPitch(true);
 	setLocalTranslation(glm::vec3{0.0f, 0.0f, 8.0f});
 }
 
@@ -62,68 +63,14 @@ glm::mat4 Camera::getViewMatrix() const
 void Camera::move(glm::vec3 amount)
 {
 	amount[2] *= -1;
-	//if(orbital)
-		//localTranslation.z += amount.z;
-	//else
-		localTranslation += glm::mat3(getLocalRotationMatrix()) * amount;
-}
-
-void Camera::rotate(float yawAmount, float pitchAmount)
-{
-	if(orbital)
-	{
-		float const d = 2.0;
-		glm::vec3 pivot = glm::vec4{0.0f, 0.0f, d, 1.0f} * glm::inverse(getLocalRotationMatrix());
-		localRotation = glm::angleAxis(glm::radians(yawAmount), glm::vec3{0.0f, 1.0f, 0.0f}) * localRotation * glm::angleAxis(glm::radians(pitchAmount), glm::vec3{1.0f, 0.0f, 0.0f});
-		glm::vec3 rotatedPivot = glm::vec4{0.0f, 0.0f, d, 1.0f} * glm::inverse(getLocalRotationMatrix());
-		glm::vec3 diff = rotatedPivot - pivot;
-		localTranslation += diff;
-		/*glm::vec3 centerOfRotation = glm::vec4{localTranslation, 1.0f} - glm::vec4{0.0f, 0.0f, d, 1.0f} *glm::mat4_cast(localRotation);
-		localTranslation -= centerOfRotation;
-		float dist = glm::length(localTranslation);
-		auto gggg = glm::angleAxis(glm::radians(0.0f), glm::vec3{0.0f, 1.0f, 0.0f}) * localRotation * glm::angleAxis(glm::radians(0.0f), glm::vec3{1.0f, 0.0f, 0.0f});
-		localTranslation = glm::vec4{0.0f, 0.0f, glm::length(localTranslation), 1.0f} * glm::inverse(glm::mat4_cast(localRotation));
-
-		localTranslation += centerOfRotation;*/
-
-		//glm::vec3 rotatedPivot = glm::vec4{0.0f, 0.0f, pivotDistance, 1.0f} *getLocalRotationMatrix();
-		//auto t = localTranslation - glm::vec3{pivot.x, pivot.y, pivot.z};
-
-		//localTranslation -= rotatedPivot - pivot;
-		//localTranslation = glm::vec3{pivot.x, pivot.y, pivot.z} + t;
-		//auto diff = pivotDistance*(transformedPivot - pivot);
-		//localTranslation += glm::vec3{diff.x, 0, -diff.z};
-	}
-	else
-	{
-		localRotation = glm::angleAxis(glm::radians(yawAmount), glm::vec3{0.0f, 1.0f, 0.0f}) * localRotation * glm::angleAxis(glm::radians(pitchAmount), glm::vec3{1.0f, 0.0f, 0.0f});
-
-	}
-
-
-	/*localRotation.y -= glm::radians(int(glm::degrees(localRotation.y)) / 360 * 360.0f);
-	if(localRotation.y < 0)
-		localRotation.y += glm::radians(360.0f);
-	if(localRotation.x > glm::radians(89.0f))
-		localRotation.x = glm::radians(89.0f);
-	else if(localRotation.x < glm::radians(-89.0f))
-		localRotation.x = glm::radians(-89.0f);*/
+	translate(glm::mat3(getLocalRotationMatrix()) * amount);
 }
 
 void Camera::drawUI()
 {
-	Node::drawUI();
+	Transformed<Translation, Rotation>::drawUI();
 	IDGuard idGuard{this};
 	ImGui::BeginChild("Camera", {ImGui::GetTextLineHeightWithSpacing() * 22, ImGui::GetTextLineHeightWithSpacing() * 10});
-	ImGui::AlignTextToFramePadding();
-	ImGui::Text("Style");
-	ImGui::SameLine();
-	ImGui::RadioButton("FPS", reinterpret_cast<int*>(&orbital), 0);
-	ImGui::SameLine();
-	ImGui::RadioButton("Orbital", reinterpret_cast<int*>(&orbital), 1);
-	glm::vec3 move{0.0f};
-	if(ImGui::DragFloat3("Move", &move[0], 0.01f))
-		this->move(move);
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Projection");
 	ImGui::SameLine();

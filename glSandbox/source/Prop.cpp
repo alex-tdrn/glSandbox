@@ -30,7 +30,7 @@ std::string const& Prop::getName() const
 
 void Prop::drawUI()
 {
-	Node::drawUI();
+	Transformed<Translation, Rotation, Scale>::drawUI();
 	ImGui::BeginChild("###Prop", {ImGui::GetTextLineHeightWithSpacing() * 22, 0});
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Mesh");

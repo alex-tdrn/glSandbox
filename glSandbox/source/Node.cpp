@@ -128,107 +128,11 @@ Bounds Node::getBounds() const
 void Node::drawUI()
 {
 	IDGuard idGuard{this};
-	static bool showMatrix = true;
-	static int local = true;
-	static float heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 10.5f : 6);
-	const float heightSubNodes = !children.empty() ? ImGui::GetTextLineHeightWithSpacing() * 5 : 0;
-	const float heightSpacing = ImGui::GetTextLineHeightWithSpacing() * (children.empty() ? 2 : 3);
-	ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, heightTransformation + heightSubNodes + heightSpacing});
-	ImGui::AlignTextToFramePadding();
-	ImGui::Text("Transformation");
-	ImGui::SameLine();
-	ImGui::RadioButton("Global", &local, 0);
-	ImGui::SameLine();
-	ImGui::RadioButton("Relative", &local, 1);
-	ImGui::SameLine();
-	ImGui::Checkbox("Show Matrix", &showMatrix);
-	heightTransformation = ImGui::GetTextLineHeightWithSpacing() * (showMatrix ? 10.5f : 6);
-	/*ImGui::BeginChild("###Transformation", {0, heightTransformation}, true);
-	{
-		glm::mat4 const& matrix = local ? getLocalTransformation() : getGlobalTransformation();
-		if(showMatrix)
-		{
-			ImGui::BeginChild("###Matrix", {0, ImGui::GetTextLineHeightWithSpacing() * 4}, false);
-			ImGui::Columns(4, nullptr, false);
-			for(int row = 0; row < 4; row++)
-			{
-				for(int col = 0; col < 4; col++)
-				{
-					ImGui::Text("%.2f", matrix[col][row]);
-					ImGui::NextColumn();
-				}
-			}
-			ImGui::Columns(1);
-			ImGui::EndChild();
-			ImGui::Separator();
-		}
-
-		auto[globalTranslation, globalRotation, globalScale] = decomposeTransformation(getGlobalTransformation());
-		float availWidth = ImGui::GetContentRegionAvailWidth() - ImGui::GetTextLineHeightWithSpacing() * 2;
-		ImGui::PushItemWidth(-1);
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("Tr");
-		ImGui::PushItemWidth(availWidth / 3.0);
-		for(int i = 0 ; i < 3; i++)
-		{
-			ImGui::PushID(i);
-			ImGui::SameLine();
-			if(local)
-				ImGui::DragFloat("###Tr", &translation[i], 0.01f);
-			else
-				ImGui::Text("%.3f", globalTranslation[i]);
-			ImGui::PopID();
-			if(i == 2)
-				ImGui::PopItemWidth();
-		}
-
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("Ro");
-		ImGui::SameLine();
-		ImGui::PushItemWidth(availWidth / 3.0);
-		for(int i = 0; i < 3; i++)
-		{
-			ImGui::PushID(i);
-			ImGui::SameLine();
-			if(local)
-				ImGui::DragFloat("###Ro", &localRotation[i], 1.0f);
-			else
-				ImGui::Text("%.3f", globalRotation[i]);
-
-			ImGui::PopID();
-			if(i == 2)
-				ImGui::PopItemWidth();
-		}
-
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("Sc");
-		ImGui::PushItemWidth(availWidth / 3.0);
-		for(int i = 0; i < 3; i++)
-		{
-			ImGui::PushID(i);
-			ImGui::SameLine();
-			if(local)
-				ImGui::DragFloat("###Sc", &scale[i], 0.01f);
-			else
-				ImGui::Text("%.3f", globalScale[i]);
-
-			if(local && ImGui::IsItemActive() && ImGui::GetIO().KeyShift)
-				scale = glm::vec3(scale[i]);
-			if(scale[i] == 0.0f)
-					scale[i] = 0.01f;
-			ImGui::PopID();
-			if(i == 2)
-				ImGui::PopItemWidth();
-		}
-		ImGui::PopItemWidth();
-
-		auto[bMin, bMax] = getBounds().getValues();
-		ImGui::Text("Bounds (%.1f, %.1f, %.1f) - (%.1f, %.1f, %.1f)", bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
-	}
-	ImGui::EndChild();
-	*/
 	if(!children.empty())
 	{
+		const float heightSubNodes = ImGui::GetTextLineHeightWithSpacing() * 5;
+		const float heightSpacing = ImGui::GetTextLineHeightWithSpacing() * 1;
+		ImGui::BeginChild("Node", {ImGui::GetTextLineHeightWithSpacing() * 22, heightSubNodes + heightSpacing});
 		ImGui::Columns(2, nullptr, false);
 		static int ctAllSubNodes = 0;
 		ImGui::Text("All Sub Nodes (%i)", ctAllSubNodes);
@@ -245,6 +149,6 @@ void Node::drawUI()
 			ImGui::BulletText(node->getName().data());
 		ImGui::EndChild();
 		ImGui::Columns(1);
+		ImGui::EndChild();
 	}
-	ImGui::EndChild();
 }

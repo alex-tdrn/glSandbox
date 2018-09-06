@@ -49,7 +49,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	Shader& currentShader = res::shaders[currentShaderType];
+	Shader& currentShader = res::shaders()[currentShaderType];
 	currentShader.use();
 	currentShader.set("screenTexture", 0);
 
@@ -82,8 +82,8 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glDisable(GL_CULL_FACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		res::shaders[res::ShaderType::gammaHDR].use();
-		res::shaders[res::ShaderType::gammaHDR].set("screenTexture", 0);
+		res::shaders()[res::ShaderType::gammaHDR].use();
+		res::shaders()[res::ShaderType::gammaHDR].set("screenTexture", 0);
 		/*if(settings::rendering::gammaCorrection)
 			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
 		else

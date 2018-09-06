@@ -162,7 +162,7 @@ void Renderer::render()
 	auto const& pointLights = scene.getPointLights();
 
 	camera->use();
-	res::shaders[res::ShaderType::light].use();
+	res::shaders()[res::ShaderType::light].use();
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
 		{
@@ -171,15 +171,15 @@ void Renderer::render()
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, light.getPosition());
 			model = glm::scale(model, glm::vec3{0.2f});
-			res::shaders[res::ShaderType::light].set("model", model);
-			res::shaders[res::ShaderType::light].set("lightColor", light.getColor() * light.getIntensity());
+			res::shaders()[res::ShaderType::light].set("model", model);
+			res::shaders()[res::ShaderType::light].set("lightColor", light.getColor() * light.getIntensity());
 			res::meshes::box()->use();
 		}
 	};
 	drawLights(pointLights);
 	drawLights(spotLights);
 
-	Shader& activeShader = res::shaders[shading.current];
+	Shader& activeShader = res::shaders()[shading.current];
 	activeShader.use();
 	glm::mat4 viewMatrix = camera->getViewMatrix();
 	switch(shading.current)
@@ -270,17 +270,17 @@ void Renderer::render()
 			activeShader.set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 			if(shading.debugging.normals.showLines)
 			{
-				res::shaders[res::ShaderType::debugNormalsShowLines].use();
-				res::shaders[res::ShaderType::debugNormalsShowLines].set("lineLength", shading.debugging.normals.lineLength);
-				res::shaders[res::ShaderType::debugNormalsShowLines].set("color", shading.debugging.normals.lineColor);
-				res::shaders[res::ShaderType::debugNormalsShowLines].set("viewSpace", shading.debugging.normals.viewSpace);
-				res::shaders[res::ShaderType::debugNormalsShowLines].set("faceNormals", shading.debugging.normals.faceNormals);
-				res::shaders[res::ShaderType::debugNormalsShowLines].set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
+				res::shaders()[res::ShaderType::debugNormalsShowLines].use();
+				res::shaders()[res::ShaderType::debugNormalsShowLines].set("lineLength", shading.debugging.normals.lineLength);
+				res::shaders()[res::ShaderType::debugNormalsShowLines].set("color", shading.debugging.normals.lineColor);
+				res::shaders()[res::ShaderType::debugNormalsShowLines].set("viewSpace", shading.debugging.normals.viewSpace);
+				res::shaders()[res::ShaderType::debugNormalsShowLines].set("faceNormals", shading.debugging.normals.faceNormals);
+				res::shaders()[res::ShaderType::debugNormalsShowLines].set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 				for(auto const& prop : props)
 				{
 					if(prop->isEnabled())
 					{
-						res::shaders[res::ShaderType::debugNormalsShowLines].set("model", prop->getGlobalTransformation());
+						res::shaders()[res::ShaderType::debugNormalsShowLines].set("model", prop->getGlobalTransformation());
 						prop->getMesh().use();
 					}
 				}
@@ -288,7 +288,7 @@ void Renderer::render()
 			}
 			break;
 	}
-	
+
 	if(highlighting.enabled)
 	{
 		if(highlighting.overlay)
@@ -299,13 +299,13 @@ void Renderer::render()
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		}
-		res::shaders[res::ShaderType::highlighting].use();
-		res::shaders[res::ShaderType::highlighting].set("color", highlighting.color);
+		res::shaders()[res::ShaderType::highlighting].use();
+		res::shaders()[res::ShaderType::highlighting].set("color", highlighting.color);
 		for(auto const& prop : props)
 		{
 			if(prop->isHighlighted())
 			{
-				res::shaders[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
+				res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
 				prop->getMesh().use();
 			}
 		}
@@ -326,7 +326,7 @@ void Renderer::render()
 			activeShader.set("material.diffuseMap", 1);
 			activeShader.set("material.hasSpecularMap", false);
 			activeShader.set("material.hasOpacityMap", false);
-			res::textures::placeholder.use(1);
+			res::textures::placeholder().use(1);
 			prop->getMesh().use();
 		}
 
@@ -338,8 +338,8 @@ void Renderer::render()
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		skybox->use();
-		resources::shaders::skybox.use();
-		resources::shaders::skybox.set("skybox", 0);
+		resources::shaders()::skybox.use();
+		resources::shaders()::skybox.set("skybox", 0);
 		glBindVertexArray(resources::boxVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}*/

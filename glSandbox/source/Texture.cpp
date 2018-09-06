@@ -94,8 +94,8 @@ void Texture::use(int location) const
 			initialize(location);
 		else
 		{
-			if(this != &res::textures::placeholder)
-				res::textures::placeholder.use(location);
+			if(this != &res::textures::placeholder())
+				res::textures::placeholder().use(location);
 			return;
 		}
 	}

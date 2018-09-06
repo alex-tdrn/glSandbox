@@ -11,7 +11,6 @@ class Camera : public Transformed<Translation, Rotation>
 private:
 	Name<Camera> name{"camera"};
 	bool projectionOrtho = false;
-	bool orbital = true;
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 	float fov = 45.0f;
@@ -32,7 +31,6 @@ public:
 	float getNearPlane() const;
 	float getFarPlane() const;
 	void move(glm::vec3 amount);
-	void rotate(float yaw, float pitch);
 	void drawUI() override;
 
 };

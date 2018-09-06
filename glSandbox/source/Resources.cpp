@@ -8,6 +8,14 @@
 #include <algorithm>
 #include <filesystem>
 
+
+Texture& res::textures::placeholder()
+{
+	static Texture placeholder("textures/placeholder.png", true);
+	return placeholder;
+	
+}
+
 static std::vector<std::shared_ptr<Mesh>> meshes;
 
 std::vector<std::shared_ptr<Mesh>> res::meshes::getAll()
@@ -308,61 +316,61 @@ void res::loadShaders()
 		switch(i)
 		{
 			case ShaderType::blinn_phong:
-				shaders.emplace_back("shaders/phong.vert", "shaders/blinn-phong.frag");
+				shaders().emplace_back("shaders/phong.vert", "shaders/blinn-phong.frag");
 				break;
 			case ShaderType::phong:
-				shaders.emplace_back("shaders/phong.vert", "shaders/phong.frag");
+				shaders().emplace_back("shaders/phong.vert", "shaders/phong.frag");
 				break;
 			case ShaderType::gouraud:
-				shaders.emplace_back("shaders/gouraud.vert", "shaders/gouraud.frag");
+				shaders().emplace_back("shaders/gouraud.vert", "shaders/gouraud.frag");
 				break;
 			case ShaderType::flat:
-				shaders.emplace_back("shaders/flat.vert", "shaders/flat.frag", "shaders/flat.geom");
+				shaders().emplace_back("shaders/flat.vert", "shaders/flat.frag", "shaders/flat.geom");
 				break;
 			case ShaderType::reflection:
-				shaders.emplace_back("shaders/reflection.vert", "shaders/reflection.frag");
+				shaders().emplace_back("shaders/reflection.vert", "shaders/reflection.frag");
 				break;
 			case ShaderType::refraction:
-				shaders.emplace_back("shaders/refraction.vert", "shaders/refraction.frag");
+				shaders().emplace_back("shaders/refraction.vert", "shaders/refraction.frag");
 				break;
 			case ShaderType::highlighting:
-				shaders.emplace_back("shaders/highlighting.vert", "shaders/highlighting.frag");
+				shaders().emplace_back("shaders/highlighting.vert", "shaders/highlighting.frag");
 				break;
 			case ShaderType::debugNormals:
-				shaders.emplace_back("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
+				shaders().emplace_back("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
 				break;
 			case ShaderType::debugNormalsShowLines:
-				shaders.emplace_back("shaders/debugNormalsShowLines.vert", "shaders/debugNormalsShowLines.frag", "shaders/debugNormalsShowLines.geom");
+				shaders().emplace_back("shaders/debugNormalsShowLines.vert", "shaders/debugNormalsShowLines.frag", "shaders/debugNormalsShowLines.geom");
 				break;
 			case ShaderType::debugTexCoords:
-				shaders.emplace_back("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
+				shaders().emplace_back("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
 				break;
 			case ShaderType::debugDepthBuffer:
-				shaders.emplace_back("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
+				shaders().emplace_back("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
 				break;
 			case ShaderType::light:
-				shaders.emplace_back("shaders/light.vert", "shaders/light.frag");
+				shaders().emplace_back("shaders/light.vert", "shaders/light.frag");
 				break;
 			case ShaderType::skybox:
-				shaders.emplace_back("shaders/skybox.vert", "shaders/skybox.frag");
+				shaders().emplace_back("shaders/skybox.vert", "shaders/skybox.frag");
 				break;
 			case ShaderType::gammaHDR:
-				shaders.emplace_back("shaders/pp.vert", "shaders/ppGammaHDR.frag");
+				shaders().emplace_back("shaders/pp.vert", "shaders/ppGammaHDR.frag");
 				break;
 			case ShaderType::passthrough:
-				shaders.emplace_back("shaders/pp.vert", "shaders/ppPassthrough.frag");
+				shaders().emplace_back("shaders/pp.vert", "shaders/ppPassthrough.frag");
 				break;
 			case ShaderType::grayscale:
-				shaders.emplace_back("shaders/pp.vert", "shaders/ppBW.frag");
+				shaders().emplace_back("shaders/pp.vert", "shaders/ppBW.frag");
 				break;
 			case ShaderType::chromaticAberration:
-				shaders.emplace_back("shaders/pp.vert", "shaders/ppChromaticAberration.frag");
+				shaders().emplace_back("shaders/pp.vert", "shaders/ppChromaticAberration.frag");
 				break;
 			case ShaderType::invert:
-				shaders.emplace_back("shaders/pp.vert", "shaders/ppInvert.frag");
+				shaders().emplace_back("shaders/pp.vert", "shaders/ppInvert.frag");
 				break;
 			case ShaderType::convolution:
-				shaders.emplace_back("shaders/pp.vert", "shaders/ppConvolution.frag");
+				shaders().emplace_back("shaders/pp.vert", "shaders/ppConvolution.frag");
 				break;
 			default:
 				assert(false);//means we forgot to add a shader
@@ -373,7 +381,7 @@ void res::loadShaders()
 void res::reloadShaders()
 {
 	for(int i = 0; i < ShaderType::END; i++)
-		shaders[i].reload();
+		shaders()[i].reload();
 }
 
 void drawImportWindow(bool *open)
@@ -516,3 +524,4 @@ Scene& res::importGLTF(std::string_view const filename)
 	meshes::add(std::move(asset.meshes));
 	return *ret;
 }
+

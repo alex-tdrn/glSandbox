@@ -26,24 +26,27 @@ namespace res
 
 	}
 
-	inline std::vector<Shader> shaders;
+	inline std::vector<Shader>& shaders()
+	{
+		static std::vector<Shader> _shaders;
+		return _shaders;
+	}
 	namespace textures
 	{
-		inline Texture placeholder("textures/placeholder.png", true);
-
+		Texture& placeholder();
 	}
 	namespace cubemaps
 	{
-		inline Cubemap skybox("skybox", {
-			"cubemaps/skybox/right.jpg", "cubemaps/skybox/left.jpg",
-			"cubemaps/skybox/top.jpg", "cubemaps/skybox/bottom.jpg",
-			"cubemaps/skybox/front.jpg", "cubemaps/skybox/back.jpg"
-			});
-		inline Cubemap mp_blizzard("mp_blizzard", {
-			"cubemaps/mp_blizzard/blizzard_rt.tga", "cubemaps/mp_blizzard/blizzard_lf.tga",
-			"cubemaps/mp_blizzard/blizzard_up.tga", "cubemaps/mp_blizzard/blizzard_dn.tga",
-			"cubemaps/mp_blizzard/blizzard_ft.tga", "cubemaps/mp_blizzard/blizzard_bk.tga"
-			});
+		//inline Cubemap skybox("skybox", {
+		//	"cubemaps/skybox/right.jpg", "cubemaps/skybox/left.jpg",
+		//	"cubemaps/skybox/top.jpg", "cubemaps/skybox/bottom.jpg",
+		//	"cubemaps/skybox/front.jpg", "cubemaps/skybox/back.jpg"
+		//	});
+		//inline Cubemap mp_blizzard("mp_blizzard", {
+		//	"cubemaps/mp_blizzard/blizzard_rt.tga", "cubemaps/mp_blizzard/blizzard_lf.tga",
+		//	"cubemaps/mp_blizzard/blizzard_up.tga", "cubemaps/mp_blizzard/blizzard_dn.tga",
+		//	"cubemaps/mp_blizzard/blizzard_ft.tga", "cubemaps/mp_blizzard/blizzard_bk.tga"
+		//	});
 
 	}
 

@@ -26,6 +26,7 @@ private:
 
 public:
 	void use() const;
+	void setName(std::string const& name) override;
 	std::string const& getName() const override;
 	glm::mat4 getViewMatrix() const;
 	float getNearPlane() const;

@@ -20,6 +20,7 @@ public:
 public:
 	Mesh& getMesh() const;
 	Bounds getBounds() const override;
+	void setName(std::string const& name) override;
 	std::string const& getName() const override;
 	void drawUI() override;
 

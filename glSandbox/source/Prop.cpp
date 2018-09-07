@@ -23,6 +23,11 @@ Bounds Prop::getBounds() const
 	return mesh->getBounds() * getGlobalTransformation();
 }
 
+void Prop::setName(std::string const& name)
+{
+	this->name.set(name);
+}
+
 std::string const& Prop::getName() const
 {
 	return name.get();

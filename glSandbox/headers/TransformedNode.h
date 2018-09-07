@@ -201,7 +201,23 @@ public:
 		if(parent == nullptr)
 			return getLocalTransformation();
 		else
-			return parent->getGlobalTransformation() * getLocalTransformation();
+		{
+			glm::mat4 transformation = parent->getGlobalTransformation();
+
+			if constexpr(!isTransformUsed<Translation>::value || !isTransformUsed<Rotation>::value || !isTransformUsed<Scale>::value)
+			{
+				auto[t, r, s] = decomposeTransformation(transformation);
+				transformation = glm::mat4{1.0f};
+				if constexpr(isTransformUsed<Translation>::value)
+					transformation *= glm::translate(glm::mat4{1.0f}, t);
+				if constexpr(isTransformUsed<Rotation>::value)
+					transformation *= glm::mat4_cast(r);
+				if constexpr(isTransformUsed<Scale>::value)
+					transformation *= glm::scale(glm::mat4{1.0f}, s);
+			}
+
+			return transformation * getLocalTransformation();
+		}
 	}
 
 	template<typename Dummy = void>
@@ -223,7 +239,7 @@ public:
 		if constexpr(isTransformUsed<Translation>::value)
 		{
 			ImGui::Text("Global Translation");
-			ImGui::Text("%.2f, %.2f, %.2f", globalTranslation[0], globalTranslation[1], globalTranslation[2]);
+			ImGui::Text("%.3f, %.3f, %.3f", globalTranslation[0], globalTranslation[1], globalTranslation[2]);
 
 			ImGui::Text("Local Translation");
 			glm::vec3 localTranslation = static_cast<Translation*>(this)->getLocalTranslation();
@@ -243,19 +259,19 @@ public:
 		if constexpr(isTransformUsed<Rotation>::value)
 		{
 			ImGui::Text("Global Rotation (Quaternion)");
-			ImGui::Text("%.2f, %.2f, %.2f, %.2f", globalRotation[0], globalRotation[1], globalRotation[2], globalRotation[3]);
+			ImGui::Text("%.3f, %.3f, %.3f, %.3f", globalRotation[0], globalRotation[1], globalRotation[2], globalRotation[3]);
 
 			ImGui::Text("Global Rotation (Euler)");
 			glm::vec3 globalRotationEuler = glm::degrees(glm::eulerAngles(globalRotation));
-			ImGui::Text("%.2f, %.2f, %.2f", globalRotationEuler[0], globalRotationEuler[1], globalRotationEuler[2]);
+			ImGui::Text("%.3f, %.3f, %.3f", globalRotationEuler[0], globalRotationEuler[1], globalRotationEuler[2]);
 
 			ImGui::Text("Local Rotation (Quaternion)");
 			glm::quat localRotation = static_cast<Rotation*>(this)->getLocalRotation();
-			ImGui::Text("%.2f, %.2f, %.2f, %.2f", localRotation[0], localRotation[1], localRotation[2], localRotation[3]);
+			ImGui::Text("%.3f, %.3f, %.3f, %.3f", localRotation[0], localRotation[1], localRotation[2], localRotation[3]);
 
 			ImGui::Text("Local Rotation (Euler)");
 			glm::vec3 localRotationEuler = glm::degrees(glm::eulerAngles(localRotation));
-			ImGui::Text("%.2f, %.2f, %.2f", localRotationEuler[0], localRotationEuler[1], localRotationEuler[2]);
+			ImGui::Text("%.3f, %.3f, %.3f", localRotationEuler[0], localRotationEuler[1], localRotationEuler[2]);
 
 			static bool rotationStyleOrbital = false;
 			static float rotationDistance = 1.0f;
@@ -297,7 +313,7 @@ public:
 		if constexpr(isTransformUsed<Scale>::value)
 		{
 			ImGui::Text("Global Scale");
-			ImGui::Text("%.2f, %.2f, %.2f", globalScale[0], globalScale[1], globalScale[2]);
+			ImGui::Text("%.3f, %.3f, %.3f", globalScale[0], globalScale[1], globalScale[2]);
 
 			ImGui::Text("Local Scale");
 			glm::vec3 localScale = static_cast<Scale*>(this)->getLocalScale();

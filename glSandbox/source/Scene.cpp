@@ -98,7 +98,7 @@ void Scene::fitToIdealSize() const
 	float const scale = idealSize / currentSize;
 	glm::mat4 t = glm::translate(glm::mat4{1.0f}, translation);
 	glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
-	root->setLocalTransformation(s * t * glm::mat4(1.0f));// root->getGlobalTransformation());
+	root->setLocalTransformation(s * t * root->getGlobalTransformation());
 }
 
 void Scene::drawUI()

@@ -59,6 +59,8 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	{
 		n = std::make_unique<TransformedNode>();
 	}
+	if(!node.name.empty())
+		n->setName(node.name);
 	glm::mat4 transformation{1.0f};
 	for(int row = 0; row < 4; row++)
 	{

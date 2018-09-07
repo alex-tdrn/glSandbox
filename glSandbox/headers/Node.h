@@ -38,6 +38,7 @@ private:
 	std::unique_ptr<Node> releaseChild(Node* node);
 
 public:
+	virtual void setName(std::string const& name);
 	virtual std::string const& getName() const;
 	Scene& getScene() const;
 	bool isEnabled() const;

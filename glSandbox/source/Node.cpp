@@ -52,6 +52,11 @@ std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
 	return children;
 }
 
+void Node::setName(std::string const& name)
+{
+	this->name.set(name);
+}
+
 std::string const& Node::getName() const
 {
 	return name.get();
@@ -88,10 +93,11 @@ void Node::disable()
 
 void Node::addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation)
 {
+	auto desiredGlobalTransformation = node->getGlobalTransformation();
 	node->parent = this;
 	node->setScene(scene);
 	if(retainGlobalTransformation)
-		node->setLocalTransformation(glm::inverse(getGlobalTransformation()) * node->getLocalTransformation());
+		node->setLocalTransformation(glm::inverse(glm::inverse(node->getLocalTransformation()) * node->getGlobalTransformation()) * desiredGlobalTransformation);
 	children.push_back(std::move(node));
 
 	invalidateSceneCache();

@@ -1,21 +1,9 @@
 #include "Lights.h"
 #include "imgui.h"
 #include "Util.h"
+#include "Shader.h"
 
-bool Light::isEnabled() const
-{
-	return enabled;
-}
-
-void Light::enable()
-{
-	enabled = true;
-}
-
-void Light::disable()
-{
-	enabled = false;
-}
+#include <GLFW\glfw3.h>
 
 void Light::setColor(glm::vec3 color)
 {
@@ -37,69 +25,83 @@ float Light::getIntensity() const
 	return intensity;
 }
 
-bool Light::drawUI()
+void Light::use(std::string const& prefix, Shader& shader, bool flash) const
 {
-	bool valueChanged = false;
-	valueChanged |= ImGui::Checkbox("Enabled", &enabled);
-	valueChanged |= ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs);
-	valueChanged |= ImGui::DragFloat("Intensity", &intensity, 0.1f);
-	return valueChanged;
+	shader.set(prefix + "color", getColor());
+	if(flash)
+		shader.set(prefix + "intensity", static_cast<float>(((std::sin(glfwGetTime()*10) + 1.0f) / 2.0f) * getIntensity()));
+	else
+		shader.set(prefix + "intensity", getIntensity());
 }
 
-void DirectionalLight::setOrientation(glm::vec3 orientation)
+void Light::drawUI()
 {
+	ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::DragFloat("Intensity", &intensity, 0.1f);
 }
 
-glm::vec3 const DirectionalLight::getDirection() const
+void DirectionalLight::setName(std::string const& name)
 {
-	return {};
+	this->name.set(name);
 }
 
-
-bool DirectionalLight::drawUI()
+std::string const& DirectionalLight::getName() const
 {
-	return true;
+	return name.get();
 }
 
-void PointLight::setPosition(glm::vec3 position)
+void DirectionalLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
 {
+	Light::use(prefix, shader, isHighlighted());
+	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
+	glm::vec3 direction = glm::mat3_cast(r) * glm::vec3{0.0f, 0.0f, -1.0f};
+	direction = glm::normalize(direction);
+	shader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(direction, 0.0f)));
 }
 
-glm::vec3 const& PointLight::getPosition() const
+void DirectionalLight::drawUI()
 {
-	return {};
+	Transformed<Rotation>::drawUI();
+	Light::drawUI();
 }
 
-bool PointLight::drawUI()
+void PointLight::setName(std::string const& name)
 {
-	return true;
-
+	this->name.set(name);
 }
 
-void SpotLight::setOrientation(glm::vec3 orientation)
+std::string const& PointLight::getName() const
 {
+	return name.get();
 }
 
-void SpotLight::setPosition(glm::vec3 position)
+void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
 {
+	Light::use(prefix, shader, isHighlighted());
+	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
+	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(t, 1.0f)));
+}
+
+void PointLight::drawUI()
+{
+	Transformed<Translation>::drawUI();
+	Light::drawUI();
+}
+
+void SpotLight::setName(std::string const& name)
+{
+	this->name.set(name);
+}
+
+std::string const& SpotLight::getName() const
+{
+	return name.get();
 }
 
 void SpotLight::setCutoff(float inner, float outer)
 {
 	this->innerCutoff = inner;
 	this->outerCutoff = outer;
-}
-
-glm::vec3 const& SpotLight::getPosition() const
-{
-	return {};
-
-}
-
-glm::vec3 const SpotLight::getDirection() const
-{
-	return {};
-
 }
 
 float SpotLight::getInnerCutoff() const
@@ -112,8 +114,22 @@ float SpotLight::getOuterCutoff() const
 	return outerCutoff;
 }
 
-bool SpotLight::drawUI()
+void SpotLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
 {
-	return true;
+	Light::use(prefix, shader, isHighlighted());
+	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
+	glm::vec3 direction = glm::mat3_cast(r) * glm::vec3{0.0f, 0.0f, -1.0f};
+	direction = glm::normalize(direction);
+	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4{t, 1.0f}));
+	shader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4{direction, 0.0f}));
+	shader.set(prefix + "innerCutoff", glm::cos(glm::radians(getInnerCutoff())));
+	shader.set(prefix + "outerCutoff", glm::cos(glm::radians(getOuterCutoff())));
+}
 
+void SpotLight::drawUI()
+{
+	Transformed<Translation, Rotation>::drawUI();
+	Light::drawUI();
+	ImGui::DragFloat("Inner Cutoff", &innerCutoff, 0.1f);
+	ImGui::DragFloat("Outer Cutoff", &outerCutoff, 0.1f);
 }

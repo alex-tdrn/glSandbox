@@ -157,22 +157,19 @@ void Renderer::render()
 	glClearColor(scene.getBackground().r, scene.getBackground().g, scene.getBackground().b, 1.0f);
 
 	auto const& props = scene.getAll<Prop>();
-	auto const& directionalLights = scene.getDirectionalLights();
-	auto const& spotLights = scene.getSpotLights();
-	auto const& pointLights = scene.getPointLights();
+	auto const& directionalLights = scene.getAll<DirectionalLight>();
+	auto const& spotLights = scene.getAll<SpotLight>();
+	auto const& pointLights = scene.getAll<PointLight>();
 
 	camera->use();
 	res::shaders()[res::ShaderType::light].use();
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
 		{
-			if(!light.isEnabled())
+			if(!light->isEnabled())
 				continue;
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, light.getPosition());
-			model = glm::scale(model, glm::vec3{0.2f});
-			res::shaders()[res::ShaderType::light].set("model", model);
-			res::shaders()[res::ShaderType::light].set("lightColor", light.getColor() * light.getIntensity());
+			res::shaders()[res::ShaderType::light].set("model", light->getGlobalTransformation());
+			res::shaders()[res::ShaderType::light].set("lightColor", light->getColor() * light->getIntensity());
 			res::meshes::box()->use();
 		}
 	};
@@ -188,6 +185,7 @@ void Renderer::render()
 		case res::ShaderType::phong:
 		case res::ShaderType::gouraud:
 		case res::ShaderType::flat:
+		{
 			activeShader.set("material.overrideDiffuse", shading.lighting.override.diffuse);
 			activeShader.set("material.overrideSpecular", shading.lighting.override.specular);
 			activeShader.set("material.overrideDiffuseColor", shading.lighting.override.diffuseColor);
@@ -195,55 +193,23 @@ void Renderer::render()
 			activeShader.set("ambientStrength", shading.lighting.ambientStrength);
 			activeShader.set("material.shininess", shading.lighting.shininess);
 			activeShader.set("ambientColor", scene.getBackground());
-			//directional lights
-			{
+			auto useLights = [&viewMatrix, &activeShader](auto const& lights, std::string const& prefix1, std::string const& prefix2){
 				int enabledLights = 0;
-				for(int i = 0; i < directionalLights.size(); i++)
+				for(int i = 0; i < lights.size(); i++)
 				{
-					if(!directionalLights[i].isEnabled())
+					if(!lights[i]->isEnabled() && !lights[i]->isHighlighted())
 						continue;
-					std::string prefix = "dirLights[" + std::to_string(enabledLights) + "].";
-					activeShader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(directionalLights[i].getDirection(), 0.0f)));
-					activeShader.set(prefix + "color", directionalLights[i].getColor());
-					activeShader.set(prefix + "intensity", directionalLights[i].getIntensity());
+					std::string prefix = prefix1 + "[" + std::to_string(enabledLights) + "].";
+					lights[i]->use(prefix, viewMatrix, activeShader);
 					enabledLights++;
 				}
-				activeShader.set("nDirLights", enabledLights);
-			}
-			//point lights
-			{
-				int enabledLights = 0;
-				for(int i = 0; i < pointLights.size(); i++)
-				{
-					if(!pointLights[i].isEnabled())
-						continue;
-					std::string prefix = "pointLights[" + std::to_string(enabledLights) + "].";
-					activeShader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(pointLights[i].getPosition(), 1.0f)));
-					activeShader.set(prefix + "color", pointLights[i].getColor());
-					activeShader.set(prefix + "intensity", pointLights[i].getIntensity());
-					enabledLights++;
-				}
-				activeShader.set("nPointLights", enabledLights);
-			}
-			//spot lights
-			{
-				int enabledLights = 0;
-				for(int i = 0; i < spotLights.size(); i++)
-				{
-					if(!spotLights[i].isEnabled())
-						continue;
-					std::string prefix = "spotLights[" + std::to_string(enabledLights) + "].";
-					activeShader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(spotLights[i].getPosition(), 1.0f)));
-					activeShader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(spotLights[i].getDirection(), 0.0f)));
-					activeShader.set(prefix + "color", spotLights[i].getColor());
-					activeShader.set(prefix + "intensity", spotLights[i].getIntensity());
-					activeShader.set(prefix + "innerCutoff", glm::cos(glm::radians(spotLights[i].getInnerCutoff())));
-					activeShader.set(prefix + "outerCutoff", glm::cos(glm::radians(spotLights[i].getOuterCutoff())));
-					enabledLights++;
-				}
-				activeShader.set("nSpotLights", enabledLights);
-			}
+				activeShader.set(prefix2, enabledLights);
+			};
+			useLights(directionalLights, "dirLights", "nDirLights");
+			useLights(pointLights, "pointLights", "nPointLights");
+			useLights(spotLights, "spotLights", "nSpotLights");
 			break;
+		}
 		case res::ShaderType::refraction:
 			activeShader.set("perChannel", shading.refraction.perChannel);
 			activeShader.set("n1", shading.refraction.n1);

@@ -76,7 +76,7 @@ public:
 class Rotation
 {
 private:
-	glm::quat localRotation{};
+	glm::quat localRotation{glm::radians(glm::vec3{0.0f})};
 	bool limitPitch = false;
 	float localPitch = 0.0f;
 
@@ -87,14 +87,14 @@ public:
 public:
 	void setLocalRotation(glm::quat localRotation)
 	{
-		localPitch = glm::eulerAngles(localRotation).x;
+		localPitch = glm::degrees(glm::eulerAngles(localRotation)).x;
 		this->localRotation = localRotation;
 	}
 
 	void setLocalRotation(glm::vec3 localRotation)
 	{
 		localPitch = localRotation.x;
-		this->localRotation = glm::quat(localRotation);
+		this->localRotation = glm::quat(glm::radians(localRotation));
 	}
 
 	glm::quat getLocalRotation() const
@@ -204,7 +204,7 @@ public:
 		{
 			glm::mat4 transformation = parent->getGlobalTransformation();
 
-			if constexpr(!isTransformUsed<Translation>::value || !isTransformUsed<Rotation>::value || !isTransformUsed<Scale>::value)
+			/*if constexpr(!isTransformUsed<Translation>::value || !isTransformUsed<Rotation>::value || !isTransformUsed<Scale>::value)
 			{
 				auto[t, r, s] = decomposeTransformation(transformation);
 				transformation = glm::mat4{1.0f};
@@ -214,7 +214,7 @@ public:
 					transformation *= glm::mat4_cast(r);
 				if constexpr(isTransformUsed<Scale>::value)
 					transformation *= glm::scale(glm::mat4{1.0f}, s);
-			}
+			}*/
 
 			return transformation * getLocalTransformation();
 		}
@@ -224,9 +224,9 @@ public:
 	std::enable_if_t<isTransformUsed<Translation>::value && isTransformUsed<Rotation>::value, Dummy>
 		rotateAroundPointInFront(float const distance, float const yawAmount, float const pitchAmount)
 	{
-		glm::vec3 pivot = glm::vec4{0.0f, 0.0f, distance, 1.0f} *glm::inverse(static_cast<Rotation*>(this)->getLocalRotationMatrix());
+		glm::vec3 pivot = static_cast<Rotation*>(this)->getLocalRotationMatrix() * glm::vec4{0.0f, 0.0f, distance, 1.0f};
 		static_cast<Rotation*>(this)->rotate(yawAmount, pitchAmount);
-		glm::vec3 rotatedPivot = glm::vec4{0.0f, 0.0f, distance, 1.0f} *glm::inverse(static_cast<Rotation*>(this)->getLocalRotationMatrix());
+		glm::vec3 rotatedPivot = static_cast<Rotation*>(this)->getLocalRotationMatrix() * glm::vec4{0.0f, 0.0f, distance, 1.0f};
 		glm::vec3 diff = rotatedPivot - pivot;
 		static_cast<Translation*>(this)->translate(diff);
 	}

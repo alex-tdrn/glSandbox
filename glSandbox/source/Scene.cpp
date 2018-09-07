@@ -11,6 +11,7 @@ Scene::Scene()
 {
 	root->setScene(this);
 	root->addChild(std::make_unique<Camera>(), true);
+	root->addChild(std::make_unique<DirectionalLight>(), true);
 }
 
 Scene::Scene(Scene &&other)
@@ -19,6 +20,8 @@ Scene::Scene(Scene &&other)
 	root->setScene(this);
 	if(getAll<Camera>().empty())
 		root->addChild(std::make_unique<Camera>(), true);
+	if(getAll<Light>().empty())
+		root->addChild(std::make_unique<DirectionalLight>(), true);
 }
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
@@ -27,6 +30,8 @@ Scene::Scene(std::unique_ptr<Node>&& root)
 	fitToIdealSize();
 	if(getAll<Camera>().empty())
 		this->root->addChild(std::make_unique<Camera>(), true);
+	if(getAll<Light>().empty())
+		this->root->addChild(std::make_unique<DirectionalLight>(), true);
 }
 
 void Scene::updateCache() const
@@ -34,6 +39,9 @@ void Scene::updateCache() const
 	cache.transformedNodes.clear();
 	cache.cameras.clear();
 	cache.props.clear();
+	cache.directionalLights.clear();
+	cache.pointLights.clear();
+	cache.spotLights.clear();
 	for(auto& node : root->getChildren())
 	{
 		node.get()->recursive([&](Node* node){
@@ -43,6 +51,12 @@ void Scene::updateCache() const
 				cache.cameras.push_back(camera);
 			else if(auto transformedNode = dynamic_cast<TransformedNode*>(node); transformedNode)
 				cache.transformedNodes.push_back(transformedNode);
+			else if(auto light = dynamic_cast<DirectionalLight*>(node); light)
+				cache.directionalLights.push_back(light);
+			else if(auto light = dynamic_cast<PointLight*>(node); light)
+				cache.pointLights.push_back(light);
+			else if(auto light = dynamic_cast<SpotLight*>(node); light)
+				cache.spotLights.push_back(light);
 		});
 	}
 	cache.dirty = false;
@@ -56,21 +70,6 @@ void Scene::cacheOutdated() const
 Node* Scene::getRoot() const
 {
 	return root.get();
-}
-
-std::vector<DirectionalLight> const& Scene::getDirectionalLights() const
-{
-	return directionalLights;
-}
-
-std::vector<PointLight> const& Scene::getPointLights() const
-{
-	return pointLights;
-}
-
-std::vector<SpotLight> const& Scene::getSpotLights() const
-{
-	return spotLights;
 }
 
 glm::vec3 const& Scene::getBackground() const
@@ -160,6 +159,16 @@ void Scene::drawUI()
 				node->addChild(std::make_unique<Camera>());
 			if(ImGui::MenuItem("Prop"))
 				node->addChild(std::make_unique<Prop>());
+			if(ImGui::BeginMenu("Light..."))
+			{
+				if(ImGui::MenuItem("Directional Light"))
+					node->addChild(std::make_unique<DirectionalLight>());
+				if(ImGui::MenuItem("Point Light"))
+					node->addChild(std::make_unique<PointLight>());
+				if(ImGui::MenuItem("Spot Light"))
+					node->addChild(std::make_unique<SpotLight>());
+				ImGui::EndMenu();
+			}
 			ImGui::EndMenu();
 		}
 	};
@@ -315,15 +324,19 @@ void Scene::drawUI()
 
 		ImGui::Text("Directional Lights");
 		ImGui::BeginChild("###Directional Lights", {0, scrollAreaHeight}, true);
-		ImGui::EndChild();
-
-		ImGui::Text("Spot Lights");
-		ImGui::BeginChild("###Spot Lights", {0, scrollAreaHeight}, true);
+		drawList(getAll<DirectionalLight>());
 		ImGui::EndChild();
 
 		ImGui::Text("Point Lights");
 		ImGui::BeginChild("###Point Lights", {0, scrollAreaHeight}, true);
+		drawList(getAll<PointLight>());
 		ImGui::EndChild();
+
+		ImGui::Text("Spot Lights");
+		ImGui::BeginChild("###Spot Lights", {0, scrollAreaHeight}, true);
+		drawList(getAll<SpotLight>());
+		ImGui::EndChild();
+
 	}
 	for(auto node : nodesMarkedForHighlighting)
 		node->setHighlighted(true);

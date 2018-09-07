@@ -22,11 +22,11 @@ private:
 		std::vector<TransformedNode*> transformedNodes;
 		std::vector<Camera*> cameras;
 		std::vector<Prop*> props;
+		std::vector<DirectionalLight*> directionalLights;
+		std::vector<PointLight*> pointLights;
+		std::vector<SpotLight*> spotLights;
 	}cache;
 
-	std::vector<DirectionalLight> directionalLights{[](){DirectionalLight light; light.setOrientation({-30, -30, 0}); return light; } ()};
-	std::vector<PointLight> pointLights;
-	std::vector<SpotLight> spotLights;
 	//7Cubemap* skybox = nullptr;
 
 public:
@@ -51,9 +51,6 @@ public:
 	std::vector<T*> const& getAll() const;
 	template<typename T>
 	std::vector<T*> getAllEnabled() const;
-	std::vector<DirectionalLight> const& getDirectionalLights() const;
-	std::vector<PointLight> const& getPointLights() const;
-	std::vector<SpotLight> const& getSpotLights() const;
 	glm::vec3 const& getBackground() const;
 	void fitToIdealSize() const;
 	void drawUI();
@@ -71,6 +68,21 @@ std::vector<T*> const& Scene::getAll() const
 		return cache.cameras;
 	else if constexpr(std::is_same<T, Prop>())
 		return cache.props;
+	else if constexpr(std::is_same<T, DirectionalLight>())
+		return cache.directionalLights;
+	else if constexpr(std::is_same<T, PointLight>())
+		return cache.pointLights;
+	else if constexpr(std::is_same<T, SpotLight>())
+		return cache.spotLights;
+	else if constexpr(std::is_same<T, Light>())
+	{
+		std::vector<Light*> ret;
+		ret.reserve(cache.directionalLights.size() + cache.pointLights.size() + cache.spotLights.size());
+		std::copy(cache.directionalLights.begin(), cache.directionalLights.end(), std::back_inserter(ret));
+		std::copy(cache.pointLights.begin(), cache.pointLights.end(), std::back_inserter(ret));
+		std::copy(cache.spotLights.begin(), cache.spotLights.end(), std::back_inserter(ret));
+		return ret;
+	}
 }
 
 template<typename T>

@@ -204,7 +204,7 @@ public:
 		{
 			glm::mat4 transformation = parent->getGlobalTransformation();
 
-			/*if constexpr(!isTransformUsed<Translation>::value || !isTransformUsed<Rotation>::value || !isTransformUsed<Scale>::value)
+			if constexpr(!isTransformUsed<Translation>::value || !isTransformUsed<Rotation>::value || !isTransformUsed<Scale>::value)
 			{
 				auto[t, r, s] = decomposeTransformation(transformation);
 				transformation = glm::mat4{1.0f};
@@ -214,7 +214,7 @@ public:
 					transformation *= glm::mat4_cast(r);
 				if constexpr(isTransformUsed<Scale>::value)
 					transformation *= glm::scale(glm::mat4{1.0f}, s);
-			}*/
+			}
 
 			return transformation * getLocalTransformation();
 		}

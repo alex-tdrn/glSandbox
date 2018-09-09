@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Scene.h"
 #include "Renderer.h"
+#include "Profiler.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -49,8 +50,9 @@ int main(int argc, char** argv)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifndef NDEBUG
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
+#endif
 	GLFWwindow* window = glfwCreateWindow(info::windowWidth, info::windowHeight, "glSandbox", nullptr, nullptr);
 	if(window == nullptr)
 	{
@@ -114,6 +116,7 @@ int main(int argc, char** argv)
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
+		profiler::recordFrame();
 	}
 
 	glfwTerminate();
@@ -126,7 +129,7 @@ void drawUI()
 	static bool drawResources = false;
 	static bool drawMainRenderer = false;
 	static bool drawPostprocessingSettings = false;
-	static bool drawStats = false;
+	static bool drawProfiler = true;
 	static bool drawImGuiDemo = false;
 	static std::deque<bool> drawRenderer;
 
@@ -157,8 +160,8 @@ void drawUI()
 					drawPostprocessingSettings = true;
 				ImGui::EndMenu();
 			}
-			if(ImGui::MenuItem("Stats"))
-				drawStats = true;
+			if(ImGui::MenuItem("Profiler"))
+				drawProfiler = true;
 			if(ImGui::BeginMenu("ImGui"))
 			{
 				if(ImGui::MenuItem("Demo"))
@@ -178,7 +181,7 @@ void drawUI()
 			settings::getAllRenderers()[i]->render();
 	}
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
-	info::drawUI(&drawStats);
+	profiler::drawUI(&drawProfiler);
 	if(drawImGuiDemo)
 		ImGui::ShowDemoWindow(&drawImGuiDemo);
 }

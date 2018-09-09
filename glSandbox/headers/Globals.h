@@ -17,8 +17,6 @@ namespace info
 	{
 		return float(windowWidth) / windowHeight;
 	}
-	inline bool rendering = false;
-	inline void drawUI(bool* open);
 }
 
 namespace settings
@@ -78,18 +76,5 @@ void settings::postprocessing::drawUI(bool* open)
 	if(removeIdx != -1)
 		steps().erase(steps().begin() + removeIdx);
 
-	ImGui::End();
-}
-
-void info::drawUI(bool* open)
-{
-	if(!*open)
-		return;
-	ImGui::Begin("Stats", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	ImGui::Text("Window size %i, %i", windowWidth, windowHeight);
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::Text("Renderer: ");
-	ImGui::SameLine();
-	ImGui::Text(rendering ? "active" : "waiting");
 	ImGui::End();
 }

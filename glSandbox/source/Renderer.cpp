@@ -372,8 +372,17 @@ void Renderer::drawUI(bool* open)
 		ImGui::Text("Samples");
 		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
-		if(ImGui::SliderInt("###Samples", &pipeline.samples, 0, 8))
+		static int samples = pipeline.samples;
+		ImGui::SliderInt("###Samples", &samples, 0, 8);
+		if(ImGui::IsItemDeactivatedAfterChange())
+		{
+			pipeline.samples = samples;
 			updateFramebuffers();
+		}
+		else if(!ImGui::IsItemActive())
+		{
+			samples = pipeline.samples;
+		}
 		ImGui::PopItemWidth();
 		ImGui::Columns(3, nullptr, true);
 		ImGui::Text("Polygon Mode");

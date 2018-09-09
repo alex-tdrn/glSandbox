@@ -39,6 +39,36 @@ Material::Material(std::string const name)
 {
 }
 
+std::string Material::mapTypeToString(Material::Maps mapType)
+{
+	switch(mapType)
+	{
+		case ambient:
+			return "Ambient";
+		case diffuse:
+			return "Diffuse";
+		case specular:
+			return "Specular";
+		case shininess:
+			return "Shininess";
+		case emission:
+			return "Emission";
+		case light:
+			return "Light";
+		case reflection:
+			return "Reflection";
+		case opacity:
+			return "Opacity";
+		case normal:
+			return "Normal";
+		case bump:
+			return "Bump";
+		case displacement:
+			return "Displacement";
+	}
+	return "Unknown Map Type";
+}
+
 void Material::setMap(int mapType, std::optional<Texture>&& map)
 {
 	maps[mapType] = std::move(map);

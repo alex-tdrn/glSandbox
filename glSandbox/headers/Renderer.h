@@ -1,6 +1,7 @@
 #pragma once
 #include "Named.h"
 #include "Resources.h"
+#include "Material.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -37,8 +38,9 @@ private:
 				lines,
 				both
 			};
-			Mode propMode = both;
+			Mode propMode = triangles;
 			Mode frustumMode = lines;
+			bool frustumTextured = false;
 			float lineWidth = 3.0f;
 			float pointSize = 2.0f;
 		}polygon;
@@ -54,7 +56,7 @@ private:
 		bool overlay = false;
 	}highlighting;
 	struct{
-		res::ShaderType current = res::ShaderType::blinn_phong;
+		res::ShaderType current = res::ShaderType::unlit;
 		struct
 		{
 			bool perChannel = false;
@@ -64,6 +66,11 @@ private:
 			glm::vec3 n2RGB{n2};
 		}refraction;
 		struct{
+			struct{
+				glm::vec3 surfaceColor{1.0f};
+				glm::vec3 lineColor{0.0f};
+				std::optional<Material::Maps> map = Material::Maps::diffuse;
+			}unlit;
 			struct{
 				bool diffuse = false;
 				bool specular = false;

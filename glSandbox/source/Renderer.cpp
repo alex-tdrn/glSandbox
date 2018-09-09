@@ -147,20 +147,24 @@ void Renderer::render()
 
 	sourceCamera->use();
 	glDisable(GL_CULL_FACE);
-	res::shaders()[res::ShaderType::light].use();
+	res::shaders()[res::ShaderType::unlit].use();
 	for(auto const& camera: sourceCameras)
 	{
 		if(sourceCamera == camera || !camera->isEnabled() || !camera->getVisualizeFrustum())
 			continue;
-		res::shaders()[res::ShaderType::light].set("model", glm::inverse(camera->getProjectionMatrix() * camera->getViewMatrix()));
+		res::shaders()[res::ShaderType::unlit].set("model", glm::inverse(camera->getProjectionMatrix() * camera->getViewMatrix()));
+		res::textures::placeholder().use(1);
 		if(pipeline.polygon.frustumMode != pipeline.polygon.lines)
 		{
-			res::shaders()[res::ShaderType::light].set("lightColor", glm::vec3{1.0f, 1.0f, 1.0f});
+			res::shaders()[res::ShaderType::unlit].set("material.hasMap", pipeline.polygon.frustumTextured);
+			res::shaders()[res::ShaderType::unlit].set("material.map", 1);
+			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{1.0f, 1.0f, 1.0f});
 			res::meshes::box()->use();
 		}
 		if(pipeline.polygon.frustumMode!= pipeline.polygon.triangles)
 		{
-			res::shaders()[res::ShaderType::light].set("lightColor", glm::vec3{0.0f, 0.0f, 0.0f});
+			res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
+			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
 			res::meshes::boxWireframe()->use();
 		}
 	}
@@ -176,8 +180,9 @@ void Renderer::render()
 		{
 			if(!light->isEnabled())
 				continue;
-			res::shaders()[res::ShaderType::light].set("model", light->getGlobalTransformation());
-			res::shaders()[res::ShaderType::light].set("lightColor", light->getColor() * light->getIntensity());
+			res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
+			res::shaders()[res::ShaderType::unlit].set("material.color", light->getColor() * light->getIntensity());
+			res::shaders()[res::ShaderType::unlit].set("model", light->getGlobalTransformation());
 			res::meshes::box()->use();
 		}
 	};
@@ -273,15 +278,15 @@ void Renderer::render()
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		}
-		res::shaders()[res::ShaderType::highlighting].use();
+		res::shaders()[res::ShaderType::unlit].use();
 		if(pipeline.polygon.propMode != pipeline.polygon.lines)
 		{
-			res::shaders()[res::ShaderType::highlighting].set("color", highlighting.color);
+			res::shaders()[res::ShaderType::unlit].set("material.color", highlighting.color);
 			for(auto const& prop : props)
 			{
 				if(prop->isHighlighted())
 				{
-					res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
+					res::shaders()[res::ShaderType::unlit].set("model", prop->getGlobalTransformation());
 					prop->getMesh().use();
 				}
 			}
@@ -289,12 +294,12 @@ void Renderer::render()
 		if(pipeline.polygon.propMode != pipeline.polygon.triangles)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			res::shaders()[res::ShaderType::highlighting].set("color", glm::vec3{1.0f - highlighting.color});
+			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{1.0f - highlighting.color});
 			for(auto const& prop : props)
 			{
 				if(prop->isHighlighted())
 				{
-					res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
+					res::shaders()[res::ShaderType::unlit].set("model", prop->getGlobalTransformation());
 					prop->getMesh().use();
 				}
 			}
@@ -308,18 +313,28 @@ void Renderer::render()
 	}
 
 	activeShader.use();
+	if(shading.current == res::ShaderType::unlit)
+	{
+		activeShader.set("material.hasMap", shading.lighting.unlit.map.has_value());
+		if(shading.lighting.unlit.map)
+			activeShader.set("material.map", *shading.lighting.unlit.map);
+		activeShader.set("material.color", shading.lighting.unlit.surfaceColor);
+	}
+	else
+	{
+		activeShader.set("material.hasDiffuseMap", true);
+		activeShader.set("material.diffuseMap", 1);
+		activeShader.set("material.hasSpecularMap", false);
+		activeShader.set("material.hasOpacityMap", false);
+	}
 	if(pipeline.polygon.propMode != pipeline.polygon.lines)
 	{
+		res::textures::placeholder().use(1);
 		for(auto const& prop : props)
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
 				activeShader.set("model", prop->getGlobalTransformation());
-				activeShader.set("material.hasDiffuseMap", true);
-				activeShader.set("material.diffuseMap", 1);
-				activeShader.set("material.hasSpecularMap", false);
-				activeShader.set("material.hasOpacityMap", false);
-				res::textures::placeholder().use(1);
 				prop->getMesh().use();
 			}
 		}
@@ -328,14 +343,15 @@ void Renderer::render()
 	if(pipeline.polygon.propMode != pipeline.polygon.triangles)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		res::shaders()[res::ShaderType::highlighting].use();
-		res::shaders()[res::ShaderType::highlighting].set("color", glm::vec3{0.0f});
+		res::shaders()[res::ShaderType::unlit].use();
+		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
+		res::shaders()[res::ShaderType::unlit].set("material.color", shading.lighting.unlit.lineColor);
 
 		for(auto const& prop : props)
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
-				res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
+				res::shaders()[res::ShaderType::unlit].set("model", prop->getGlobalTransformation());
 				prop->getMesh().use();
 			}
 		}
@@ -382,9 +398,13 @@ void Renderer::drawUI(bool* open)
 	ImGui::Text("Camera");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	if(ImGui::BeginCombo("###Camera", sourceCamera ? sourceCamera->getName().data() : "-"))
+	if(ImGui::BeginCombo("###Camera", sourceCamera ? sourceCamera->getName().data() : "None"))
 	{
 		int id = 0;
+		if(ImGui::Selectable("None"), sourceCamera == nullptr)
+			sourceCamera = nullptr;
+		if(sourceCamera == nullptr)
+			ImGui::SetItemDefaultFocus();
 		for(auto& s : res::scenes::getAll())
 		{
 			ImGui::Text(("Scene: " + s->name.get()).data());
@@ -447,6 +467,8 @@ void Renderer::drawUI(bool* open)
 		ImGui::RadioButton("Triangles", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.triangles);
 		ImGui::RadioButton("Lines", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.lines);
 		ImGui::RadioButton("Both", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.both);
+		if(pipeline.polygon.frustumMode != pipeline.polygon.lines)
+			ImGui::Checkbox("Textured", &pipeline.polygon.frustumTextured);
 		ImGui::PopID();
 		ImGui::NewLine();
 		ImGui::AlignTextToFramePadding();
@@ -484,6 +506,7 @@ void Renderer::drawUI(bool* open)
 	{
 		ImGui::Columns(3, nullptr, true);
 		ImGui::Text("Lighting");
+		ImGui::RadioButton("Unlit", reinterpret_cast<int*>(&shading.current), res::ShaderType::unlit);
 		ImGui::RadioButton("Blinn-Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::blinn_phong);
 		ImGui::RadioButton("Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::phong);
 		ImGui::RadioButton("Gouraud", reinterpret_cast<int*>(&shading.current), res::ShaderType::gouraud);
@@ -502,6 +525,28 @@ void Renderer::drawUI(bool* open)
 
 		switch(shading.current)
 		{
+			case res::ShaderType::unlit:
+				ImGui::Text("Map:");
+				if(ImGui::BeginCombo("###Map", shading.lighting.unlit.map ? Material::mapTypeToString(*shading.lighting.unlit.map).data() : "None"))
+				{
+					if(ImGui::Selectable("None", !shading.lighting.unlit.map))
+						shading.lighting.unlit.map = std::nullopt;
+					if(!shading.lighting.unlit.map)
+						ImGui::SetItemDefaultFocus();
+					for(int i = 0; i < Material::Maps::n; i++)
+					{
+						bool selected = shading.lighting.unlit.map && shading.lighting.unlit.map == i;
+						if(ImGui::Selectable(Material::mapTypeToString(Material::Maps(i)).data(), &selected))
+							shading.lighting.unlit.map = Material::Maps(i);
+						if(selected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+				if(!shading.lighting.unlit.map)
+					ImGui::ColorEdit3("Surface", &shading.lighting.unlit.surfaceColor.x, ImGuiColorEditFlags_NoInputs);
+				ImGui::ColorEdit3("Line", &shading.lighting.unlit.lineColor.x, ImGuiColorEditFlags_NoInputs);
+				break;
 			case res::ShaderType::blinn_phong:
 			case res::ShaderType::phong:
 			case res::ShaderType::gouraud:

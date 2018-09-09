@@ -52,18 +52,17 @@ namespace res
 
 	enum ShaderType
 	{
+		unlit,
 		blinn_phong,
 		phong,
 		gouraud,
 		flat,
 		reflection,
 		refraction,
-		highlighting,
 		debugNormals,
 		debugNormalsShowLines,
 		debugTexCoords,
 		debugDepthBuffer,
-		light,
 		skybox,
 		gammaHDR,
 		passthrough,

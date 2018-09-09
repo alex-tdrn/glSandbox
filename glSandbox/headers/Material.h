@@ -35,6 +35,7 @@ public:
 	Material(std::string const name = "Material#" + std::to_string(ct++));
 
 public:
+	static std::string mapTypeToString(Material::Maps mapType);
 	void setMap(int mapType, std::optional<Texture>&& map);
 	bool isInitialized() const;
 	std::string_view const getName() const;

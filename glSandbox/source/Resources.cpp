@@ -402,6 +402,9 @@ void res::loadShaders()
 	{
 		switch(i)
 		{
+			case ShaderType::unlit:
+				shaders().emplace_back("shaders/unlit.vert", "shaders/unlit.frag");
+				break;
 			case ShaderType::blinn_phong:
 				shaders().emplace_back("shaders/phong.vert", "shaders/blinn-phong.frag");
 				break;
@@ -420,9 +423,6 @@ void res::loadShaders()
 			case ShaderType::refraction:
 				shaders().emplace_back("shaders/refraction.vert", "shaders/refraction.frag");
 				break;
-			case ShaderType::highlighting:
-				shaders().emplace_back("shaders/highlighting.vert", "shaders/highlighting.frag");
-				break;
 			case ShaderType::debugNormals:
 				shaders().emplace_back("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
 				break;
@@ -434,9 +434,6 @@ void res::loadShaders()
 				break;
 			case ShaderType::debugDepthBuffer:
 				shaders().emplace_back("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
-				break;
-			case ShaderType::light:
-				shaders().emplace_back("shaders/light.vert", "shaders/light.frag");
 				break;
 			case ShaderType::skybox:
 				shaders().emplace_back("shaders/skybox.vert", "shaders/skybox.frag");

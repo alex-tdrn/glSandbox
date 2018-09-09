@@ -72,7 +72,7 @@
     <ClCompile Include="source\Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="headers\Profiler.cpp">
+    <ClCompile Include="source\Profiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -139,12 +139,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\light.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\light.frag">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\phong.vert">
       <Filter>shaders</Filter>
     </None>
@@ -238,10 +232,10 @@
     <None Include="shaders\blinn-phong.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\highlighting.vert">
+    <None Include="shaders\unlit.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\highlighting.frag">
+    <None Include="shaders\unlit.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

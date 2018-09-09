@@ -2,8 +2,8 @@
 #include "Lights.h"
 #include "Prop.h"
 
-Renderer::Renderer(Camera* camera)
-	:camera(camera)
+Renderer::Renderer(Camera* sourceCamera)
+	:sourceCamera(sourceCamera)
 {
 	glGenTextures(1, &multisampledColorbuffer);
 	glGenRenderbuffers(1, &multisampledRenderbuffer);
@@ -70,15 +70,15 @@ void Renderer::resizeViewport(int width, int height)
 	updateFramebuffers();
 }
 
-void Renderer::setCamera(Camera* camera)
+void Renderer::setCamera(Camera* sourceCamera)
 {
-	this->camera = camera;
+	this->sourceCamera = sourceCamera;
 	shouldRender();
 }
 
 Camera* Renderer::getCamera()
 {
-	return camera;
+	return sourceCamera;
 }
 
 void Renderer::shouldRender()
@@ -88,7 +88,7 @@ void Renderer::shouldRender()
 
 void Renderer::render()
 {
-	if(!camera)
+	if(!sourceCamera)
 		return;
 	if(explicitRendering)
 	{
@@ -130,39 +130,47 @@ void Renderer::render()
 	{
 		glDisable(GL_DEPTH_TEST);
 	}
-	if(pipeline.faceCulling)
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(pipeline.faceCullingMode);
-		glFrontFace(pipeline.faceCullingOrdering);
-	}
-	else
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	glPolygonMode(GL_FRONT_AND_BACK, pipeline.polygon.mode);
-	switch(pipeline.polygon.mode)
-	{
-		case GL_FILL:
-			break;
-		case GL_LINE:
-			glLineWidth(pipeline.polygon.lineWidth);
-			break;
-		case GL_POINT:
-			glPointSize(pipeline.polygon.pointSize);
-			break;
-	}
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glLineWidth(pipeline.polygon.lineWidth);
+	glPointSize(pipeline.polygon.pointSize);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	auto const& scene = camera->getScene();
+	auto const& scene = sourceCamera->getScene();
 	glClearColor(scene.getBackground().r, scene.getBackground().g, scene.getBackground().b, 1.0f);
 
 	auto const& props = scene.getAll<Prop>();
 	auto const& directionalLights = scene.getAll<DirectionalLight>();
 	auto const& spotLights = scene.getAll<SpotLight>();
 	auto const& pointLights = scene.getAll<PointLight>();
+	auto const& sourceCameras = scene.getAll<Camera>();
 
-	camera->use();
+	sourceCamera->use();
+	glDisable(GL_CULL_FACE);
 	res::shaders()[res::ShaderType::light].use();
+	for(auto const& camera: sourceCameras)
+	{
+		if(sourceCamera == camera || !camera->isEnabled() || !camera->getVisualizeFrustum())
+			continue;
+		res::shaders()[res::ShaderType::light].set("model", glm::inverse(camera->getProjectionMatrix() * camera->getViewMatrix()));
+		if(pipeline.polygon.frustumMode != pipeline.polygon.lines)
+		{
+			res::shaders()[res::ShaderType::light].set("lightColor", glm::vec3{1.0f, 1.0f, 1.0f});
+			res::meshes::box()->use();
+		}
+		if(pipeline.polygon.frustumMode!= pipeline.polygon.triangles)
+		{
+			res::shaders()[res::ShaderType::light].set("lightColor", glm::vec3{0.0f, 0.0f, 0.0f});
+			res::meshes::boxWireframe()->use();
+		}
+	}
+	if(pipeline.faceCulling)
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(pipeline.faceCullingMode);
+		glFrontFace(pipeline.faceCullingOrdering);
+	}
+
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
 		{
@@ -178,7 +186,7 @@ void Renderer::render()
 
 	Shader& activeShader = res::shaders()[shading.current];
 	activeShader.use();
-	glm::mat4 viewMatrix = camera->getViewMatrix();
+	glm::mat4 viewMatrix = sourceCamera->getViewMatrix();
 	switch(shading.current)
 	{
 		case res::ShaderType::blinn_phong:
@@ -222,13 +230,13 @@ void Renderer::render()
 			{
 				skybox->use();
 				activeShader.set("skybox", 0);
-				activeShader.set("camera->os", camera->getPosition());
+				activeShader.set("S->os", S->getPosition());
 			}*/
 			break;
 		case res::ShaderType::debugDepthBuffer:
 			activeShader.set("linearize", shading.debugging.depthBufferLinear);
-			activeShader.set("nearPlane", camera->getNearPlane());
-			activeShader.set("farPlane", camera->getFarPlane());
+			activeShader.set("nearPlane", sourceCamera->getNearPlane());
+			activeShader.set("farPlane", sourceCamera->getFarPlane());
 			break;
 		case res::ShaderType::debugNormals:
 			activeShader.set("viewSpace", shading.debugging.normals.viewSpace);
@@ -266,14 +274,31 @@ void Renderer::render()
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		}
 		res::shaders()[res::ShaderType::highlighting].use();
-		res::shaders()[res::ShaderType::highlighting].set("color", highlighting.color);
-		for(auto const& prop : props)
+		if(pipeline.polygon.propMode != pipeline.polygon.lines)
 		{
-			if(prop->isHighlighted())
+			res::shaders()[res::ShaderType::highlighting].set("color", highlighting.color);
+			for(auto const& prop : props)
 			{
-				res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
-				prop->getMesh().use();
+				if(prop->isHighlighted())
+				{
+					res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
+					prop->getMesh().use();
+				}
 			}
+		}
+		if(pipeline.polygon.propMode != pipeline.polygon.triangles)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			res::shaders()[res::ShaderType::highlighting].set("color", glm::vec3{1.0f - highlighting.color});
+			for(auto const& prop : props)
+			{
+				if(prop->isHighlighted())
+				{
+					res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
+					prop->getMesh().use();
+				}
+			}
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 		if(highlighting.overlay)
 		{
@@ -283,19 +308,38 @@ void Renderer::render()
 	}
 
 	activeShader.use();
-	for(auto const& prop : props)
+	if(pipeline.polygon.propMode != pipeline.polygon.lines)
 	{
-		if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
+		for(auto const& prop : props)
 		{
-			activeShader.set("model", prop->getGlobalTransformation());
-			activeShader.set("material.hasDiffuseMap", true);
-			activeShader.set("material.diffuseMap", 1);
-			activeShader.set("material.hasSpecularMap", false);
-			activeShader.set("material.hasOpacityMap", false);
-			res::textures::placeholder().use(1);
-			prop->getMesh().use();
+			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
+			{
+				activeShader.set("model", prop->getGlobalTransformation());
+				activeShader.set("material.hasDiffuseMap", true);
+				activeShader.set("material.diffuseMap", 1);
+				activeShader.set("material.hasSpecularMap", false);
+				activeShader.set("material.hasOpacityMap", false);
+				res::textures::placeholder().use(1);
+				prop->getMesh().use();
+			}
 		}
+	}
 
+	if(pipeline.polygon.propMode != pipeline.polygon.triangles)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		res::shaders()[res::ShaderType::highlighting].use();
+		res::shaders()[res::ShaderType::highlighting].set("color", glm::vec3{0.0f});
+
+		for(auto const& prop : props)
+		{
+			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
+			{
+				res::shaders()[res::ShaderType::highlighting].set("model", prop->getGlobalTransformation());
+				prop->getMesh().use();
+			}
+		}
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	glDisable(GL_STENCIL_TEST);
 	//draw skybox
@@ -338,7 +382,7 @@ void Renderer::drawUI(bool* open)
 	ImGui::Text("Camera");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	if(ImGui::BeginCombo("###Camera", camera ? camera->getName().data() : "-"))
+	if(ImGui::BeginCombo("###Camera", sourceCamera ? sourceCamera->getName().data() : "-"))
 	{
 		int id = 0;
 		for(auto& s : res::scenes::getAll())
@@ -348,7 +392,7 @@ void Renderer::drawUI(bool* open)
 			for(auto& c : s->getAll<Camera>())
 			{
 				ImGui::PushID(id++);
-				bool isSelected = camera == c;
+				bool isSelected = sourceCamera == c;
 				if(ImGui::Selectable(c->getName().data(), &isSelected))
 					setCamera(c);
 				if(isSelected)
@@ -392,28 +436,27 @@ void Renderer::drawUI(bool* open)
 		ImGui::Checkbox("Face Culling", &pipeline.faceCulling);
 		ImGui::Separator();
 		ImGui::NextColumn();
-		ImGui::Text("Mode");
-		ImGui::RadioButton("GL_FILL", &pipeline.polygon.mode, GL_FILL);
-		ImGui::RadioButton("GL_LINE", &pipeline.polygon.mode, GL_LINE);
-		ImGui::RadioButton("GL_POINT", &pipeline.polygon.mode, GL_POINT);
+		ImGui::Text("Prop Draw Mode");
+		ImGui::PushID(0);
+		ImGui::RadioButton("Triangles", reinterpret_cast<int*>(&pipeline.polygon.propMode), pipeline.polygon.triangles);
+		ImGui::RadioButton("Lines", reinterpret_cast<int*>(&pipeline.polygon.propMode), pipeline.polygon.lines);
+		ImGui::RadioButton("Both", reinterpret_cast<int*>(&pipeline.polygon.propMode), pipeline.polygon.both);
+		ImGui::PopID();
+		ImGui::PushID(1);
+		ImGui::Text("Frustum Draw Mode");
+		ImGui::RadioButton("Triangles", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.triangles);
+		ImGui::RadioButton("Lines", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.lines);
+		ImGui::RadioButton("Both", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.both);
+		ImGui::PopID();
 		ImGui::NewLine();
-		switch(pipeline.polygon.mode)
-		{
-			case GL_FILL:
-				break;
-			case GL_LINE:
-				ImGui::AlignTextToFramePadding();
-				ImGui::Text("Width");
-				ImGui::PushItemWidth(-1);
-				ImGui::SliderFloat("###Width", &pipeline.polygon.lineWidth, 0.1f, 32.0f);
-				break;
-			case GL_POINT:
-				ImGui::AlignTextToFramePadding();
-				ImGui::Text("Size");
-				ImGui::PushItemWidth(-1);
-				ImGui::SliderFloat("###Size", &pipeline.polygon.pointSize, 0.1f, 256.0f);
-				break;
-		}
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Line Width");
+		ImGui::PushItemWidth(-1);
+		ImGui::SliderFloat("###Width", &pipeline.polygon.lineWidth, 0.1f, 32.0f);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Point Size");
+		ImGui::PushItemWidth(-1);
+		ImGui::SliderFloat("###Size", &pipeline.polygon.pointSize, 0.1f, 256.0f);
 		ImGui::NextColumn();
 		ImGui::Text("Function");
 		ImGui::RadioButton("GL_ALWAYS", &pipeline.depthFunction, GL_ALWAYS);

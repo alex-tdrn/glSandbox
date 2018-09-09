@@ -65,6 +65,11 @@ glm::mat4 Camera::getViewMatrix() const
 	return glm::inverse(getGlobalTransformation());
 }
 
+bool Camera::getVisualizeFrustum() const
+{
+	return visualizeFrustum;
+}
+
 void Camera::move(glm::vec3 amount)
 {
 	amount[2] *= -1;
@@ -88,5 +93,6 @@ void Camera::drawUI()
 		ImGui::DragFloat("FOV", &fov, 0.1f);
 	ImGui::DragFloat("Near Plane", &nearPlane, 0.01f);
 	ImGui::DragFloat("Far Plane", &farPlane, 0.1f);
+	ImGui::Checkbox("Visualize Frustum", &visualizeFrustum);
 	ImGui::EndChild();
 }

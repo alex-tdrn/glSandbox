@@ -3,6 +3,8 @@
 #include "Lights.h"
 #include "Globals.h"
 #include "Scene.h"
+#include "Node.h"
+#include "Prop.h"
 #include "Renderer.h"
 #include "Profiler.h"
 
@@ -29,7 +31,22 @@ double lastMouseY = 300;
 bool mouseDrag = false;
 Renderer& settings::mainRenderer()
 {
-	static Renderer r{res::importGLTF("models/Cube/Cube.gltf").getAll<Camera>()[0]};
+	static Renderer r = {[](){
+		auto defaultScene = std::make_unique<Scene>();
+		const int nPrimitives = 3;
+		const float spacing = 3.0f;
+		glm::vec3 pos{-spacing * (static_cast<float>(nPrimitives - 1) / 2.0f), 0.0f, 0.0f};
+		for(auto const& mesh : {res::meshes::quad(), res::meshes::box(), res::meshes::boxWireframe()})
+		{
+			std::unique_ptr<Node> prop = std::make_unique<Prop>(mesh);
+			prop->setLocalTransformation(glm::translate(glm::mat4(1.0f), pos));
+			pos.x += spacing;
+			defaultScene->getRoot()->addChild(std::move(prop));
+		}
+		auto ret = defaultScene->getAll<Camera>()[0];
+		res::scenes::add(std::move(defaultScene));
+		return ret;
+	}()};
 	return r;
 }
 

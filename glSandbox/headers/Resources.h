@@ -16,7 +16,7 @@ namespace res
 		void add(std::vector<std::shared_ptr<Mesh>>&&);
 		std::shared_ptr<Mesh> const& quad();
 		std::shared_ptr<Mesh> const& box();
-
+		std::shared_ptr<Mesh> const& boxWireframe();
 	}
 	namespace scenes
 	{

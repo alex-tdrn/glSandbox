@@ -10,7 +10,7 @@ class Camera;
 class Renderer
 {
 private:
-	Camera* camera = nullptr;
+	Camera* sourceCamera = nullptr;
 	unsigned int multisampledFramebuffer = 0;
 	unsigned int multisampledColorbuffer = 0;
 	unsigned int multisampledRenderbuffer = 0;
@@ -31,9 +31,16 @@ private:
 	struct{
 		int samples = 0;
 		struct{
-			int mode = GL_FILL;
-			float lineWidth = 1.0f;
-			float pointSize = 1.0f;
+			enum Mode
+			{
+				triangles,
+				lines,
+				both
+			};
+			Mode propMode = both;
+			Mode frustumMode = lines;
+			float lineWidth = 3.0f;
+			float pointSize = 2.0f;
 		}polygon;
 		bool depthTesting = true;
 		int depthFunction = GL_LESS;

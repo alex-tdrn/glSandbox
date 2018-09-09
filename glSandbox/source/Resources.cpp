@@ -23,6 +23,7 @@ std::vector<std::shared_ptr<Mesh>> res::meshes::getAll()
 	auto meshes = ::meshes;
 	meshes.push_back(quad());
 	meshes.push_back(box());
+	meshes.push_back(boxWireframe());
 	return meshes;
 }
 
@@ -38,13 +39,48 @@ void res::meshes::add(std::vector<std::shared_ptr<Mesh>>&& meshes)
 		::meshes.push_back(std::move(mesh));
 }
 
+struct SimpleVertex
+{
+	float const position[3];
+};
+
 struct Vertex
 {
 	float const position[3];
 	float const normal[3];
 	float const texcoords[2];
 };
-Mesh buildMesh(std::vector<Vertex>&& vertices, std::optional<std::vector<uint8_t>>&& indices = std::nullopt)
+Mesh buildMesh(GLenum primitiveType, std::vector<SimpleVertex>&& vertices, std::optional<std::vector<uint8_t>>&& indices = std::nullopt)
+{
+	Mesh::Attributes::AttributeBuffer positions;
+	positions.attributeType = Mesh::AttributeType::positions;
+	positions.componentSize = 3;
+	positions.dataType = GL_FLOAT;
+	positions.stride = sizeof(SimpleVertex);
+	positions.offset = offsetof(SimpleVertex, position);
+
+	Mesh::Attributes attributes;
+	attributes.array[Mesh::AttributeType::positions] = positions;
+	attributes.interleaved = true;
+	attributes.data = reinterpret_cast<uint8_t const*>(vertices.data());
+	attributes.size = vertices.size() * sizeof(SimpleVertex);
+
+	std::optional<Mesh::IndexBuffer> indexBuffer;
+	if(indices)
+	{
+		indexBuffer.emplace();
+		indexBuffer->data = reinterpret_cast<uint8_t const*>(indices->data());
+		indexBuffer->count = indices->size();
+		indexBuffer->size = indices->size() * sizeof(uint8_t);
+		indexBuffer->dataType = GL_UNSIGNED_BYTE;
+	}
+	Bounds bounds;
+	for(auto vertex : vertices)
+		bounds += vertex.position;
+	return {bounds, primitiveType, std::move(attributes), std::move(indexBuffer)};
+}
+
+Mesh buildMesh(GLenum primitiveType, std::vector<Vertex>&& vertices, std::optional<std::vector<uint8_t>>&& indices = std::nullopt)
 {
 	Mesh::Attributes::AttributeBuffer positions;
 	positions.attributeType = Mesh::AttributeType::positions;
@@ -87,7 +123,7 @@ Mesh buildMesh(std::vector<Vertex>&& vertices, std::optional<std::vector<uint8_t
 	Bounds bounds;
 	for(auto vertex : vertices)
 		bounds += vertex.position;
-	return {bounds, GL_TRIANGLES, std::move(attributes), std::move(indexBuffer)};
+	return {bounds, primitiveType, std::move(attributes), std::move(indexBuffer)};
 }
 
 std::shared_ptr<Mesh> const& res::meshes::quad()
@@ -119,7 +155,7 @@ std::shared_ptr<Mesh> const& res::meshes::quad()
 			0, 1, 2,
 			0, 2, 3
 		};
-		return std::make_shared<Mesh>(buildMesh(std::move(vertices), std::move(indices)));
+		return std::make_shared<Mesh>(buildMesh(GL_TRIANGLES, std::move(vertices), std::move(indices)));
 	}();
 	return quad;
 }
@@ -280,9 +316,60 @@ std::shared_ptr<Mesh> const& res::meshes::box()
 			20, 21, 22,
 			20, 22, 23
 		};
-		return std::make_shared<Mesh>(buildMesh(std::move(vertices), std::move(indices)));
+		return std::make_shared<Mesh>(buildMesh(GL_TRIANGLES, std::move(vertices), std::move(indices)));
 	}();
 	return box;
+}
+
+std::shared_ptr<Mesh> const& res::meshes::boxWireframe()
+{
+	static std::shared_ptr<Mesh> boxWireframe = []() -> std::shared_ptr<Mesh>{
+		std::vector<SimpleVertex> vertices = {
+			//front face
+			{//top left
+				-1.0f, +1.0f, +1.0f,
+			},
+			{//bottom left
+				-1.0f, -1.0f, +1.0f,
+			},
+			{//bottom right
+				+1.0f, -1.0f, +1.0f,
+			},
+			{//top right
+				+1.0f, +1.0f, +1.0f,
+			},
+
+			//back face
+			{//top left
+				+1.0f, +1.0f, -1.0f,
+			},
+			{//bottom left
+				+1.0f, -1.0f, -1.0f,
+			},
+			{//bottom right
+				-1.0f, -1.0f, -1.0f,
+			},
+			{//top right
+				-1.0f, +1.0f, -1.0f,
+			}
+		};
+		std::vector<uint8_t> indices = {
+			0, 1,
+			1, 2,
+			2, 3,
+			3, 0,
+			0, 7,
+			7, 6,
+			6, 1, 
+			2, 5,
+			5, 4,
+			4, 3,
+			7, 4,
+			5, 6
+		};
+		return std::make_shared<Mesh>(buildMesh(GL_LINES, std::move(vertices), std::move(indices)));
+	}();
+	return boxWireframe;
 }
 
 static std::vector<std::unique_ptr<Scene>> scenes;

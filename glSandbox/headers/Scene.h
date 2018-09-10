@@ -26,7 +26,7 @@ private:
 		std::vector<PointLight*> pointLights;
 		std::vector<SpotLight*> spotLights;
 	}cache;
-
+	Node* current = nullptr;
 	//7Cubemap* skybox = nullptr;
 
 public:
@@ -47,6 +47,7 @@ private:
 public:
 	void cacheOutdated() const;
 	Node* getRoot() const;
+	Node* getCurrent() const;
 	template<typename T>
 	std::vector<T*> const& getAll() const;
 	template<typename T>

@@ -112,6 +112,17 @@ public:
 		}
 		return *this;
 	}
+	Bounds& operator+=(glm::vec3 t)
+	{
+		min += t;
+		max += t;
+		return *this;
+	}
+	Bounds operator+(glm::vec3 t)
+	{
+		auto ret(*this);
+		return ret += t;
+	}
 	friend Bounds operator*(Bounds const& lhs, glm::mat4 const& rhs);
 	friend Bounds operator+(Bounds const& lhs, Bounds const& rhs);
 
@@ -137,6 +148,23 @@ public:
 	std::pair<glm::vec3, glm::vec3> getValues() const
 	{
 		return {min, max};
+	}
+	glm::vec3 getCenter() const
+	{
+		return (min + max) * 0.5f;
+	}
+	glm::mat4 getTransformation() const
+	{
+		glm::vec3 translation = -getCenter();
+		auto aux{*this};
+		aux += translation;
+
+		glm::vec3 scale;
+		for(int i = 0; i < 3; i++)
+			scale[i] = std::max(std::abs(min[i]), std::abs(max[i]));
+		glm::mat4 t = glm::translate(glm::mat4{1.0f}, -translation);
+		glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
+		return t * s;
 	}
 };
 

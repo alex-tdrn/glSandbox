@@ -72,6 +72,11 @@ Node* Scene::getRoot() const
 	return root.get();
 }
 
+Node * Scene::getCurrent() const
+{
+	return current;
+}
+
 glm::vec3 const& Scene::getBackground() const
 {
 	return backgroundColor;
@@ -85,10 +90,8 @@ void Scene::fitToIdealSize() const
 
 	auto[min, max] = bounds.getValues();
 
-	glm::vec3 centroid = (min + max) * 0.5f;
-	glm::vec3 translation = -centroid;
-	min += translation;
-	max += translation;
+	glm::vec3 translation = -bounds.getCenter();
+	bounds += translation;
 
 	glm::vec3 absMax;
 	for(int i = 0; i < 3; i++)
@@ -106,9 +109,8 @@ void Scene::drawUI()
 	
 	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
 	ImGui::SameLine();
-	if(ImGui::Button("Fit To Ideal Size"))
+	if(ImGui::Button("Fit To:"))
 		fitToIdealSize();
-	ImGui::NewLine();
 
 	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
 	static int hierarchyView = 0;
@@ -116,15 +118,16 @@ void Scene::drawUI()
 	ImGui::Columns(2, nullptr, false);
 	ImGui::SetColumnWidth(-1, scrollAreaWidth);
 
-	static Node* selected;
+	ImGui::InputFloat("###IdealSize", &idealSize);
+	ImGui::NewLine();
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Nodes");
 	ImGui::SameLine();
 	if(ImGui::RadioButton("Category", &hierarchyView, 0))
-		selected = nullptr;
+		current = nullptr;
 	ImGui::SameLine();
 	if(ImGui::RadioButton("Hierarchy", &hierarchyView, 1))
-		selected = nullptr;
+		current = nullptr;
 	ImGui::BeginChild("###Nodes");
 
 	std::set<Node*> nodesMarkedForHighlighting;
@@ -245,12 +248,12 @@ void Scene::drawUI()
 				flags = flags | ImGuiTreeNodeFlags_DefaultOpen;
 			if(node->getChildren().empty())
 				flags = flags | ImGuiTreeNodeFlags_Leaf;
-			if(selected == node)
+			if(current == node)
 				flags = flags | ImGuiTreeNodeFlags_Selected;
 			bool expandNode = ImGui::TreeNodeEx(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), flags);
 			if(ImGui::IsItemClicked())
-				selected = node;
-			if(ImGui::IsItemHovered() || selected == node)
+				current = node;
+			if(ImGui::IsItemHovered() || current == node)
 				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
 			else
 				node->setHighlighted(false);
@@ -281,9 +284,9 @@ void Scene::drawUI()
 	else
 	{
 		auto drawNode = [&](Node* node, bool root = false){
-			if(ImGui::Selectable(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), selected == node))
-				selected = node;
-			if(ImGui::IsItemHovered() || selected == node)
+			if(ImGui::Selectable(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), current == node))
+				current = node;
+			if(ImGui::IsItemHovered() || current == node)
 				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
 			else
 				node->setHighlighted(false);
@@ -291,7 +294,7 @@ void Scene::drawUI()
 		auto drawList = [&](auto const& nodes){
 
 			if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow() && !ImGui::IsMouseDragging())//check for mouse click inside window
-				selected = nullptr;
+				current = nullptr;
 
 			int id = 0;
 			for(auto node : nodes)
@@ -342,19 +345,19 @@ void Scene::drawUI()
 		node->setHighlighted(true);
 	for(auto node : nodesMarkedForShallowRemove)
 	{
-		if(selected == node)
-			selected = nullptr;
+		if(current == node)
+			current = nullptr;
 		node->release();
 	}
 
 	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow() && !ImGui::IsMouseDragging())//check for mouse click inside window
-		selected = nullptr;
+		current = nullptr;
 	ImGui::EndChild();
 
 	ImGui::NextColumn();
-	ImGui::Text(selected ? selected->getName().data() : "No selection...");
+	ImGui::Text(current ? current->getName().data() : "No selection...");
 	ImGui::BeginChild("###Edit Node", {0, 0}, true);
-	if(selected) selected->drawUI();
+	if(current) current->drawUI();
 	ImGui::EndChild();
 
 	ImGui::Columns(1);

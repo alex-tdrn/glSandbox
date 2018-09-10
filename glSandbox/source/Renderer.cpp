@@ -168,6 +168,13 @@ void Renderer::render()
 			res::meshes::boxWireframe()->use();
 		}
 	}
+	if(scene.getCurrent())
+	{
+		res::shaders()[res::ShaderType::unlit].set("model", scene.getCurrent()->getBounds().getTransformation());
+		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
+		res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
+		res::meshes::boxWireframe()->use();
+	}
 	if(pipeline.faceCulling)
 	{
 		glEnable(GL_CULL_FACE);

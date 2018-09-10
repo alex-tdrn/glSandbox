@@ -17,6 +17,7 @@ namespace res
 		std::shared_ptr<Mesh> const& quad();
 		std::shared_ptr<Mesh> const& box();
 		std::shared_ptr<Mesh> const& boxWireframe();
+		std::shared_ptr<Mesh> const& grid(int resolution);
 	}
 	namespace scenes
 	{

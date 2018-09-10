@@ -7,7 +7,7 @@
 #include <variant>
 #include <algorithm>
 #include <filesystem>
-
+#include <map>
 
 Texture& res::textures::placeholder()
 {
@@ -20,11 +20,7 @@ static std::vector<std::shared_ptr<Mesh>> meshes;
 
 std::vector<std::shared_ptr<Mesh>> res::meshes::getAll()
 {
-	auto meshes = ::meshes;
-	meshes.push_back(quad());
-	meshes.push_back(box());
-	meshes.push_back(boxWireframe());
-	return meshes;
+	return ::meshes;
 }
 
 void res::meshes::add(std::shared_ptr<Mesh> mesh)
@@ -50,7 +46,30 @@ struct Vertex
 	float const normal[3];
 	float const texcoords[2];
 };
-Mesh buildMesh(GLenum primitiveType, std::vector<SimpleVertex>&& vertices, std::optional<std::vector<uint8_t>>&& indices = std::nullopt)
+
+template <typename T>
+Mesh::IndexBuffer buildIndexBuffer(std::vector<T>&& indices)
+{
+	Mesh::IndexBuffer indexBuffer;
+	indexBuffer.data = reinterpret_cast<uint8_t const*>(indices.data());
+	indexBuffer.count = indices.size();
+	indexBuffer.size = indices.size() * sizeof(T);
+	switch(sizeof(T))
+	{
+		case 1:
+			indexBuffer.dataType = GL_UNSIGNED_BYTE;
+			break;
+		case 2:
+			indexBuffer.dataType = GL_UNSIGNED_SHORT;
+			break;
+		case 4:
+			indexBuffer.dataType = GL_UNSIGNED_INT;
+			break;
+	}
+	return indexBuffer;
+}
+
+Mesh::Attributes buildAttributes(std::vector<SimpleVertex>&& vertices)
 {
 	Mesh::Attributes::AttributeBuffer positions;
 	positions.attributeType = Mesh::AttributeType::positions;
@@ -64,23 +83,10 @@ Mesh buildMesh(GLenum primitiveType, std::vector<SimpleVertex>&& vertices, std::
 	attributes.interleaved = true;
 	attributes.data = reinterpret_cast<uint8_t const*>(vertices.data());
 	attributes.size = vertices.size() * sizeof(SimpleVertex);
-
-	std::optional<Mesh::IndexBuffer> indexBuffer;
-	if(indices)
-	{
-		indexBuffer.emplace();
-		indexBuffer->data = reinterpret_cast<uint8_t const*>(indices->data());
-		indexBuffer->count = indices->size();
-		indexBuffer->size = indices->size() * sizeof(uint8_t);
-		indexBuffer->dataType = GL_UNSIGNED_BYTE;
-	}
-	Bounds bounds;
-	for(auto vertex : vertices)
-		bounds += vertex.position;
-	return {bounds, primitiveType, std::move(attributes), std::move(indexBuffer)};
+	return attributes;
 }
 
-Mesh buildMesh(GLenum primitiveType, std::vector<Vertex>&& vertices, std::optional<std::vector<uint8_t>>&& indices = std::nullopt)
+Mesh::Attributes buildAttributes(std::vector<Vertex>&& vertices)
 {
 	Mesh::Attributes::AttributeBuffer positions;
 	positions.attributeType = Mesh::AttributeType::positions;
@@ -110,20 +116,16 @@ Mesh buildMesh(GLenum primitiveType, std::vector<Vertex>&& vertices, std::option
 	attributes.interleaved = true;
 	attributes.data = reinterpret_cast<uint8_t const*>(vertices.data());
 	attributes.size = vertices.size() * sizeof(Vertex);
+	return attributes;
+}
 
-	std::optional<Mesh::IndexBuffer> indexBuffer;
-	if(indices)
-	{
-		indexBuffer.emplace();
-		indexBuffer->data = reinterpret_cast<uint8_t const*>(indices->data());
-		indexBuffer->count = indices->size();
-		indexBuffer->size = indices->size() * sizeof(uint8_t);
-		indexBuffer->dataType = GL_UNSIGNED_BYTE;
-	}
+template <typename T>
+Bounds calculateBounds(std::vector<T> const& vertices)
+{
 	Bounds bounds;
 	for(auto vertex : vertices)
 		bounds += vertex.position;
-	return {bounds, primitiveType, std::move(attributes), std::move(indexBuffer)};
+	return bounds;
 }
 
 std::shared_ptr<Mesh> const& res::meshes::quad()
@@ -155,7 +157,10 @@ std::shared_ptr<Mesh> const& res::meshes::quad()
 			0, 1, 2,
 			0, 2, 3
 		};
-		return std::make_shared<Mesh>(buildMesh(GL_TRIANGLES, std::move(vertices), std::move(indices)));
+		auto bounds = calculateBounds(vertices);
+		auto ret = std::make_shared<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
+		add(ret);
+		return ret;
 	}();
 	return quad;
 }
@@ -316,7 +321,10 @@ std::shared_ptr<Mesh> const& res::meshes::box()
 			20, 21, 22,
 			20, 22, 23
 		};
-		return std::make_shared<Mesh>(buildMesh(GL_TRIANGLES, std::move(vertices), std::move(indices)));
+		auto bounds = calculateBounds(vertices);
+		auto ret = std::make_shared<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
+		add(ret);
+		return ret;
 	}();
 	return box;
 }
@@ -367,9 +375,52 @@ std::shared_ptr<Mesh> const& res::meshes::boxWireframe()
 			7, 4,
 			5, 6
 		};
-		return std::make_shared<Mesh>(buildMesh(GL_LINES, std::move(vertices), std::move(indices)));
+		auto bounds = calculateBounds(vertices);
+		auto ret = std::make_shared<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
+		add(ret);
+		return ret;
 	}();
 	return boxWireframe;
+}
+ 
+std::shared_ptr<Mesh> const& res::meshes::grid(int resolution)
+{
+	static std::unordered_map<int, std::shared_ptr<Mesh>> gridCache;
+	if(gridCache.find(resolution) != gridCache.end())
+	{
+		return gridCache[resolution];
+	}
+	else
+	{ 
+		std::vector<SimpleVertex> vertices;
+		std::vector<uint16_t> indices;
+		int const sideLength = resolution + 1;
+		float const step = 2.0f / resolution;
+		int idx = 0;
+		for(int x = 0; x < sideLength; x++, idx+=2)
+		{
+			vertices.push_back({-1.0f + x * step, 0.0f, -1.0f});
+			vertices.push_back({-1.0f + x * step, 0.0f, +1.0f});
+			indices.push_back(idx);
+			indices.push_back(idx + 1);
+		}
+		indices.push_back(0);
+		indices.push_back((sideLength - 1) * 2);
+		indices.push_back(1);
+		indices.push_back(sideLength * 2 - 1);
+		for(int z = 1; z < sideLength - 1; z++, idx += 2)
+		{
+			vertices.push_back({-1.0f, 0.0f, -1.0f + z * step});
+			vertices.push_back({+1.0f, 0.0f, -1.0f + z * step});
+			indices.push_back(idx);
+			indices.push_back(idx + 1);
+		}
+		auto bounds = calculateBounds(vertices);
+		auto grid = std::make_shared<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
+		add(grid);
+		gridCache.insert({resolution, grid});
+		return grid;
+	}
 }
 
 static std::vector<std::unique_ptr<Scene>> scenes;

@@ -31,19 +31,6 @@ private:
 	} viewport;
 	struct{
 		int samples = 0;
-		struct{
-			enum Mode
-			{
-				triangles,
-				lines,
-				both
-			};
-			Mode propMode = triangles;
-			Mode frustumMode = lines;
-			bool frustumTextured = false;
-			float lineWidth = 3.0f;
-			float pointSize = 2.0f;
-		}polygon;
 		bool depthTesting = true;
 		int depthFunction = GL_LESS;
 		bool faceCulling = true;
@@ -93,6 +80,30 @@ private:
 		}debugging;
 	}shading;
 
+	struct{
+		enum Mode
+		{
+			triangles,
+			lines,
+			both
+		};
+		struct{
+			Mode mode = lines;
+			bool textured = false;
+		}frustum;
+		struct{
+			Mode mode = triangles;
+		}prop;
+		struct{
+			bool enabled = true;
+			int resolution = 64;
+			float scale = 32.0f;
+			float lineWidth = 2.0f;
+			glm::vec3 color{0.0f};
+		}grid;
+		float lineWidth = 3.0f;
+		float pointSize = 2.0f;
+	}geometry;
 public:
 	Name<Renderer> name{"renderer"};
 

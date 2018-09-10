@@ -26,7 +26,7 @@ namespace settings
 	void addRenderer(std::unique_ptr<Renderer>&&);
 	namespace rendering
 	{
-		inline bool vsync = true;
+		inline bool vsync = false;
 		inline bool gammaCorrection = true;
 		enum tonemappingType
 		{

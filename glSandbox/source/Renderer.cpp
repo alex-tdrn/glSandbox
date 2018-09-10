@@ -131,10 +131,6 @@ void Renderer::render()
 		glDisable(GL_DEPTH_TEST);
 	}
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glLineWidth(pipeline.polygon.lineWidth);
-	glPointSize(pipeline.polygon.pointSize);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	auto const& scene = sourceCamera->getScene();
 	glClearColor(scene.getBackground().r, scene.getBackground().g, scene.getBackground().b, 1.0f);
@@ -154,14 +150,14 @@ void Renderer::render()
 			continue;
 		res::shaders()[res::ShaderType::unlit].set("model", glm::inverse(camera->getProjectionMatrix() * camera->getViewMatrix()));
 		res::textures::placeholder().use(1);
-		if(pipeline.polygon.frustumMode != pipeline.polygon.lines)
+		if(geometry.frustum.mode != geometry.lines)
 		{
-			res::shaders()[res::ShaderType::unlit].set("material.hasMap", pipeline.polygon.frustumTextured);
+			res::shaders()[res::ShaderType::unlit].set("material.hasMap", geometry.frustum.textured);
 			res::shaders()[res::ShaderType::unlit].set("material.map", 1);
 			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{1.0f, 1.0f, 1.0f});
 			res::meshes::box()->use();
 		}
-		if(pipeline.polygon.frustumMode!= pipeline.polygon.triangles)
+		if(geometry.frustum.mode!= geometry.triangles)
 		{
 			res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
 			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
@@ -175,12 +171,25 @@ void Renderer::render()
 		res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
 		res::meshes::boxWireframe()->use();
 	}
+	if(geometry.grid.enabled)
+	{
+		glLineWidth(geometry.grid.lineWidth);
+		res::shaders()[res::ShaderType::unlit].set("model", glm::scale(glm::mat4{1.0f}, glm::vec3{geometry.grid.scale}));
+		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
+		res::shaders()[res::ShaderType::unlit].set("material.color", geometry.grid.color);
+		res::meshes::grid(geometry.grid.resolution)->use();
+		glLineWidth(geometry.grid.lineWidth * 4);
+		res::meshes::grid(2)->use();
+	}
 	if(pipeline.faceCulling)
 	{
 		glEnable(GL_CULL_FACE);
 		glCullFace(pipeline.faceCullingMode);
 		glFrontFace(pipeline.faceCullingOrdering);
 	}
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glLineWidth(geometry.lineWidth);
+	glPointSize(geometry.pointSize);
 
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
@@ -286,7 +295,7 @@ void Renderer::render()
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		}
 		res::shaders()[res::ShaderType::unlit].use();
-		if(pipeline.polygon.propMode != pipeline.polygon.lines)
+		if(geometry.prop.mode != geometry.lines)
 		{
 			res::shaders()[res::ShaderType::unlit].set("material.color", highlighting.color);
 			for(auto const& prop : props)
@@ -298,7 +307,7 @@ void Renderer::render()
 				}
 			}
 		}
-		if(pipeline.polygon.propMode != pipeline.polygon.triangles)
+		if(geometry.prop.mode != geometry.triangles)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{1.0f - highlighting.color});
@@ -334,7 +343,7 @@ void Renderer::render()
 		activeShader.set("material.hasSpecularMap", false);
 		activeShader.set("material.hasOpacityMap", false);
 	}
-	if(pipeline.polygon.propMode != pipeline.polygon.lines)
+	if(geometry.prop.mode != geometry.lines)
 	{
 		res::textures::placeholder().use(1);
 		for(auto const& prop : props)
@@ -347,7 +356,7 @@ void Renderer::render()
 		}
 	}
 
-	if(pipeline.polygon.propMode != pipeline.polygon.triangles)
+	if(geometry.prop.mode != geometry.triangles)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		res::shaders()[res::ShaderType::unlit].use();
@@ -437,7 +446,60 @@ void Renderer::drawUI(bool* open)
 	ImGui::SameLine();
 	ImGui::Checkbox("Overlay", &highlighting.overlay);
 	ImGui::NewLine();
-	if(ImGui::CollapsingHeader("Pipeline", ImGuiTreeNodeFlags_DefaultOpen))
+	if(ImGui::CollapsingHeader("Geometry", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Line Width");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(-1);
+		ImGui::SliderFloat("###Width", &geometry.lineWidth, 0.1f, 32.0f);
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("Point Size");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(-1);
+		ImGui::SliderFloat("###Size", &geometry.pointSize, 0.1f, 256.0f);
+
+		ImGui::Text("Prop Draw Mode");
+		ImGui::PushID(0);
+		ImGui::RadioButton("Triangles", reinterpret_cast<int*>(&geometry.prop.mode), geometry.triangles);
+		ImGui::SameLine();
+		ImGui::RadioButton("Lines", reinterpret_cast<int*>(&geometry.prop.mode), geometry.lines);
+		ImGui::SameLine();
+		ImGui::RadioButton("Both", reinterpret_cast<int*>(&geometry.prop.mode), geometry.both);
+		ImGui::PopID();
+
+		ImGui::Text("Frustum Draw Mode");
+		ImGui::PushID(1);
+		ImGui::RadioButton("Triangles", reinterpret_cast<int*>(&geometry.frustum.mode), geometry.triangles);
+		ImGui::SameLine();
+		ImGui::RadioButton("Lines", reinterpret_cast<int*>(&geometry.frustum.mode), geometry.lines);
+		ImGui::SameLine();
+		ImGui::RadioButton("Both", reinterpret_cast<int*>(&geometry.frustum.mode), geometry.both);
+		if(geometry.frustum.mode != geometry.lines)
+			ImGui::Checkbox("Textured", &geometry.frustum.textured);
+		ImGui::PopID();
+
+		ImGui::Checkbox("Grid", &geometry.grid.enabled);
+		if(geometry.grid.enabled)
+		{
+			ImGui::SameLine();
+			ImGui::ColorEdit3("###ColorGrid", &geometry.grid.color.x, ImGuiColorEditFlags_NoInputs);
+			ImGui::InputInt("Resolution", &geometry.grid.resolution, 1);
+			if(geometry.grid.resolution < 1)
+				geometry.grid.resolution = 1;
+			ImGui::InputFloat("Scale", &geometry.grid.scale, 0.01f);
+			if(std::abs(geometry.grid.scale) <= 0.001f)
+				geometry.grid.scale = 0.001f;
+			ImGui::Text("Line Width");
+			ImGui::SameLine();
+			ImGui::PushItemWidth(-1);
+			ImGui::SliderFloat("###GridLineWidth", &geometry.grid.lineWidth, 0.1f, 32.0f);
+		}
+
+		ImGui::NewLine();
+	}
+
+	if(ImGui::CollapsingHeader("Pipeline"))
 	{
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Samples");
@@ -455,37 +517,11 @@ void Renderer::drawUI(bool* open)
 			samples = pipeline.samples;
 		}
 		ImGui::PopItemWidth();
-		ImGui::Columns(3, nullptr, true);
-		ImGui::Text("Polygon Mode");
-		ImGui::NextColumn();
+		ImGui::Columns(2, nullptr, true);
 		ImGui::Checkbox("Depth Testing", &pipeline.depthTesting);
 		ImGui::NextColumn();
 		ImGui::Checkbox("Face Culling", &pipeline.faceCulling);
 		ImGui::Separator();
-		ImGui::NextColumn();
-		ImGui::Text("Prop Draw Mode");
-		ImGui::PushID(0);
-		ImGui::RadioButton("Triangles", reinterpret_cast<int*>(&pipeline.polygon.propMode), pipeline.polygon.triangles);
-		ImGui::RadioButton("Lines", reinterpret_cast<int*>(&pipeline.polygon.propMode), pipeline.polygon.lines);
-		ImGui::RadioButton("Both", reinterpret_cast<int*>(&pipeline.polygon.propMode), pipeline.polygon.both);
-		ImGui::PopID();
-		ImGui::PushID(1);
-		ImGui::Text("Frustum Draw Mode");
-		ImGui::RadioButton("Triangles", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.triangles);
-		ImGui::RadioButton("Lines", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.lines);
-		ImGui::RadioButton("Both", reinterpret_cast<int*>(&pipeline.polygon.frustumMode), pipeline.polygon.both);
-		if(pipeline.polygon.frustumMode != pipeline.polygon.lines)
-			ImGui::Checkbox("Textured", &pipeline.polygon.frustumTextured);
-		ImGui::PopID();
-		ImGui::NewLine();
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("Line Width");
-		ImGui::PushItemWidth(-1);
-		ImGui::SliderFloat("###Width", &pipeline.polygon.lineWidth, 0.1f, 32.0f);
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("Point Size");
-		ImGui::PushItemWidth(-1);
-		ImGui::SliderFloat("###Size", &pipeline.polygon.pointSize, 0.1f, 256.0f);
 		ImGui::NextColumn();
 		ImGui::Text("Function");
 		ImGui::RadioButton("GL_ALWAYS", &pipeline.depthFunction, GL_ALWAYS);

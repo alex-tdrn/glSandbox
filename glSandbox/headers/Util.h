@@ -161,7 +161,7 @@ public:
 
 		glm::vec3 scale;
 		for(int i = 0; i < 3; i++)
-			scale[i] = std::max(std::abs(min[i]), std::abs(max[i]));
+			scale[i] = std::max(std::abs(aux.min[i]), std::abs(aux.max[i]));
 		glm::mat4 t = glm::translate(glm::mat4{1.0f}, -translation);
 		glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
 		return t * s;

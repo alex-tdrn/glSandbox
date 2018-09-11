@@ -1,19 +1,23 @@
 #pragma once
 #include "TransformedNode.h"
 #include "Util.h"
-#include "Mesh.h"
 #include "Resources.h"
-#include <optional>
+#include "ProceduralMesh.h"
+#include <memory>
+
+class Mesh;
 
 class Prop final : public Transformed<Translation, Rotation, Scale>
 {
 private:
 	Name<Prop> name{"prop"};
-	Mesh* mesh = res::meshes::box();
+	Mesh* staticMesh = nullptr;
+	std::unique_ptr<ProceduralMesh> proceduralMesh = nullptr;
 
 public:
 	Prop() = default;
 	Prop(Mesh* mesh);
+	Prop(std::unique_ptr<ProceduralMesh>&& mesh);
 	virtual ~Prop() = default;
 
 public:

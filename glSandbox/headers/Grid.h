@@ -7,6 +7,7 @@ private:
 	int resolution = 1;
 
 public:
+	Grid() = default;
 	Grid(int resolution);
 
 private:

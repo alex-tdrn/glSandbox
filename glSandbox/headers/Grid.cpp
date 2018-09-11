@@ -34,7 +34,7 @@ void Grid::generate() const
 		indices.push_back(idx + 1);
 	}
 	auto bounds = calculateBounds(vertices);
-	mesh = std::make_unique<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
+	mesh = std::make_unique<Mesh>(bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices)));
 }
 
 void Grid::drawUI()
@@ -43,11 +43,6 @@ void Grid::drawUI()
 	ImGui::InputInt("Resolution", &resolution, 1);
 	if(resolution < 1)
 		resolution = 1;
-
-	ImGui::InputInt("rfghsf", &resolution, 1);
-	ImGui::InputInt("tion", &resolution, 1);
-	ImGui::InputInt("R", &resolution, 1);
-
 	ImGui::EndGroup();
 	if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
 		parametersChanged = true;

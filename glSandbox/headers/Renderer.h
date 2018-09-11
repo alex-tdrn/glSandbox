@@ -42,6 +42,7 @@ private:
 		bool enabled = true;
 		glm::vec3 color{1.0f};
 		bool overlay = false;
+		bool boundingBox = false;
 	}highlighting;
 	struct{
 		res::ShaderType current = res::ShaderType::unlit;

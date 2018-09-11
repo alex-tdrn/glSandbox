@@ -164,7 +164,7 @@ void Renderer::render()
 			res::meshes::boxWireframe()->use();
 		}
 	}
-	if(scene.getCurrent())
+	if(highlighting.boundingBox && scene.getCurrent())
 	{
 		res::shaders()[res::ShaderType::unlit].set("model", scene.getCurrent()->getBounds().getTransformation());
 		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
@@ -445,6 +445,9 @@ void Renderer::drawUI(bool* open)
 	ImGui::ColorEdit3("###Highlighting", &highlighting.color[0], ImGuiColorEditFlags_NoInputs);
 	ImGui::SameLine();
 	ImGui::Checkbox("Overlay", &highlighting.overlay);
+	ImGui::SameLine();
+	ImGui::Checkbox("Bounding Box", &highlighting.boundingBox);
+
 	ImGui::NewLine();
 	if(ImGui::CollapsingHeader("Geometry", ImGuiTreeNodeFlags_DefaultOpen))
 	{

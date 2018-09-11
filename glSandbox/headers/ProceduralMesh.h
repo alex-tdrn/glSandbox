@@ -9,6 +9,9 @@ protected:
 	mutable std::unique_ptr<Mesh> mesh;
 	mutable bool parametersChanged = true;
 
+public:
+	virtual ~ProceduralMesh() = default;
+
 protected:
 	virtual void generate() const = 0;
 

@@ -2,6 +2,7 @@
 #include "Named.h"
 #include "Util.h"
 
+#include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <optional>
 #include <array>
@@ -72,14 +73,14 @@ public:
 
 struct SimpleVertex
 {
-	float const position[3];
+	glm::vec3 position;
 };
 
 struct Vertex
 {
-	float const position[3];
-	float const normal[3];
-	float const texcoords[2];
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 texcoords;
 };
 
 template <typename T>
@@ -112,7 +113,7 @@ template <typename T>
 Bounds calculateBounds(std::vector<T> const& vertices)
 {
 	Bounds bounds;
-	for(auto vertex : vertices)
+	for(auto const& vertex : vertices)
 		bounds += vertex.position;
 	return bounds;
 }

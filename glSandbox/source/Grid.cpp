@@ -17,8 +17,8 @@ void Grid::generate() const
 	int idx = 0;
 	for(int x = 0; x < sideLength; x++, idx += 2)
 	{
-		vertices.push_back({-1.0f + x * step, 0.0f, -1.0f});
-		vertices.push_back({-1.0f + x * step, 0.0f, +1.0f});
+		vertices.push_back({glm::vec3{-1.0f + x * step, 0.0f, -1.0f}});
+		vertices.push_back({glm::vec3{-1.0f + x * step, 0.0f, +1.0f}});
 		indices.push_back(idx);
 		indices.push_back(idx + 1);
 	}
@@ -28,8 +28,8 @@ void Grid::generate() const
 	indices.push_back(sideLength * 2 - 1);
 	for(int z = 1; z < sideLength - 1; z++, idx += 2)
 	{
-		vertices.push_back({-1.0f, 0.0f, -1.0f + z * step});
-		vertices.push_back({+1.0f, 0.0f, -1.0f + z * step});
+		vertices.push_back({glm::vec3{-1.0f, 0.0f, -1.0f + z * step}});
+		vertices.push_back({glm::vec3{+1.0f, 0.0f, -1.0f + z * step}});
 		indices.push_back(idx);
 		indices.push_back(idx + 1);
 	}

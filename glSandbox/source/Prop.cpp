@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "Mesh.h"
 #include "Grid.h"
+#include "SierpinskiTriangle.h"
 
 Prop::Prop(Mesh* mesh)
 	:staticMesh(mesh)
@@ -45,6 +46,8 @@ void addProceduralMeshItem(std::unique_ptr<ProceduralMesh>& proceduralMesh, Mesh
 	std::string name;
 	if constexpr(std::is_same_v<PM, Grid>)
 		name = "Grid";
+	else if constexpr(std::is_same_v<PM, SierpinskiTriangle>)
+		name = "Sierpinski Triangle";
 	else
 		static_assert(false);
 	if(ImGui::Selectable(name.data(), &isSelected))
@@ -63,7 +66,10 @@ void Prop::drawUI()
 	ImGui::Text("Mesh");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	if(ImGui::BeginCombo("###Mesh", getMesh().name.get().data()))
+	std::string name = getMesh().name.get();
+	if(proceduralMesh)
+		name = "Procedural";//TODO
+	if(ImGui::BeginCombo("###Mesh", name.data()))
 	{
 		int id = 0;
 		//static meshes
@@ -83,7 +89,7 @@ void Prop::drawUI()
 		//procedural meshes
 		ImGui::Separator();
 		addProceduralMeshItem<Grid>(proceduralMesh, staticMesh);
-
+		addProceduralMeshItem<SierpinskiTriangle>(proceduralMesh, staticMesh);
 		ImGui::EndCombo();
 	}
 	if(proceduralMesh)

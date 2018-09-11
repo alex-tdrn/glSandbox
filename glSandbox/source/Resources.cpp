@@ -42,24 +42,24 @@ Mesh* res::meshes::quad()
 	static Mesh* quad = []() -> Mesh*{
 		std::vector<Vertex> vertices = {
 			{//top left
-				-1.0f, +1.0f, +0.0f,
-				+0.0f, +0.0f, +1.0f,
-				+0.0f, +1.0f
+				glm::vec3{-1.0f, +1.0f, +0.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+0.0f, +1.0f}
 			},
 			{//bottom left
-				-1.0f, -1.0f, +0.0f,
-				+0.0f, +0.0f, +1.0f,
-				+0.0f, +0.0f
+				glm::vec3{-1.0f, -1.0f, +0.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+0.0f, +0.0f}
 			},
 			{//bottm right
-				+1.0f, -1.0f, +0.0f,
-				+0.0f, +0.0f, +1.0f,
-				+1.0f, +0.0f
+				glm::vec3{+1.0f, -1.0f, +0.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+1.0f, +0.0f}
 			},
 			{//top right
-				+1.0f, +1.0f, +0.0f,
-				+0.0f, +0.0f, +1.0f,
-				+1.0f, +1.0f
+				glm::vec3{+1.0f, +1.0f, +0.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+1.0f, +1.0f}
 			}
 		};
 		std::vector<uint8_t> indices = {
@@ -78,134 +78,134 @@ Mesh* res::meshes::box()
 		std::vector<Vertex> vertices = {
 			//front face
 			{//top left
-				-1.0f, +1.0f, +1.0f,
-				+0.0f, +0.0f, +1.0f,
-				+0.0f, +1.0f
+				glm::vec3{-1.0f, +1.0f, +1.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+0.0f, +1.0f}
 			},
 			{//bottom left
-				-1.0f, -1.0f, +1.0f,
-				+0.0f, +0.0f, +1.0f,
-				+0.0f, +0.0f
+				glm::vec3{-1.0f, -1.0f, +1.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+0.0f, +0.0f}
 			},
 			{//bottom right
-				+1.0f, -1.0f, +1.0f,
-				+0.0f, +0.0f, +1.0f,
-				+1.0f, +0.0f
+				glm::vec3{+1.0f, -1.0f, +1.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+1.0f, +0.0f}
 			},
 			{//top right
-				+1.0f, +1.0f, +1.0f,
-				+0.0f, +0.0f, +1.0f,
-				+1.0f, +1.0f
+				glm::vec3{+1.0f, +1.0f, +1.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+1.0f, +1.0f}
 			},
 
 			//left face
 			{//top left
-				-1.0f, +1.0f, -1.0f,
-				-1.0f, +0.0f, +0.0f,
-				+0.0f, +1.0f
+				glm::vec3{-1.0f, +1.0f, -1.0f},
+				glm::vec3{-1.0f, +0.0f, +0.0f},
+				glm::vec2{+0.0f, +1.0f}
 			},
 			{//bottom left
-				-1.0f, -1.0f, -1.0f,
-				-1.0f, +0.0f, +0.0f,
-				+0.0f, +0.0f
+				glm::vec3{-1.0f, -1.0f, -1.0f},
+				glm::vec3{-1.0f, +0.0f, +0.0f},
+				glm::vec2{+0.0f, +0.0f}
 			},
 			{//bottom right
-				-1.0f, -1.0f, +1.0f,
-				-1.0f, +0.0f, +0.0f,
-				+1.0f, +0.0f
+				glm::vec3{-1.0f, -1.0f, +1.0f},
+				glm::vec3{-1.0f, +0.0f, +0.0f},
+				glm::vec2{+1.0f, +0.0f}
 			},
 			{//top right
-				-1.0f, +1.0f, +1.0f,
-				-1.0f, +0.0f, +0.0f,
-				+1.0f, +1.0f
+				glm::vec3{-1.0f, +1.0f, +1.0f},
+				glm::vec3{-1.0f, +0.0f, +0.0f},
+				glm::vec2{+1.0f, +1.0f}
 			},
 			
 			//back face
 			{//top left
-				+1.0f, +1.0f, -1.0f,
-				+0.0f, +0.0f, -1.0f,
-				+0.0f, +1.0f
+				glm::vec3{+1.0f, +1.0f, -1.0f},
+				glm::vec3{+0.0f, +0.0f, -1.0f},
+				glm::vec2{+0.0f, +1.0f}
 			},
 			{//bottom left
-				+1.0f, -1.0f, -1.0f,
-				+0.0f, +0.0f, -1.0f,
-				+0.0f, +0.0f
+				glm::vec3{+1.0f, -1.0f, -1.0f},
+				glm::vec3{+0.0f, +0.0f, -1.0f},
+				glm::vec2{+0.0f, +0.0f}
 			},
 			{//bottom right
-				-1.0f, -1.0f, -1.0f,
-				+0.0f, +0.0f, -1.0f,
-				+1.0f, +0.0f
+				glm::vec3{-1.0f, -1.0f, -1.0f},
+				glm::vec3{+0.0f, +0.0f, -1.0f},
+				glm::vec2{+1.0f, +0.0f}
 			},
 			{//top right
-				-1.0f, +1.0f, -1.0f,
-				+0.0f, +0.0f, -1.0f,
-				+1.0f, +1.0f
+				glm::vec3{-1.0f, +1.0f, -1.0f},
+				glm::vec3{+0.0f, +0.0f, -1.0f},
+				glm::vec2{+1.0f, +1.0f}
 			},
 			
 			//right face
 			{//top left
-				+1.0f, +1.0f, +1.0f,
-				+1.0f, +0.0f, +0.0f,
-				+0.0f, +1.0f
+				glm::vec3{+1.0f, +1.0f, +1.0f},
+				glm::vec3{+1.0f, +0.0f, +0.0f},
+				glm::vec2{+0.0f, +1.0f}
 			},
 			{//bottom left
-				+1.0f, -1.0f, +1.0f,
-				+1.0f, +0.0f, +0.0f,
-				+0.0f, +0.0f
+				glm::vec3{+1.0f, -1.0f, +1.0f},
+				glm::vec3{+1.0f, +0.0f, +0.0f},
+				glm::vec2{+0.0f, +0.0f}
 			},
 			{//bottom right
-				+1.0f, -1.0f, -1.0f,
-				+1.0f, +0.0f, +0.0f,
-				+1.0f, +0.0f
+				glm::vec3{+1.0f, -1.0f, -1.0f},
+				glm::vec3{+1.0f, +0.0f, +0.0f},
+				glm::vec2{+1.0f, +0.0f}
 			},
 			{//top right
-				+1.0f, +1.0f, -1.0f,
-				+1.0f, +0.0f, +0.0f,
-				+1.0f, +1.0f
+				glm::vec3{+1.0f, +1.0f, -1.0f},
+				glm::vec3{+1.0f, +0.0f, +0.0f},
+				glm::vec2{+1.0f, +1.0f}
 			},
 			
 			//top face
 			{//top left
-				-1.0f, +1.0f, -1.0f,
-				+0.0f, +1.0f, +0.0f,
-				+0.0f, +1.0f
+				glm::vec3{-1.0f, +1.0f, -1.0f},
+				glm::vec3{+0.0f, +1.0f, +0.0f},
+				glm::vec2{+0.0f, +1.0f}
 			},
 			{//bottom left
-				-1.0f, +1.0f, +1.0f,
-				+0.0f, +1.0f, +0.0f,
-				+0.0f, +0.0f
+				glm::vec3{-1.0f, +1.0f, +1.0f},
+				glm::vec3{+0.0f, +1.0f, +0.0f},
+				glm::vec2{+0.0f, +0.0f}
 			},
 			{//bottom right
-				+1.0f, +1.0f, +1.0f,
-				+0.0f, +1.0f, +0.0f,
-				+1.0f, +0.0f
+				glm::vec3{+1.0f, +1.0f, +1.0f},
+				glm::vec3{+0.0f, +1.0f, +0.0f},
+				glm::vec2{+1.0f, +0.0f}
 			},
 			{//top right
-				+1.0f, +1.0f, -1.0f,
-				+0.0f, +1.0f, +0.0f,
-				+1.0f, +1.0f
+				glm::vec3{+1.0f, +1.0f, -1.0f},
+				glm::vec3{+0.0f, +1.0f, +0.0f},
+				glm::vec2{+1.0f, +1.0f}
 			},
 
 			//bottom face
 			{//top left
-				+1.0f, -1.0f, -1.0f,
-				+0.0f, -1.0f, +0.0f,
-				+1.0f, +1.0f
+				glm::vec3{+1.0f, -1.0f, -1.0f},
+				glm::vec3{+0.0f, -1.0f, +0.0f},
+				glm::vec2{+1.0f, +1.0f}
 			},
 			{//bottom left
-				+1.0f, -1.0f, +1.0f,
-				+0.0f, -1.0f, +0.0f,
-				+1.0f, +0.0f
+				glm::vec3{+1.0f, -1.0f, +1.0f},
+				glm::vec3{+0.0f, -1.0f, +0.0f},
+				glm::vec2{+1.0f, +0.0f}
 			},
 			{//bottom right
-				-1.0f, -1.0f, +1.0f,
-				+0.0f, -1.0f, +0.0f,
-				+0.0f, +0.0f
+				glm::vec3{-1.0f, -1.0f, +1.0f},
+				glm::vec3{+0.0f, -1.0f, +0.0f},
+				glm::vec2{+0.0f, +0.0f}
 			},
 			{//top right
-				-1.0f, -1.0f, -1.0f,
-				+0.0f, -1.0f, +0.0f,
-				+0.0f, +1.0f
+				glm::vec3{-1.0f, -1.0f, -1.0f},
+				glm::vec3{+0.0f, -1.0f, +0.0f},
+				glm::vec2{+0.0f, +1.0f}
 			},
 		};
 		std::vector<uint8_t> indices = {
@@ -240,30 +240,30 @@ Mesh* res::meshes::boxWireframe()
 		std::vector<SimpleVertex> vertices = {
 			//front face
 			{//top left
-				-1.0f, +1.0f, +1.0f,
+				glm::vec3{-1.0f, +1.0f, +1.0f}
 			},
 			{//bottom left
-				-1.0f, -1.0f, +1.0f,
+				glm::vec3{-1.0f, -1.0f, +1.0f}
 			},
 			{//bottom right
-				+1.0f, -1.0f, +1.0f,
+				glm::vec3{+1.0f, -1.0f, +1.0f}
 			},
 			{//top right
-				+1.0f, +1.0f, +1.0f,
+				glm::vec3{+1.0f, +1.0f, +1.0f}
 			},
 
 			//back face
 			{//top left
-				+1.0f, +1.0f, -1.0f,
+				glm::vec3{+1.0f, +1.0f, -1.0f}
 			},
 			{//bottom left
-				+1.0f, -1.0f, -1.0f,
+				glm::vec3{+1.0f, -1.0f, -1.0f}
 			},
 			{//bottom right
-				-1.0f, -1.0f, -1.0f,
+				glm::vec3{-1.0f, -1.0f, -1.0f}
 			},
 			{//top right
-				-1.0f, +1.0f, -1.0f,
+				glm::vec3{-1.0f, +1.0f, -1.0f}
 			}
 		};
 		std::vector<uint8_t> indices = {

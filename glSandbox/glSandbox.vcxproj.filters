@@ -78,7 +78,10 @@
     <ClCompile Include="source\ProceduralMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="headers\Grid.cpp">
+    <ClCompile Include="source\Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SierpinskiTriangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -147,6 +150,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\Grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

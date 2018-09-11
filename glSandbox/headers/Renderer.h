@@ -2,6 +2,7 @@
 #include "Named.h"
 #include "Resources.h"
 #include "Material.h"
+#include "Grid.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -96,7 +97,8 @@ private:
 		}prop;
 		struct{
 			bool enabled = true;
-			int resolution = 64;
+			Grid mainGenerator{64};
+			Grid subGenerator{2};
 			float scale = 32.0f;
 			float lineWidth = 2.0f;
 			glm::vec3 color{0.0f};

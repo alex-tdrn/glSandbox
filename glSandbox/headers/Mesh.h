@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <optional>
 #include <array>
+#include <vector>
 
 class Mesh
 {
@@ -68,3 +69,50 @@ public:
 	void drawUI();
 
 };
+
+struct SimpleVertex
+{
+	float const position[3];
+};
+
+struct Vertex
+{
+	float const position[3];
+	float const normal[3];
+	float const texcoords[2];
+};
+
+template <typename T>
+Mesh::IndexBuffer buildIndexBuffer(std::vector<T>&& indices)
+{
+	Mesh::IndexBuffer indexBuffer;
+	indexBuffer.data = reinterpret_cast<uint8_t const*>(indices.data());
+	indexBuffer.count = indices.size();
+	indexBuffer.size = indices.size() * sizeof(T);
+	switch(sizeof(T))
+	{
+		case 1:
+			indexBuffer.dataType = GL_UNSIGNED_BYTE;
+			break;
+		case 2:
+			indexBuffer.dataType = GL_UNSIGNED_SHORT;
+			break;
+		case 4:
+			indexBuffer.dataType = GL_UNSIGNED_INT;
+			break;
+	}
+	return indexBuffer;
+}
+
+Mesh::Attributes buildAttributes(std::vector<SimpleVertex>&& vertices);
+
+Mesh::Attributes buildAttributes(std::vector<Vertex>&& vertices);
+
+template <typename T>
+Bounds calculateBounds(std::vector<T> const& vertices)
+{
+	Bounds bounds;
+	for(auto vertex : vertices)
+		bounds += vertex.position;
+	return bounds;
+}

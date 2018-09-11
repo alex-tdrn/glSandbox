@@ -24,7 +24,7 @@ public:
 
 };
 
-class DirectionalLight : public Light, public Transformed<Rotation>
+class DirectionalLight final : public Light, public Transformed<Rotation>
 {
 private:
 	Name<DirectionalLight> name{"Light(D)"};
@@ -41,7 +41,7 @@ public:
 
 };
 
-class PointLight : public Light, public Transformed<Translation>
+class PointLight final : public Light, public Transformed<Translation>
 {
 private:
 	Name<DirectionalLight> name{"Light(P)"};
@@ -58,7 +58,7 @@ public:
 
 };
 
-class SpotLight : public Light, public Transformed<Translation, Rotation>
+class SpotLight final : public Light, public Transformed<Translation, Rotation>
 {
 private:
 	Name<DirectionalLight> name{"Light(S)"};

@@ -155,7 +155,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Globals.cpp" />
-    <ClCompile Include="headers\ProceduralMesh.cpp" />
+    <ClCompile Include="headers\Grid.cpp" />
+    <ClCompile Include="source\ProceduralMesh.cpp" />
     <ClCompile Include="source\Profiler.cpp" />
     <ClCompile Include="source\Resources.cpp" />
     <ClCompile Include="source\Node.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="source\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Grid.h" />
     <ClInclude Include="headers\Named.h" />
     <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />

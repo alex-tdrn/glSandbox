@@ -177,9 +177,9 @@ void Renderer::render()
 		res::shaders()[res::ShaderType::unlit].set("model", glm::scale(glm::mat4{1.0f}, glm::vec3{geometry.grid.scale}));
 		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
 		res::shaders()[res::ShaderType::unlit].set("material.color", geometry.grid.color);
-		res::meshes::grid(geometry.grid.resolution)->use();
+		geometry.grid.mainGenerator.get()->use();
 		glLineWidth(geometry.grid.lineWidth * 4);
-		res::meshes::grid(2)->use();
+		geometry.grid.subGenerator.get()->use();
 	}
 	if(pipeline.faceCulling)
 	{
@@ -483,10 +483,8 @@ void Renderer::drawUI(bool* open)
 		if(geometry.grid.enabled)
 		{
 			ImGui::SameLine();
+			geometry.grid.mainGenerator.drawUI();
 			ImGui::ColorEdit3("###ColorGrid", &geometry.grid.color.x, ImGuiColorEditFlags_NoInputs);
-			ImGui::InputInt("Resolution", &geometry.grid.resolution, 1);
-			if(geometry.grid.resolution < 1)
-				geometry.grid.resolution = 1;
 			ImGui::InputFloat("Scale", &geometry.grid.scale, 0.01f);
 			if(std::abs(geometry.grid.scale) <= 0.001f)
 				geometry.grid.scale = 0.001f;

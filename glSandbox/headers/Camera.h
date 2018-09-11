@@ -6,7 +6,7 @@
 #include <glm/gtc\quaternion.hpp>
 #include <tuple>
 
-class Camera : public Transformed<Translation, Rotation>
+class Camera final : public Transformed<Translation, Rotation>
 {
 private:
 	Name<Camera> name{"camera"};

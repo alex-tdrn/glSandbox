@@ -5,7 +5,7 @@
 #include "Resources.h"
 #include <optional>
 
-class Prop : public Transformed<Translation, Rotation, Scale>
+class Prop final : public Transformed<Translation, Rotation, Scale>
 {
 private:
 	Name<Prop> name{"prop"};

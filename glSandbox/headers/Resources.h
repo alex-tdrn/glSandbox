@@ -17,7 +17,6 @@ namespace res
 		Mesh* quad();
 		Mesh* box();
 		Mesh* boxWireframe();
-		Mesh* grid(int resolution);
 	}
 	namespace scenes
 	{

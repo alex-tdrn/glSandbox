@@ -115,3 +115,53 @@ void Mesh::drawUI()
 	ImGui::Text("Bounds (%.1f, %.1f, %.1f) - (%.1f, %.1f, %.1f)", bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
 	ImGui::EndChild();
 }
+
+Mesh::Attributes buildAttributes(std::vector<SimpleVertex>&& vertices)
+{
+	Mesh::Attributes::AttributeBuffer positions;
+	positions.attributeType = Mesh::AttributeType::positions;
+	positions.componentSize = 3;
+	positions.dataType = GL_FLOAT;
+	positions.stride = sizeof(SimpleVertex);
+	positions.offset = offsetof(SimpleVertex, position);
+
+	Mesh::Attributes attributes;
+	attributes.array[Mesh::AttributeType::positions] = positions;
+	attributes.interleaved = true;
+	attributes.data = reinterpret_cast<uint8_t const*>(vertices.data());
+	attributes.size = vertices.size() * sizeof(SimpleVertex);
+	return attributes;
+}
+
+Mesh::Attributes buildAttributes(std::vector<Vertex>&& vertices)
+{
+	Mesh::Attributes::AttributeBuffer positions;
+	positions.attributeType = Mesh::AttributeType::positions;
+	positions.componentSize = 3;
+	positions.dataType = GL_FLOAT;
+	positions.stride = sizeof(Vertex);
+	positions.offset = offsetof(Vertex, position);
+
+	Mesh::Attributes::AttributeBuffer normals;
+	normals.attributeType = Mesh::AttributeType::normals;
+	normals.componentSize = 3;
+	normals.dataType = GL_FLOAT;
+	normals.stride = sizeof(Vertex);
+	normals.offset = offsetof(Vertex, normal);
+
+	Mesh::Attributes::AttributeBuffer texcoords;
+	texcoords.attributeType = Mesh::AttributeType::texcoords;
+	texcoords.componentSize = 2;
+	texcoords.dataType = GL_FLOAT;
+	texcoords.stride = sizeof(Vertex);
+	texcoords.offset = offsetof(Vertex, texcoords);
+
+	Mesh::Attributes attributes;
+	attributes.array[Mesh::AttributeType::positions] = positions;
+	attributes.array[Mesh::AttributeType::normals] = normals;
+	attributes.array[Mesh::AttributeType::texcoords] = texcoords;
+	attributes.interleaved = true;
+	attributes.data = reinterpret_cast<uint8_t const*>(vertices.data());
+	attributes.size = vertices.size() * sizeof(Vertex);
+	return attributes;
+}

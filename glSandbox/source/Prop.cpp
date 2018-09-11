@@ -1,14 +1,8 @@
 #include "Prop.h"
 #include "Resources.h"
 
-Prop::Prop(std::shared_ptr<Mesh> const& mesh)
+Prop::Prop(Mesh* mesh)
 	:mesh(mesh)
-{
-
-}
-
-Prop::Prop(std::shared_ptr<Mesh>&& mesh)
-	:mesh(std::move(mesh))
 {
 
 }
@@ -47,9 +41,9 @@ void Prop::drawUI()
 		for(auto& m : res::meshes::getAll())
 		{
 			ImGui::PushID(id++);
-			bool isSelected = mesh.get() == m.get();
+			bool isSelected = mesh == m.get();
 			if(ImGui::Selectable(m->name.get().data(), &isSelected))
-				mesh = m;
+				mesh = m.get();
 			if(isSelected)
 				ImGui::SetItemDefaultFocus();
 			ImGui::PopID();

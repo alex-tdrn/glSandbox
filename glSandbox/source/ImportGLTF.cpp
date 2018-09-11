@@ -8,13 +8,13 @@
 #include <filesystem>
 
 using namespace fx;
-using PrimitivesMap = std::map<gltf::Primitive const*, std::shared_ptr<Mesh>>;
+using PrimitivesMap = std::map<gltf::Primitive const*, Mesh*>;
 
 uint32_t calculateElementSize(gltf::Accessor const& accessor);
 uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
-std::pair<std::vector<std::shared_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
-std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::shared_ptr<Mesh>>& loadedMeshes);
+std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes);
 
 Asset import(std::string_view const& filename)
 {
@@ -87,14 +87,14 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	return n;
 }
 
-std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::shared_ptr<Mesh>>& loadedMeshes)
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes)
 {
 	std::vector<std::unique_ptr<Scene>> scenes;
 	if(doc.scenes.empty())
 	{
 		std::vector<std::unique_ptr<Node>> nodes;
-		for(auto mesh : loadedMeshes)
-			nodes.push_back(std::make_unique<Prop>(std::move(mesh)));
+		for(auto& mesh : loadedMeshes)
+			nodes.push_back(std::make_unique<Prop>(mesh.get()));
 		scenes.emplace_back(std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes))));
 	}
 	else
@@ -105,17 +105,17 @@ std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, Primit
 			for(auto const nodeIdx : scene.nodes)
 				nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
 			auto s = std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes)));
-			/*if(!scene.name.empty())
-				s->name.set(scene.name);*/
+			if(!scene.name.empty())
+				s->name.set(scene.name);
 			scenes.emplace_back(std::move(s));
 		}
 	}
 	return scenes;
 }
 
-std::pair<std::vector<std::shared_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc)
+std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc)
 {
-	std::vector<std::shared_ptr<Mesh>> meshes;
+	std::vector<std::unique_ptr<Mesh>> meshes;
 	PrimitivesMap primitivesMap;
 	for(auto const& mesh : doc.meshes)
 	{
@@ -192,10 +192,10 @@ std::pair<std::vector<std::shared_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Do
 						return GL_TRIANGLES;
 				}
 			}();
-			auto m = std::make_shared<Mesh>(Bounds{min, max}, drawMode, std::move(attributes), std::move(indices));
+			auto m = std::make_unique<Mesh>(Bounds{min, max}, drawMode, std::move(attributes), std::move(indices));
 			if(!mesh.name.empty())
 				m->name.set(mesh.name + "#" + std::to_string(idx++));
-			primitivesMap[&primitive] = m;
+			primitivesMap[&primitive] = m.get();
 			meshes.push_back(std::move(m));
 		}
 	}

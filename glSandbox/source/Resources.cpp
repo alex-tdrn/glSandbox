@@ -16,19 +16,21 @@ Texture& res::textures::placeholder()
 	
 }
 
-static std::vector<std::shared_ptr<Mesh>> meshes;
+static std::vector<std::unique_ptr<Mesh>> meshes;
 
-std::vector<std::shared_ptr<Mesh>> res::meshes::getAll()
+std::vector<std::unique_ptr<Mesh>> const& res::meshes::getAll()
 {
 	return ::meshes;
 }
 
-void res::meshes::add(std::shared_ptr<Mesh> mesh)
+Mesh* res::meshes::add(std::unique_ptr<Mesh>&& mesh)
 {
+	Mesh* ret = mesh.get();
 	::meshes.push_back(std::move(mesh));
+	return ret;
 }
 
-void res::meshes::add(std::vector<std::shared_ptr<Mesh>>&& meshes)
+void res::meshes::add(std::vector<std::unique_ptr<Mesh>>&& meshes)
 {
 	::meshes.reserve(::meshes.size() + meshes.size());
 	for(auto& mesh : meshes)
@@ -128,9 +130,9 @@ Bounds calculateBounds(std::vector<T> const& vertices)
 	return bounds;
 }
 
-std::shared_ptr<Mesh> const& res::meshes::quad()
+Mesh* res::meshes::quad()
 {
-	static std::shared_ptr<Mesh> quad = []() -> std::shared_ptr<Mesh>{
+	static Mesh* quad = []() -> Mesh*{
 		std::vector<Vertex> vertices = {
 			{//top left
 				-1.0f, +1.0f, +0.0f,
@@ -158,16 +160,14 @@ std::shared_ptr<Mesh> const& res::meshes::quad()
 			0, 2, 3
 		};
 		auto bounds = calculateBounds(vertices);
-		auto ret = std::make_shared<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
-		add(ret);
-		return ret;
+		return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
 	}();
 	return quad;
 }
 					  
-std::shared_ptr<Mesh> const& res::meshes::box()
+Mesh* res::meshes::box()
 {
-	static std::shared_ptr<Mesh> box = []() -> std::shared_ptr<Mesh>{
+	static Mesh* box = []() -> Mesh*{
 		std::vector<Vertex> vertices = {
 			//front face
 			{//top left
@@ -322,16 +322,14 @@ std::shared_ptr<Mesh> const& res::meshes::box()
 			20, 22, 23
 		};
 		auto bounds = calculateBounds(vertices);
-		auto ret = std::make_shared<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
-		add(ret);
-		return ret;
+		return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
 	}();
 	return box;
 }
 
-std::shared_ptr<Mesh> const& res::meshes::boxWireframe()
+Mesh* res::meshes::boxWireframe()
 {
-	static std::shared_ptr<Mesh> boxWireframe = []() -> std::shared_ptr<Mesh>{
+	static Mesh* boxWireframe = []() -> Mesh*{
 		std::vector<SimpleVertex> vertices = {
 			//front face
 			{//top left
@@ -376,21 +374,15 @@ std::shared_ptr<Mesh> const& res::meshes::boxWireframe()
 			5, 6
 		};
 		auto bounds = calculateBounds(vertices);
-		auto ret = std::make_shared<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
-		add(ret);
-		return ret;
+		return add(std::make_unique<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
 	}();
 	return boxWireframe;
 }
  
-std::shared_ptr<Mesh> const& res::meshes::grid(int resolution)
+Mesh* res::meshes::grid(int resolution)
 {
-	static std::unordered_map<int, std::shared_ptr<Mesh>> gridCache;
-	if(gridCache.find(resolution) != gridCache.end())
-	{
-		return gridCache[resolution];
-	}
-	else
+	static std::unordered_map<int, std::unique_ptr<Mesh>> gridCache;
+	if(gridCache.find(resolution) == gridCache.end())
 	{ 
 		std::vector<SimpleVertex> vertices;
 		std::vector<uint16_t> indices;
@@ -416,11 +408,10 @@ std::shared_ptr<Mesh> const& res::meshes::grid(int resolution)
 			indices.push_back(idx + 1);
 		}
 		auto bounds = calculateBounds(vertices);
-		auto grid = std::make_shared<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
-		add(grid);
-		gridCache.insert({resolution, grid});
-		return grid;
+		auto grid = std::make_unique<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))});
+		gridCache.insert({resolution, std::move(grid)});
 	}
+	return gridCache[resolution].get();
 }
 
 static std::vector<std::unique_ptr<Scene>> scenes;

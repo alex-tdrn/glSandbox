@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="headers\ProceduralMesh.cpp" />
     <ClCompile Include="source\Profiler.cpp" />
     <ClCompile Include="source\Resources.cpp" />
     <ClCompile Include="source\Node.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="headers\Mesh.h" />
     <ClInclude Include="headers\Node.h" />
     <ClInclude Include="headers\PostProcessingStep.h" />
+    <ClInclude Include="headers\ProceduralMesh.h" />
     <ClInclude Include="headers\Profiler.h" />
     <ClInclude Include="headers\Prop.h" />
     <ClInclude Include="headers\Renderer.h" />

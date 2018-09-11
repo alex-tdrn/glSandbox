@@ -9,12 +9,11 @@ class Prop : public Transformed<Translation, Rotation, Scale>
 {
 private:
 	Name<Prop> name{"prop"};
-	std::shared_ptr<Mesh> mesh = res::meshes::box();
+	Mesh* mesh = res::meshes::box();
 
 public:
 	Prop() = default;
-	Prop(std::shared_ptr<Mesh> const& mesh);
-	Prop(std::shared_ptr<Mesh>&& mesh);
+	Prop(Mesh* mesh);
 	virtual ~Prop() = default;
 
 public:

@@ -11,13 +11,13 @@ namespace res
 {
 	namespace meshes
 	{
-		std::vector<std::shared_ptr<Mesh>> getAll();
-		void add(std::shared_ptr<Mesh>);
-		void add(std::vector<std::shared_ptr<Mesh>>&&);
-		std::shared_ptr<Mesh> const& quad();
-		std::shared_ptr<Mesh> const& box();
-		std::shared_ptr<Mesh> const& boxWireframe();
-		std::shared_ptr<Mesh> const& grid(int resolution);
+		std::vector<std::unique_ptr<Mesh>> const& getAll();
+		Mesh* add(std::unique_ptr<Mesh>&&);
+		void add(std::vector<std::unique_ptr<Mesh>>&&);
+		Mesh* quad();
+		Mesh* box();
+		Mesh* boxWireframe();
+		Mesh* grid(int resolution);
 	}
 	namespace scenes
 	{

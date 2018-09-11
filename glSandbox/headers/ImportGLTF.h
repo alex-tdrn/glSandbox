@@ -8,7 +8,7 @@
 struct Asset
 {
 	std::vector<std::unique_ptr<Scene>> scenes;
-	std::vector<std::shared_ptr<Mesh>> meshes;
+	std::vector<std::unique_ptr<Mesh>> meshes;
 };
 
 Asset import(std::string_view const& filename);

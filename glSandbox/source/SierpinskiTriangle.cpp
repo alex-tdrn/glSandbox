@@ -31,9 +31,10 @@ void SierpinskiTriangle::generate() const
 		processTriangle(c, B, a, iteration - 1, processTriangle);
 		processTriangle(b, a, C, iteration - 1, processTriangle);
 	};
-	addVertex({0.0f, 1.0f, 0.0f});
-	addVertex({-0.5f, 0.0f, 0.0f});
-	addVertex({0.5f, 0.0f, 0.0f});
+	float const tHeight = 0.866025f;
+	addVertex({0.0f, 2 * tHeight / 3, 0.0f});
+	addVertex({-0.5f, - tHeight / 3, 0.0f});
+	addVertex({0.5f, - tHeight / 3, 0.0f});
 	processTriangle(0, 1, 2, iterations, processTriangle);
 	auto bounds = calculateBounds(vertices);
 	mesh = std::make_unique<Mesh>(bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices)));

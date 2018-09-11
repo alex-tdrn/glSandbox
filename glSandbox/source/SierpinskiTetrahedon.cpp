@@ -12,10 +12,11 @@ void SierpinskiTetrahedon::generate() const
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
-	glm::vec3 A{glm::vec3{+0.0f, 1.0f, 0.0f}};
-	glm::vec3 B{glm::vec3{-0.5f, 0.0f, 0.5f}};
-	glm::vec3 C{glm::vec3{+0.5f, 0.0f, 0.5f}};
-	glm::vec3 D{glm::vec3{0.0f, 0.0f, -0.5f}};
+	float const tHeight = 0.866025f;
+	glm::vec3 A{glm::vec3{+0.0f, 2 * tHeight / 3, 0.0f}};
+	glm::vec3 B{glm::vec3{-0.5f, - tHeight / 3, tHeight / 3}};
+	glm::vec3 C{glm::vec3{+0.5f, - tHeight / 3, tHeight / 3}};
+	glm::vec3 D{glm::vec3{0.0f, -tHeight / 3, - 2 * tHeight / 3}};
 	glm::vec3 normals[4] = 
 	{
 		glm::cross(B - A, C - A),

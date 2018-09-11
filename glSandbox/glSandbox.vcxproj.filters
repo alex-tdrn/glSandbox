@@ -87,6 +87,9 @@
     <ClCompile Include="source\SierpinskiTetrahedon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SierpinskiCarpet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\Camera.h">
@@ -159,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\SierpinskiTetrahedon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiCarpet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

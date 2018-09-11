@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="SierpinskiCarpet.cpp" />
     <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
     <ClCompile Include="source\SierpinskiTriangle.cpp" />
     <ClCompile Include="source\Grid.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="headers\Util.h" />
     <ClInclude Include="headers\TransformedNode.h" />
     <ClInclude Include="headers\SierpinskiTetrahedon.h" />
+    <ClInclude Include="headers\SierpinskiCarpet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\blinn-phong.frag" />

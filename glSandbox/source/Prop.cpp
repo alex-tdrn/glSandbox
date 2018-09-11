@@ -4,6 +4,7 @@
 #include "Grid.h"
 #include "SierpinskiTriangle.h"
 #include "SierpinskiTetrahedon.h"
+#include "SierpinskiCarpet.h"
 
 Prop::Prop(Mesh* mesh)
 	:staticMesh(mesh)
@@ -51,6 +52,8 @@ void addProceduralMeshItem(std::unique_ptr<ProceduralMesh>& proceduralMesh, Mesh
 		name = "Sierpinski Triangle";
 	else if constexpr(std::is_same_v<PM, SierpinskiTetrahedon>)
 		name = "Sierpinski Tetrahedon";
+	else if constexpr(std::is_same_v<PM, SierpinskiCarpet>)
+		name = "Sierpinski Carpet";
 	else
 		static_assert(false);
 	if(ImGui::Selectable(name.data(), &isSelected))
@@ -94,6 +97,7 @@ void Prop::drawUI()
 		addProceduralMeshItem<Grid>(proceduralMesh, staticMesh);
 		addProceduralMeshItem<SierpinskiTriangle>(proceduralMesh, staticMesh);
 		addProceduralMeshItem<SierpinskiTetrahedon>(proceduralMesh, staticMesh);
+		addProceduralMeshItem<SierpinskiCarpet>(proceduralMesh, staticMesh);
 		ImGui::EndCombo();
 	}
 	if(proceduralMesh)

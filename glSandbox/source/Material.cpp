@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "Texture.h"
+#include "Util.h"
 #include <imgui.h>
 
 std::string mapToString(int mapType)
@@ -38,9 +39,39 @@ Material::Material(std::string const name)
 {
 }
 
-void Material::setMap(int mapType, std::optional<Texture> map)
+std::string Material::mapTypeToString(Material::Maps mapType)
 {
-	maps[mapType] = map;
+	switch(mapType)
+	{
+		case ambient:
+			return "Ambient";
+		case diffuse:
+			return "Diffuse";
+		case specular:
+			return "Specular";
+		case shininess:
+			return "Shininess";
+		case emission:
+			return "Emission";
+		case light:
+			return "Light";
+		case reflection:
+			return "Reflection";
+		case opacity:
+			return "Opacity";
+		case normal:
+			return "Normal";
+		case bump:
+			return "Bump";
+		case displacement:
+			return "Displacement";
+	}
+	return "Unknown Map Type";
+}
+
+void Material::setMap(int mapType, std::optional<Texture>&& map)
+{
+	maps[mapType] = std::move(map);
 }
 
 std::string_view const Material::getName() const
@@ -51,9 +82,10 @@ std::string_view const Material::getName() const
 bool Material::isInitialized() const
 {
 	bool ret = true;
+	return true;
 	for(auto& map : maps)
 		if(map)
-			ret = ret && map->isInitialized();
+			ret = ret && map->isLoaded();
 
 	return ret;
 }
@@ -72,16 +104,16 @@ void Material::use(Shader shader) const
 	shader.set("material.hasDiffuseMap", bool(maps[diffuse]));
 	if(maps[diffuse])
 	{
-		maps[diffuse]->use();
-		shader.set("material.diffuseMap", maps[diffuse]->getLocation());
+		maps[diffuse]->use(diffuse);
+		shader.set("material.diffuseMap", diffuse);
 		shader.set("material.diffuseMapOffset", maps[diffuse]->getUVOffset());
 	}
 
 	shader.set("material.hasSpecularMap", bool(maps[specular]));
 	if(maps[specular])
 	{
-		maps[specular]->use();
-		shader.set("material.specularMap", maps[specular]->getLocation());
+		maps[specular]->use(specular);
+		shader.set("material.specularMap", specular);
 		shader.set("material.specularMapOffset", maps[specular]->getUVOffset());
 		shader.set("material.shininess", shininessValue);
 	}
@@ -89,8 +121,8 @@ void Material::use(Shader shader) const
 	shader.set("material.hasOpacityMap", bool(maps[opacity]));
 	if(maps[opacity])
 	{
-		maps[opacity]->use();
-		shader.set("material.opacityMap", maps[opacity]->getLocation());
+		maps[opacity]->use(opacity);
+		shader.set("material.opacityMap", opacity);
 		shader.set("material.opacityMapOffset", maps[opacity]->getUVOffset());
 	}
 
@@ -98,6 +130,8 @@ void Material::use(Shader shader) const
 
 bool Material::drawUI()
 {
+	IDGuard idGuard{this};
+
 	bool valueChanged = false;
 	std::string header = name;
 	if(!isInitialized())
@@ -123,8 +157,7 @@ bool Material::drawUI()
 				if(maps[mapType])
 				{
 					ImGui::Text((mapToString(mapType) + " Map").c_str());
-					if(maps[mapType]->drawUI())
-						valueChanged = true;
+					valueChanged |= maps[mapType]->drawUI();
 					ImGui::NextColumn();
 					columnsEmpty--;
 				}

@@ -18,13 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Actor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Components.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\glad.c">
@@ -45,9 +39,6 @@
     <ClCompile Include="source\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\PostProcessingStep.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,15 +54,45 @@
     <ClCompile Include="source\Cubemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Prop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ImportGLTF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Globals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Profiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ProceduralMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SierpinskiTriangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SierpinskiTetrahedon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SierpinskiCarpet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\Actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="headers\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\Globals.h">
@@ -87,9 +108,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\PostProcessingStep.h">
@@ -110,14 +128,47 @@
     <ClInclude Include="headers\Cubemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="headers\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Named.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Prop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\ImportGLTF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\TransformedNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Profiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\ProceduralMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiTriangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiTetrahedon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiCarpet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\light.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\light.frag">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\phong.vert">
       <Filter>shaders</Filter>
     </None>
@@ -134,12 +185,6 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\debugDepthBuffer.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\outline.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\outline.frag">
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\ppBW.frag">
@@ -206,6 +251,21 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\flat.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ppChromaticAberration.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ppGammaHDR.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\blinn-phong.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\unlit.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\unlit.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

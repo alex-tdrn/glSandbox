@@ -26,19 +26,19 @@ struct Material
 struct DirLight
 {
 	vec3 color;
+	float intensity;
 	vec3 direction;
 };
 struct PointLight
 {
 	vec3 color;
+	float intensity;
 	vec3 position;
-	float constant;
-	float linear;
-	float quadratic;
 };
 struct SpotLight
 {
 	vec3 color;
+	float intensity;
 	vec3 position;
 	vec3 direction;
 	float innerCutoff;
@@ -93,7 +93,7 @@ void main()
 	else if(material.overrideSpecular)
 		specularColor = material.overrideSpecularColor;
 	else
-		specularColor = vec3(0.0f);
+		specularColor = vec3(1.0f);
 
 	vec3 result = vec3(0,0,0);
 
@@ -131,16 +131,16 @@ vec3 calcDirLight(DirLight light)
 {
 	vec3 lightDirection = normalize(-light.direction);
 
-    return light.color * (diffuse(lightDirection) + specular(lightDirection));
+    return light.color * light.intensity * (diffuse(lightDirection) + specular(lightDirection));
 }
 
 vec3 calcPointLight(PointLight light)
 {
 	float distance = length(light.position - fs_in.position);
-	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	float attenuation = 1.0 / (distance * distance);
 	vec3 lightDirection = normalize(light.position - fs_in.position);
 
-	return attenuation * light.color * (diffuse(lightDirection) + specular(lightDirection));
+	return attenuation * light.color * light.intensity * (diffuse(lightDirection) + specular(lightDirection));
 }
 
 vec3 calcSpotLight(SpotLight light)
@@ -151,5 +151,5 @@ vec3 calcSpotLight(SpotLight light)
 	float epsilon = light.innerCutoff - light.outerCutoff;
 	float intensity = clamp((theta - light.outerCutoff) / epsilon, 0.0f, 1.0f);
 
-	return intensity * light.color * (diffuse(lightDirection) + specular(lightDirection));
+	return intensity * light.color * light.intensity * (diffuse(lightDirection) + specular(lightDirection));
 }

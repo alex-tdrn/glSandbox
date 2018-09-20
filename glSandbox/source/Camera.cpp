@@ -1,31 +1,45 @@
 #include "Camera.h"
 #include "Globals.h"
+#include "Util.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <imgui.h>
 
-void Camera::init() const
+Camera::Camera()
 {
-	glGenBuffers(1, &ubo);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STREAM_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+	setLimitPitch(true);
+	setLocalTranslation(glm::vec3{0.0f, 0.0f, 8.0f});
 }
 
-void Camera::update()
+unsigned int Camera::ubo()
 {
-	front = orientation.getDirectionVector();
-	right = glm::normalize(glm::cross(-front, {0.0f, -1.0f, 0.0f}));
-	up = glm::normalize(glm::cross(-front, right));
+	static unsigned int ubo = [](){
+		unsigned int ubo;
+		glGenBuffers(1, &ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+		glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STREAM_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+		return ubo;
+	}();
+
+	return ubo;
 }
 
 void Camera::use() const
 {
-	if(!initialized)
-		init();
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo());
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 64, glm::value_ptr(getProjectionMatrix()));
 	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, glm::value_ptr(getViewMatrix()));
-	
+}
+
+void Camera::setName(std::string const& name)
+{
+	this->name.set(name);
+}
+
+std::string const& Camera::getName() const
+{
+	return name.get();
 }
 
 float Camera::getNearPlane() const
@@ -41,95 +55,44 @@ float Camera::getFarPlane() const
 glm::mat4 Camera::getProjectionMatrix() const
 {
 	if(projectionOrtho)
-		return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f);
+		return glm::ortho(-info::windowWidth * 0.5f * orthoScale, +info::windowWidth * 0.5f * orthoScale, -info::windowHeight* 0.5f * orthoScale, +info::windowHeight* 0.5f * orthoScale, nearPlane, farPlane);
 	else
 		return glm::perspective(glm::radians(fov), static_cast<float>(info::windowWidth) / info::windowHeight, nearPlane, farPlane);
 }
 
 glm::mat4 Camera::getViewMatrix() const
 {
-	return glm::lookAt(position.position, position.position + front, up);
+	return glm::inverse(getGlobalTransformation());
 }
 
-glm::vec3 Camera::getPosition() const
+bool Camera::getVisualizeFrustum() const
 {
-	return position.position;
+	return visualizeFrustum;
 }
 
-void Camera::setPosition(Position position)
+void Camera::move(glm::vec3 amount)
 {
-	this->position = position;
-	update();
+	amount[2] *= -1;
+	translate(glm::mat3(getLocalRotationMatrix()) * amount);
 }
 
-void Camera::setOrientation(Orientation orientation)
+void Camera::drawUI()
 {
-	this->orientation = orientation;
-	update();
-}
-
-void Camera::dolly(float amount)
-{
-	position.position += front * amount;
-	update();
-}
-
-void Camera::pan(glm::vec2 amount)
-{
-	position.position += right * amount.x;
-	position.position += up * amount.y;
-	update();
-}
-
-void Camera::adjustOrientation(float yawAmount, float pitchAmount)
-{
-	orientation.yaw += yawAmount;
-	orientation.yaw -= int(orientation.yaw) / 360 * 360;
-	if(orientation.yaw < 0)
-		orientation.yaw += 360;
-	orientation.pitch += pitchAmount;
-	if(orientation.pitch > 89.0f)
-		orientation.pitch = 89.0f;
-	else if(orientation.pitch < -89.0f)
-		orientation.pitch = -89.0f;
-	update();
-}
-
-bool Camera::drawUI()
-{
-	bool valueChanged = false;
-	if(ImGui::CollapsingHeader("Camera"))
-	{
-		ImGui::Indent();
-
-		ImGui::Text("Projection");
-		ImGui::SameLine();
-		if(ImGui::RadioButton("Perspective", reinterpret_cast<int*>(&projectionOrtho), 0))
-			valueChanged = true;
-		ImGui::SameLine();
-		if(ImGui::RadioButton("Orthographic", reinterpret_cast<int*>(&projectionOrtho), 1))
-			valueChanged = true;
-
-		if(ImGui::DragFloat("FOV", &fov, 0.1f))
-			valueChanged = true;
-
-		if(ImGui::DragFloat("Near Plane", &nearPlane, 0.01f))
-			valueChanged = true;
-
-		if(ImGui::DragFloat("Far Plane", &farPlane, 0.1f))
-			valueChanged = true;
-
-		if(orientation.drawUI())
-			valueChanged = true;
-		if(position.drawUI())
-			valueChanged = true;
-		ImGui::Text("Front: (%.2f, %.2f, %.2f)", front.x, front.y, front.z);
-		ImGui::Text("Right: (%.2f, %.2f, %.2f)", right.x, right.y, right.z);
-		ImGui::Text("Up: (%.2f, %.2f, %.2f)", up.x, up.y, up.z);
-
-		ImGui::Unindent();
-	}
-	if(valueChanged) 
-		update();
-	return valueChanged;
+	Transformed<Translation, Rotation>::drawUI();
+	IDGuard idGuard{this};
+	ImGui::BeginChild("Camera", {ImGui::GetTextLineHeightWithSpacing() * 22, ImGui::GetTextLineHeightWithSpacing() * 10});
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Projection");
+	ImGui::SameLine();
+	ImGui::RadioButton("Perspective", reinterpret_cast<int*>(&projectionOrtho), 0);
+	ImGui::SameLine();
+	ImGui::RadioButton("Orthographic", reinterpret_cast<int*>(&projectionOrtho), 1);
+	if(projectionOrtho)
+		ImGui::DragFloat("Scale", &orthoScale, 0.0001f);
+	else
+		ImGui::DragFloat("FOV", &fov, 0.1f);
+	ImGui::DragFloat("Near Plane", &nearPlane, 0.01f);
+	ImGui::DragFloat("Far Plane", &farPlane, 0.1f);
+	ImGui::Checkbox("Visualize Frustum", &visualizeFrustum);
+	ImGui::EndChild();
 }

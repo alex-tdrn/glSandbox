@@ -1,366 +1,364 @@
 #include "Scene.h"
-#include "Globals.h"
+#include "Prop.h"
+#include "Util.h"
+#include "Camera.h"
 
-#include <glad/glad.h>
 #include <imgui.h>
+#include <variant>
+#include <set>
 
 Scene::Scene()
 {
-	
+	root->setScene(this);
+	root->addChild(std::make_unique<Camera>(), true);
+	root->addChild(std::make_unique<DirectionalLight>(), true);
 }
 
-void Scene::init()
+Scene::Scene(Scene &&other)
+	:root(std::move(other.root))
 {
-	initialized = true;
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &colorbuffer);
-	glBindTexture(GL_TEXTURE_2D, colorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorbuffer, 0);
-
-	glGenRenderbuffers(1, &renderbuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, info::windowWidth, info::windowHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
-
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	root->setScene(this);
+	if(getAll<Camera>().empty())
+		root->addChild(std::make_unique<Camera>(), true);
+	if(getAll<Light>().empty())
+		root->addChild(std::make_unique<DirectionalLight>(), true);
+}
+Scene::Scene(std::unique_ptr<Node>&& root)
+	:root(std::move(root))
+{
+	this->root->setScene(this);
+	fitToIdealSize();
+	if(getAll<Camera>().empty())
+		this->root->addChild(std::make_unique<Camera>(), true);
+	if(getAll<Light>().empty())
+		this->root->addChild(std::make_unique<DirectionalLight>(), true);
 }
 
-void Scene::add(DirectionalLight light)
+void Scene::updateCache() const
 {
-	directionalLights.push_back(std::move(light));
+	cache.transformedNodes.clear();
+	cache.cameras.clear();
+	cache.props.clear();
+	cache.directionalLights.clear();
+	cache.pointLights.clear();
+	cache.spotLights.clear();
+	for(auto& node : root->getChildren())
+	{
+		node.get()->recursive([&](Node* node){
+			if(auto prop = dynamic_cast<Prop*>(node); prop)
+				cache.props.push_back(prop);
+			else if(auto camera = dynamic_cast<Camera*>(node); camera)
+				cache.cameras.push_back(camera);
+			else if(auto transformedNode = dynamic_cast<TransformedNode*>(node); transformedNode)
+				cache.transformedNodes.push_back(transformedNode);
+			else if(auto light = dynamic_cast<DirectionalLight*>(node); light)
+				cache.directionalLights.push_back(light);
+			else if(auto light = dynamic_cast<PointLight*>(node); light)
+				cache.pointLights.push_back(light);
+			else if(auto light = dynamic_cast<SpotLight*>(node); light)
+				cache.spotLights.push_back(light);
+		});
+	}
+	cache.dirty = false;
 }
 
-void Scene::add(PointLight light)
+void Scene::cacheOutdated() const
 {
-	pointLights.push_back(std::move(light));
+	cache.dirty = true;
 }
 
-void Scene::add(SpotLight light)
+Node* Scene::getRoot() const
 {
-	spotLights.push_back(std::move(light));
+	return root.get();
 }
 
-void Scene::add(Actor actor)
+Node * Scene::getCurrent() const
 {
-	actors.push_back(std::move(actor));
+	return current;
 }
 
-void Scene::update()
+glm::vec3 const& Scene::getBackground() const
 {
-	needRedraw = true;
+	return backgroundColor;
 }
 
-void Scene::updateFramebuffer()
+void Scene::fitToIdealSize() const
 {
-	update();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, info::windowWidth, info::windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, info::windowWidth, info::windowHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-}
-
-void Scene::setBackgroundColor(glm::vec3 color)
-{
-	backgroundColor = color;
-}
-
-void Scene::draw()
-{
-	if(!initialized)
-		init();
-	using namespace settings::rendering;
-	if(explicitRendering && !needRedraw)
+	Bounds bounds = root->getBounds();
+	if(bounds.empty())
 		return;
-	if(explicitRendering)
-		needRedraw = false;
-	else
-		needRedraw = true;
 
-	ImGui::Text("rendering scene..");
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
+	auto[min, max] = bounds.getValues();
 
-	if(depthTesting)
-	{
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(depthFunction);
-	}
-	else
-	{
-		glDisable(GL_DEPTH_TEST);
-	}
+	glm::vec3 translation = -bounds.getCenter();
+	bounds += translation;
 
-	if(faceCulling)
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(faceCullingMode);
-		glFrontFace(faceCullingOrdering);
-	}
-	else
-	{
-		glDisable(GL_CULL_FACE);
-	}
-
-
-	if(wireframe)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	camera.use();
-	resources::shaders::light.use();
-	glBindVertexArray(resources::boxVAO);
-	auto drawLights = [&](auto lights){
-		for(auto const& light : lights)
-		{
-			if(!light.isEnabled())
-				continue;
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, light.getPosition());
-			model = glm::scale(model, glm::vec3{0.2f});
-			resources::shaders::light.set("model", model);
-			resources::shaders::light.set("lightColor", light.getColor());
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-	};
-	drawLights(pointLights);
-	drawLights(spotLights);
-	Shader& activeShader = getActiveShader();
-	glm::mat4 viewMatrix = camera.getViewMatrix();
-	if(active == type::phong || active == type::gouraud || active == type::flat)
-	{
-		activeShader.set("ambientColor", backgroundColor);
-		//directional lights
-		{
-			int enabledLights = 0;
-			for(int i = 0; i < directionalLights.size(); i++)
-			{
-				if(!directionalLights[i].isEnabled())
-					continue;
-				enabledLights++;
-				std::string prefix = "dirLights[" + std::to_string(i) + "].";
-				activeShader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(directionalLights[i].getDirection(), 0.0f)));
-				activeShader.set(prefix + "color", directionalLights[i].getColor());
-			}
-			activeShader.set("nDirLights", enabledLights);
-		}
-
-		//point lights
-		{
-			int enabledLights = 0;
-			for(int i = 0; i < pointLights.size(); i++)
-			{
-				if(!pointLights[i].isEnabled())
-					continue;
-				enabledLights++;
-				std::string prefix = "pointLights[" + std::to_string(i) + "].";
-				activeShader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(pointLights[i].getPosition(), 1.0f)));
-				activeShader.set(prefix + "color", pointLights[i].getColor());
-				activeShader.set(prefix + "constant", pointLights[i].getConstant());
-				activeShader.set(prefix + "linear", pointLights[i].getLinear());
-				activeShader.set(prefix + "quadratic", pointLights[i].getQuadratic());
-			}
-			activeShader.set("nPointLights", enabledLights);
-		}
-
-		//spot lights
-		{
-			int enabledLights = 0;
-			for(int i = 0; i < spotLights.size(); i++)
-			{
-				if(!spotLights[i].isEnabled())
-					continue;
-				enabledLights++;
-				std::string prefix = "spotLights[" + std::to_string(i) + "].";
-				activeShader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(spotLights[i].getPosition(), 1.0f)));
-				activeShader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(spotLights[i].getDirection(), 0.0f)));
-				activeShader.set(prefix + "color", spotLights[i].getColor());
-				activeShader.set(prefix + "innerCutoff", glm::cos(glm::radians(spotLights[i].getInnerCutoff())));
-				activeShader.set(prefix + "outerCutoff", glm::cos(glm::radians(spotLights[i].getOuterCutoff())));
-			}
-			activeShader.set("nSpotLights", enabledLights);
-		}
-	}
-	else if(active == type::reflection || active == type::refraction)
-	{
-		if(skybox)
-			skybox->use();
-		activeShader.set("skybox", 0);
-		activeShader.set("cameraPos", camera.getPosition());
-	}
-	else if(active == type::debugDepthBuffer)
-	{
-		activeShader.set("nearPlane", camera.getNearPlane());
-		activeShader.set("farPlane", camera.getFarPlane());
-	}
-	else if(active == type::debugNormals)
-	{
-		if(settings::rendering::debugNormalsShowLines)
-		{
-			resources::shaders::debugNormalsShowLines.use();
-			for(auto& actor : actors)
-				actor.draw(resources::shaders::debugNormalsShowLines);
-			activeShader.use();
-		}
-	}
-
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	for(auto& actor : actors)
-		actor.draw(activeShader);
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilMask(0x00);
-	glDisable(GL_DEPTH_TEST);
-	resources::shaders::outline.use();
-	for(auto& actor : actors)
-		actor.drawOutline(resources::shaders::outline);
-	glStencilMask(0xFF);
-	glDisable(GL_STENCIL_TEST);
-
-	//draw skybox
-	if(skybox)
-	{
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-		skybox->use();
-		resources::shaders::skybox.use();
-		resources::shaders::skybox.set("skybox", 0);
-		glBindVertexArray(resources::boxVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-}
-
-unsigned int Scene::getColorbuffer() const
-{
-	return colorbuffer;
-}
-
-Camera& Scene::getCamera()
-{
-	return camera;
+	glm::vec3 absMax;
+	for(int i = 0; i < 3; i++)
+		absMax[i] = std::max(std::abs(min[i]), std::abs(max[i]));
+	float const currentSize = std::max({absMax[0], absMax[1], absMax[2]});
+	float const scale = idealSize / currentSize;
+	glm::mat4 t = glm::translate(glm::mat4{1.0f}, translation);
+	glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
+	root->setLocalTransformation(s * t * root->getGlobalTransformation());
 }
 
 void Scene::drawUI()
 {
-	if(ImGui::CollapsingHeader("Scene"))
-	{
-		ImGui::Indent();
-		if(ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs))
-			update();
-		std::string_view comboPreview = "None";
-		if(skybox)
-			comboPreview = skybox->getName();
-		if(ImGui::BeginCombo("Skybox", comboPreview.data()))
+	IDGuard idGuard{this};
+	
+	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::SameLine();
+	if(ImGui::Button("Fit To:"))
+		fitToIdealSize();
+
+	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
+	static int hierarchyView = 0;
+
+	ImGui::Columns(2, nullptr, false);
+	ImGui::SetColumnWidth(-1, scrollAreaWidth);
+
+	ImGui::InputFloat("###IdealSize", &idealSize);
+	ImGui::NewLine();
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Nodes");
+	ImGui::SameLine();
+	if(ImGui::RadioButton("Category", &hierarchyView, 0))
+		current = nullptr;
+	ImGui::SameLine();
+	if(ImGui::RadioButton("Hierarchy", &hierarchyView, 1))
+		current = nullptr;
+	ImGui::BeginChild("###Nodes");
+
+	std::set<Node*> nodesMarkedForHighlighting;
+	std::set<Node*> nodesMarkedForShallowRemove;
+	auto modal = [](bool justActivated, std::string_view title){
+		bool answer = false;
+		if(justActivated)
+			ImGui::OpenPopup(title.data());
+		if(ImGui::BeginPopupModal(title.data(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
 		{
-			if(ImGui::Selectable("None", !skybox))
+			ImGui::SetWindowSize({100, ImGui::GetTextLineHeight() * 5});
+			ImGui::Text("Are you sure?");
+			ImVec2 buttonSize{ImGui::GetContentRegionAvailWidth() * 0.5f, ImGui::GetContentRegionAvail().y};
+			if(ImGui::Button("Yes", buttonSize))
 			{
-				skybox = nullptr;
-				resources::scene.update();
-			}
-			if(ImGui::Selectable(resources::cubemaps::skybox.getName().data(), skybox == &resources::cubemaps::skybox))
-			{
-				skybox = &resources::cubemaps::skybox;
-				resources::scene.update();
-			}
-			if(ImGui::Selectable(resources::cubemaps::mp_blizzard.getName().data(), skybox == &resources::cubemaps::mp_blizzard))
-			{
-				skybox = &resources::cubemaps::mp_blizzard;
-				resources::scene.update();
-			}
-			ImGui::EndCombo();
-		}
-		if(camera.drawUI())
-			update();
-		auto generateListUI = [&](auto& data, std::optional<std::string_view const> const name = std::nullopt){
-		if(!name.has_value() || ImGui::TreeNode((*name).data()))
-		{
-			if(ImGui::Button("Disable All"))
-			{
-				update();
-				for(auto& entity : data)
-					entity.disable();
+				answer = true;
+				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
-			if(ImGui::Button("Enable All"))
+			if(ImGui::Button("No", buttonSize))
+				ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
+		}
+		return answer;
+	};
+	auto actionsAdd = [](Node* node){
+		if(ImGui::BeginMenu("Add..."))
+		{
+			if(ImGui::MenuItem("Transformed Node"))
+				node->addChild(std::make_unique<TransformedNode>());
+			if(ImGui::MenuItem("Camera"))
+				node->addChild(std::make_unique<Camera>());
+			if(ImGui::MenuItem("Prop"))
+				node->addChild(std::make_unique<Prop>());
+			if(ImGui::BeginMenu("Light..."))
 			{
-				update();
-				for(auto& entity : data)
-					entity.enable();
+				if(ImGui::MenuItem("Directional Light"))
+					node->addChild(std::make_unique<DirectionalLight>());
+				if(ImGui::MenuItem("Point Light"))
+					node->addChild(std::make_unique<PointLight>());
+				if(ImGui::MenuItem("Spot Light"))
+					node->addChild(std::make_unique<SpotLight>());
+				ImGui::EndMenu();
 			}
-			if(ImGui::Button("Add New"))
+			ImGui::EndMenu();
+		}
+	};
+	auto actionsEnableDisable = [](Node* node){
+		if(ImGui::Selectable("Enable"))
+			node->enable();
+		if(ImGui::Selectable("Disable"))
+			node->disable();
+		if(ImGui::Selectable("Recursive Enable"))
+			node->recursive(&Node::enable);
+		if(ImGui::Selectable("Recursive Disable"))
+			node->recursive(&Node::disable);
+	};
+	auto drawRootContextMenu = [&](){
+		bool removeAllChildren = false;
+		if(ImGui::BeginPopupContextItem())
+		{
+			actionsAdd(root.get());
+			actionsEnableDisable(root.get());
+			ImGui::Separator();
+			removeAllChildren = ImGui::Selectable("Remove All Children");
+			ImGui::EndPopup();
+		}
+		if(modal(removeAllChildren, "Remove All Children"))
+		{
+			for(auto& child : root->getChildren())
 			{
-				update();
-				data.emplace_back();
+				child->recursive([&](Node* node){
+					nodesMarkedForShallowRemove.insert(node);
+				});
 			}
-			int removeIdx = -1;
-			for(int i = 0; i < data.size(); i++)
+		}
+	};
+	auto drawNodeContextMenu = [&](Node* node){		
+		bool remove = false;
+		bool removeRecursive = false;
+		bool removeChildren = false;
+		if(ImGui::BeginPopupContextItem())
+		{
+			actionsAdd(node);
+			actionsEnableDisable(node);
+			ImGui::Separator();
+			remove = ImGui::Selectable("Remove");
+			removeRecursive = ImGui::Selectable("Recursive Remove");
+			removeChildren = ImGui::Selectable("Remove All Children");
+			ImGui::EndPopup();
+		}
+		if(modal(remove, "Remove"))
+		{
+			nodesMarkedForShallowRemove.insert(node);
+		}
+		if(modal(removeRecursive, "Recursive Remove"))
+		{
+			node->recursive([&](Node* node){
+				nodesMarkedForShallowRemove.insert(node); 
+			});
+		}
+		if(modal(removeChildren, "Remove All Children"))
+		{
+			for(auto& child : node->getChildren())
 			{
-				if(ImGui::TreeNode(std::to_string(i).data()))
-				{
-					if(ImGui::Button("Remove"))
-						removeIdx = i;
-					if(data[i].drawUI())
-						update();
-					ImGui::TreePop();
-				}
+				child->recursive([&](Node* node){ 
+					nodesMarkedForShallowRemove.insert(node); 
+				});
 			}
-			if(removeIdx != -1)
+		}
+	};
+	root->recursive([](Node* node){ node->setHighlighted(false); });
+	if(hierarchyView)
+	{
+		auto drawNode = [&](Node* node, bool root = false){
+			int flags = ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			if(root)
+				flags = flags | ImGuiTreeNodeFlags_DefaultOpen;
+			if(node->getChildren().empty())
+				flags = flags | ImGuiTreeNodeFlags_Leaf;
+			if(current == node)
+				flags = flags | ImGuiTreeNodeFlags_Selected;
+			bool expandNode = ImGui::TreeNodeEx(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), flags);
+			if(ImGui::IsItemClicked())
+				current = node;
+			if(ImGui::IsItemHovered() || current == node)
+				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
+			else
+				node->setHighlighted(false);
+			return expandNode;
+		};
+		auto drawSubtree = [&, id = 0](Node* node, auto& drawSubtree)mutable -> void{
+			ImGui::PushID(id++);
+			bool expandNode = drawNode(node);
+			drawNodeContextMenu(node);
+			ImGui::PopID();
+			if(expandNode)
 			{
-				data.erase(data.begin() + removeIdx);
-				update();
-			}
-			if(name.has_value())
+				for(auto& child : node->getChildren())
+					drawSubtree(child.get(), drawSubtree);
 				ImGui::TreePop();
 			}
 		};
-		if(ImGui::CollapsingHeader("Actors"))
+
+		bool expandNode = drawNode(root.get(), true);
+		drawRootContextMenu();
+		if(expandNode)
 		{
-			generateListUI(actors);
+			for(auto& node : root->getChildren())
+				drawSubtree(node.get(), drawSubtree);
+			ImGui::TreePop();
 		}
-		if(ImGui::CollapsingHeader("Lights"))
-		{
-			if(ImGui::Button("Disable All"))
-			{
-				update();
-				for(auto& light : directionalLights)
-					light.disable();
-				for(auto& light : pointLights)
-					light.disable();
-				for(auto& light : spotLights)
-					light.disable();
-			}
-			ImGui::SameLine();
-			if(ImGui::Button("Enable All"))
-			{
-				update();
-				for(auto& light : directionalLights)
-					light.enable();
-				for(auto& light : pointLights)
-					light.enable();
-				for(auto& light : spotLights)
-					light.enable();
-			}
-			generateListUI(directionalLights, "Directional Lights");
-			generateListUI(pointLights, "Point Lights");
-			generateListUI(spotLights, "Spot Lights");
-		}
-		ImGui::Unindent();
 	}
+	else
+	{
+		auto drawNode = [&](Node* node, bool root = false){
+			if(ImGui::Selectable(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), current == node))
+				current = node;
+			if(ImGui::IsItemHovered() || current == node)
+				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
+			else
+				node->setHighlighted(false);
+		};
+		auto drawList = [&](auto const& nodes){
+
+			if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow() && !ImGui::IsMouseDragging())//check for mouse click inside window
+				current = nullptr;
+
+			int id = 0;
+			for(auto node : nodes)
+			{
+				ImGui::PushID(id++);
+				drawNode(node);
+				drawNodeContextMenu(node);
+				ImGui::PopID();
+			}
+			
+		};
+		float const scrollAreaHeight = ImGui::GetTextLineHeightWithSpacing() * 8;
+
+		ImGui::Text("Abstract Nodes");
+		ImGui::BeginChild("###Abstract Nodes", {0, scrollAreaHeight}, true);
+		drawNode(root.get(), true);
+		drawRootContextMenu();
+		drawList(getAll<TransformedNode>());
+		ImGui::EndChild();
+
+		ImGui::Text("Props");
+		ImGui::BeginChild("###Props", {0, scrollAreaHeight}, true);
+		drawList(getAll<Prop>());
+		ImGui::EndChild();
+
+		ImGui::Text("Cameras");
+		ImGui::BeginChild("###Cameras", {0, scrollAreaHeight}, true);
+		drawList(getAll<Camera>());
+		ImGui::EndChild();
+
+		ImGui::Text("Directional Lights");
+		ImGui::BeginChild("###Directional Lights", {0, scrollAreaHeight}, true);
+		drawList(getAll<DirectionalLight>());
+		ImGui::EndChild();
+
+		ImGui::Text("Point Lights");
+		ImGui::BeginChild("###Point Lights", {0, scrollAreaHeight}, true);
+		drawList(getAll<PointLight>());
+		ImGui::EndChild();
+
+		ImGui::Text("Spot Lights");
+		ImGui::BeginChild("###Spot Lights", {0, scrollAreaHeight}, true);
+		drawList(getAll<SpotLight>());
+		ImGui::EndChild();
+
+	}
+	for(auto node : nodesMarkedForHighlighting)
+		node->setHighlighted(true);
+	for(auto node : nodesMarkedForShallowRemove)
+	{
+		if(current == node)
+			current = nullptr;
+		node->release();
+	}
+
+	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow() && !ImGui::IsMouseDragging())//check for mouse click inside window
+		current = nullptr;
+	ImGui::EndChild();
+
+	ImGui::NextColumn();
+	ImGui::Text(current ? current->getName().data() : "No selection...");
+	ImGui::BeginChild("###Edit Node", {0, 0}, true);
+	if(current) current->drawUI();
+	ImGui::EndChild();
+
+	ImGui::Columns(1);
 }

@@ -1,20 +1,9 @@
 #include "Lights.h"
 #include "imgui.h"
+#include "Util.h"
+#include "Shader.h"
 
-bool Light::isEnabled() const
-{
-	return enabled;
-}
-
-void Light::enable()
-{
-	enabled = true;
-}
-
-void Light::disable()
-{
-	enabled = false;
-}
+#include <GLFW\glfw3.h>
 
 void Light::setColor(glm::vec3 color)
 {
@@ -26,108 +15,93 @@ glm::vec3 const& Light::getColor() const
 	return color;
 }
 
-bool Light::drawUI()
+void Light::setIntensity(float intensity)
 {
-	bool valueChanged = false;
-	if(ImGui::Checkbox("Enabled", &enabled))
-		valueChanged = true;
-	if(ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs))
-		valueChanged = true;
-
-	return valueChanged;
+	this->intensity = intensity;
 }
 
-void DirectionalLight::setOrientation(glm::vec3 orientation)
+float Light::getIntensity() const
 {
-	this->orientation.yaw = orientation.x;
-	this->orientation.pitch = orientation.y;
-	this->orientation.roll = orientation.z;
+	return intensity;
 }
 
-glm::vec3 const DirectionalLight::getDirection() const
+void Light::use(std::string const& prefix, Shader& shader, bool flash) const
 {
-	return orientation.getDirectionVector();
+	shader.set(prefix + "color", getColor());
+	if(flash)
+		shader.set(prefix + "intensity", static_cast<float>(((std::sin(glfwGetTime()*10) + 1.0f) / 2.0f) * getIntensity()));
+	else
+		shader.set(prefix + "intensity", getIntensity());
 }
 
-
-bool DirectionalLight::drawUI()
+void Light::drawUI()
 {
-	bool valueChanged = false;
-	if(Light::drawUI())
-		valueChanged = true;
-
-	if(orientation.drawUI())
-		valueChanged = true;
-
-	return valueChanged;
+	ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::DragFloat("Intensity", &intensity, 0.1f);
 }
 
-void PointLight::setPosition(glm::vec3 position)
+void DirectionalLight::setName(std::string const& name)
 {
-	this->position.position = position;
+	this->name.set(name);
 }
 
-glm::vec3 const& PointLight::getPosition() const
+std::string const& DirectionalLight::getName() const
 {
-	return position.position;
+	return name.get();
 }
 
-float PointLight::getConstant() const
+void DirectionalLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
 {
-	return constant;
+	Light::use(prefix, shader, isHighlighted());
+	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
+	glm::vec3 direction = glm::mat3_cast(r) * glm::vec3{0.0f, 0.0f, -1.0f};
+	direction = glm::normalize(direction);
+	shader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4(direction, 0.0f)));
 }
 
-float PointLight::getLinear() const
+void DirectionalLight::drawUI()
 {
-	return linear;
+	Transformed<Rotation>::drawUI();
+	Light::drawUI();
 }
 
-float PointLight::getQuadratic() const
+void PointLight::setName(std::string const& name)
 {
-	return quadratic;
+	this->name.set(name);
 }
 
-bool PointLight::drawUI()
+std::string const& PointLight::getName() const
 {
-	bool valueChanged = false;
-	if(Light::drawUI())
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Constant", &constant, 0.001f))
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Linear", &linear, 0.001f))
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Quadratic", &quadratic, 0.001f))
-		valueChanged = true;
-
-	if(position.drawUI())
-		valueChanged = true;
-
-	return valueChanged;
+	return name.get();
 }
 
-void SpotLight::setOrientation(glm::vec3 orientation)
+void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
 {
-	this->orientation.yaw = orientation.x;
-	this->orientation.pitch = orientation.y;
-	this->orientation.roll = orientation.z;
+	Light::use(prefix, shader, isHighlighted());
+	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
+	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(t, 1.0f)));
 }
 
-void SpotLight::setPosition(glm::vec3 position)
+void PointLight::drawUI()
 {
-	this->position.position = position;
+	Transformed<Translation>::drawUI();
+	Light::drawUI();
 }
 
-glm::vec3 const& SpotLight::getPosition() const
+void SpotLight::setName(std::string const& name)
 {
-	return position.position;
+	this->name.set(name);
 }
 
-glm::vec3 const SpotLight::getDirection() const
+std::string const& SpotLight::getName() const
 {
-	return orientation.getDirectionVector();
+	return name.get();
+}
+
+void SpotLight::setCutoff(float inner, float outer)
+{
+	this->innerCutoff = inner;
+	this->outerCutoff = outer;
 }
 
 float SpotLight::getInnerCutoff() const
@@ -140,23 +114,22 @@ float SpotLight::getOuterCutoff() const
 	return outerCutoff;
 }
 
-bool SpotLight::drawUI()
+void SpotLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
 {
-	bool valueChanged = false;
-	if(Light::drawUI())
-		valueChanged = true;
+	Light::use(prefix, shader, isHighlighted());
+	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
+	glm::vec3 direction = glm::mat3_cast(r) * glm::vec3{0.0f, 0.0f, -1.0f};
+	direction = glm::normalize(direction);
+	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4{t, 1.0f}));
+	shader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4{direction, 0.0f}));
+	shader.set(prefix + "innerCutoff", glm::cos(glm::radians(getInnerCutoff())));
+	shader.set(prefix + "outerCutoff", glm::cos(glm::radians(getOuterCutoff())));
+}
 
-	if(ImGui::DragFloat("Inner Cutoff", &innerCutoff, 0.02f))
-		valueChanged = true;
-
-	if(ImGui::DragFloat("Outer Cutoff", &outerCutoff, 0.02f))
-		valueChanged = true;
-
-	if(orientation.drawUI())
-		valueChanged = true;
-
-	if(position.drawUI())
-		valueChanged = true;
-
-	return valueChanged;
+void SpotLight::drawUI()
+{
+	Transformed<Translation, Rotation>::drawUI();
+	Light::drawUI();
+	ImGui::DragFloat("Inner Cutoff", &innerCutoff, 0.1f);
+	ImGui::DragFloat("Outer Cutoff", &outerCutoff, 0.1f);
 }

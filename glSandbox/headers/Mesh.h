@@ -1,35 +1,119 @@
 #pragma once
-#include "Shader.h"
+#include "Named.h"
+#include "Util.h"
 
 #include <glm/glm.hpp>
+#include <glad/glad.h>
+#include <optional>
+#include <array>
 #include <vector>
-
-class Material;
-struct Vertex
-{
-	glm::vec3 position{0.0f, 0.0f, 0.0f};
-	glm::vec3 normal{0.0f, 0.0f, 0.0f};
-	glm::vec2 texCoords{0.0f, 0.0f};
-};
 
 class Mesh
 {
-private:
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO;
-	std::string name;
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	Material* material;
-	static int ct;
 public:
-	Mesh(std::vector<Vertex>&& vertices, std::vector<unsigned int>&& indices, Material* material, std::string const name = "Mesh#" + std::to_string(ct++));
-	~Mesh();
+	enum AttributeType
+	{
+		positions,
+		normals,
+		texcoords,
+		N
+	};
+	struct Attributes
+	{
+		struct AttributeBuffer
+		{
+			uint8_t const* data;
+			uint64_t size;
+			uint32_t stride;
+			uint64_t offset;
+			uint32_t componentSize;
+			GLenum dataType;
+			AttributeType attributeType;
+		};
+		std::array<std::optional<AttributeBuffer>, AttributeType::N> array;
+		bool interleaved = false;
+		uint8_t const* data;
+		uint64_t size;
+	};
+	struct IndexBuffer
+	{
+		uint8_t const* data;
+		uint64_t size;
+		uint32_t count;
+		GLenum dataType;
+	};
+
+private:
+	mutable unsigned int VAO = 0;
+	mutable unsigned int VBO = 0;
+	mutable unsigned int EBO = 0;
+	GLenum drawMode = GL_POINTS;
+	uint32_t const vertexCount;
+	uint32_t const indexCount;
+	GLenum const indexDataType;
+	bool indexedDrawing;
+	Bounds const bounds;
+public:
+	Name<Mesh> name{"mesh"};
 
 public:
-	std::vector<Vertex> const& getVertices() const;
-	std::vector<unsigned int> const& getIndices() const;
-	void draw(Shader shader) const;
-	[[nodiscard]] bool drawUI();
+	Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
+	Mesh(Mesh const&) = delete;
+	Mesh(Mesh&&);
+	~Mesh();
+	Mesh& operator=(Mesh const&) = delete;
+	Mesh& operator=(Mesh&&) = delete;
+
+public:
+	Bounds const& getBounds() const;
+	void use() const;
+	void drawUI();
+
 };
+
+struct SimpleVertex
+{
+	glm::vec3 position;
+};
+
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 texcoords;
+};
+
+template <typename T>
+Mesh::IndexBuffer buildIndexBuffer(std::vector<T>&& indices)
+{
+	Mesh::IndexBuffer indexBuffer;
+	indexBuffer.data = reinterpret_cast<uint8_t const*>(indices.data());
+	indexBuffer.count = indices.size();
+	indexBuffer.size = indices.size() * sizeof(T);
+	switch(sizeof(T))
+	{
+		case 1:
+			indexBuffer.dataType = GL_UNSIGNED_BYTE;
+			break;
+		case 2:
+			indexBuffer.dataType = GL_UNSIGNED_SHORT;
+			break;
+		case 4:
+			indexBuffer.dataType = GL_UNSIGNED_INT;
+			break;
+	}
+	return indexBuffer;
+}
+
+Mesh::Attributes buildAttributes(std::vector<SimpleVertex>&& vertices);
+
+Mesh::Attributes buildAttributes(std::vector<Vertex>&& vertices);
+
+template <typename T>
+Bounds calculateBounds(std::vector<T> const& vertices)
+{
+	Bounds bounds;
+	for(auto const& vertex : vertices)
+		bounds += vertex.position;
+	return bounds;
+}

@@ -1,10 +1,12 @@
-#include "Model.h"
-#include "Actor.h"
-#include "Shader.h"
+﻿#include "Shader.h"
 #include "Camera.h"
 #include "Lights.h"
 #include "Globals.h"
 #include "Scene.h"
+#include "Node.h"
+#include "Prop.h"
+#include "Renderer.h"
+#include "Profiler.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,12 +20,35 @@
 #include <array>
 #include <vector>
 #include <optional>
+#include <memory>
+#include <deque>
+#include <vld.h>
 
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
-float lastMouseX = 400;
-float lastMouseY = 300;
+double deltaTime = 0.0f;
+double lastFrame = 0.0f;
+double lastMouseX = 400;
+double lastMouseY = 300;
 bool mouseDrag = false;
+Renderer& settings::mainRenderer()
+{
+	static Renderer r = {[](){
+		auto defaultScene = std::make_unique<Scene>();
+		const int nPrimitives = 3;
+		const float spacing = 3.0f;
+		glm::vec3 pos{-spacing * (static_cast<float>(nPrimitives - 1) / 2.0f), 0.0f, 0.0f};
+		for(auto const& mesh : {res::meshes::quad(), res::meshes::box(), res::meshes::boxWireframe()})
+		{
+			std::unique_ptr<Node> prop = std::make_unique<Prop>(mesh);
+			prop->setLocalTransformation(glm::translate(glm::mat4(1.0f), pos));
+			pos.x += spacing;
+			defaultScene->getRoot()->addChild(std::move(prop));
+		}
+		auto ret = defaultScene->getAll<Camera>()[0];
+		res::scenes::add(std::move(defaultScene));
+		return ret;
+	}()};
+	return r;
+}
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam);
@@ -34,6 +59,7 @@ void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifie
 void processInput(GLFWwindow* window);
 void drawUI();
 
+
 int main(int argc, char** argv)
 {
 	//initialize stuff
@@ -41,8 +67,9 @@ int main(int argc, char** argv)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifndef NDEBUG
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
+#endif
 	GLFWwindow* window = glfwCreateWindow(info::windowWidth, info::windowHeight, "glSandbox", nullptr, nullptr);
 	if(window == nullptr)
 	{
@@ -69,65 +96,24 @@ int main(int argc, char** argv)
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 #endif
-
 	glfwSetFramebufferSizeCallback(window, windowResizeCallback);
 	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetScrollCallback(window, ImGui_ImplGlfw_ScrollCallback);
 	glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
-
 	//setup ImGui
 	//IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplGlfwGL3_Init(window, false);
-	ImGui::StyleColorsLight();
-	
-	resources::scene.setBackgroundColor({0.5f, 0.5f, 0.5f});
-	resources::scene.getCamera().setPosition(Position{{3.0f, 2.0f, 1.0f}});
-	resources::scene.getCamera().setOrientation(Orientation{200.0f, -20.0f, 0.0f});
-	resources::init();
-	{
-		DirectionalLight light;
-		light.setColor({20.0f / 255.0f, 10.0f / 255.0f, 70.0f / 255.0f});
-		light.setOrientation({120.0f, -60.0f, 0.0f});
-		resources::scene.add(light);
-	}
-	{
-		PointLight light;
-		light.setColor({1.0f, 200.0f / 255.0f, 0.0f});
-		light.setPosition({-1.0f, 0.0f, 2.0f});
-		resources::scene.add(light);
-	}
-	{
-		SpotLight light;
-		light.setPosition({-2.4f, -1.4f, -2.4f});
-		light.setOrientation({170.0f, 0.0f, 0.0f});
-		resources::scene.add(light);
-	}
-	{
-		Actor actor(&resources::models::sponza);
-		actor.setPosition({0.0f, -1.8f, 0.0f});
-		actor.setScale({0.0125f, 0.0125f, 0.0125f});
-#ifdef NDEBUG
-		resources::scene.add(actor);
-#endif
-	}
-	{
-		int idx = 1;
-		for(int i = 0; i < 3; i++)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				Actor actor(&resources::models::nanosuit);
-				actor.setPosition({0.0f - i * 3.0f, -1.75f, 0.0f - j * 1.0f});
-				actor.setScale({0.15f, 0.15f, 0.15f});
-				resources::scene.add(actor);
-				idx++;
-			}
-		}
-	}
+	ImGui::StyleColorsDark();
+	ImGui::GetStyle().WindowRounding = 0.0f;
+	ImGui::GetStyle().WindowBorderSize = 0.0f;
+	ImGui::GetStyle().PopupRounding= 0.0f;
+	ImGui::GetStyle().ScrollbarRounding = 0.0f;
+	res::loadShaders();
+
 	while(!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
@@ -136,31 +122,18 @@ int main(int argc, char** argv)
 		processInput(window);
 		drawUI();
 		glfwSwapInterval(settings::rendering::vsync);
-		float currentFrame = glfwGetTime();
+		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
-		resources::scene.draw();
-
-		{
-			using settings::postprocessing::steps;
-			if(steps.size() == 1)
-			{
-				steps[0].draw(resources::scene.getColorbuffer(), 0);
-			}
-			else if(steps.size() > 1)
-			{
-				steps[0].draw(resources::scene.getColorbuffer());
-				for(int i = 1; i < steps.size() - 1; i++)
-					steps[i].draw(steps[i - 1].getColorbuffer());
-				steps[steps.size() - 1].draw(steps[steps.size() - 2].getColorbuffer(), 0);
-			}
-
-		}
-
+		settings::mainRenderer().render();
+		
+		glEnable(GL_FRAMEBUFFER_SRGB);
+		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
+		glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
+		profiler::recordFrame();
 	}
 
 	glfwTerminate();
@@ -169,27 +142,83 @@ int main(int argc, char** argv)
 
 void drawUI()
 {
-	ImGui_ImplGlfwGL3_NewFrame();
-	resources::drawUI();
-	settings::drawUI();
-	info::drawUI();
+	static bool drawFileBrowserFlag = false;
+	static bool drawResources = false;
+	static bool drawMainRenderer = false;
+	static bool drawPostprocessingSettings = false;
+	static bool drawProfiler = true;
+	static bool drawImGuiDemo = false;
+	static std::deque<bool> drawRenderer;
 
+	ImGui_ImplGlfwGL3_NewFrame();
+	if(ImGui::BeginMainMenuBar())
+	{
+		if(ImGui::BeginMenu("View"))
+		{
+			if(ImGui::MenuItem("Resources"))
+				drawResources = true;
+			if(ImGui::BeginMenu("Rendering"))
+			{
+				if(ImGui::MenuItem("Main Renderer"))
+					drawMainRenderer = true;
+				for(int i = 0; i < settings::getAllRenderers().size(); i++)
+					if(ImGui::MenuItem(("Secondary Renderer " + std::to_string(i)).data()))
+						drawRenderer[i] = true;
+				if(ImGui::MenuItem("Add Secondary Renderer"))
+				{
+					settings::addRenderer(std::make_unique<Renderer>());
+					drawRenderer.push_back(true);
+				}
+				ImGui::EndMenu();
+			}
+			if(ImGui::BeginMenu("Settings"))
+			{
+				if(ImGui::MenuItem("Postprocessing"))
+					drawPostprocessingSettings = true;
+				ImGui::EndMenu();
+			}
+			if(ImGui::MenuItem("Profiler"))
+				drawProfiler = true;
+			if(ImGui::BeginMenu("ImGui"))
+			{
+				if(ImGui::MenuItem("Demo"))
+					drawImGuiDemo = true;
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+	res::drawUI(&drawResources);
+	settings::mainRenderer().drawUI(&drawMainRenderer);
+	for(int i = 0; i < drawRenderer.size(); i++)
+	{
+		settings::getAllRenderers()[i]->drawUI(&drawRenderer[i]);
+		if(drawRenderer[i])
+			settings::getAllRenderers()[i]->render();
+	}
+	settings::postprocessing::drawUI(&drawPostprocessingSettings);
+	profiler::drawUI(&drawProfiler);
+	if(drawImGuiDemo)
+		ImGui::ShowDemoWindow(&drawImGuiDemo);
 }
+
 void windowResizeCallback(GLFWwindow* window, int width, int height)
 {
 	info::windowWidth = width;
 	info::windowHeight = height;
+
 	glViewport(0, 0, width, height);
-	resources::scene.updateFramebuffer();
-	for(auto& step : settings::postprocessing::steps)
+	settings::mainRenderer().resizeViewport(width, height);
+	for(auto& step : settings::postprocessing::steps())
 		step.updateFramebuffer();
 }
 void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
 
 	static bool firstMouse = true;
-	float xoffset = xpos - lastMouseX;
-	float yoffset = ypos - lastMouseY;
+	double xoffset = xpos - lastMouseX;
+	double yoffset = ypos - lastMouseY;
 	lastMouseX = xpos;
 	lastMouseY = ypos;
 	if(!mouseDrag || firstMouse)
@@ -197,19 +226,16 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 		firstMouse = false;
 		return;
 	}
-	resources::scene.update();
-
 	float sensitivity = 0.05f;
-	xoffset *= sensitivity;
+	xoffset *= -sensitivity;
 	yoffset *= -sensitivity;
-	resources::scene.getCamera().adjustOrientation(xoffset, yoffset);
+	settings::mainRenderer().getCamera()->rotate(xoffset, yoffset);
+	settings::mainRenderer().shouldRender();
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
 	if(ImGuiIO& io = ImGui::GetIO(); io.WantCaptureMouse)
 		return ImGui_ImplGlfw_MouseButtonCallback(window, button, mode, modifier);
-	resources::scene.update();
-
 
 	if(button == GLFW_MOUSE_BUTTON_1)
 	{
@@ -227,59 +253,41 @@ void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 }
 void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifier)
 {
-	if(ImGuiIO& io = ImGui::GetIO(); io.WantCaptureKeyboard)
-		return ImGui_ImplGlfw_KeyCallback(window, key, keycode, mode, modifier);
-	if(mode != GLFW_PRESS)
-		return;
-	resources::scene.update();
-
-	switch(key)
+	if(key == GLFW_KEY_ESCAPE && mode == GLFW_PRESS)
 	{
-		case GLFW_KEY_ESCAPE:
-			glfwSetWindowShouldClose(window, true);
-			break;
+		glfwSetWindowShouldClose(window, true);
+		return;
 	}
+	return ImGui_ImplGlfw_KeyCallback(window, key, keycode, mode, modifier);
 }
 void processInput(GLFWwindow* window)
 {
 
-	float moveDistance = 2.5f * deltaTime; // adjust accordingly
+	float distance = 2.5f * deltaTime; // adjust accordingly
+	glm::vec3 direction{0.0f};
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		resources::scene.getCamera().dolly(+moveDistance);
-		resources::scene.update();
-	}
+		direction.z += 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		resources::scene.getCamera().dolly(-moveDistance);
-		resources::scene.update();
-	}
+		direction.z -= 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		resources::scene.getCamera().pan({+moveDistance, 0.0f});
-		resources::scene.update();
-	}
+		direction.x += 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		resources::scene.getCamera().pan({-moveDistance, 0.0f});
-		resources::scene.update();
-	}
+		direction.x -= 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-	{
-		resources::scene.getCamera().pan({0.0f, +moveDistance});
-		resources::scene.update();
-	}
+		direction.y += 1.0f;
 	if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		direction.y -= 1.0f;
+	if(direction != glm::vec3{0.0f})
 	{
-		resources::scene.getCamera().pan({0.0f, -moveDistance});
-		resources::scene.update();
+		settings::mainRenderer().getCamera()->move(direction * distance);
+		settings::mainRenderer().shouldRender();
 	}
 }
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam)
 {
-	if(type == GL_DEBUG_TYPE_PERFORMANCE)
+	if(type == GL_DEBUG_TYPE_PERFORMANCE || type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR)
 		return;
 	std::cout << "-----------------------------------\n"
 		<< "OpenGL Debug Message (" << id << "): \n" << message << '\n';

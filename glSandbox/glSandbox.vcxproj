@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -81,7 +81,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Libraries\glad\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <CodeAnalysisRuleSet>CppCoreCheckRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Libraries\glad\include;$(IncludePath)</IncludePath>
@@ -105,7 +106,11 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Libraries\Visual Leak Detector\include;C:\Libraries\fx-gltf\include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FloatingPointExceptions>true</FloatingPointExceptions>
+      <EnablePREfast>false</EnablePREfast>
+      <DisableSpecificWarnings>4312; 4244; 4312;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -136,9 +141,10 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Libraries\Visual Leak Detector\include;C:\Libraries\fx-gltf\include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -148,40 +154,60 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="SierpinskiCarpet.cpp" />
+    <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
+    <ClCompile Include="source\SierpinskiTriangle.cpp" />
+    <ClCompile Include="source\Grid.cpp" />
+    <ClCompile Include="source\ProceduralMesh.cpp" />
+    <ClCompile Include="source\Profiler.cpp" />
+    <ClCompile Include="source\Resources.cpp" />
+    <ClCompile Include="source\Node.cpp" />
+    <ClCompile Include="source\Prop.cpp" />
+    <ClCompile Include="source\ImportGLTF.cpp" />
     <ClCompile Include="source\Cubemap.cpp" />
     <ClCompile Include="source\Camera.cpp" />
-    <ClCompile Include="source\Components.cpp" />
     <ClCompile Include="source\glad.c" />
     <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="source\Lights.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\Material.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
-    <ClCompile Include="source\Model.cpp" />
-    <ClCompile Include="source\Actor.cpp" />
     <ClCompile Include="source\PostProcessingStep.cpp" />
+    <ClCompile Include="source\Renderer.cpp" />
     <ClCompile Include="source\Scene.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Grid.h" />
+    <ClInclude Include="headers\Named.h" />
+    <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />
-    <ClInclude Include="headers\Components.h" />
     <ClInclude Include="headers\Globals.h" />
     <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="headers\Lights.h" />
     <ClInclude Include="headers\Material.h" />
     <ClInclude Include="headers\Mesh.h" />
-    <ClInclude Include="headers\Model.h" />
-    <ClInclude Include="headers\Actor.h" />
+    <ClInclude Include="headers\Node.h" />
     <ClInclude Include="headers\PostProcessingStep.h" />
+    <ClInclude Include="headers\ProceduralMesh.h" />
+    <ClInclude Include="headers\Profiler.h" />
+    <ClInclude Include="headers\Prop.h" />
+    <ClInclude Include="headers\Renderer.h" />
+    <ClInclude Include="headers\Resources.h" />
     <ClInclude Include="headers\Scene.h" />
     <ClInclude Include="headers\Shader.h" />
+    <ClInclude Include="headers\SierpinskiTriangle.h" />
     <ClInclude Include="headers\Texture.h" />
     <ClInclude Include="headers\Util.h" />
+    <ClInclude Include="headers\TransformedNode.h" />
+    <ClInclude Include="headers\SierpinskiTetrahedon.h" />
+    <ClInclude Include="headers\SierpinskiCarpet.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\blinn-phong.frag" />
     <None Include="shaders\debugNormals.geom" />
     <None Include="shaders\debugDepthBuffer.frag" />
     <None Include="shaders\debugDepthBuffer.vert" />
@@ -197,14 +223,14 @@
     <None Include="shaders\flat.vert" />
     <None Include="shaders\gouraud.frag" />
     <None Include="shaders\gouraud.vert" />
-    <None Include="shaders\light.frag" />
-    <None Include="shaders\light.vert" />
-    <None Include="shaders\outline.frag" />
-    <None Include="shaders\outline.vert" />
+    <None Include="shaders\unlit.frag" />
+    <None Include="shaders\unlit.vert" />
     <None Include="shaders\phong.frag" />
     <None Include="shaders\phong.vert" />
     <None Include="shaders\ppBW.frag" />
+    <None Include="shaders\ppChromaticAberration.frag" />
     <None Include="shaders\ppConvolution.frag" />
+    <None Include="shaders\ppGammaHDR.frag" />
     <None Include="shaders\ppInvert.frag" />
     <None Include="shaders\ppPassthrough.frag" />
     <None Include="shaders\pp.vert" />

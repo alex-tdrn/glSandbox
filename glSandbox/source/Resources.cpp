@@ -328,6 +328,13 @@ namespace res::textures
 		return ret;
 	}
 
+	void add(std::vector<std::unique_ptr<Texture>>&& textures)
+	{
+		_textures.reserve(_textures.size() + textures.size());
+		for(auto& texture : textures)
+			_textures.push_back(std::move(texture));
+	}
+
 	Texture* placeholder()
 	{
 		static auto placeholder = add(std::make_unique<Texture>("textures/placeholder.png", true));
@@ -563,6 +570,7 @@ Scene& res::importGLTF(std::string_view const filename)
 	auto ret = asset.scenes[0].get();//active scene
 	scenes::add(std::move(asset.scenes));
 	meshes::add(std::move(asset.meshes));
+	textures::add(std::move(asset.textures));
 	return *ret;
 }
 

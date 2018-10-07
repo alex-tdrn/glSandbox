@@ -35,6 +35,7 @@ namespace res
 	{
 		std::vector<std::unique_ptr<Texture>> const& getAll();
 		Texture* add(std::unique_ptr<Texture>&&);
+		void add(std::vector<std::unique_ptr<Texture>>&&);
 		Texture* placeholder();
 	}
 	namespace cubemaps

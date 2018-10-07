@@ -14,6 +14,7 @@ uint32_t calculateElementSize(gltf::Accessor const& accessor);
 uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
+std::vector<std::unique_ptr<Texture>> loadTextures(gltf::Document const& doc, std::filesystem::path const& currentPath);
 std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes);
 
 Asset import(std::string_view const& filename)
@@ -33,7 +34,10 @@ Asset import(std::string_view const& filename)
 		else
 			scenes[i]->name.set(name);
 	}
-	return {std::move(scenes), std::move(meshes)};
+	std::filesystem::path currentPath = filename;
+	
+	auto textures = loadTextures(doc, currentPath.parent_path().string());
+	return {std::move(scenes), std::move(meshes), std::move(textures)};
 }
 
 std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, PrimitivesMap const& primitivesMap)
@@ -200,6 +204,18 @@ std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Do
 		}
 	}
 	return {std::move(meshes), std::move(primitivesMap)};
+}
+
+std::vector<std::unique_ptr<Texture>> loadTextures(gltf::Document const& doc, std::filesystem::path const& currentPath)
+{
+	std::vector<std::unique_ptr<Texture>> ret;
+	for(auto& image : doc.images)
+	{
+		if(image.IsEmbeddedResource())
+			continue;
+		ret.push_back(std::make_unique<Texture>((currentPath / image.uri).string(), true));
+	}
+	return ret;
 }
 
 GLenum gltfToGLType(gltf::Accessor::ComponentType type)

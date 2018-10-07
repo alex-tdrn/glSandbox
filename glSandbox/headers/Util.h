@@ -10,6 +10,7 @@
 #include <tuple>
 #include <algorithm>
 #include <iostream>
+#include <array>
 
 template <typename...>
 struct is_one_of
@@ -86,12 +87,47 @@ public:
 	}
 	Bounds& operator*=(glm::mat4 const& rhs)
 	{
-		assert(!_empty);
-		glm::vec4 min{this->min, 1.0f};
-		glm::vec4 max{this->max, 1.0f};
-		this->min = rhs * min;
-		this->max = rhs * max;
-		normalize();
+		if(!_empty)
+		{
+			std::array<glm::vec4, 8> corners;
+			int idx = 0;
+			for(int x = 0; x <= 1; x++)
+			{
+				for(int y = 0; y <= 1; y++)
+				{
+					for(int z = 0; z <= 1; z++)
+					{
+						corners[idx++] = glm::vec4{
+							x ? min.x : max.x,
+							y ? min.y : max.y,
+							z ? min.z : max.z,
+							1.0f};
+					}
+				}
+			}
+			bool initMinMax = false;
+			for(auto& corner : corners)
+			{
+				glm::vec4 transformedCorner = rhs * corner;
+				if(!initMinMax)
+				{
+					min = transformedCorner;
+					max = transformedCorner;
+					initMinMax = true;
+				}
+				for(int i = 0; i < 3; i++)
+				{
+					if(std::abs(transformedCorner[i]) > 2.0f)
+					{
+						volatile int a = 2;
+					}
+					min[i] = std::min(min[i], transformedCorner[i]);
+					max[i] = std::max(max[i], transformedCorner[i]);
+				}
+			}
+
+			normalize();
+		}
 		return *this;
 	}
 	Bounds& operator+=(Bounds const& rhs)
@@ -170,10 +206,11 @@ public:
 
 inline Bounds operator*(Bounds const& lhs, glm::mat4 const& rhs)
 {
-	assert(!lhs._empty);
-	glm::vec4 min{lhs.min, 1.0f};
-	glm::vec4 max{lhs.max, 1.0f};
-	return {rhs * min, rhs * max};
+	if(lhs._empty)
+		return lhs;
+	Bounds ret = lhs;
+	ret *= rhs;
+	return ret;
 }
 
 inline Bounds operator+(Bounds const& lhs, Bounds const& rhs)

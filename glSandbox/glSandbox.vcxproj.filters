@@ -87,7 +87,7 @@
     <ClCompile Include="source\SierpinskiTetrahedon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SierpinskiCarpet.cpp">
+    <ClCompile Include="source\SierpinskiCarpet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

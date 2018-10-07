@@ -8,7 +8,8 @@
 Camera::Camera()
 {
 	setLimitPitch(true);
-	setLocalTranslation(glm::vec3{0.0f, 0.0f, 8.0f});
+	setLocalTranslation(glm::vec3{0.0f, 3.0f, 10.0f});
+	setLocalRotation(glm::vec3{-15.0f, 0.0f, 0.0f});
 }
 
 unsigned int Camera::ubo()

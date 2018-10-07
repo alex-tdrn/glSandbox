@@ -16,7 +16,7 @@ class Scene
 private:
 	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
 	std::unique_ptr<Node> root = std::make_unique<TransformedNode>();
-	float idealSize = 2.0f;
+	float idealSize = 4.0f;
 	mutable struct{
 		bool dirty = true;
 		std::vector<TransformedNode*> transformedNodes;

@@ -155,7 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Globals.cpp" />
-    <ClCompile Include="SierpinskiCarpet.cpp" />
+    <ClCompile Include="source\SierpinskiCarpet.cpp" />
     <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
     <ClCompile Include="source\SierpinskiTriangle.cpp" />
     <ClCompile Include="source\Grid.cpp" />

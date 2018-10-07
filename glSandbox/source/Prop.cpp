@@ -29,7 +29,8 @@ Mesh& Prop::getMesh() const
 
 Bounds Prop::getBounds() const
 {
-	return getMesh().getBounds() * getGlobalTransformation();
+	Bounds childBounds = Node::getBounds();
+	return getMesh().getBounds() * getGlobalTransformation() + childBounds;
 }
 
 void Prop::setName(std::string const& name)

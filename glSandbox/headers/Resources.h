@@ -21,7 +21,7 @@ namespace res
 	namespace scenes
 	{
 		std::vector<std::unique_ptr<Scene>> const& getAll();
-		void add(std::unique_ptr<Scene>&&);
+		Scene* add(std::unique_ptr<Scene>&&);
 		void add(std::vector<std::unique_ptr<Scene>>&&);
 
 	}
@@ -33,7 +33,9 @@ namespace res
 	}
 	namespace textures
 	{
-		Texture& placeholder();
+		std::vector<std::unique_ptr<Texture>> const& getAll();
+		Texture* add(std::unique_ptr<Texture>&&);
+		Texture* placeholder();
 	}
 	namespace cubemaps
 	{

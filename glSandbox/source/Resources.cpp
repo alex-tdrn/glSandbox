@@ -9,43 +9,38 @@
 #include <filesystem>
 #include <map>
 
-Texture& res::textures::placeholder()
+namespace res::meshes
 {
-	static Texture placeholder("textures/placeholder.png", true);
-	return placeholder;
-	
-}
+	static std::vector<std::unique_ptr<Mesh>> _meshes;
 
-static std::vector<std::unique_ptr<Mesh>> meshes;
+	std::vector<std::unique_ptr<Mesh>> const& getAll()
+	{
+		return _meshes;
+	}
 
-std::vector<std::unique_ptr<Mesh>> const& res::meshes::getAll()
-{
-	return ::meshes;
-}
+	Mesh* add(std::unique_ptr<Mesh>&& mesh)
+	{
+		Mesh* ret = mesh.get();
+		_meshes.push_back(std::move(mesh));
+		return ret;
+	}
 
-Mesh* res::meshes::add(std::unique_ptr<Mesh>&& mesh)
-{
-	Mesh* ret = mesh.get();
-	::meshes.push_back(std::move(mesh));
-	return ret;
-}
+	void add(std::vector<std::unique_ptr<Mesh>>&& meshes)
+	{
+		_meshes.reserve(_meshes.size() + meshes.size());
+		for(auto& mesh : meshes)
+			_meshes.push_back(std::move(mesh));
+	}
 
-void res::meshes::add(std::vector<std::unique_ptr<Mesh>>&& meshes)
-{
-	::meshes.reserve(::meshes.size() + meshes.size());
-	for(auto& mesh : meshes)
-		::meshes.push_back(std::move(mesh));
-}
-
-Mesh* res::meshes::quad()
-{
-	static Mesh* quad = []() -> Mesh*{
-		std::vector<Vertex> vertices = {
-			{//top left
-				glm::vec3{-1.0f, +1.0f, +0.0f},
-				glm::vec3{+0.0f, +0.0f, +1.0f},
-				glm::vec2{+0.0f, +1.0f}
-			},
+	Mesh* quad()
+	{
+		static Mesh* quad = []() -> Mesh*{
+			std::vector<Vertex> vertices = {
+				{//top left
+					glm::vec3{-1.0f, +1.0f, +0.0f},
+					glm::vec3{+0.0f, +0.0f, +1.0f},
+					glm::vec2{+0.0f, +1.0f}
+				},
 			{//bottom left
 				glm::vec3{-1.0f, -1.0f, +0.0f},
 				glm::vec3{+0.0f, +0.0f, +1.0f},
@@ -61,27 +56,27 @@ Mesh* res::meshes::quad()
 				glm::vec3{+0.0f, +0.0f, +1.0f},
 				glm::vec2{+1.0f, +1.0f}
 			}
-		};
-		std::vector<uint8_t> indices = {
-			0, 1, 2,
-			0, 2, 3
-		};
-		auto bounds = calculateBounds(vertices);
-		return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
-	}();
-	return quad;
-}
-					  
-Mesh* res::meshes::box()
-{
-	static Mesh* box = []() -> Mesh*{
-		std::vector<Vertex> vertices = {
-			//front face
-			{//top left
-				glm::vec3{-1.0f, +1.0f, +1.0f},
-				glm::vec3{+0.0f, +0.0f, +1.0f},
-				glm::vec2{+0.0f, +1.0f}
-			},
+			};
+			std::vector<uint8_t> indices = {
+				0, 1, 2,
+				0, 2, 3
+			};
+			auto bounds = calculateBounds(vertices);
+			return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
+		}();
+		return quad;
+	}
+
+	Mesh* box()
+	{
+		static Mesh* box = []() -> Mesh*{
+			std::vector<Vertex> vertices = {
+				//front face
+				{//top left
+					glm::vec3{-1.0f, +1.0f, +1.0f},
+					glm::vec3{+0.0f, +0.0f, +1.0f},
+					glm::vec2{+0.0f, +1.0f}
+				},
 			{//bottom left
 				glm::vec3{-1.0f, -1.0f, +1.0f},
 				glm::vec3{+0.0f, +0.0f, +1.0f},
@@ -119,7 +114,7 @@ Mesh* res::meshes::box()
 				glm::vec3{-1.0f, +0.0f, +0.0f},
 				glm::vec2{+1.0f, +1.0f}
 			},
-			
+
 			//back face
 			{//top left
 				glm::vec3{+1.0f, +1.0f, -1.0f},
@@ -141,7 +136,7 @@ Mesh* res::meshes::box()
 				glm::vec3{+0.0f, +0.0f, -1.0f},
 				glm::vec2{+1.0f, +1.0f}
 			},
-			
+
 			//right face
 			{//top left
 				glm::vec3{+1.0f, +1.0f, +1.0f},
@@ -163,7 +158,7 @@ Mesh* res::meshes::box()
 				glm::vec3{+1.0f, +0.0f, +0.0f},
 				glm::vec2{+1.0f, +1.0f}
 			},
-			
+
 			//top face
 			{//top left
 				glm::vec3{-1.0f, +1.0f, -1.0f},
@@ -207,41 +202,41 @@ Mesh* res::meshes::box()
 				glm::vec3{+0.0f, -1.0f, +0.0f},
 				glm::vec2{+0.0f, +1.0f}
 			},
-		};
-		std::vector<uint8_t> indices = {
-			//front face
-			0, 1, 2,
-			0, 2, 3,
-			//left face
-			4, 5, 6,
-			4, 6, 7,
-			//back face
-			8, 9, 10,
-			8, 10, 11,
-			//right face
-			12, 13, 14,
-			12, 14, 15,
-			//top face
-			16, 17, 18,
-			16, 18, 19,
-			//bottom face
-			20, 21, 22,
-			20, 22, 23
-		};
-		auto bounds = calculateBounds(vertices);
-		return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
-	}();
-	return box;
-}
+			};
+			std::vector<uint8_t> indices = {
+				//front face
+				0, 1, 2,
+				0, 2, 3,
+				//left face
+				4, 5, 6,
+				4, 6, 7,
+				//back face
+				8, 9, 10,
+				8, 10, 11,
+				//right face
+				12, 13, 14,
+				12, 14, 15,
+				//top face
+				16, 17, 18,
+				16, 18, 19,
+				//bottom face
+				20, 21, 22,
+				20, 22, 23
+			};
+			auto bounds = calculateBounds(vertices);
+			return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
+		}();
+		return box;
+	}
 
-Mesh* res::meshes::boxWireframe()
-{
-	static Mesh* boxWireframe = []() -> Mesh*{
-		std::vector<SimpleVertex> vertices = {
-			//front face
-			{//top left
-				glm::vec3{-1.0f, +1.0f, +1.0f}
-			},
+	Mesh* boxWireframe()
+	{
+		static Mesh* boxWireframe = []() -> Mesh*{
+			std::vector<SimpleVertex> vertices = {
+				//front face
+				{//top left
+					glm::vec3{-1.0f, +1.0f, +1.0f}
+				},
 			{//bottom left
 				glm::vec3{-1.0f, -1.0f, +1.0f}
 			},
@@ -265,50 +260,83 @@ Mesh* res::meshes::boxWireframe()
 			{//top right
 				glm::vec3{-1.0f, +1.0f, -1.0f}
 			}
-		};
-		std::vector<uint8_t> indices = {
-			0, 1,
-			1, 2,
-			2, 3,
-			3, 0,
-			0, 7,
-			7, 6,
-			6, 1, 
-			2, 5,
-			5, 4,
-			4, 3,
-			7, 4,
-			5, 6
-		};
-		auto bounds = calculateBounds(vertices);
-		return add(std::make_unique<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
-	}();
-	return boxWireframe;
-}
- 
-static std::vector<std::unique_ptr<Scene>> scenes;
-
-std::vector<std::unique_ptr<Scene>> const& res::scenes::getAll()
-{
-	return ::scenes;
+			};
+			std::vector<uint8_t> indices = {
+				0, 1,
+				1, 2,
+				2, 3,
+				3, 0,
+				0, 7,
+				7, 6,
+				6, 1,
+				2, 5,
+				5, 4,
+				4, 3,
+				7, 4,
+				5, 6
+			};
+			auto bounds = calculateBounds(vertices);
+			return add(std::make_unique<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
+		}();
+		return boxWireframe;
+	}
 }
 
-void res::scenes::add(std::unique_ptr<Scene>&& scene)
+namespace res::scenes
 {
-	::scenes.push_back(std::move(scene));
+	static std::vector<std::unique_ptr<Scene>> _scenes;
+
+	std::vector<std::unique_ptr<Scene>> const& getAll()
+	{
+		return _scenes;
+	}
+
+	Scene* add(std::unique_ptr<Scene>&& scene)
+	{
+		auto ret = scene.get();
+		_scenes.push_back(std::move(scene));
+		return ret;
+	}
+
+	void removeScene(Scene* scene)
+	{
+		_scenes.erase(std::remove_if(_scenes.begin(), _scenes.end(), [&](std::unique_ptr<Scene>& val){ return val.get() == scene; }), _scenes.end());
+	}
+
+	void add(std::vector<std::unique_ptr<Scene>>&& scenes)
+	{
+		_scenes.reserve(_scenes.size() + scenes.size());
+		for(auto& scene : scenes)
+			_scenes.push_back(std::move(scene));
+	}
+
 }
 
-void removeScene(Scene* scene)
+namespace res::textures
 {
-	scenes.erase(std::remove_if(scenes.begin(), scenes.end(), [&](std::unique_ptr<Scene>& val){ return val.get() == scene; }), scenes.end());
+	static std::vector<std::unique_ptr<Texture>> _textures;
+
+	std::vector<std::unique_ptr<Texture>> const& getAll()
+	{
+		return _textures;
+	}
+
+	Texture* add(std::unique_ptr<Texture>&& texture)
+	{
+		auto ret = texture.get();
+		_textures.push_back(std::move(texture));
+		return ret;
+	}
+
+	Texture* placeholder()
+	{
+		static auto placeholder = add(std::make_unique<Texture>("textures/placeholder.png", true));
+		return placeholder;
+
+	}
+
 }
 
-void res::scenes::add(std::vector<std::unique_ptr<Scene>>&& scenes)
-{
-	::scenes.reserve(::scenes.size() + scenes.size());
-	for(auto& scene : scenes)
-		::scenes.push_back(std::move(scene));
-}
 
 void res::loadShaders()
 {
@@ -440,7 +468,7 @@ void res::drawUI(bool* open)
 	ImGui::SameLine();
 	if(ImGui::Button("Reload Shaders"))
 		reloadShaders();
-	static std::variant<Scene*, Mesh*> selected;
+	static std::variant<Scene*, Mesh*, Texture*> selected;
 	ImGui::BeginChild("###Resources");
 
 	ImGui::Text("Scenes");
@@ -471,7 +499,7 @@ void res::drawUI(bool* open)
 			{
 				if(active)
 					selected = static_cast<Scene*>(nullptr);
-				removeScene(scene.get());
+				res::scenes::removeScene(scene.get());
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
@@ -496,6 +524,21 @@ void res::drawUI(bool* open)
 			active = std::get<Mesh*>(selected) == mesh.get();
 		if(ImGui::Selectable(mesh->name.get().data(), active))
 			selected = mesh.get();
+		ImGui::PopID();
+	}
+	ImGui::EndChild();
+	ImGui::NewLine();
+
+	ImGui::Text("Textures");
+	ImGui::BeginChild("###Textures", {0, scrollAreaHeight}, true);
+	for(auto& texture : textures::getAll())
+	{
+		ImGui::PushID(id++);
+		bool active = false;
+		if(std::holds_alternative<Texture*>(selected))
+			active = std::get<Texture*>(selected) == texture.get();
+		if(ImGui::Selectable(texture->name.get().data(), active))
+			selected = texture.get();
 		ImGui::PopID();
 	}
 	ImGui::EndChild();

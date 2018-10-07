@@ -77,7 +77,8 @@ std::vector<T*> const& Scene::getAll() const
 		return cache.spotLights;
 	else if constexpr(std::is_same<T, Light>())
 	{
-		std::vector<Light*> ret;
+		assert(false);
+		std::vector<Light*> ret;//TODO this needs a fix
 		ret.reserve(cache.directionalLights.size() + cache.pointLights.size() + cache.spotLights.size());
 		std::copy(cache.directionalLights.begin(), cache.directionalLights.end(), std::back_inserter(ret));
 		std::copy(cache.pointLights.begin(), cache.pointLights.end(), std::back_inserter(ret));

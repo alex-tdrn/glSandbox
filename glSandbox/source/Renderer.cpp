@@ -149,7 +149,7 @@ void Renderer::render()
 		if(sourceCamera == camera || !camera->isEnabled() || !camera->getVisualizeFrustum())
 			continue;
 		res::shaders()[res::ShaderType::unlit].set("model", glm::inverse(camera->getProjectionMatrix() * camera->getViewMatrix()));
-		res::textures::placeholder().use(1);
+		res::textures::placeholder()->use(1);
 		if(geometry.frustum.mode != geometry.lines)
 		{
 			res::shaders()[res::ShaderType::unlit].set("material.hasMap", geometry.frustum.textured);
@@ -345,7 +345,7 @@ void Renderer::render()
 	}
 	if(geometry.prop.mode != geometry.lines)
 	{
-		res::textures::placeholder().use(1);
+		res::textures::placeholder()->use(1);
 		for(auto const& prop : props)
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())

@@ -83,18 +83,18 @@ bool Material::isInitialized() const
 {
 	bool ret = true;
 	return true;
-	for(auto& map : maps)
-		if(map)
-			ret = ret && map->isLoaded();
+	//for(auto& map : maps)
+	//	if(map)
+	//		ret = ret && map->isLoaded();
 
 	return ret;
 }
 
 bool Material::contains(std::string_view const path)
 {
-	for(auto& map : maps)
-		if(map && map->getPath() == path)
-			return true;
+	//for(auto& map : maps)
+	//	if(map && map->getPath() == path)
+	//		return true;
 	return false;
 }
 
@@ -106,7 +106,6 @@ void Material::use(Shader shader) const
 	{
 		maps[diffuse]->use(diffuse);
 		shader.set("material.diffuseMap", diffuse);
-		shader.set("material.diffuseMapOffset", maps[diffuse]->getUVOffset());
 	}
 
 	shader.set("material.hasSpecularMap", bool(maps[specular]));
@@ -114,7 +113,6 @@ void Material::use(Shader shader) const
 	{
 		maps[specular]->use(specular);
 		shader.set("material.specularMap", specular);
-		shader.set("material.specularMapOffset", maps[specular]->getUVOffset());
 		shader.set("material.shininess", shininessValue);
 	}
 
@@ -123,7 +121,6 @@ void Material::use(Shader shader) const
 	{
 		maps[opacity]->use(opacity);
 		shader.set("material.opacityMap", opacity);
-		shader.set("material.opacityMapOffset", maps[opacity]->getUVOffset());
 	}
 
 }
@@ -157,7 +154,7 @@ bool Material::drawUI()
 				if(maps[mapType])
 				{
 					ImGui::Text((mapToString(mapType) + " Map").c_str());
-					valueChanged |= maps[mapType]->drawUI();
+					//valueChanged |= maps[mapType]->drawUI();
 					ImGui::NextColumn();
 					columnsEmpty--;
 				}

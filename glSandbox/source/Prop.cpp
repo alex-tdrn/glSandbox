@@ -27,6 +27,11 @@ Mesh& Prop::getMesh() const
 	else return *res::meshes::boxWireframe();
 }
 
+Texture* Prop::getTexture() const
+{
+	return texture;
+}
+
 Bounds Prop::getBounds() const
 {
 	Bounds childBounds = Node::getBounds();
@@ -73,10 +78,10 @@ void Prop::drawUI()
 	ImGui::Text("Mesh");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	std::string name = getMesh().name.get();
+	std::string meshName = getMesh().name.get();
 	if(proceduralMesh)
-		name = "Procedural";//TODO
-	if(ImGui::BeginCombo("###Mesh", name.data()))
+		meshName = "Procedural";//TODO
+	if(ImGui::BeginCombo("###Mesh", meshName.data()))
 	{
 		int id = 0;
 		//static meshes
@@ -103,6 +108,28 @@ void Prop::drawUI()
 	}
 	if(proceduralMesh)
 		proceduralMesh->drawUI();
+	bool noTexture = !texture;
+	std::string textureName = texture ? texture->name.get() : "None";
+	if(ImGui::BeginCombo("###Texture", textureName.data()))
+	{
+		if(ImGui::Selectable("None", &noTexture))
+			texture = nullptr;
+		if(!texture)
+			ImGui::SetItemDefaultFocus();
+		ImGui::Separator();
+		int id = 0;
+		for(auto& t : res::textures::getAll())
+		{
+			ImGui::PushID(id++);
+			bool isSelected = texture == t.get();
+			if(ImGui::Selectable(t->name.get().data(), &isSelected))
+				texture = t.get();
+			if(isSelected)
+				ImGui::SetItemDefaultFocus();
+			ImGui::PopID();
+		}
+		ImGui::EndCombo();
+	}
 	ImGui::EndChild();
 }
 

@@ -14,6 +14,7 @@ Texture::Texture(std::string const& path, bool linear)
 void Texture::load() const
 {
 	loaded = true;
+	
 	std::uint8_t* imageData = stbi_load(path->data(), &width, &height, &nrChannels, STBI_default);
 	if(!imageData)
 		throw "Could not load image from disk";

@@ -6,6 +6,7 @@
 #include <memory>
 
 class Mesh;
+class Texture;
 
 class Prop final : public Transformed<Translation, Rotation, Scale>
 {
@@ -13,6 +14,7 @@ private:
 	Name<Prop> name{"prop"};
 	Mesh* staticMesh = nullptr;
 	std::unique_ptr<ProceduralMesh> proceduralMesh = nullptr;
+	Texture* texture = nullptr;
 
 public:
 	Prop() = default;
@@ -22,6 +24,7 @@ public:
 
 public:
 	Mesh& getMesh() const;
+	Texture* getTexture() const;
 	Bounds getBounds() const override;
 	void setName(std::string const& name) override;
 	std::string const& getName() const override;

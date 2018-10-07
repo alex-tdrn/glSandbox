@@ -345,12 +345,15 @@ void Renderer::render()
 	}
 	if(geometry.prop.mode != geometry.lines)
 	{
-		res::textures::placeholder()->use(1);
 		for(auto const& prop : props)
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
 				activeShader.set("model", prop->getGlobalTransformation());
+				if(prop->getTexture())
+					prop->getTexture()->use(1);
+				else
+					res::textures::placeholder()->use(1);
 				prop->getMesh().use();
 			}
 		}

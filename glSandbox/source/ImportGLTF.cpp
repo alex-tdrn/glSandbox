@@ -211,9 +211,12 @@ std::vector<std::unique_ptr<Texture>> loadTextures(gltf::Document const& doc, st
 	std::vector<std::unique_ptr<Texture>> ret;
 	for(auto& image : doc.images)
 	{
-		if(image.IsEmbeddedResource())
-			continue;
-		ret.push_back(std::make_unique<Texture>((currentPath / image.uri).string(), true));
+		if(image.IsEmbeddedResource())//TODO
+			assert(false);
+		auto path = currentPath / image.uri;
+		auto texture = std::make_unique<Texture>(path.string(), true);
+		texture->name.set(image.name.empty() ? path.filename().string() : image.name);
+		ret.push_back(std::move(texture));
 	}
 	return ret;
 }

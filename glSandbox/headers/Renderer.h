@@ -56,21 +56,6 @@ private:
 		}refraction;
 		struct{
 			struct{
-				glm::vec3 surfaceColor{1.0f};
-				glm::vec3 lineColor{0.0f};
-				std::optional<Material::Maps> map = Material::Maps::diffuse;
-			}unlit;
-			struct{
-				bool diffuse = false;
-				bool specular = false;
-				glm::vec3 diffuseColor{1.0f, 1.0f, 1.0f};
-				glm::vec3 specularColor{1.0f, 1.0f, 1.0f};
-			}override;
-			float ambientStrength = 1.0f;
-			float shininess = 128;
-		}lighting;
-		struct{
-			struct{
 				bool viewSpace = false;
 				bool faceNormals = false;
 				float explodeMagnitude = 0.0f;
@@ -80,6 +65,9 @@ private:
 			}normals;
 			bool depthBufferLinear = false;
 		}debugging;
+		struct{
+			float ambientStrength = 1.0f;
+		}lighting;
 	}shading;
 
 	struct{

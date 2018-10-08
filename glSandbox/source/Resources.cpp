@@ -1,6 +1,7 @@
 #include "Resources.h"
 #include "ImportGLTF.h"
 #include "Globals.h"
+#include "MaterialPBRMetallicRoughness.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
@@ -344,6 +345,41 @@ namespace res::textures
 
 }
 
+namespace res::materials
+{
+	static std::vector<std::unique_ptr<Material>> _materials;
+
+	std::vector<std::unique_ptr<Material>> const& getAll()
+	{
+		return _materials;
+	}
+
+	Material* add(std::unique_ptr<Material>&& texture)
+	{
+		auto ret = texture.get();
+		_materials.push_back(std::move(texture));
+		return ret;
+	}
+
+	void add(std::vector<std::unique_ptr<Material>>&& textures)
+	{
+		_materials.reserve(_materials.size() + textures.size());
+		for(auto& texture : textures)
+			_materials.push_back(std::move(texture));
+	}
+
+	Material* placeholder()
+	{
+		static auto placeholder = [&]() -> Material*{
+			auto material = std::make_unique<MaterialPBRMetallicRoughness>();
+			material->setBaseColor(res::textures::placeholder(), std::nullopt);
+			return add(std::move(material));
+		}();
+		return placeholder;
+
+	}
+
+}
 
 void res::loadShaders()
 {
@@ -475,7 +511,7 @@ void res::drawUI(bool* open)
 	ImGui::SameLine();
 	if(ImGui::Button("Reload Shaders"))
 		reloadShaders();
-	static std::variant<Scene*, Mesh*, Texture*> selected;
+	static std::variant<Scene*, Mesh*, Texture*, Material*> selected;
 	ImGui::BeginChild("###Resources");
 
 	ImGui::Text("Scenes");
@@ -550,6 +586,20 @@ void res::drawUI(bool* open)
 	}
 	ImGui::EndChild();
 
+	ImGui::Text("Materials");
+	ImGui::BeginChild("###Materials", {0, scrollAreaHeight}, true);
+	for(auto& material : materials::getAll())
+	{
+		ImGui::PushID(id++);
+		bool active = false;
+		if(std::holds_alternative<Material*>(selected))
+			active = std::get<Material*>(selected) == material.get();
+		if(ImGui::Selectable(material->name.get().data(), active))
+			selected = material.get();
+		ImGui::PopID();
+	}
+	ImGui::EndChild();
+
 	ImGui::EndChild();
 
 	ImGui::NextColumn();
@@ -571,6 +621,7 @@ Scene& res::importGLTF(std::string_view const filename)
 	scenes::add(std::move(asset.scenes));
 	meshes::add(std::move(asset.meshes));
 	textures::add(std::move(asset.textures));
+	materials::add(std::move(asset.materials));
 	return *ret;
 }
 

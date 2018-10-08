@@ -82,12 +82,11 @@ void Texture::use(int location) const
 void Texture::drawUI()
 {
 	IDGuard idGuard{this};
-	ImGui::BeginChild("###Texture");
 	if(!loaded)
 		load();
 	
 	float const size = std::min(ImGui::GetContentRegionAvailWidth(), 512.0f);
-	ImGui::Text("Encoding: %S", linear ? "Linear" : "Gamma");
+	ImGui::Text("Encoding: %s", linear ? "Linear" : "Gamma");
 	ImGui::Text("ID %i", ID);
 	ImGui::Text("%i x %i", width, height);
 	ImGui::Text("# channels %i", nrChannels);
@@ -123,5 +122,4 @@ void Texture::drawUI()
 		ImGui::EndPopup();
 	}
 
-	ImGui::EndChild();
 }

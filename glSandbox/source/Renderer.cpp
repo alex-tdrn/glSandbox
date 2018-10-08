@@ -215,13 +215,8 @@ void Renderer::render()
 		case res::ShaderType::gouraud:
 		case res::ShaderType::flat:
 		{
-			activeShader.set("material.overrideDiffuse", shading.lighting.override.diffuse);
-			activeShader.set("material.overrideSpecular", shading.lighting.override.specular);
-			activeShader.set("material.overrideDiffuseColor", shading.lighting.override.diffuseColor);
-			activeShader.set("material.overrideSpecularColor", shading.lighting.override.specularColor);
-			activeShader.set("ambientStrength", shading.lighting.ambientStrength);
-			activeShader.set("material.shininess", shading.lighting.shininess);
 			activeShader.set("ambientColor", scene.getBackground());
+			activeShader.set("ambientStrength", shading.lighting.ambientStrength);
 			auto useLights = [&viewMatrix, &activeShader](auto const& lights, std::string const& prefix1, std::string const& prefix2){
 				int enabledLights = 0;
 				for(int i = 0; i < lights.size(); i++)
@@ -329,20 +324,21 @@ void Renderer::render()
 	}
 
 	activeShader.use();
-	if(shading.current == res::ShaderType::unlit)
-	{
-		activeShader.set("material.hasMap", shading.lighting.unlit.map.has_value());
-		if(shading.lighting.unlit.map)
-			activeShader.set("material.map", *shading.lighting.unlit.map);
-		activeShader.set("material.color", shading.lighting.unlit.surfaceColor);
-	}
-	else
-	{
-		activeShader.set("material.hasDiffuseMap", true);
-		activeShader.set("material.diffuseMap", 1);
-		activeShader.set("material.hasSpecularMap", false);
-		activeShader.set("material.hasOpacityMap", false);
-	}
+	//TODO
+	//if(shading.current == res::ShaderType::unlit)
+	//{
+	//	activeShader.set("material.hasMap", shading.lighting.unlit.map.has_value());
+	//	if(shading.lighting.unlit.map)
+	//		activeShader.set("material.map", *shading.lighting.unlit.map);
+	//	activeShader.set("material.color", shading.lighting.unlit.surfaceColor);
+	//}
+	//else
+	//{
+	//	activeShader.set("material.hasDiffuseMap", true);
+	//	activeShader.set("material.diffuseMap", 1);
+	//	activeShader.set("material.hasSpecularMap", false);
+	//	activeShader.set("material.hasOpacityMap", false);
+	//}
 	if(geometry.prop.mode != geometry.lines)
 	{
 		for(auto const& prop : props)
@@ -350,8 +346,8 @@ void Renderer::render()
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
 				activeShader.set("model", prop->getGlobalTransformation());
-				if(prop->getTexture())
-					prop->getTexture()->use(1);
+				if(false)
+					prop->getMaterial()->use(activeShader);
 				else
 					res::textures::placeholder()->use(1);
 				prop->getMesh().use();
@@ -362,9 +358,10 @@ void Renderer::render()
 	if(geometry.prop.mode != geometry.triangles)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		res::shaders()[res::ShaderType::unlit].use();
+		//TODO
+		/*res::shaders()[res::ShaderType::unlit].use();
 		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-		res::shaders()[res::ShaderType::unlit].set("material.color", shading.lighting.unlit.lineColor);
+		res::shaders()[res::ShaderType::unlit].set("material.color", shading.lighting.unlit.lineColor);*/
 
 		for(auto const& prop : props)
 		{
@@ -572,51 +569,10 @@ void Renderer::drawUI(bool* open)
 
 		switch(shading.current)
 		{
-			case res::ShaderType::unlit:
-				ImGui::Text("Map:");
-				if(ImGui::BeginCombo("###Map", shading.lighting.unlit.map ? Material::mapTypeToString(*shading.lighting.unlit.map).data() : "None"))
-				{
-					if(ImGui::Selectable("None", !shading.lighting.unlit.map))
-						shading.lighting.unlit.map = std::nullopt;
-					if(!shading.lighting.unlit.map)
-						ImGui::SetItemDefaultFocus();
-					for(int i = 0; i < Material::Maps::n; i++)
-					{
-						bool selected = shading.lighting.unlit.map && shading.lighting.unlit.map == i;
-						if(ImGui::Selectable(Material::mapTypeToString(Material::Maps(i)).data(), &selected))
-							shading.lighting.unlit.map = Material::Maps(i);
-						if(selected)
-							ImGui::SetItemDefaultFocus();
-					}
-					ImGui::EndCombo();
-				}
-				if(!shading.lighting.unlit.map)
-					ImGui::ColorEdit3("Surface", &shading.lighting.unlit.surfaceColor.x, ImGuiColorEditFlags_NoInputs);
-				ImGui::ColorEdit3("Line", &shading.lighting.unlit.lineColor.x, ImGuiColorEditFlags_NoInputs);
-				break;
 			case res::ShaderType::blinn_phong:
 			case res::ShaderType::phong:
 			case res::ShaderType::gouraud:
 			case res::ShaderType::flat:
-				ImGui::Checkbox("Override Diffuse", &shading.lighting.override.diffuse);
-				if(shading.lighting.override.diffuse)
-				{
-					ImGui::SameLine();
-					ImGui::ColorEdit3("Diffuse", &shading.lighting.override.diffuseColor.x, ImGuiColorEditFlags_NoInputs);
-
-				}
-				ImGui::SameLine();
-				ImGui::Checkbox("Override Specular", &shading.lighting.override.specular);
-				if(shading.lighting.override.specular)
-				{
-					ImGui::SameLine();
-					ImGui::ColorEdit3("Specular", &shading.lighting.override.specularColor.x, ImGuiColorEditFlags_NoInputs);
-				}
-				ImGui::AlignTextToFramePadding();
-				ImGui::Text("Shininess");
-				ImGui::SameLine();
-				ImGui::PushItemWidth(-1);
-				ImGui::SliderFloat("###Shininess", &shading.lighting.shininess, 0, 512);
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Ambient Strength");
 				ImGui::SameLine();

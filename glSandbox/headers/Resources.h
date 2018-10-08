@@ -4,6 +4,7 @@
 #include "Cubemap.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Material.h"
 
 #include <vector>
 
@@ -25,18 +26,19 @@ namespace res
 		void add(std::vector<std::unique_ptr<Scene>>&&);
 
 	}
-
-	inline std::vector<Shader>& shaders()
-	{
-		static std::vector<Shader> _shaders;
-		return _shaders;
-	}
 	namespace textures
 	{
 		std::vector<std::unique_ptr<Texture>> const& getAll();
 		Texture* add(std::unique_ptr<Texture>&&);
 		void add(std::vector<std::unique_ptr<Texture>>&&);
 		Texture* placeholder();
+	}
+	namespace materials
+	{
+		std::vector<std::unique_ptr<Material>> const& getAll();
+		Material* add(std::unique_ptr<Material>&&);
+		void add(std::vector<std::unique_ptr<Material>>&&);
+		Material* placeholder();
 	}
 	namespace cubemaps
 	{
@@ -51,6 +53,11 @@ namespace res
 		//	"cubemaps/mp_blizzard/blizzard_ft.tga", "cubemaps/mp_blizzard/blizzard_bk.tga"
 		//	});
 
+	}
+	inline std::vector<Shader>& shaders()
+	{
+		static std::vector<Shader> _shaders;
+		return _shaders;
 	}
 
 	enum ShaderType

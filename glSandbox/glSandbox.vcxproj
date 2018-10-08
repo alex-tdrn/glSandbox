@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="MaterialPBRMetallicRoughness.cpp" />
     <ClCompile Include="source\SierpinskiCarpet.cpp" />
     <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
     <ClCompile Include="source\SierpinskiTriangle.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="headers\TransformedNode.h" />
     <ClInclude Include="headers\SierpinskiTetrahedon.h" />
     <ClInclude Include="headers\SierpinskiCarpet.h" />
+    <ClInclude Include="headers\MaterialPBRMetallicRoughness.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\blinn-phong.frag" />

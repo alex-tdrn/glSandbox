@@ -1,6 +1,7 @@
 #include "ImportGLTF.h"
 #include "Resources.h"
 #include "Prop.h"
+#include "MaterialPBRMetallicRoughness.h"
 
 #include <fx/gltf.h>
 #include <numeric>
@@ -14,7 +15,8 @@ uint32_t calculateElementSize(gltf::Accessor const& accessor);
 uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
-std::vector<std::unique_ptr<Texture>> loadTextures(gltf::Document const& doc, std::filesystem::path const& currentPath);
+std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Material>>>
+	loadTexturesAndMaterials(gltf::Document const& doc, std::filesystem::path const& currentPath);
 std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes);
 
 Asset import(std::string_view const& filename)
@@ -36,8 +38,8 @@ Asset import(std::string_view const& filename)
 	}
 	std::filesystem::path currentPath = filename;
 	
-	auto textures = loadTextures(doc, currentPath.parent_path().string());
-	return {std::move(scenes), std::move(meshes), std::move(textures)};
+	auto[textures, materials] = loadTexturesAndMaterials(doc, currentPath.parent_path().string());
+	return {std::move(scenes), std::move(meshes), std::move(textures), std::move(materials)};
 }
 
 std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, PrimitivesMap const& primitivesMap)
@@ -206,19 +208,71 @@ std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Do
 	return {std::move(meshes), std::move(primitivesMap)};
 }
 
-std::vector<std::unique_ptr<Texture>> loadTextures(gltf::Document const& doc, std::filesystem::path const& currentPath)
+
+
+template <size_t N>
+auto getFactor(std::array<float, N> const& factor)
 {
-	std::vector<std::unique_ptr<Texture>> ret;
-	for(auto& image : doc.images)
+	if constexpr(N == 0)
+		return std::nullopt;
+	else if constexpr(N == 3)
+		return glm::vec3(factor[0], factor[1], factor[2]);
+	else if constexpr(N == 4)
+		return glm::vec4(factor[0], factor[1], factor[2], factor[3]);
+
+};
+
+std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Material>>>
+	loadTexturesAndMaterials(gltf::Document const& doc, std::filesystem::path const& currentPath)
+{
+	std::vector<std::unique_ptr<Texture>> textures;
+	std::vector<std::unique_ptr<Material>> materials;
+	auto getMap = [&textures, &doc, &currentPath](gltf::Material::Texture const& texture, bool linear = true) -> Texture*{
+		if(texture.empty())
+		{
+			return nullptr;
+		}
+		else
+		{
+			auto image = doc.images[texture.index];
+			if(image.IsEmbeddedResource())//TODO
+				assert(false);
+			auto path = currentPath / image.uri;
+			auto texture = std::make_unique<Texture>(path.string(), linear);
+			texture->name.set(image.name.empty() ? path.filename().string() : image.name);
+			textures.push_back(std::move(texture));
+			return textures.back().get();
+		}
+	};
+
+	for(auto& material : doc.materials)
 	{
-		if(image.IsEmbeddedResource())//TODO
-			assert(false);
-		auto path = currentPath / image.uri;
-		auto texture = std::make_unique<Texture>(path.string(), true);
-		texture->name.set(image.name.empty() ? path.filename().string() : image.name);
-		ret.push_back(std::move(texture));
+		std::unique_ptr<Material> _material;
+		if(auto materialMR = material.pbrMetallicRoughness; !materialMR.empty())
+		{
+			auto _materialMR = new MaterialPBRMetallicRoughness;
+			_materialMR->setBaseColor(getMap(materialMR.baseColorTexture, false), getFactor(materialMR.baseColorFactor));
+			_materialMR->setMetallicRoughness(getMap(materialMR.metallicRoughnessTexture), materialMR.metallicFactor, materialMR.roughnessFactor);
+			_material.reset(_materialMR);
+		}
+		else
+		{
+			assert(false);//TODO
+		}
+
+		if(!material.name.empty())
+			_material->name.set(material.name);
+		_material->setNormal(getMap(material.normalTexture));
+		_material->setOcclusion(getMap(material.occlusionTexture));
+		_material->setEmissive(getMap(material.emissiveTexture), getFactor(material.emissiveFactor));
+		if(material.doubleSided)
+		{
+			//TODO
+		}
+		materials.push_back(std::move(_material));
 	}
-	return ret;
+
+	return {std::move(textures), std::move(materials)};
 }
 
 GLenum gltfToGLType(gltf::Accessor::ComponentType type)

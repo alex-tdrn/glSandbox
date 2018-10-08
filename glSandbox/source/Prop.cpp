@@ -27,9 +27,9 @@ Mesh& Prop::getMesh() const
 	else return *res::meshes::boxWireframe();
 }
 
-Texture* Prop::getTexture() const
+Material* Prop::getMaterial() const
 {
-	return texture;
+	return material;
 }
 
 Bounds Prop::getBounds() const
@@ -108,22 +108,20 @@ void Prop::drawUI()
 	}
 	if(proceduralMesh)
 		proceduralMesh->drawUI();
-	bool noTexture = !texture;
-	std::string textureName = texture ? texture->name.get() : "None";
-	if(ImGui::BeginCombo("###Texture", textureName.data()))
+	assert(material);
+	std::string materialName = material->name.get();
+	if(ImGui::BeginCombo("###Material", materialName.data()))
 	{
-		if(ImGui::Selectable("None", &noTexture))
-			texture = nullptr;
-		if(!texture)
+		if(!material)
 			ImGui::SetItemDefaultFocus();
 		ImGui::Separator();
 		int id = 0;
-		for(auto& t : res::textures::getAll())
+		for(auto& m : res::materials::getAll())
 		{
 			ImGui::PushID(id++);
-			bool isSelected = texture == t.get();
-			if(ImGui::Selectable(t->name.get().data(), &isSelected))
-				texture = t.get();
+			bool isSelected = material == m.get();
+			if(ImGui::Selectable(m->name.get().data(), &isSelected))
+				material = m.get();
 			if(isSelected)
 				ImGui::SetItemDefaultFocus();
 			ImGui::PopID();

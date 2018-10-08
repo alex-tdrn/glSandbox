@@ -1,45 +1,31 @@
 #pragma once
-#include "Texture.h"
-#include "Shader.h"
+#include "Named.h"
 
-#include <string>
+#include <glm/glm.hpp>
 #include <optional>
-#include <array>
+
+class Texture;
+class Shader;
 
 class Material
 {
-public:
-	enum Maps
-	{
-		ambient,
-		diffuse,
-		specular,
-		shininess,
-		emission,
-		light,
-		reflection,
-		opacity,
-		normal,
-		bump,
-		displacement,
-		unknown,
-		n
-	};
 private:
-	std::string const name;
-	std::array<std::optional<Texture>, Maps::n> maps;
-	float shininessValue = 32.0f;
-	inline static int ct = 0;
+	Texture* normalMap = nullptr;
+	Texture* occlusionMap = nullptr;
+	Texture* emissiveMap = nullptr;
+	glm::vec3 emissiveFactor = glm::vec3{0.0f};
 
 public:
-	Material(std::string const name = "Material#" + std::to_string(ct++));
+	Name<Material> name{"material"};
 
 public:
-	static std::string mapTypeToString(Material::Maps mapType);
-	void setMap(int mapType, std::optional<Texture>&& map);
-	bool isInitialized() const;
-	std::string_view const getName() const;
-	bool contains(std::string_view const path);
-	void use(Shader shader) const;
-	[[nodiscard]]bool drawUI();
+	Material() = default;
+	virtual ~Material() = default;
+
+public:
+	void setNormal(Texture* map);
+	void setOcclusion(Texture* map);
+	void setEmissive(Texture* map, std::optional<glm::vec3> factor);
+	virtual void use(Shader& shader) const;
+	virtual void drawUI();
 };

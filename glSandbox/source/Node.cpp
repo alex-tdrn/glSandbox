@@ -91,16 +91,18 @@ void Node::disable()
 	enabled = false;
 }
 
-void Node::addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation)
+Node* Node::addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation)
 {
 	auto desiredGlobalTransformation = node->getGlobalTransformation();
 	node->parent = this;
 	node->setScene(scene);
 	if(retainGlobalTransformation)
 		node->setLocalTransformation(glm::inverse(glm::inverse(node->getLocalTransformation()) * node->getGlobalTransformation()) * desiredGlobalTransformation);
+	auto ret = node.get();
 	children.push_back(std::move(node));
 
 	invalidateSceneCache();
+	return ret;
 }
 
 void Node::addChildren(std::vector<std::unique_ptr<Node>>&& nodes, bool retainGlobalTransformation)

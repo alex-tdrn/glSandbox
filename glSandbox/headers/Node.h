@@ -46,7 +46,7 @@ public:
 	void disable();
 	bool isHighlighted() const;
 	void setHighlighted(bool);
-	void addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation = false);
+	Node* addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation = false);
 	void addChildren(std::vector<std::unique_ptr<Node>>&& nodes, bool retainGlobalTransformation = false);
 	std::unique_ptr<Node> release();
 	std::vector<std::unique_ptr<Node>> releaseChildren();

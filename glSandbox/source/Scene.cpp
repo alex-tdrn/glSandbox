@@ -19,7 +19,7 @@ Scene::Scene(Scene &&other)
 {
 	root->setScene(this);
 	if(getAll<Camera>().empty())
-		root->addChild(std::make_unique<Camera>(), true);
+		root->addChild(std::make_unique<Camera>(), true)->addChild(std::make_unique<SpotLight>());
 	if(getAll<Light>().empty())
 		root->addChild(std::make_unique<DirectionalLight>(), true);
 }
@@ -29,7 +29,7 @@ Scene::Scene(std::unique_ptr<Node>&& root)
 	this->root->setScene(this);
 	fitToIdealSize();
 	if(getAll<Camera>().empty())
-		this->root->addChild(std::make_unique<Camera>(), true);
+		this->root->addChild(std::make_unique<Camera>(), true)->addChild(std::make_unique<SpotLight>());
 	if(getAll<Light>().empty())
 		this->root->addChild(std::make_unique<DirectionalLight>(), true);
 }

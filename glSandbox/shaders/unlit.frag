@@ -20,5 +20,5 @@ void main()
 	if(material.hasMap)
 		FragColor = texture(material.map, fs_in.textureCoordinates);
 	else
-    FragColor = vec4(material.color, 1.0f); 
+		FragColor = vec4(material.color, 1.0f); 
 }

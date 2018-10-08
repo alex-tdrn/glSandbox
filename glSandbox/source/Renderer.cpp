@@ -210,6 +210,7 @@ void Renderer::render()
 	glm::mat4 viewMatrix = sourceCamera->getViewMatrix();
 	switch(shading.current)
 	{
+		case res::ShaderType::pbr:
 		case res::ShaderType::blinn_phong:
 		case res::ShaderType::phong:
 		case res::ShaderType::gouraud:
@@ -346,10 +347,7 @@ void Renderer::render()
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
 				activeShader.set("model", prop->getGlobalTransformation());
-				if(false)
-					prop->getMaterial()->use(activeShader);
-				else
-					res::textures::placeholder()->use(1);
+				prop->getMaterial()->use(activeShader);
 				prop->getMesh().use();
 			}
 		}
@@ -551,6 +549,7 @@ void Renderer::drawUI(bool* open)
 		ImGui::Columns(3, nullptr, true);
 		ImGui::Text("Lighting");
 		ImGui::RadioButton("Unlit", reinterpret_cast<int*>(&shading.current), res::ShaderType::unlit);
+		ImGui::RadioButton("PBR", reinterpret_cast<int*>(&shading.current), res::ShaderType::pbr);
 		ImGui::RadioButton("Blinn-Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::blinn_phong);
 		ImGui::RadioButton("Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::phong);
 		ImGui::RadioButton("Gouraud", reinterpret_cast<int*>(&shading.current), res::ShaderType::gouraud);
@@ -569,6 +568,7 @@ void Renderer::drawUI(bool* open)
 
 		switch(shading.current)
 		{
+			case res::ShaderType::pbr:
 			case res::ShaderType::blinn_phong:
 			case res::ShaderType::phong:
 			case res::ShaderType::gouraud:

@@ -63,6 +63,7 @@ namespace res
 	enum ShaderType
 	{
 		unlit,
+		pbr,
 		blinn_phong,
 		phong,
 		gouraud,

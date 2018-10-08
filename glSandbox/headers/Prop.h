@@ -18,8 +18,8 @@ private:
 
 public:
 	Prop() = default;
-	Prop(Mesh* mesh);
-	Prop(std::unique_ptr<ProceduralMesh>&& mesh);
+	Prop(Mesh* mesh, Material* material = res::materials::placeholder());
+	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = res::materials::placeholder());
 	virtual ~Prop() = default;
 
 public:

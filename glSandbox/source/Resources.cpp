@@ -390,6 +390,9 @@ void res::loadShaders()
 			case ShaderType::unlit:
 				shaders().emplace_back("shaders/unlit.vert", "shaders/unlit.frag");
 				break;
+			case ShaderType::pbr:
+				shaders().emplace_back("shaders/pbr.vert", "shaders/pbr.frag");
+				break;
 			case ShaderType::blinn_phong:
 				shaders().emplace_back("shaders/phong.vert", "shaders/blinn-phong.frag");
 				break;

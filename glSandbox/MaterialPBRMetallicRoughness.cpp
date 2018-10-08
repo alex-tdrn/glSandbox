@@ -1,5 +1,6 @@
 #include "MaterialPBRMetallicRoughness.h"
 #include "Util.h"
+#include "Shader.h"
 
 void MaterialPBRMetallicRoughness::setBaseColor(Texture* map, std::optional<glm::vec4> factor)
 {
@@ -17,10 +18,26 @@ void MaterialPBRMetallicRoughness::setMetallicRoughness(Texture* map, float meta
 	this->roughnessFactor = roughnessFactor;
 }
 
-void MaterialPBRMetallicRoughness::use(Shader & shader) const
+void MaterialPBRMetallicRoughness::use(Shader& shader) const
 {
 	Material::use(shader);
-	//TODO
+
+	shader.set("material.baseColorMapExists", baseColorMap != nullptr);
+	if(baseColorMap)
+	{
+		shader.set("material.baseColorMap", 4);
+		baseColorMap->use(4);
+	}
+	shader.set("material.baseColorFactor", baseColorFactor);
+
+	shader.set("material.metallicRoughnessMapExists", metallicRoughnessMap != nullptr);
+	if(metallicRoughnessMap)
+	{
+		shader.set("material.metallicRoughnessMap", 5);
+		metallicRoughnessMap->use(5);
+	}
+	shader.set("material.metallicFactor", metallicFactor);
+	shader.set("material.roughnessFactor", roughnessFactor);
 }
 
 void MaterialPBRMetallicRoughness::drawUI()

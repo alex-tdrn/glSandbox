@@ -17,16 +17,22 @@ GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
 std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Material>>>
 	loadTexturesAndMaterials(gltf::Document const& doc, std::filesystem::path const& currentPath);
-std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes);
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, 
+	PrimitivesMap const& primitivesMap, 
+	std::vector<std::unique_ptr<Mesh>>& loadedMeshes,
+	std::vector<std::unique_ptr<Material>> const& materials);
 
 Asset import(std::string_view const& filename)
 {
+	std::filesystem::path currentPath = filename;
 	gltf::ReadQuotas readQuota;
 	readQuota.MaxBufferByteLength = std::numeric_limits<uint32_t>::max();
 	gltf::Document doc = gltf::LoadFromText(filename.data(), readQuota);
 	
 	auto [meshes, primitivesMap] = loadMeshes(doc);
-	auto scenes = loadScenes(doc, primitivesMap, meshes);
+	auto [textures, materials] = loadTexturesAndMaterials(doc, currentPath.parent_path().string());
+
+	auto scenes = loadScenes(doc, primitivesMap, meshes, materials);
 	std::filesystem::path file(filename);
 	std::string name = file.stem().string();
 	for(int i = 0; i < scenes.size(); i++)
@@ -36,13 +42,13 @@ Asset import(std::string_view const& filename)
 		else
 			scenes[i]->name.set(name);
 	}
-	std::filesystem::path currentPath = filename;
 	
-	auto[textures, materials] = loadTexturesAndMaterials(doc, currentPath.parent_path().string());
 	return {std::move(scenes), std::move(meshes), std::move(textures), std::move(materials)};
 }
 
-std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, PrimitivesMap const& primitivesMap)
+std::unique_ptr<Node> loadNode(gltf::Document const& doc, 
+	size_t const idx, PrimitivesMap const& primitivesMap,
+	std::vector<std::unique_ptr<Material>> const& materials)
 {
 	auto const& node = doc.nodes[idx];
 	std::unique_ptr<Node> n;
@@ -52,13 +58,22 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 		auto const& mesh = doc.meshes[node.mesh];
 		if(mesh.primitives.size() == 1)
 		{
-			n = std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]));
+			int materialIndex = mesh.primitives[0].material;
+			if(materialIndex != -1)
+				n = std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]), materials[materialIndex].get());
+			else
+				n = std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]));
 		}
 		else
 		{
 			n = std::make_unique<TransformedNode>();
 			for(auto const& primitive :doc.meshes[node.mesh].primitives)
-				n->addChild(std::make_unique<Prop>(primitivesMap.at(&primitive)));
+			{
+				if(primitive.material != -1)
+					n->addChild(std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]), materials[primitive.material].get()));
+				else
+					n->addChild(std::make_unique<Prop>(primitivesMap.at(&primitive)));
+			}
 		}
 	}
 	else
@@ -88,33 +103,26 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	assert(transformation[3][3] == 1);
 	n->setLocalTransformation(std::move(transformation));
 	for(auto childIdx : node.children)
-		n->addChild(loadNode(doc, childIdx, primitivesMap));
+		n->addChild(loadNode(doc, childIdx, primitivesMap, materials));
 
 	return n;
 }
 
-std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes)
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, 
+	PrimitivesMap const& primitivesMap, 
+	std::vector<std::unique_ptr<Mesh>>& loadedMeshes,
+	std::vector<std::unique_ptr<Material>> const& materials)
 {
 	std::vector<std::unique_ptr<Scene>> scenes;
-	if(doc.scenes.empty())
+	for(auto const& scene : doc.scenes)
 	{
 		std::vector<std::unique_ptr<Node>> nodes;
-		for(auto& mesh : loadedMeshes)
-			nodes.push_back(std::make_unique<Prop>(mesh.get()));
-		scenes.emplace_back(std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes))));
-	}
-	else
-	{
-		for(auto const& scene : doc.scenes)
-		{
-			std::vector<std::unique_ptr<Node>> nodes;
-			for(auto const nodeIdx : scene.nodes)
-				nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
-			auto s = std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes)));
-			if(!scene.name.empty())
-				s->name.set(scene.name);
-			scenes.emplace_back(std::move(s));
-		}
+		for(auto const nodeIdx : scene.nodes)
+			nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap, materials));
+		auto s = std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes)));
+		if(!scene.name.empty())
+			s->name.set(scene.name);
+		scenes.emplace_back(std::move(s));
 	}
 	return scenes;
 }

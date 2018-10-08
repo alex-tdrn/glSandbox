@@ -274,5 +274,7 @@
     <None Include="shaders\unlit.frag">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\pbr.vert" />
+    <None Include="shaders\pbr.frag" />
   </ItemGroup>
 </Project>

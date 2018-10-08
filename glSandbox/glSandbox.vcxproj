@@ -225,6 +225,8 @@
     <None Include="shaders\flat.vert" />
     <None Include="shaders\gouraud.frag" />
     <None Include="shaders\gouraud.vert" />
+    <None Include="shaders\pbr.frag" />
+    <None Include="shaders\pbr.vert" />
     <None Include="shaders\unlit.frag" />
     <None Include="shaders\unlit.vert" />
     <None Include="shaders\phong.frag" />

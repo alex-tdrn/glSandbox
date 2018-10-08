@@ -6,14 +6,14 @@
 #include "SierpinskiTetrahedon.h"
 #include "SierpinskiCarpet.h"
 
-Prop::Prop(Mesh* mesh)
-	:staticMesh(mesh)
+Prop::Prop(Mesh* mesh, Material* material)
+	:staticMesh(mesh), material(material)
 {
 
 }
 
-Prop::Prop(std::unique_ptr<ProceduralMesh>&& mesh)
-	: proceduralMesh(std::move(mesh))
+Prop::Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material)
+	: proceduralMesh(std::move(mesh)), material(material)
 {
 
 }

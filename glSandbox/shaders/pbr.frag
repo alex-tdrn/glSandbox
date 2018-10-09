@@ -32,7 +32,7 @@ struct Material
 	vec4 baseColorFactor;
 
 	bool metallicRoughnessMapExists;
-	sampler2D metallichRoughnessMap;
+	sampler2D metallicRoughnessMap;
 	float metallicFactor;
 	float roughnessFactor;
 };
@@ -58,6 +58,7 @@ out vec4 FragColor;
 
 const float PI = 3.14159265359;
 vec3 viewDirection = normalize(-fs_in.position);
+vec3 normal = normalize(fs_in.normal);
 vec3 baseColor = vec3(material.baseColorFactor);
 float metalness = material.metallicFactor;
 float roughness = material.roughnessFactor;
@@ -76,9 +77,9 @@ void main()
 
 	if(material.metallicRoughnessMapExists)
 	{
-		vec4 mr = texture(material.metallichRoughnessMap, fs_in.textureCoordinates);
-		metalness *= mr.r;
+		vec4 mr = texture(material.metallicRoughnessMap, fs_in.textureCoordinates);
 		roughness *= mr.g;
+		metalness *= mr.b;
 	}
 
 	F0 = mix(F0, baseColor, metalness);
@@ -105,7 +106,7 @@ vec3 calcDirLight(DirLight light)
 {
 	vec3 lightDirection = normalize(-light.direction);
     vec3 radiance = light.color * light.intensity;
-	return BRDF(lightDirection) * radiance * max(dot(fs_in.normal, lightDirection), 0.0f);
+	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 
 vec3 calcPointLight(PointLight light)
@@ -114,7 +115,7 @@ vec3 calcPointLight(PointLight light)
 	float attenuation = 1.0 / (distance * distance);
 	vec3 lightDirection = normalize(light.position - fs_in.position);
 	vec3 radiance = light.color * light.intensity * attenuation;
-	return BRDF(lightDirection) * radiance * max(dot(fs_in.normal, lightDirection), 0.0f);
+	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 
 vec3 calcSpotLight(SpotLight light)
@@ -126,16 +127,16 @@ vec3 calcSpotLight(SpotLight light)
 	float attenuation = 1.0 / (distance * distance);
 	attenuation *= clamp((theta - light.outerCutoff) / epsilon, 0.0f, 1.0f);
 	vec3 radiance = light.color * light.intensity * attenuation;
-	return BRDF(lightDirection) * radiance * max(dot(fs_in.normal, lightDirection), 0.0f);
+	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 
 float DistributionGGX(vec3 halfwayVector)
 {
 	float r4 = roughness * roughness;
 	r4 *= r4;
-	float cosAlpha2 = max(dot(fs_in.normal, halfwayVector), 0.0f);
+	float cosAlpha2 = max(dot(normal, halfwayVector), 0.0f);
 	cosAlpha2 *= cosAlpha2;
-	float denominator = cosAlpha2 * (r4 + 1.0f) + 1.0f;
+	float denominator = cosAlpha2 * (r4 - 1.0f) + 1.0f;
 	denominator *= PI * denominator;
 
 	return r4 / denominator;
@@ -150,14 +151,14 @@ float GeometrySchlickGGX(float cosAlpha)
 
 float GeometrySmith(vec3 lightDirection)
 {
-	float ggx1 = GeometrySchlickGGX(max(dot(fs_in.normal, lightDirection), 0.0f));
-	float ggx2 = GeometrySchlickGGX(max(dot(fs_in.normal, viewDirection), 0.0f));
+	float ggx1 = GeometrySchlickGGX(max(dot(normal, lightDirection), 0.0f));
+	float ggx2 = GeometrySchlickGGX(max(dot(normal, viewDirection), 0.0f));
 	return ggx1 * ggx2;
 }
 
-vec3 FresnelSchlick(vec3 halfwayVector)
+vec3 FresnelSchlick(float cosAlpha)
 {
-	return F0 + (1.0f - F0) * pow(1.0f - max(dot(halfwayVector, viewDirection), 0.0f), 5.0f);
+	return F0 + (1.0f - F0) * pow(1.0f - cosAlpha, 5.0f);
 }
 
 vec3 BRDF(vec3 lightDirection)
@@ -166,11 +167,11 @@ vec3 BRDF(vec3 lightDirection)
 
 	float D = DistributionGGX(halfwayVector);
 	float G = GeometrySmith(lightDirection);
-	vec3 F = FresnelSchlick(halfwayVector);
+	vec3 F = FresnelSchlick(max(dot(halfwayVector, viewDirection), 0.0f));
 
-	float denominator = 4 * max(dot(fs_in.normal, viewDirection), 0.0) * max(dot(fs_in.normal, lightDirection), 0.0) + 0.001;
+	float denominator = 4 * max(dot(normal, viewDirection), 0.0) * max(dot(normal, lightDirection), 0.0) + 0.001;
 	vec3 specular = (D * G * F) / denominator;
-	vec3 kD = 1.0f - F;
+	vec3 kD = vec3(1.0f) - F;
 	kD *= 1.0f - metalness;
 	vec3 diffuse = kD * baseColor / PI;
 

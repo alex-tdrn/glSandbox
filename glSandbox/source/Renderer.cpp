@@ -196,9 +196,10 @@ void Renderer::render()
 		{
 			if(!light->isEnabled())
 				continue;
+			glm::vec3 lightColor = light->getColor() * light->getIntensity() / (light->getIntensity() + 1);
 			res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-			res::shaders()[res::ShaderType::unlit].set("material.color", light->getColor() * light->getIntensity());
-			res::shaders()[res::ShaderType::unlit].set("model", light->getGlobalTransformation());
+			res::shaders()[res::ShaderType::unlit].set("material.color", lightColor);
+			res::shaders()[res::ShaderType::unlit].set("model", light->getGlobalTransformation() * glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
 			res::meshes::box()->use();
 		}
 	};
@@ -325,21 +326,6 @@ void Renderer::render()
 	}
 
 	activeShader.use();
-	//TODO
-	//if(shading.current == res::ShaderType::unlit)
-	//{
-	//	activeShader.set("material.hasMap", shading.lighting.unlit.map.has_value());
-	//	if(shading.lighting.unlit.map)
-	//		activeShader.set("material.map", *shading.lighting.unlit.map);
-	//	activeShader.set("material.color", shading.lighting.unlit.surfaceColor);
-	//}
-	//else
-	//{
-	//	activeShader.set("material.hasDiffuseMap", true);
-	//	activeShader.set("material.diffuseMap", 1);
-	//	activeShader.set("material.hasSpecularMap", false);
-	//	activeShader.set("material.hasOpacityMap", false);
-	//}
 	if(geometry.prop.mode != geometry.lines)
 	{
 		for(auto const& prop : props)
@@ -356,10 +342,9 @@ void Renderer::render()
 	if(geometry.prop.mode != geometry.triangles)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//TODO
-		/*res::shaders()[res::ShaderType::unlit].use();
+		res::shaders()[res::ShaderType::unlit].use();
 		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-		res::shaders()[res::ShaderType::unlit].set("material.color", shading.lighting.unlit.lineColor);*/
+		res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3(0.0f));
 
 		for(auto const& prop : props)
 		{

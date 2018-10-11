@@ -93,7 +93,7 @@
     <ClCompile Include="source\MaterialPBRMetallicRoughness.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileSelector.cpp">
+    <ClCompile Include="source\FileSelector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -177,6 +177,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="headers\FileSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\glad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -280,7 +283,11 @@
     <None Include="shaders\unlit.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\pbr.vert" />
-    <None Include="shaders\pbr.frag" />
+    <None Include="shaders\pbr.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\pbr.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

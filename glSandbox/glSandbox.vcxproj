@@ -154,7 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FileSelector.cpp" />
+    <ClCompile Include="source\FileSelector.cpp" />
     <ClCompile Include="source\Globals.cpp" />
     <ClCompile Include="source\MaterialPBRMetallicRoughness.cpp" />
     <ClCompile Include="source\SierpinskiCarpet.cpp" />
@@ -183,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\FileSelector.h" />
+    <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Grid.h" />
     <ClInclude Include="headers\Named.h" />
     <ClInclude Include="headers\ImportGLTF.h" />

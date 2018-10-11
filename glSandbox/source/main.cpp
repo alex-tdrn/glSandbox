@@ -7,10 +7,10 @@
 #include "Prop.h"
 #include "Renderer.h"
 #include "Profiler.h"
+#include "glad/glad.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glad\glad.h>
 #include <GLFW\glfw3.h>
 #include <imgui.h>
 #include "imgui_impl_glfw_gl3.h"

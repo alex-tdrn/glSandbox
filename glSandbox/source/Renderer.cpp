@@ -354,17 +354,20 @@ void Renderer::render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	glDisable(GL_STENCIL_TEST);
-	//draw skybox
-	/*if(skybox)
+	if(scene.usesSkybox())
 	{
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-		skybox->use();
-		resources::ResourceManager<Shader>.use()->;
-		resources::ResourceManager<Shader>.set()->skybox", 0);
-		glBindVertexArray(resources::boxVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}*/
+		//draw skybox
+		/*if(skybox)
+		{
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
+			skybox->use();
+			resources::ResourceManager<Shader>.use()->;
+			resources::ResourceManager<Shader>.set()->skybox", 0);
+			glBindVertexArray(resources::boxVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}*/
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

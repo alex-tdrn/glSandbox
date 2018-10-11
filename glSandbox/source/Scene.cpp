@@ -77,9 +77,19 @@ Node * Scene::getCurrent() const
 	return current;
 }
 
+bool Scene::usesSkybox() const
+{
+	return useSkybox && skybox != nullptr;
+}
+
 glm::vec3 const& Scene::getBackground() const
 {
 	return backgroundColor;
+}
+
+Cubemap const* Scene::getSkyBox() const
+{
+	return skybox;
 }
 
 void Scene::fitToIdealSize() const
@@ -106,28 +116,40 @@ void Scene::fitToIdealSize() const
 void Scene::drawUI()
 {
 	IDGuard idGuard{this};
-	
-	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
-	ImGui::SameLine();
-	if(ImGui::Button("Fit To:"))
-		fitToIdealSize();
-
-	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
-	static int hierarchyView = 0;
-
 	ImGui::Columns(2, nullptr, false);
+	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
 	ImGui::SetColumnWidth(-1, scrollAreaWidth);
 
+	ImGui::Text("Background");
+	if(ImGui::RadioButton("Solid", useSkybox == false || skybox == nullptr))
+		useSkybox = false;
+	ImGui::SameLine();
+	ImGui::ColorEdit3("###Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
+	if(ImGui::RadioButton("Cubemap", useSkybox == true && skybox != nullptr))
+		useSkybox = true;
+	ImGui::SameLine();
+	skybox = chooseFromCombo(skybox, ResourceManager<Cubemap>::getAll());
+	if(ImGui::Button("Fit To:"))
+		fitToIdealSize();
+	ImGui::SameLine();
 	ImGui::InputFloat("###IdealSize", &idealSize);
+	
+	static bool hierarchyView = false;
 	ImGui::NewLine();
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Nodes");
 	ImGui::SameLine();
-	if(ImGui::RadioButton("Category", &hierarchyView, 0))
+	if(ImGui::RadioButton("Category", !hierarchyView))
+	{
 		current = nullptr;
+		hierarchyView = false;
+	}
 	ImGui::SameLine();
-	if(ImGui::RadioButton("Hierarchy", &hierarchyView, 1))
+	if(ImGui::RadioButton("Hierarchy", hierarchyView))
+	{
 		current = nullptr;
+		hierarchyView = true;
+	}
 	ImGui::BeginChild("###Nodes");
 
 	std::set<Node*> nodesMarkedForHighlighting;

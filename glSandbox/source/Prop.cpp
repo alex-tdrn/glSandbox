@@ -109,25 +109,8 @@ void Prop::drawUI()
 	if(proceduralMesh)
 		proceduralMesh->drawUI();
 	assert(material);
-	std::string materialName = material->name.get();
-	if(ImGui::BeginCombo("###Material", materialName.data()))
-	{
-		if(!material)
-			ImGui::SetItemDefaultFocus();
-		ImGui::Separator();
-		int id = 0;
-		for(auto& m : ResourceManager<Material>::getAll())
-		{
-			ImGui::PushID(id++);
-			bool isSelected = material == m.get();
-			if(ImGui::Selectable(m->name.get().data(), &isSelected))
-				material = m.get();
-			if(isSelected)
-				ImGui::SetItemDefaultFocus();
-			ImGui::PopID();
-		}
-		ImGui::EndCombo();
-	}
+	material = chooseFromCombo(material, ResourceManager<Material>::getAll());
+
 	ImGui::EndChild();
 }
 

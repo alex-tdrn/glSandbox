@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "MaterialPBRMetallicRoughness.h"
 #include "Prop.h"
+#include "FileSelector.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
@@ -573,49 +574,98 @@ void initializeResources()
 	ResourceManager<Shader>::convolution();
 }
 
-void drawImportWindow(bool *open)
+class CubemapLoaderFunctor
 {
-	if(!*open)
-		return;
-	ImGui::Begin("Import", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	static std::filesystem::path path{std::filesystem::current_path()};
-	ImGui::Text(path.generic_string().data());
-	if(ImGui::Selectable(".."))
-		path = path.parent_path();
-	std::vector<std::filesystem::directory_entry> folders;
-	std::vector<std::filesystem::directory_entry> files;
-	for(auto const& part : std::filesystem::directory_iterator(path))
-	{
-		if(part.is_directory())
-			folders.push_back(part);
-		else
-			files.push_back(part);
-	}
-	ImVec2 elementSize{ImGui::GetContentRegionAvail().x, 0.0f};
-	for(auto const& folder : folders)
-	{
-		if(ImGui::Selectable(folder.path().filename().generic_string().data()))
-			path = folder.path();
-	}
-	ImGui::Separator();
-	for(auto const& file : files)
-	{
-		std::string filename = file.path().filename().generic_string();
-		if(file.path().extension() == ".gltf")
-		{
-			if(ImGui::Selectable(filename.data()))
-				settings::mainRenderer().setCamera(
-				ResourceManager<Scene>::importGLTF(
-				file.path().generic_string())->getAll<Camera>().front());
-		}
-		else
-		{
-			ImGui::Text(filename.data());
-		}
-	}
-	ImGui::End();
-}
+private:
+	inline static std::array<std::string, 6> const faceNames = {
+		"Face +X", "Face -X",
+		"Face +Y", "Face -Y",
+		"Face +Z", "Face -Z"
+	};
+	std::array<std::optional<Texture>, 6> faces;
+	bool allLoaded = true;
+	FileSelector* browser = nullptr;
+	int activeFace = -1;
+	bool explorerOpen = true;
 
+public:
+	CubemapLoaderFunctor() = default;
+	~CubemapLoaderFunctor()
+	{
+		if(browser)
+			delete browser;
+	}
+
+public:
+	bool isDone() const
+	{
+		return !explorerOpen;
+	}
+
+	void operator()()
+	{
+		ImGui::Begin("Import Cubemap", &explorerOpen, ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize);
+		allLoaded = true;
+		for(int i = 0; i < 6; ++i)
+		{
+			if(ImGui::Button(faceNames[i].data()))
+			{
+				if(activeFace == -1)
+				{
+					auto oldPath = std::filesystem::current_path();
+					if(browser)
+					{
+						oldPath = browser->getFile();
+						delete browser;
+					}
+					browser = new FileSelector({".jpg", ".png", ".tga"}, oldPath);
+					activeFace = i;
+				}
+			}
+			ImGui::SameLine();
+			if(faces[i])
+			{
+				ImGui::Text("( %s )", faces[i]->name.get().data());
+			}
+			else
+			{
+				allLoaded = false;
+				ImGui::Text("(None)");
+			}
+		}
+
+		if(activeFace != -1)
+		{
+			browser->drawUI();
+			if(browser->fileChosen())
+			{
+				faces[activeFace] = Texture(browser->getFile().string(), false);
+				activeFace = -1;
+			}
+			else if(browser->cancelled())
+			{
+				activeFace = -1;
+			}
+		}
+
+		if(allLoaded && ImGui::Button("Ok"))
+		{
+			ResourceManager<Cubemap>::add(std::make_unique<Cubemap>(
+				std::array<Texture, 6>{
+				std::move(*faces[0]),
+					std::move(*faces[1]),
+					std::move(*faces[2]),
+					std::move(*faces[3]),
+					std::move(*faces[4]),
+					std::move(*faces[5])
+			}));
+			explorerOpen = false;
+		}
+		ImGui::End();
+	}
+
+};
 void drawResourcesUI(bool* open)
 {
 	if(!*open)
@@ -625,20 +675,45 @@ void drawResourcesUI(bool* open)
 	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
 	ImGui::Columns(2, nullptr, false);
 	ImGui::SetColumnWidth(-1, scrollAreaWidth);
-	static bool importWindowOpen = false;
-	if(ImGui::Button("Import"))
-		importWindowOpen = true;
-	drawImportWindow(&importWindowOpen);
-	ImGui::SameLine();
-	if(ImGui::Button("Reload Shaders"))
-		ResourceManager<Shader>::reloadAll();
+	static void(*importCallback)(std::filesystem::path) = nullptr;
+	static FileSelector* browser = nullptr;
+
+	if(browser && importCallback)
+	{
+		browser->drawUI();
+		if(browser->fileChosen())
+		{
+			importCallback(browser->getFile());
+			delete browser;
+			browser = nullptr;
+			importCallback = nullptr;
+		}
+		else if(browser->cancelled())
+		{
+			delete browser;
+			browser = nullptr;
+			importCallback = nullptr;
+		}
+	}
+	static CubemapLoaderFunctor* cubemapBrowser = nullptr;
+	if(cubemapBrowser)
+	{
+		(*cubemapBrowser)();
+		if(cubemapBrowser->isDone())
+		{
+			delete cubemapBrowser;
+			cubemapBrowser = nullptr;
+		}
+	}
 	static std::variant<Scene*, Mesh*, Texture*, Material*, Cubemap*, Shader*> selected;
 	ImGui::BeginChild("###Resources");
 	int id = 0;
-	auto drawResources = [&id](std::string const& title, auto const& container){
+	auto drawResourcesWithCallback = [&id](std::string const& title, auto const& container, auto extraUI){
+		IDGuard idGuard(title.data());
 		static float const scrollAreaHeight = ImGui::GetTextLineHeightWithSpacing() * 8;
-
+		ImGui::AlignTextToFramePadding();
 		ImGui::Text(title.data());
+		extraUI();
 		ImGui::BeginChild(("###" + title).data(), {0, scrollAreaHeight}, true);
 		for(auto& resource : container)
 		{
@@ -654,15 +729,54 @@ void drawResourcesUI(bool* open)
 		ImGui::EndChild();
 		ImGui::NewLine();
 	};
+	auto drawResources = [&drawResourcesWithCallback](std::string const& title, auto const& container){
+		drawResourcesWithCallback(title, container, [](){});
+	};
 
-	/*if(ImGui::SmallButton("New"))
-		scenes::add(std::make_unique<Scene>());*/
-	drawResources("Scenes", ResourceManager<Scene>::getAll());
+	drawResourcesWithCallback("Scenes", ResourceManager<Scene>::getAll(), [](){
+		ImGui::SameLine();
+		if(ImGui::SmallButton("Import"))
+		{
+			if(!browser && !importCallback)
+			{
+				browser = new FileSelector({".gltf"});
+				importCallback = [](std::filesystem::path file)	{
+					settings::mainRenderer().setCamera(
+						ResourceManager<Scene>::importGLTF(file.string())->getAll<Camera>().front());
+				};
+			}
+		}
+		ImGui::SameLine();
+		if(ImGui::SmallButton("New"))
+			ResourceManager<Scene>::add(std::make_unique<Scene>());
+	});
 	drawResources("Meshes", ResourceManager<Mesh>::getAll());
-	drawResources("Textures", ResourceManager<Texture>::getAll());
+	drawResourcesWithCallback("Textures", ResourceManager<Texture>::getAll(), [](){
+		ImGui::SameLine();
+		if(ImGui::SmallButton("Import"))
+		{
+			if(!browser && !importCallback)
+			{
+				browser = new FileSelector({".jpg", ".png", ".tga"});
+				importCallback = [](std::filesystem::path file){
+					ResourceManager<Texture>::add(std::make_unique<Texture>(file.string(), true));
+				};
+			}
+		}
+	});
 	drawResources("Materials", ResourceManager<Material>::getAll());
-	drawResources("Cubemaps", ResourceManager<Cubemap>::getAll());
-	drawResources("Shaders", ResourceManager<Shader>::getAll());
+	drawResourcesWithCallback("Cubemaps", ResourceManager<Cubemap>::getAll(), [](){
+		ImGui::SameLine();
+		if(ImGui::SmallButton("Import"))
+		{
+			cubemapBrowser = new CubemapLoaderFunctor();
+		}
+	});
+	drawResourcesWithCallback("Shaders", ResourceManager<Shader>::getAll(), [](){
+		ImGui::SameLine();
+		if(ImGui::SmallButton("Reload"))
+			ResourceManager<Shader>::reloadAll();
+	});
 
 	ImGui::EndChild();
 

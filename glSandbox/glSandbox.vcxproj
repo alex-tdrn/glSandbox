@@ -154,8 +154,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Globals.cpp" />
-    <ClCompile Include="MaterialPBRMetallicRoughness.cpp" />
+    <ClCompile Include="FileSelector.cpp" />
+    <ClCompile Include="source\Globals.cpp" />
+    <ClCompile Include="source\MaterialPBRMetallicRoughness.cpp" />
     <ClCompile Include="source\SierpinskiCarpet.cpp" />
     <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
     <ClCompile Include="source\SierpinskiTriangle.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="source\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\FileSelector.h" />
     <ClInclude Include="headers\Grid.h" />
     <ClInclude Include="headers\Named.h" />
     <ClInclude Include="headers\ImportGLTF.h" />

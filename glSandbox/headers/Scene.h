@@ -2,6 +2,7 @@
 #include "Named.h"
 #include "Camera.h"
 #include "Lights.h"
+#include "Cubemap.h"
 
 #include <vector>
 #include <memory>
@@ -14,7 +15,9 @@ class Scene
 {
 
 private:
+	bool useSkybox = false;
 	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
+	Cubemap* skybox = nullptr;
 	std::unique_ptr<Node> root = std::make_unique<TransformedNode>();
 	float idealSize = 4.0f;
 	mutable struct{
@@ -27,7 +30,6 @@ private:
 		std::vector<SpotLight*> spotLights;
 	}cache;
 	Node* current = nullptr;
-	//7Cubemap* skybox = nullptr;
 
 public:
 	Name<Scene> name{"scene"};
@@ -52,7 +54,10 @@ public:
 	std::vector<T*> const& getAll() const;
 	template<typename T>
 	std::vector<T*> getAllEnabled() const;
+	bool usesSkybox() const;
 	glm::vec3 const& getBackground() const;
+	Cubemap const* getSkyBox() const;
+	
 	void fitToIdealSize() const;
 	void drawUI();
 

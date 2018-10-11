@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <iostream>
 #include <array>
+#include <vector>
+#include <memory>
 
 template <typename...>
 struct is_one_of
@@ -238,6 +240,14 @@ class IDGuard
 {
 public:
 	IDGuard() = delete;
+	IDGuard(int* ID)
+	{
+		ImGui::PushID(ID);
+	}
+	IDGuard(char const* ID)
+	{
+		ImGui::PushID(ID);
+	}
 	IDGuard(void* ID)
 	{
 		ImGui::PushID(ID);
@@ -247,6 +257,37 @@ public:
 		ImGui::PopID();
 	}
 };
+
+template <typename T>
+T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possibleValues, bool nullable = false)
+{
+	IDGuard idGuard{currentValue};
+	if(ImGui::BeginCombo("###Combo", currentValue ? currentValue->name.get().data() : "None"))
+	{
+		bool isSelected = !currentValue;
+		if(nullable)
+		{
+			if(ImGui::Selectable("None", &isSelected))
+				currentValue = nullptr;
+			if(isSelected)
+				ImGui::SetItemDefaultFocus();
+			ImGui::Separator();
+		}
+		int id = 0;
+		for(auto& v : possibleValues)
+		{
+			ImGui::PushID(id++);
+			isSelected = currentValue == v.get();
+			if(ImGui::Selectable(v->name.get().data(), &isSelected))
+				currentValue = v.get();
+			if(isSelected)
+				ImGui::SetItemDefaultFocus();
+			ImGui::PopID();
+		}
+		ImGui::EndCombo();
+	}
+	return currentValue;
+}
 
 inline void wrapAround(float& x, float const min, float const max)
 {

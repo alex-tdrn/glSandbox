@@ -2,6 +2,8 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Util.h"
+#include "Resources.h"
+
 #include <imgui.h>
 
 void Material::setNormal(Texture* map)
@@ -25,29 +27,16 @@ void Material::setEmissive(Texture* map, std::optional<glm::vec3> factor)
 
 void Material::use(Shader* shader) const
 {
-
-	//shader.set("material.hasDiffuseMap", bool(maps[diffuse]));
-	//if(maps[diffuse])
-	//{
-	//	maps[diffuse]->use(diffuse);
-	//	shader.set("material.diffuseMap", diffuse);
-	//}
-
-	//shader.set("material.hasSpecularMap", bool(maps[specular]));
-	//if(maps[specular])
-	//{
-	//	maps[specular]->use(specular);
-	//	shader.set("material.specularMap", specular);
-	//	shader.set("material.shininess", shininessValue);
-	//}
-
-	//shader.set("material.hasOpacityMap", bool(maps[opacity]));
-	//if(maps[opacity])
-	//{
-	//	maps[opacity]->use(opacity);
-	//	shader.set("material.opacityMap", opacity);
-	//}
-
+	if(shader == ResourceManager<Shader>::pbr())
+	{
+		shader->set("material.emissiveMapExists", emissiveMap != nullptr);
+		if(emissiveMap)
+		{
+			shader->set("material.emissiveMap", 3);
+			emissiveMap->use(3);
+		}
+		shader->set("material.emissiveFactor", emissiveFactor);
+	}
 }
 
 void Material::drawUI()
@@ -69,7 +58,7 @@ void Material::drawUI()
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Emissive");
 	ImGui::SameLine();
-	ImGui::ColorEdit3("###Factor", &emissiveFactor.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::ColorEdit3("###FactorEmissive", &emissiveFactor.x, ImGuiColorEditFlags_NoInputs);
 	if(emissiveMap)
 		emissiveMap->drawUI();
 }

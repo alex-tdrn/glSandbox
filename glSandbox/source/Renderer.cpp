@@ -357,7 +357,7 @@ void Renderer::render()
 	glDisable(GL_CULL_FACE);
 	if(scene.usesSkybox())
 	{
-		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		if(geometry.skybox.wireframe)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		else

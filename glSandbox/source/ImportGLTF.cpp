@@ -272,7 +272,7 @@ std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Mat
 			_material->name.set(material.name);
 		_material->setNormal(getMap(material.normalTexture));
 		_material->setOcclusion(getMap(material.occlusionTexture));
-		_material->setEmissive(getMap(material.emissiveTexture), getFactor(material.emissiveFactor));
+		_material->setEmissive(getMap(material.emissiveTexture, false), getFactor(material.emissiveFactor));
 		if(material.doubleSided)
 		{
 			//TODO

@@ -35,6 +35,10 @@ struct Material
 	sampler2D metallicRoughnessMap;
 	float metallicFactor;
 	float roughnessFactor;
+
+	bool emissiveMapExists;
+	sampler2D emissiveMap;
+	vec3 emissiveFactor;
 };
 
 uniform Material material;
@@ -62,6 +66,7 @@ vec3 normal = normalize(fs_in.normal);
 vec3 baseColor = vec3(material.baseColorFactor);
 float metalness = material.metallicFactor;
 float roughness = material.roughnessFactor;
+vec3 emissive = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
 
 vec3 calcAmbientLight();
@@ -81,10 +86,12 @@ void main()
 		roughness *= mr.g;
 		metalness *= mr.b;
 	}
+	if(material.emissiveMapExists)
+		emissive *= vec3(texture(material.emissiveMap, fs_in.textureCoordinates));
 
 	F0 = mix(F0, baseColor, metalness);
 
-	vec3 result = calcAmbientLight();
+	vec3 result = calcAmbientLight() + emissive;
 	for(int i = 0; i < nDirLights; i++)
 		result += calcDirLight(dirLights[i]);
 	for(int i = 0; i < nPointLights; i++)

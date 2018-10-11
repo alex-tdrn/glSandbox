@@ -90,7 +90,7 @@ void MaterialPBRMetallicRoughness::drawUI()
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Base Color");
 	ImGui::SameLine();
-	ImGui::ColorEdit4("###FactorBaseColor", &baseColorFactor.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::ColorEdit4("###FactorBaseColor", &baseColorFactor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 	if(baseColorMap)
 		baseColorMap->drawUI();
 	ImGui::Separator();

@@ -124,12 +124,8 @@ void Scene::drawUI()
 	if(ImGui::RadioButton("Solid", useSkybox == false || skybox == nullptr))
 		useSkybox = false;
 	ImGui::SameLine();
-	glm::vec3 color = backgroundColor;
-	ImGui::ColorEdit3("###Background", &color.x, ImGuiColorEditFlags_NoInputs);
-	if(color != backgroundColor)
-	{
-		backgroundColor = glm::vec3(std::pow(color.x, 2.2f), std::pow(color.y, 2.2f), std::pow(color.z, 2.2f));
-	}
+	static float aaa = 0.0f;
+	ImGui::ColorEdit3("###Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 	if(ImGui::RadioButton("Cubemap", useSkybox == true && skybox != nullptr))
 		useSkybox = true;
 	ImGui::SameLine();

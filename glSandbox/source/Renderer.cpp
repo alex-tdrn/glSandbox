@@ -428,7 +428,7 @@ void Renderer::drawUI(bool* open)
 	ImGui::AlignTextToFramePadding();
 	ImGui::Checkbox("Highlighting", &highlighting.enabled);
 	ImGui::SameLine();
-	ImGui::ColorEdit3("###Highlighting", &highlighting.color[0], ImGuiColorEditFlags_NoInputs);
+	ImGui::ColorEdit3("###Highlighting", &highlighting.color[0], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 	ImGui::SameLine();
 	ImGui::Checkbox("Overlay", &highlighting.overlay);
 	ImGui::SameLine();
@@ -473,7 +473,7 @@ void Renderer::drawUI(bool* open)
 		{
 			ImGui::SameLine();
 			geometry.grid.mainGenerator.drawUI();
-			ImGui::ColorEdit3("###ColorGrid", &geometry.grid.color.x, ImGuiColorEditFlags_NoInputs);
+			ImGui::ColorEdit3("###ColorGrid", &geometry.grid.color.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 			ImGui::InputFloat("Scale", &geometry.grid.scale, 0.01f);
 			if(std::abs(geometry.grid.scale) <= 0.001f)
 				geometry.grid.scale = 0.001f;
@@ -598,7 +598,7 @@ void Renderer::drawUI(bool* open)
 			if(shading.debugging.normals.showLines)
 			{
 				ImGui::DragFloat("Line length", &shading.debugging.normals.lineLength, 0.001f);
-				ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs);
+				ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 			}
 		}
 	}

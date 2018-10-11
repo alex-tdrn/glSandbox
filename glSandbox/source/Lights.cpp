@@ -36,7 +36,7 @@ void Light::use(std::string const& prefix, Shader& shader, bool flash) const
 
 void Light::drawUI()
 {
-	ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::ColorEdit3("Color", &Light::color.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 	ImGui::DragFloat("Intensity", &intensity, 0.1f);
 }
 

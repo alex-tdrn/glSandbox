@@ -58,7 +58,7 @@ void Material::drawUI()
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Emissive");
 	ImGui::SameLine();
-	ImGui::ColorEdit3("###FactorEmissive", &emissiveFactor.x, ImGuiColorEditFlags_NoInputs);
+	ImGui::ColorEdit3("###FactorEmissive", &emissiveFactor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 	if(emissiveMap)
 		emissiveMap->drawUI();
 }

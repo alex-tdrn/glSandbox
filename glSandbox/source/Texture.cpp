@@ -11,15 +11,20 @@ Texture::Texture(std::string const& path, bool linear)
 {
 }
 
+Texture::~Texture()
+{
+	//TODO
+}
+
 void Texture::load() const
 {
+	if(!path)
+		assert(false);
 	loaded = true;
 	
 	std::uint8_t* imageData = stbi_load(path->data(), &width, &height, &nrChannels, STBI_default);
 	if(!imageData)
 		throw "Could not load image from disk";
-	GLenum format = 0;
-	GLenum pixelTransfer = 0;
 	switch(nrChannels)
 	{
 		case 1:
@@ -70,13 +75,20 @@ void Texture::load() const
 void Texture::use(int location) const
 {
 	if(!loaded)
-	{
-		if(!path)
-			assert(false);
 		load();
-	}
 	glActiveTexture(GL_TEXTURE0 + location);
 	glBindTexture(GL_TEXTURE_2D, ID);
+}
+
+void Texture::copy(unsigned int textureID, int bindTarget, int copyTarget) const
+{
+	if(!loaded)
+		load();
+	glBindTexture(bindTarget, textureID);
+	glTexImage2D(copyTarget, 0, format, width, height, 0, pixelTransfer, GL_UNSIGNED_BYTE, nullptr);
+	glBindTexture(GL_TEXTURE_2D, ID);
+	glCopyTexImage2D(copyTarget, 0, format, 0, 0, width, height, 0);
+	glBindTexture(bindTarget, textureID);
 }
 
 void Texture::drawUI()
@@ -86,8 +98,52 @@ void Texture::drawUI()
 		load();
 	
 	float const size = std::min(ImGui::GetContentRegionAvailWidth(), 512.0f);
-	ImGui::Text("Encoding: %s", linear ? "Linear" : "Gamma");
 	ImGui::Text("ID %i", ID);
+	ImGui::Text("Encoding: %s", linear ? "Linear" : "Gamma");
+	ImGui::Text("Format: ");
+	ImGui::SameLine();
+	switch(format)
+	{
+		case GL_R8:
+			ImGui::Text("GL_R8");
+			break;
+		case GL_RG8:
+			ImGui::Text("GL_RG8");
+			break;
+		case GL_RGB8:
+			ImGui::Text("GL_RGB8");
+			break;
+		case GL_RGBA8:
+			ImGui::Text("GL_RGB8");
+			break;
+		case GL_SRGB8:
+			ImGui::Text("GL_SRGB8");
+			break;
+		case GL_SRGB8_ALPHA8:
+			ImGui::Text("GL_SRGB8_ALPHA8");
+			break;
+		default:
+			assert(false);
+	}
+	ImGui::Text("Pixel Transfer: ");
+	ImGui::SameLine();
+	switch(pixelTransfer)
+	{
+		case GL_RED:
+			ImGui::Text("GL_RED");
+			break;
+		case GL_RG:
+			ImGui::Text("GL_RG");
+			break;
+		case GL_RGB:
+			ImGui::Text("GL_RGB");
+			break;
+		case GL_RGBA:
+			ImGui::Text("GL_RGBA");
+			break;
+		default:
+			assert(false);
+	}
 	ImGui::Text("%i x %i", width, height);
 	ImGui::Text("# channels %i", nrChannels);
 	if(path)

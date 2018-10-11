@@ -10,11 +10,13 @@ class Texture
 {
 private:
 	mutable bool loaded = false;
-	bool linear;
 	mutable unsigned int ID;
-	mutable int width = 0;
-	mutable int height = 0;
-	mutable int nrChannels = 0;
+	mutable int width = -1;
+	mutable int height = -1;
+	mutable int nrChannels = -1;
+	mutable unsigned int format = 0;
+	mutable unsigned int pixelTransfer = 0;
+	bool linear;
 	std::optional<std::string> path = std::nullopt;
 
 public:
@@ -27,12 +29,14 @@ public:
 	Texture(Texture&& other) = default;
 	Texture& operator=(Texture const& other) = delete;
 	Texture& operator=(Texture&& other) = default;
+	~Texture();
 
 private:
 	void load() const;
 
 public:
 	void use(int location) const;
+	void copy(unsigned int textureID, int bindTarget, int copyTarget) const;
 	void drawUI();
 
 };

@@ -16,6 +16,9 @@ namespace res::meshes
 
 	std::vector<std::unique_ptr<Mesh>> const& getAll()
 	{
+		quad();
+		box();
+		boxWireframe();
 		return _meshes;
 	}
 
@@ -319,6 +322,7 @@ namespace res::textures
 
 	std::vector<std::unique_ptr<Texture>> const& getAll()
 	{
+		placeholder();
 		return _textures;
 	}
 
@@ -351,6 +355,7 @@ namespace res::materials
 
 	std::vector<std::unique_ptr<Material>> const& getAll()
 	{
+		placeholder();
 		return _materials;
 	}
 
@@ -376,6 +381,49 @@ namespace res::materials
 			return add(std::move(material));
 		}();
 		return placeholder;
+
+	}
+
+}
+
+namespace res::cubemaps
+{
+	static std::vector<std::unique_ptr<Cubemap>> _cubemap;
+
+	std::vector<std::unique_ptr<Cubemap>> const& getAll()
+	{
+		skybox();
+		return _cubemap;
+	}
+
+	Cubemap* add(std::unique_ptr<Cubemap>&& texture)
+	{
+		auto ret = texture.get();
+		_cubemap.push_back(std::move(texture));
+		return ret;
+	}
+
+	void add(std::vector<std::unique_ptr<Cubemap>>&& textures)
+	{
+		_cubemap.reserve(_cubemap.size() + textures.size());
+		for(auto& texture : textures)
+			_cubemap.push_back(std::move(texture));
+	}
+
+	Cubemap* skybox()
+	{
+		static auto skybox= [&]() -> Cubemap*{
+			std::array<Texture, 6> faces = {
+				Texture{"cubemaps/skybox/right.jpg", true},
+				Texture{"cubemaps/skybox/left.jpg", true},
+				Texture{"cubemaps/skybox/top.jpg", true},
+				Texture{"cubemaps/skybox/bottom.jpg", true},
+				Texture{"cubemaps/skybox/front.jpg", true},
+				Texture{"cubemaps/skybox/back.jpg", true}
+			};
+			return add(std::make_unique<Cubemap>(std::move(faces)));
+		}();
+		return skybox;
 
 	}
 
@@ -514,7 +562,7 @@ void res::drawUI(bool* open)
 	ImGui::SameLine();
 	if(ImGui::Button("Reload Shaders"))
 		reloadShaders();
-	static std::variant<Scene*, Mesh*, Texture*, Material*> selected;
+	static std::variant<Scene*, Mesh*, Texture*, Material*, Cubemap*> selected;
 	ImGui::BeginChild("###Resources");
 
 	ImGui::Text("Scenes");
@@ -599,6 +647,20 @@ void res::drawUI(bool* open)
 			active = std::get<Material*>(selected) == material.get();
 		if(ImGui::Selectable(material->name.get().data(), active))
 			selected = material.get();
+		ImGui::PopID();
+	}
+	ImGui::EndChild();
+
+	ImGui::Text("Cubemaps");
+	ImGui::BeginChild("###Cubemaps", {0, scrollAreaHeight}, true);
+	for(auto& cubemap : cubemaps::getAll())
+	{
+		ImGui::PushID(id++);
+		bool active = false;
+		if(std::holds_alternative<Cubemap*>(selected))
+			active = std::get<Cubemap*>(selected) == cubemap.get();
+		if(ImGui::Selectable(cubemap->name.get().data(), active))
+			selected = cubemap.get();
 		ImGui::PopID();
 	}
 	ImGui::EndChild();

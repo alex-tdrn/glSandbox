@@ -42,6 +42,10 @@ namespace res
 	}
 	namespace cubemaps
 	{
+		std::vector<std::unique_ptr<Cubemap>> const& getAll();
+		Cubemap* add(std::unique_ptr<Cubemap>&&);
+		Cubemap* skybox();
+
 		//inline Cubemap skybox("skybox", {
 		//	"cubemaps/skybox/right.jpg", "cubemaps/skybox/left.jpg",
 		//	"cubemaps/skybox/top.jpg", "cubemaps/skybox/bottom.jpg",

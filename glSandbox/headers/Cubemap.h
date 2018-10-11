@@ -1,23 +1,34 @@
 #pragma once
+#include "Named.h"
+#include "Texture.h"
+
 #include <array>
-#include <string>
+#include <optional>
 
 class Cubemap
 {
 private:
-	unsigned int ID;
-	std::array<std::string, 6> paths;
-	std::string name;
-	bool initialized = false;
-	int width, height, nrChannels;
+	mutable bool loaded = false;
+	mutable unsigned int ID;
+	std::array<Texture, 6> faces;
 
 public:
-	Cubemap(std::string name, std::array<std::string, 6> paths);
+	Name<Cubemap> name{"cubemap"};
 
 public:
-	std::string_view getName() const;
-	void use();
-	void initialize();
-	[[nodiscard]] bool drawUI();
+	Cubemap() = delete;
+	Cubemap(std::array<Texture, 6>&& faces);
+	Cubemap(Cubemap const&) = delete;
+	Cubemap(Cubemap&&) = default;
+	Cubemap& operator= (Cubemap const&) = delete;
+	Cubemap& operator= (Cubemap&&) = default;
+	~Cubemap() = default;
+
+private:
+	void load();
+
+public:
+	void use(int location);
+	void drawUI();
 
 };

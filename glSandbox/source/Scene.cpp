@@ -1,11 +1,11 @@
 #include "Scene.h"
+#include "Camera.h"
 #include "Prop.h"
 #include "Util.h"
-#include "Camera.h"
 
 #include <imgui.h>
-#include <variant>
 #include <set>
+#include <variant>
 
 Scene::Scene()
 {

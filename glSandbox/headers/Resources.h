@@ -8,87 +8,112 @@
 
 #include <vector>
 
-namespace res
+namespace detail
 {
-	namespace meshes
+	template<typename T>
+	class ResourceManagerBase
 	{
-		std::vector<std::unique_ptr<Mesh>> const& getAll();
-		Mesh* add(std::unique_ptr<Mesh>&&);
-		void add(std::vector<std::unique_ptr<Mesh>>&&);
-		Mesh* quad();
-		Mesh* box();
-		Mesh* boxWireframe();
-	}
-	namespace scenes
-	{
-		std::vector<std::unique_ptr<Scene>> const& getAll();
-		Scene* add(std::unique_ptr<Scene>&&);
-		void add(std::vector<std::unique_ptr<Scene>>&&);
+	private:
+		static std::vector<std::unique_ptr<T>>& _getAll()
+		{
+			static std::vector<std::unique_ptr<T>> container;
+			return container;
+		}
+	public:
+		static std::vector<std::unique_ptr<T>> const& getAll()
+		{
+			return _getAll();
+		}
+		static T* add(std::unique_ptr<T>&& resource)
+		{
+			T* ret = resource.get();
+			_getAll().push_back(std::move(resource));
+			return ret;
+		}
+		static void add(std::vector<std::unique_ptr<T>>&& resources)
+		{
+			_getAll().reserve(_getAll().size() + resources.size());
+			for(auto& resource : resources)
+				_getAll().push_back(std::move(resource));
+		}
 
-	}
-	namespace textures
-	{
-		std::vector<std::unique_ptr<Texture>> const& getAll();
-		Texture* add(std::unique_ptr<Texture>&&);
-		void add(std::vector<std::unique_ptr<Texture>>&&);
-		Texture* placeholder();
-	}
-	namespace materials
-	{
-		std::vector<std::unique_ptr<Material>> const& getAll();
-		Material* add(std::unique_ptr<Material>&&);
-		void add(std::vector<std::unique_ptr<Material>>&&);
-		Material* placeholder();
-	}
-	namespace cubemaps
-	{
-		std::vector<std::unique_ptr<Cubemap>> const& getAll();
-		Cubemap* add(std::unique_ptr<Cubemap>&&);
-		Cubemap* skybox();
-
-		//inline Cubemap skybox("skybox", {
-		//	"cubemaps/skybox/right.jpg", "cubemaps/skybox/left.jpg",
-		//	"cubemaps/skybox/top.jpg", "cubemaps/skybox/bottom.jpg",
-		//	"cubemaps/skybox/front.jpg", "cubemaps/skybox/back.jpg"
-		//	});
-		//inline Cubemap mp_blizzard("mp_blizzard", {
-		//	"cubemaps/mp_blizzard/blizzard_rt.tga", "cubemaps/mp_blizzard/blizzard_lf.tga",
-		//	"cubemaps/mp_blizzard/blizzard_up.tga", "cubemaps/mp_blizzard/blizzard_dn.tga",
-		//	"cubemaps/mp_blizzard/blizzard_ft.tga", "cubemaps/mp_blizzard/blizzard_bk.tga"
-		//	});
-
-	}
-	inline std::vector<Shader>& shaders()
-	{
-		static std::vector<Shader> _shaders;
-		return _shaders;
-	}
-
-	enum ShaderType
-	{
-		unlit,
-		pbr,
-		blinn_phong,
-		phong,
-		gouraud,
-		flat,
-		reflection,
-		refraction,
-		debugNormals,
-		debugNormalsShowLines,
-		debugTexCoords,
-		debugDepthBuffer,
-		skybox,
-		gammaHDR,
-		passthrough,
-		grayscale,
-		chromaticAberration,
-		invert,
-		convolution,
-		END
 	};
-	void loadShaders();
-	void reloadShaders();
-	void drawUI(bool* open);
-	Scene& importGLTF(std::string_view const filename);
 }
+
+template<typename T>
+class ResourceManager : public detail::ResourceManagerBase<T>
+{
+public:
+	using detail::ResourceManagerBase<T>::getAll;
+	using detail::ResourceManagerBase<T>::add;
+};
+
+template<>
+class ResourceManager<Mesh> : public detail::ResourceManagerBase<Mesh>
+{
+public:
+	static Mesh* quad();
+	static Mesh* box();
+	static Mesh* boxWireframe();
+};
+
+template<>
+class ResourceManager<Texture> : public detail::ResourceManagerBase<Texture>
+{
+public:
+	static Texture* debug();
+};
+
+template<>
+class ResourceManager<Material> : public detail::ResourceManagerBase<Material>
+{
+public:
+	static Material* basic();
+};
+
+template<>
+class ResourceManager<Cubemap> : public detail::ResourceManagerBase<Cubemap>
+{
+public:
+	static Cubemap* skybox();
+};
+
+template<>
+class ResourceManager<Scene> : public detail::ResourceManagerBase<Scene>
+{
+public:
+	static Scene* importGLTF(std::string_view const filename);
+	static Scene* test();
+
+};
+
+template<>
+class ResourceManager<Shader> : public detail::ResourceManagerBase<Shader>
+{
+public:
+	static void reloadAll();
+	static bool isLightingShader(Shader*);
+	static Shader* unlit();
+	static Shader* pbr();
+	static Shader* blinnPhong();
+	static Shader* phong();
+	static Shader* gouraud();
+	static Shader* flat();
+	static Shader* reflection();
+	static Shader* refraction();
+	static Shader* debugNormals();
+	static Shader* debugNormalsShowLines();
+	static Shader* debugTexCoords();
+	static Shader* debugDepthBuffer();
+	static Shader* skybox();
+	static Shader* gammaHDR();
+	static Shader* passthrough();
+	static Shader* grayscale();
+	static Shader* chromaticAberration();
+	static Shader* invert();
+	static Shader* convolution();
+};
+
+
+void initializeResources();
+void drawResourcesUI(bool* open);

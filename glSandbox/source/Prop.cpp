@@ -24,7 +24,7 @@ Mesh& Prop::getMesh() const
 		return *staticMesh;
 	else if(proceduralMesh)
 		return *proceduralMesh->get();
-	else return *res::meshes::boxWireframe();
+	else return *ResourceManager<Mesh>::boxWireframe();
 }
 
 Material* Prop::getMaterial() const
@@ -85,7 +85,7 @@ void Prop::drawUI()
 	{
 		int id = 0;
 		//static meshes
-		for(auto& m : res::meshes::getAll())
+		for(auto& m : ResourceManager<Mesh>::getAll())
 		{
 			ImGui::PushID(id++);
 			bool isSelected = staticMesh == m.get();
@@ -116,7 +116,7 @@ void Prop::drawUI()
 			ImGui::SetItemDefaultFocus();
 		ImGui::Separator();
 		int id = 0;
-		for(auto& m : res::materials::getAll())
+		for(auto& m : ResourceManager<Material>::getAll())
 		{
 			ImGui::PushID(id++);
 			bool isSelected = material == m.get();

@@ -14,12 +14,12 @@ private:
 	Name<Prop> name{"prop"};
 	Mesh* staticMesh = nullptr;
 	std::unique_ptr<ProceduralMesh> proceduralMesh = nullptr;
-	Material* material = res::materials::placeholder();
+	Material* material = ResourceManager<Material>::basic();
 
 public:
 	Prop() = default;
-	Prop(Mesh* mesh, Material* material = res::materials::placeholder());
-	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = res::materials::placeholder());
+	Prop(Mesh* mesh, Material* material = ResourceManager<Material>::basic());
+	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = ResourceManager<Material>::basic());
 	virtual ~Prop() = default;
 
 public:

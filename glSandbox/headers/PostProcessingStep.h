@@ -9,7 +9,7 @@ private:
 	unsigned int inputColorbuffer;
 	unsigned int framebuffer;
 	unsigned int colorbuffer;
-	res::ShaderType currentShaderType = res::ShaderType::passthrough;
+	Shader* currentShader = ResourceManager<Shader>::passthrough();
 	float convolutionKernel[9];
 	float convolutionDivisor = 1.0f;
 	float convolutionOffset = 0.001f;

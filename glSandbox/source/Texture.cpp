@@ -5,10 +5,13 @@
 
 #include <stb_image.h>
 #include <imgui.h>
+#include <filesystem>
 
 Texture::Texture(std::string const& path, bool linear)
 	:path(path), linear(linear)
 {
+	std::filesystem::path filename = path;
+	name.set(filename.filename().string());
 }
 
 Texture::~Texture()

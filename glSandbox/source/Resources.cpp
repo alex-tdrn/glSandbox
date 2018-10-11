@@ -2,6 +2,7 @@
 #include "ImportGLTF.h"
 #include "Globals.h"
 #include "MaterialPBRMetallicRoughness.h"
+#include "Prop.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
@@ -10,41 +11,15 @@
 #include <filesystem>
 #include <map>
 
-namespace res::meshes
+Mesh* ResourceManager<Mesh>::quad()
 {
-	static std::vector<std::unique_ptr<Mesh>> _meshes;
-
-	std::vector<std::unique_ptr<Mesh>> const& getAll()
-	{
-		quad();
-		box();
-		boxWireframe();
-		return _meshes;
-	}
-
-	Mesh* add(std::unique_ptr<Mesh>&& mesh)
-	{
-		Mesh* ret = mesh.get();
-		_meshes.push_back(std::move(mesh));
-		return ret;
-	}
-
-	void add(std::vector<std::unique_ptr<Mesh>>&& meshes)
-	{
-		_meshes.reserve(_meshes.size() + meshes.size());
-		for(auto& mesh : meshes)
-			_meshes.push_back(std::move(mesh));
-	}
-
-	Mesh* quad()
-	{
-		static Mesh* quad = []() -> Mesh*{
-			std::vector<Vertex> vertices = {
-				{//top left
-					glm::vec3{-1.0f, +1.0f, +0.0f},
-					glm::vec3{+0.0f, +0.0f, +1.0f},
-					glm::vec2{+0.0f, +1.0f}
-				},
+	static Mesh* ret = []() -> Mesh* {
+		std::vector<Vertex> vertices = {
+			{//top left
+				glm::vec3{-1.0f, +1.0f, +0.0f},
+				glm::vec3{+0.0f, +0.0f, +1.0f},
+				glm::vec2{+0.0f, +1.0f}
+			},
 			{//bottom left
 				glm::vec3{-1.0f, -1.0f, +0.0f},
 				glm::vec3{+0.0f, +0.0f, +1.0f},
@@ -60,20 +35,24 @@ namespace res::meshes
 				glm::vec3{+0.0f, +0.0f, +1.0f},
 				glm::vec2{+1.0f, +1.0f}
 			}
-			};
-			std::vector<uint8_t> indices = {
-				0, 1, 2,
-				0, 2, 3
-			};
-			auto bounds = calculateBounds(vertices);
-			return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
-		}();
-		return quad;
-	}
+		};
+		std::vector<uint8_t> indices = {
+			0, 1, 2,
+			0, 2, 3
+		};
+		auto mesh = std::make_unique<Mesh>(
+			calculateBounds(vertices), GL_TRIANGLES,
+			buildAttributes(std::move(vertices)), 
+			buildIndexBuffer(std::move(indices)));
+		mesh->name.set("quad");
+		return add(std::move(mesh));
+	}();
+	return ret;
+}
 
-	Mesh* box()
+Mesh* ResourceManager<Mesh>::box()
 	{
-		static Mesh* box = []() -> Mesh*{
+		static Mesh* ret = []() -> Mesh* {
 			std::vector<Vertex> vertices = {
 				//front face
 				{//top left
@@ -227,15 +206,19 @@ namespace res::meshes
 				20, 21, 22,
 				20, 22, 23
 			};
-			auto bounds = calculateBounds(vertices);
-			return add(std::make_unique<Mesh>(Mesh{bounds, GL_TRIANGLES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
+			auto mesh = std::make_unique<Mesh>(
+				calculateBounds(vertices), GL_TRIANGLES,
+				buildAttributes(std::move(vertices)),
+				buildIndexBuffer(std::move(indices)));
+			mesh->name.set("box");
+			return add(std::move(mesh));
 		}();
-		return box;
+		return ret;
 	}
 
-	Mesh* boxWireframe()
+Mesh* ResourceManager<Mesh>::boxWireframe()
 	{
-		static Mesh* boxWireframe = []() -> Mesh*{
+		static Mesh* ret = []() -> Mesh* {
 			std::vector<SimpleVertex> vertices = {
 				//front face
 				{//top left
@@ -279,229 +262,315 @@ namespace res::meshes
 				7, 4,
 				5, 6
 			};
-			auto bounds = calculateBounds(vertices);
-			return add(std::make_unique<Mesh>(Mesh{bounds, GL_LINES, buildAttributes(std::move(vertices)), buildIndexBuffer(std::move(indices))}));
+			auto mesh = std::make_unique<Mesh>(
+				calculateBounds(vertices), GL_LINES,
+				buildAttributes(std::move(vertices)),
+				buildIndexBuffer(std::move(indices)));
+			mesh->name.set("box_wireframe");
+			return (add(std::move(mesh)));
 		}();
-		return boxWireframe;
-	}
-}
-
-namespace res::scenes
-{
-	static std::vector<std::unique_ptr<Scene>> _scenes;
-
-	std::vector<std::unique_ptr<Scene>> const& getAll()
-	{
-		return _scenes;
-	}
-
-	Scene* add(std::unique_ptr<Scene>&& scene)
-	{
-		auto ret = scene.get();
-		_scenes.push_back(std::move(scene));
 		return ret;
 	}
 
-	void removeScene(Scene* scene)
-	{
-		_scenes.erase(std::remove_if(_scenes.begin(), _scenes.end(), [&](std::unique_ptr<Scene>& val){ return val.get() == scene; }), _scenes.end());
-	}
-
-	void add(std::vector<std::unique_ptr<Scene>>&& scenes)
-	{
-		_scenes.reserve(_scenes.size() + scenes.size());
-		for(auto& scene : scenes)
-			_scenes.push_back(std::move(scene));
-	}
+Texture* ResourceManager<Texture>::debug()
+{
+	static auto ret = add(std::make_unique<Texture>("textures/debug.png", true));
+	return ret;
 
 }
 
-namespace res::textures
+Material* ResourceManager<Material>::basic()
 {
-	static std::vector<std::unique_ptr<Texture>> _textures;
+	static auto ret = [&]() -> Material* {
+		auto material = std::make_unique<MaterialPBRMetallicRoughness>();
+		material->setBaseColor(ResourceManager<Texture>::debug(), std::nullopt);
+		material->name.set("basic");
+		return add(std::move(material));
+	}();
+	return ret;
+}
 
-	std::vector<std::unique_ptr<Texture>> const& getAll()
-	{
-		placeholder();
-		return _textures;
-	}
-
-	Texture* add(std::unique_ptr<Texture>&& texture)
-	{
-		auto ret = texture.get();
-		_textures.push_back(std::move(texture));
-		return ret;
-	}
-
-	void add(std::vector<std::unique_ptr<Texture>>&& textures)
-	{
-		_textures.reserve(_textures.size() + textures.size());
-		for(auto& texture : textures)
-			_textures.push_back(std::move(texture));
-	}
-
-	Texture* placeholder()
-	{
-		static auto placeholder = add(std::make_unique<Texture>("textures/placeholder.png", true));
-		return placeholder;
-
-	}
+Cubemap* ResourceManager<Cubemap>::skybox()
+{
+	static auto ret= [&]() -> Cubemap* {
+		std::array<Texture, 6> faces = {
+			Texture{"cubemaps/skybox/right.jpg", false},
+			Texture{"cubemaps/skybox/left.jpg", false},
+			Texture{"cubemaps/skybox/top.jpg", false},
+			Texture{"cubemaps/skybox/bottom.jpg", false},
+			Texture{"cubemaps/skybox/front.jpg", false},
+			Texture{"cubemaps/skybox/back.jpg", false}
+		};
+		auto cubemap = std::make_unique<Cubemap>(std::move(faces));
+		cubemap->name.set("skybox");
+		return add(std::move(cubemap));
+	}();
+	return ret;
 
 }
 
-namespace res::materials
+Scene* ResourceManager<Scene>::importGLTF(std::string_view const filename)
 {
-	static std::vector<std::unique_ptr<Material>> _materials;
-
-	std::vector<std::unique_ptr<Material>> const& getAll()
-	{
-		placeholder();
-		return _materials;
-	}
-
-	Material* add(std::unique_ptr<Material>&& texture)
-	{
-		auto ret = texture.get();
-		_materials.push_back(std::move(texture));
-		return ret;
-	}
-
-	void add(std::vector<std::unique_ptr<Material>>&& textures)
-	{
-		_materials.reserve(_materials.size() + textures.size());
-		for(auto& texture : textures)
-			_materials.push_back(std::move(texture));
-	}
-
-	Material* placeholder()
-	{
-		static auto placeholder = [&]() -> Material*{
-			auto material = std::make_unique<MaterialPBRMetallicRoughness>();
-			material->setBaseColor(res::textures::placeholder(), std::nullopt);
-			return add(std::move(material));
-		}();
-		return placeholder;
-
-	}
-
+	auto asset = import(filename);
+	auto ret = asset.scenes[0].get();//active scene
+	add(std::move(asset.scenes));
+	ResourceManager<Mesh>::add(std::move(asset.meshes));
+	ResourceManager<Texture>::add(std::move(asset.textures));
+	ResourceManager<Material>::add(std::move(asset.materials));
+	return ret;
 }
 
-namespace res::cubemaps
+Scene* ResourceManager<Scene>::test()
 {
-	static std::vector<std::unique_ptr<Cubemap>> _cubemap;
-
-	std::vector<std::unique_ptr<Cubemap>> const& getAll()
-	{
-		skybox();
-		return _cubemap;
-	}
-
-	Cubemap* add(std::unique_ptr<Cubemap>&& texture)
-	{
-		auto ret = texture.get();
-		_cubemap.push_back(std::move(texture));
-		return ret;
-	}
-
-	void add(std::vector<std::unique_ptr<Cubemap>>&& textures)
-	{
-		_cubemap.reserve(_cubemap.size() + textures.size());
-		for(auto& texture : textures)
-			_cubemap.push_back(std::move(texture));
-	}
-
-	Cubemap* skybox()
-	{
-		static auto skybox= [&]() -> Cubemap*{
-			std::array<Texture, 6> faces = {
-				Texture{"cubemaps/skybox/right.jpg", true},
-				Texture{"cubemaps/skybox/left.jpg", true},
-				Texture{"cubemaps/skybox/top.jpg", true},
-				Texture{"cubemaps/skybox/bottom.jpg", true},
-				Texture{"cubemaps/skybox/front.jpg", true},
-				Texture{"cubemaps/skybox/back.jpg", true}
-			};
-			return add(std::make_unique<Cubemap>(std::move(faces)));
-		}();
-		return skybox;
-
-	}
-
+	static auto ret = [&]() -> Scene*{
+		auto scene = std::make_unique<Scene>();
+		scene->name.set("test");
+		std::unique_ptr<Node> prop = std::make_unique<Prop>(ResourceManager<Mesh>::box());
+		scene->getRoot()->addChild(std::move(prop));
+		return add(std::move(scene));
+	}();
+	return ret;
 }
 
-void res::loadShaders()
+void ResourceManager<Shader>::reloadAll()
 {
-	for(int i = 0; i < ShaderType::END; i++)
-	{
-		switch(i)
-		{
-			case ShaderType::unlit:
-				shaders().emplace_back("shaders/unlit.vert", "shaders/unlit.frag");
-				break;
-			case ShaderType::pbr:
-				shaders().emplace_back("shaders/pbr.vert", "shaders/pbr.frag");
-				break;
-			case ShaderType::blinn_phong:
-				shaders().emplace_back("shaders/phong.vert", "shaders/blinn-phong.frag");
-				break;
-			case ShaderType::phong:
-				shaders().emplace_back("shaders/phong.vert", "shaders/phong.frag");
-				break;
-			case ShaderType::gouraud:
-				shaders().emplace_back("shaders/gouraud.vert", "shaders/gouraud.frag");
-				break;
-			case ShaderType::flat:
-				shaders().emplace_back("shaders/flat.vert", "shaders/flat.frag", "shaders/flat.geom");
-				break;
-			case ShaderType::reflection:
-				shaders().emplace_back("shaders/reflection.vert", "shaders/reflection.frag");
-				break;
-			case ShaderType::refraction:
-				shaders().emplace_back("shaders/refraction.vert", "shaders/refraction.frag");
-				break;
-			case ShaderType::debugNormals:
-				shaders().emplace_back("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
-				break;
-			case ShaderType::debugNormalsShowLines:
-				shaders().emplace_back("shaders/debugNormalsShowLines.vert", "shaders/debugNormalsShowLines.frag", "shaders/debugNormalsShowLines.geom");
-				break;
-			case ShaderType::debugTexCoords:
-				shaders().emplace_back("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
-				break;
-			case ShaderType::debugDepthBuffer:
-				shaders().emplace_back("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
-				break;
-			case ShaderType::skybox:
-				shaders().emplace_back("shaders/skybox.vert", "shaders/skybox.frag");
-				break;
-			case ShaderType::gammaHDR:
-				shaders().emplace_back("shaders/pp.vert", "shaders/ppGammaHDR.frag");
-				break;
-			case ShaderType::passthrough:
-				shaders().emplace_back("shaders/pp.vert", "shaders/ppPassthrough.frag");
-				break;
-			case ShaderType::grayscale:
-				shaders().emplace_back("shaders/pp.vert", "shaders/ppBW.frag");
-				break;
-			case ShaderType::chromaticAberration:
-				shaders().emplace_back("shaders/pp.vert", "shaders/ppChromaticAberration.frag");
-				break;
-			case ShaderType::invert:
-				shaders().emplace_back("shaders/pp.vert", "shaders/ppInvert.frag");
-				break;
-			case ShaderType::convolution:
-				shaders().emplace_back("shaders/pp.vert", "shaders/ppConvolution.frag");
-				break;
-			default:
-				assert(false);//means we forgot to add a shader
-		}
-	}
+	for(auto& shader : getAll())
+		shader->reload();
 }
 
-void res::reloadShaders()
+bool ResourceManager<Shader>::isLightingShader(Shader* shader)
 {
-	for(int i = 0; i < ShaderType::END; i++)
-		shaders()[i].reload();
+	return 
+		shader == pbr() || 
+		shader == blinnPhong() ||
+		shader == phong() ||
+		shader == gouraud() ||
+		shader == flat();
+}
+
+Shader* ResourceManager<Shader>::unlit()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/unlit.vert", "shaders/unlit.frag");
+		shader->name.set("Unlit");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::pbr()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/pbr.vert", "shaders/pbr.frag");
+		shader->name.set("PBR");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::blinnPhong()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/phong.vert", "shaders/blinn-phong.frag");
+		shader->name.set("Blinn-Phong");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::phong()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/phong.vert", "shaders/phong.frag");
+		shader->name.set("Phong");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::gouraud()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/gouraud.vert", "shaders/gouraud.frag");
+		shader->name.set("Gouraud");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::flat()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/flat.vert", "shaders/flat.frag", "shaders/flat.geom");
+		shader->name.set("Flat");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::reflection()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/reflection.vert", "shaders/reflection.frag");
+		shader->name.set("Reflection");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::refraction()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/refraction.vert", "shaders/refraction.frag");
+		shader->name.set("Refraction");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::debugNormals()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/debugNormals.vert", "shaders/debugNormals.frag", "shaders/debugNormals.geom");
+		shader->name.set("Debug Normals");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::debugNormalsShowLines()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/debugNormalsShowLines.vert", "shaders/debugNormalsShowLines.frag", "shaders/debugNormalsShowLines.geom");
+		shader->name.set("Debug Normals Show Lines");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::debugTexCoords()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/debugTextureCoords.vert", "shaders/debugTextureCoords.frag");
+		shader->name.set("Debug Texture Coordinates");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::debugDepthBuffer()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/debugDepthBuffer.vert", "shaders/debugDepthBuffer.frag");
+		shader->name.set("Debug Depth Buffer");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::skybox()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/skybox.vert", "shaders/skybox.frag");
+		shader->name.set("Skybox");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::gammaHDR()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/pp.vert", "shaders/ppGammaHDR.frag");
+		shader->name.set("Gamma / HDR");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::passthrough()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/pp.vert", "shaders/ppPassthrough.frag");
+		shader->name.set("Passthrough");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::grayscale()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/pp.vert", "shaders/ppBW.frag");
+		shader->name.set("Grayscale");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::chromaticAberration()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/pp.vert", "shaders/ppChromaticAberration.frag");
+		shader->name.set("Chromatic Aberration");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::invert()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/pp.vert", "shaders/ppInvert.frag");
+		shader->name.set("Invert");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::convolution()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/pp.vert", "shaders/ppConvolution.frag");
+		shader->name.set("Convolution");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+void initializeResources()
+{
+	ResourceManager<Mesh>::quad();
+	ResourceManager<Mesh>::box();
+	ResourceManager<Mesh>::boxWireframe();
+
+	ResourceManager<Texture>::debug();
+
+	ResourceManager<Material>::basic();
+
+	ResourceManager<Cubemap>::skybox();
+
+	ResourceManager<Scene>::test();
+
+	ResourceManager<Shader>::unlit();
+	ResourceManager<Shader>::pbr();
+	ResourceManager<Shader>::blinnPhong();
+	ResourceManager<Shader>::phong();
+	ResourceManager<Shader>::gouraud();
+	ResourceManager<Shader>::flat();
+	ResourceManager<Shader>::reflection();
+	ResourceManager<Shader>::refraction();
+	ResourceManager<Shader>::debugNormals();
+	ResourceManager<Shader>::debugNormalsShowLines();
+	ResourceManager<Shader>::debugTexCoords();
+	ResourceManager<Shader>::debugDepthBuffer();
+	ResourceManager<Shader>::skybox();
+	ResourceManager<Shader>::gammaHDR();
+	ResourceManager<Shader>::passthrough();
+	ResourceManager<Shader>::grayscale();
+	ResourceManager<Shader>::chromaticAberration();
+	ResourceManager<Shader>::invert();
+	ResourceManager<Shader>::convolution();
 }
 
 void drawImportWindow(bool *open)
@@ -535,7 +604,9 @@ void drawImportWindow(bool *open)
 		if(file.path().extension() == ".gltf")
 		{
 			if(ImGui::Selectable(filename.data()))
-				settings::mainRenderer().setCamera(res::importGLTF(file.path().generic_string()).getAll<Camera>()[0]);
+				settings::mainRenderer().setCamera(
+				ResourceManager<Scene>::importGLTF(
+				file.path().generic_string())->getAll<Camera>().front());
 		}
 		else
 		{
@@ -545,13 +616,12 @@ void drawImportWindow(bool *open)
 	ImGui::End();
 }
 
-void res::drawUI(bool* open)
+void drawResourcesUI(bool* open)
 {
 	if(!*open)
 		return;
 	ImGui::Begin("Resources", open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-	float const scrollAreaHeight = ImGui::GetTextLineHeightWithSpacing() * 8;
 	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
 	ImGui::Columns(2, nullptr, false);
 	ImGui::SetColumnWidth(-1, scrollAreaWidth);
@@ -561,109 +631,38 @@ void res::drawUI(bool* open)
 	drawImportWindow(&importWindowOpen);
 	ImGui::SameLine();
 	if(ImGui::Button("Reload Shaders"))
-		reloadShaders();
-	static std::variant<Scene*, Mesh*, Texture*, Material*, Cubemap*> selected;
+		ResourceManager<Shader>::reloadAll();
+	static std::variant<Scene*, Mesh*, Texture*, Material*, Cubemap*, Shader*> selected;
 	ImGui::BeginChild("###Resources");
-
-	ImGui::Text("Scenes");
-	ImGui::SameLine();
-	if(ImGui::SmallButton("New"))
-		scenes::add(std::make_unique<Scene>());
-	ImGui::BeginChild("###Scenes", {0, scrollAreaHeight}, true);
 	int id = 0;
-	for(auto& scene : scenes::getAll())
-	{
-		ImGui::PushID(id++);
-		bool active = false;
-		if(std::holds_alternative<Scene*>(selected))
-			active = std::get<Scene*>(selected) == scene.get();
-		if(ImGui::Selectable(scene->name.get().data(), active))
-			selected = scene.get();
-		if(ImGui::BeginPopupContextItem())
+	auto drawResources = [&id](std::string const& title, auto const& container){
+		static float const scrollAreaHeight = ImGui::GetTextLineHeightWithSpacing() * 8;
+
+		ImGui::Text(title.data());
+		ImGui::BeginChild(("###" + title).data(), {0, scrollAreaHeight}, true);
+		for(auto& resource : container)
 		{
-			bool showRemoveModal = ImGui::Selectable("Remove");
-			ImGui::EndPopup();
-			if(showRemoveModal) ImGui::OpenPopup("Are you sure?");
+			ImGui::PushID(id++);
+			bool active = false;
+			using T = decltype(resource.get());
+			if(std::holds_alternative<T>(selected))
+				active = std::get<T>(selected) == resource.get();
+			if(ImGui::Selectable(resource->name.get().data(), active))
+				selected = resource.get();
+			ImGui::PopID();
 		}
-		if(ImGui::BeginPopupModal("Are you sure?", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
-		{
-			ImGui::SetWindowSize({100, ImGui::GetTextLineHeight() * 5});
-			ImVec2 buttonSize{ImGui::GetContentRegionAvailWidth() * 0.5f, ImGui::GetContentRegionAvail().y};
-			if(ImGui::Button("Yes", buttonSize))
-			{
-				if(active)
-					selected = static_cast<Scene*>(nullptr);
-				res::scenes::removeScene(scene.get());
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SameLine();
-			if(ImGui::Button("No", buttonSize))
-			{
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
-	}
-	ImGui::EndChild();
-	ImGui::NewLine();
+		ImGui::EndChild();
+		ImGui::NewLine();
+	};
 
-	ImGui::Text("Meshes");
-	ImGui::BeginChild("###Meshes", {0, scrollAreaHeight}, true);
-	for(auto& mesh : meshes::getAll())
-	{
-		ImGui::PushID(id++);
-		bool active = false;
-		if(std::holds_alternative<Mesh*>(selected))
-			active = std::get<Mesh*>(selected) == mesh.get();
-		if(ImGui::Selectable(mesh->name.get().data(), active))
-			selected = mesh.get();
-		ImGui::PopID();
-	}
-	ImGui::EndChild();
-	ImGui::NewLine();
-
-	ImGui::Text("Textures");
-	ImGui::BeginChild("###Textures", {0, scrollAreaHeight}, true);
-	for(auto& texture : textures::getAll())
-	{
-		ImGui::PushID(id++);
-		bool active = false;
-		if(std::holds_alternative<Texture*>(selected))
-			active = std::get<Texture*>(selected) == texture.get();
-		if(ImGui::Selectable(texture->name.get().data(), active))
-			selected = texture.get();
-		ImGui::PopID();
-	}
-	ImGui::EndChild();
-
-	ImGui::Text("Materials");
-	ImGui::BeginChild("###Materials", {0, scrollAreaHeight}, true);
-	for(auto& material : materials::getAll())
-	{
-		ImGui::PushID(id++);
-		bool active = false;
-		if(std::holds_alternative<Material*>(selected))
-			active = std::get<Material*>(selected) == material.get();
-		if(ImGui::Selectable(material->name.get().data(), active))
-			selected = material.get();
-		ImGui::PopID();
-	}
-	ImGui::EndChild();
-
-	ImGui::Text("Cubemaps");
-	ImGui::BeginChild("###Cubemaps", {0, scrollAreaHeight}, true);
-	for(auto& cubemap : cubemaps::getAll())
-	{
-		ImGui::PushID(id++);
-		bool active = false;
-		if(std::holds_alternative<Cubemap*>(selected))
-			active = std::get<Cubemap*>(selected) == cubemap.get();
-		if(ImGui::Selectable(cubemap->name.get().data(), active))
-			selected = cubemap.get();
-		ImGui::PopID();
-	}
-	ImGui::EndChild();
+	/*if(ImGui::SmallButton("New"))
+		scenes::add(std::make_unique<Scene>());*/
+	drawResources("Scenes", ResourceManager<Scene>::getAll());
+	drawResources("Meshes", ResourceManager<Mesh>::getAll());
+	drawResources("Textures", ResourceManager<Texture>::getAll());
+	drawResources("Materials", ResourceManager<Material>::getAll());
+	drawResources("Cubemaps", ResourceManager<Cubemap>::getAll());
+	drawResources("Shaders", ResourceManager<Shader>::getAll());
 
 	ImGui::EndChild();
 
@@ -679,14 +678,4 @@ void res::drawUI(bool* open)
 	ImGui::End();
 }
 
-Scene& res::importGLTF(std::string_view const filename)
-{
-	auto asset = import(filename);
-	auto ret = asset.scenes[0].get();//active scene
-	scenes::add(std::move(asset.scenes));
-	meshes::add(std::move(asset.meshes));
-	textures::add(std::move(asset.textures));
-	materials::add(std::move(asset.materials));
-	return *ret;
-}
 

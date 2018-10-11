@@ -23,7 +23,7 @@ void Material::setEmissive(Texture* map, std::optional<glm::vec3> factor)
 		emissiveFactor = *factor;
 }
 
-void Material::use(Shader& shader) const
+void Material::use(Shader* shader) const
 {
 
 	//shader.set("material.hasDiffuseMap", bool(maps[diffuse]));

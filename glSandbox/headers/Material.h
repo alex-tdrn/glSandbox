@@ -26,6 +26,6 @@ public:
 	void setNormal(Texture* map);
 	void setOcclusion(Texture* map);
 	void setEmissive(Texture* map, std::optional<glm::vec3> factor);
-	virtual void use(Shader& shader) const;
+	virtual void use(Shader* shader) const;
 	virtual void drawUI();
 };

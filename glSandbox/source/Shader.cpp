@@ -85,3 +85,8 @@ void Shader::set(std::string_view const name, glm::mat4 const& value) const
 {
 	glUniformMatrix4fv(glGetUniformLocation(ID, name.data()), 1, GL_FALSE, glm::value_ptr(value));
 }
+
+void Shader::drawUI()
+{
+	//TODO
+}

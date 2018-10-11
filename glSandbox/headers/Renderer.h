@@ -45,7 +45,7 @@ private:
 		bool boundingBox = false;
 	}highlighting;
 	struct{
-		res::ShaderType current = res::ShaderType::unlit;
+		Shader* current = ResourceManager<Shader>::unlit();
 		struct
 		{
 			bool perChannel = false;

@@ -1,4 +1,6 @@
 #pragma once
+#include "Named.h"
+
 #include <glm\gtc\matrix_transform.hpp>
 #include <glad\glad.h>
 #include <string>
@@ -18,6 +20,9 @@ private:
 	std::optional<std::string const> const geometryPath;
 
 public:
+	Name<Shader> name{"shader"};
+
+public:
 	Shader(std::string const vertexPath, std::string const fragmentPath, std::optional<std::string const> geometryPath = std::nullopt);
 
 public:
@@ -29,4 +34,5 @@ public:
 	void set(std::string_view const name, glm::vec3 const& value) const;
 	void set(std::string_view const name, glm::vec4 const& value) const;
 	void set(std::string_view const name, glm::mat4 const& value) const;
+	void drawUI();
 };

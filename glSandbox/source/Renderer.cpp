@@ -143,40 +143,40 @@ void Renderer::render()
 
 	sourceCamera->use();
 	glDisable(GL_CULL_FACE);
-	res::shaders()[res::ShaderType::unlit].use();
+	ResourceManager<Shader>::unlit()->use();
 	for(auto const& camera: sourceCameras)
 	{
 		if(sourceCamera == camera || !camera->isEnabled() || !camera->getVisualizeFrustum())
 			continue;
-		res::shaders()[res::ShaderType::unlit].set("model", glm::inverse(camera->getProjectionMatrix() * camera->getViewMatrix()));
-		res::textures::placeholder()->use(1);
+		ResourceManager<Shader>::unlit()->set("model", glm::inverse(camera->getProjectionMatrix() * camera->getViewMatrix()));
+		ResourceManager<Texture>::debug()->use(1);
 		if(geometry.frustum.mode != geometry.lines)
 		{
-			res::shaders()[res::ShaderType::unlit].set("material.hasMap", geometry.frustum.textured);
-			res::shaders()[res::ShaderType::unlit].set("material.map", 1);
-			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{1.0f, 1.0f, 1.0f});
-			res::meshes::box()->use();
+			ResourceManager<Shader>::unlit()->set("material.hasMap", geometry.frustum.textured);
+			ResourceManager<Shader>::unlit()->set("material.map", 1);
+			ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{1.0f, 1.0f, 1.0f});
+			ResourceManager<Mesh>::box()->use();
 		}
-		if(geometry.frustum.mode!= geometry.triangles)
+		if(geometry.frustum.mode != geometry.triangles)
 		{
-			res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
-			res::meshes::boxWireframe()->use();
+			ResourceManager<Shader>::unlit()->set("material.hasMap", false);
+			ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
+			ResourceManager<Mesh>::boxWireframe()->use();
 		}
 	}
 	if(highlighting.boundingBox && scene.getCurrent())
 	{
-		res::shaders()[res::ShaderType::unlit].set("model", scene.getCurrent()->getBounds().getTransformation());
-		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-		res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
-		res::meshes::boxWireframe()->use();
+		ResourceManager<Shader>::unlit()->set("model", scene.getCurrent()->getBounds().getTransformation());
+		ResourceManager<Shader>::unlit()->set("material.hasMap", false);
+		ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
+		ResourceManager<Mesh>::boxWireframe()->use();
 	}
 	if(geometry.grid.enabled)
 	{
 		glLineWidth(geometry.grid.lineWidth);
-		res::shaders()[res::ShaderType::unlit].set("model", glm::scale(glm::mat4{1.0f}, glm::vec3{geometry.grid.scale}));
-		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-		res::shaders()[res::ShaderType::unlit].set("material.color", geometry.grid.color);
+		ResourceManager<Shader>::unlit()->set("model", glm::scale(glm::mat4{1.0f}, glm::vec3{geometry.grid.scale}));
+		ResourceManager<Shader>::unlit()->set("material.hasMap", false);
+		ResourceManager<Shader>::unlit()->set("material.color", geometry.grid.color);
 		geometry.grid.mainGenerator.get()->use();
 		glLineWidth(geometry.grid.lineWidth * 4);
 		geometry.grid.subGenerator.get()->use();
@@ -197,88 +197,85 @@ void Renderer::render()
 			if(!light->isEnabled())
 				continue;
 			glm::vec3 lightColor = light->getColor() * light->getIntensity() / (light->getIntensity() + 1);
-			res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-			res::shaders()[res::ShaderType::unlit].set("material.color", lightColor);
-			res::shaders()[res::ShaderType::unlit].set("model", light->getGlobalTransformation() * glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
-			res::meshes::box()->use();
+			ResourceManager<Shader>::unlit()->set("material.hasMap", false);
+			ResourceManager<Shader>::unlit()->set("material.color", lightColor);
+			ResourceManager<Shader>::unlit()->set("model", light->getGlobalTransformation() * glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			ResourceManager<Mesh>::box()->use();
 		}
 	};
 	drawLights(pointLights);
 	drawLights(spotLights);
 
-	Shader& activeShader = res::shaders()[shading.current];
-	activeShader.use();
+	shading.current->use();
 	glm::mat4 viewMatrix = sourceCamera->getViewMatrix();
-	switch(shading.current)
+	if(ResourceManager<Shader>::isLightingShader(shading.current))
 	{
-		case res::ShaderType::pbr:
-		case res::ShaderType::blinn_phong:
-		case res::ShaderType::phong:
-		case res::ShaderType::gouraud:
-		case res::ShaderType::flat:
-		{
-			activeShader.set("ambientColor", scene.getBackground());
-			activeShader.set("ambientStrength", shading.lighting.ambientStrength);
-			auto useLights = [&viewMatrix, &activeShader](auto const& lights, std::string const& prefix1, std::string const& prefix2){
-				int enabledLights = 0;
-				for(int i = 0; i < lights.size(); i++)
-				{
-					if(!lights[i]->isEnabled() && !lights[i]->isHighlighted())
-						continue;
-					std::string prefix = prefix1 + "[" + std::to_string(enabledLights) + "].";
-					lights[i]->use(prefix, viewMatrix, activeShader);
-					enabledLights++;
-				}
-				activeShader.set(prefix2, enabledLights);
-			};
-			useLights(directionalLights, "dirLights", "nDirLights");
-			useLights(pointLights, "pointLights", "nPointLights");
-			useLights(spotLights, "spotLights", "nSpotLights");
-			break;
-		}
-		case res::ShaderType::refraction:
-			activeShader.set("perChannel", shading.refraction.perChannel);
-			activeShader.set("n1", shading.refraction.n1);
-			activeShader.set("n1RGB", shading.refraction.n1RGB);
-			activeShader.set("n2", shading.refraction.n2);
-			activeShader.set("n2RGB", shading.refraction.n2RGB);
-			[[fallthrough]];
-		case res::ShaderType::reflection:
-			/*if(skybox)
+		shading.current->set("ambientColor", scene.getBackground());
+		shading.current->set("ambientStrength", shading.lighting.ambientStrength);
+		auto useLights = [&](auto const& lights, std::string const& prefix1, std::string const& prefix2){
+			int enabledLights = 0;
+			for(int i = 0; i < lights.size(); i++)
 			{
-				skybox->use();
-				activeShader.set("skybox", 0);
-				activeShader.set("S->os", S->getPosition());
-			}*/
-			break;
-		case res::ShaderType::debugDepthBuffer:
-			activeShader.set("linearize", shading.debugging.depthBufferLinear);
-			activeShader.set("nearPlane", sourceCamera->getNearPlane());
-			activeShader.set("farPlane", sourceCamera->getFarPlane());
-			break;
-		case res::ShaderType::debugNormals:
-			activeShader.set("viewSpace", shading.debugging.normals.viewSpace);
-			activeShader.set("faceNormals", shading.debugging.normals.faceNormals);
-			activeShader.set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
-			if(shading.debugging.normals.showLines)
-			{
-				res::shaders()[res::ShaderType::debugNormalsShowLines].use();
-				res::shaders()[res::ShaderType::debugNormalsShowLines].set("lineLength", shading.debugging.normals.lineLength);
-				res::shaders()[res::ShaderType::debugNormalsShowLines].set("color", shading.debugging.normals.lineColor);
-				res::shaders()[res::ShaderType::debugNormalsShowLines].set("viewSpace", shading.debugging.normals.viewSpace);
-				res::shaders()[res::ShaderType::debugNormalsShowLines].set("faceNormals", shading.debugging.normals.faceNormals);
-				res::shaders()[res::ShaderType::debugNormalsShowLines].set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
-				for(auto const& prop : props)
-				{
-					if(prop->isEnabled())
-					{
-						res::shaders()[res::ShaderType::debugNormalsShowLines].set("model", prop->getGlobalTransformation());
-						prop->getMesh().use();
-					}
-				}
-				activeShader.use();
+				if(!lights[i]->isEnabled() && !lights[i]->isHighlighted())
+					continue;
+				std::string prefix = prefix1 + "[" + std::to_string(enabledLights) + "].";
+				lights[i]->use(prefix, viewMatrix, *(shading.current));
+				enabledLights++;
 			}
-			break;
+			shading.current->set(prefix2, enabledLights);
+		};
+		useLights(directionalLights, "dirLights", "nDirLights");
+		useLights(pointLights, "pointLights", "nPointLights");
+		useLights(spotLights, "spotLights", "nSpotLights");
+
+	}
+	else if(shading.current == ResourceManager<Shader>::refraction())
+	{
+		/*shading.current->set("perChannel", shading.refraction.perChannel);
+		shading.current->set("n1", shading.refraction.n1);
+		shading.current->set("n1RGB", shading.refraction.n1RGB);
+		shading.current->set("n2", shading.refraction.n2);
+		shading.current->set("n2RGB", shading.refraction.n2RGB);*/
+	}
+	else if(shading.current == ResourceManager<Shader>::reflection())
+	{
+		/*if(skybox)
+		{
+			skybox->use();
+			shading.current->set("skybox", 0);
+			shading.current->set("S->os", S->getPosition());
+		}*/
+
+	}
+	else if(shading.current == ResourceManager<Shader>::debugDepthBuffer())
+	{
+		shading.current->set("linearize", shading.debugging.depthBufferLinear);
+		shading.current->set("nearPlane", sourceCamera->getNearPlane());
+		shading.current->set("farPlane", sourceCamera->getFarPlane());
+	}
+	else if(shading.current == ResourceManager<Shader>::debugNormals())
+	{
+		shading.current->set("viewSpace", shading.debugging.normals.viewSpace);
+		shading.current->set("faceNormals", shading.debugging.normals.faceNormals);
+		shading.current->set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
+		if(shading.debugging.normals.showLines)
+		{
+			ResourceManager<Shader>::debugNormalsShowLines()->use();
+			ResourceManager<Shader>::debugNormalsShowLines()->set("lineLength", shading.debugging.normals.lineLength);
+			ResourceManager<Shader>::debugNormalsShowLines()->set("color", shading.debugging.normals.lineColor);
+			ResourceManager<Shader>::debugNormalsShowLines()->set("viewSpace", shading.debugging.normals.viewSpace);
+			ResourceManager<Shader>::debugNormalsShowLines()->set("faceNormals", shading.debugging.normals.faceNormals);
+			ResourceManager<Shader>::debugNormalsShowLines()->set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
+			for(auto const& prop : props)
+			{
+				if(prop->isEnabled())
+				{
+					ResourceManager<Shader>::debugNormalsShowLines()->set("model", prop->getGlobalTransformation());
+					prop->getMesh().use();
+				}
+			}
+			shading.current->use();
+		}
 	}
 
 	if(highlighting.enabled)
@@ -291,15 +288,15 @@ void Renderer::render()
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		}
-		res::shaders()[res::ShaderType::unlit].use();
+		ResourceManager<Shader>::unlit()->use();
 		if(geometry.prop.mode != geometry.lines)
 		{
-			res::shaders()[res::ShaderType::unlit].set("material.color", highlighting.color);
+			ResourceManager<Shader>::unlit()->set("material.color", highlighting.color);
 			for(auto const& prop : props)
 			{
 				if(prop->isHighlighted())
 				{
-					res::shaders()[res::ShaderType::unlit].set("model", prop->getGlobalTransformation());
+					ResourceManager<Shader>::unlit()->set("model", prop->getGlobalTransformation());
 					prop->getMesh().use();
 				}
 			}
@@ -307,12 +304,12 @@ void Renderer::render()
 		if(geometry.prop.mode != geometry.triangles)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3{1.0f - highlighting.color});
+			ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{1.0f - highlighting.color});
 			for(auto const& prop : props)
 			{
 				if(prop->isHighlighted())
 				{
-					res::shaders()[res::ShaderType::unlit].set("model", prop->getGlobalTransformation());
+					ResourceManager<Shader>::unlit()->set("model", prop->getGlobalTransformation());
 					prop->getMesh().use();
 				}
 			}
@@ -325,15 +322,15 @@ void Renderer::render()
 		}
 	}
 
-	activeShader.use();
+	shading.current->use();
 	if(geometry.prop.mode != geometry.lines)
 	{
 		for(auto const& prop : props)
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
-				activeShader.set("model", prop->getGlobalTransformation());
-				prop->getMaterial()->use(activeShader);
+				shading.current->set("model", prop->getGlobalTransformation());
+				prop->getMaterial()->use(shading.current);
 				prop->getMesh().use();
 			}
 		}
@@ -342,15 +339,15 @@ void Renderer::render()
 	if(geometry.prop.mode != geometry.triangles)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		res::shaders()[res::ShaderType::unlit].use();
-		res::shaders()[res::ShaderType::unlit].set("material.hasMap", false);
-		res::shaders()[res::ShaderType::unlit].set("material.color", glm::vec3(0.0f));
+		ResourceManager<Shader>::unlit()->use();
+		ResourceManager<Shader>::unlit()->set("material.hasMap", false);
+		ResourceManager<Shader>::unlit()->set("material.color", glm::vec3(0.0f));
 
 		for(auto const& prop : props)
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
-				res::shaders()[res::ShaderType::unlit].set("model", prop->getGlobalTransformation());
+				ResourceManager<Shader>::unlit()->set("model", prop->getGlobalTransformation());
 				prop->getMesh().use();
 			}
 		}
@@ -363,8 +360,8 @@ void Renderer::render()
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		skybox->use();
-		resources::shaders()::skybox.use();
-		resources::shaders()::skybox.set("skybox", 0);
+		resources::ResourceManager<Shader>.use()->;
+		resources::ResourceManager<Shader>.set()->skybox", 0);
 		glBindVertexArray(resources::boxVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}*/
@@ -372,6 +369,7 @@ void Renderer::render()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
+
 unsigned int Renderer::getOutput()
 {
 	if(pipeline.samples > 0)
@@ -404,7 +402,7 @@ void Renderer::drawUI(bool* open)
 			sourceCamera = nullptr;
 		if(sourceCamera == nullptr)
 			ImGui::SetItemDefaultFocus();
-		for(auto& s : res::scenes::getAll())
+		for(auto& s : ResourceManager<Scene>::getAll())
 		{
 			ImGui::Text(("Scene: " + s->name.get()).data());
 			ImGui::Separator();
@@ -531,73 +529,71 @@ void Renderer::drawUI(bool* open)
 	}
 	if(ImGui::CollapsingHeader("Shaders", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		auto drawShaderOption = [&](Shader* shaderOption){
+			if(ImGui::RadioButton(shaderOption->name.get().data(), shading.current == shaderOption))
+				shading.current = shaderOption;
+		};
 		ImGui::Columns(3, nullptr, true);
 		ImGui::Text("Lighting");
-		ImGui::RadioButton("Unlit", reinterpret_cast<int*>(&shading.current), res::ShaderType::unlit);
-		ImGui::RadioButton("PBR", reinterpret_cast<int*>(&shading.current), res::ShaderType::pbr);
-		ImGui::RadioButton("Blinn-Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::blinn_phong);
-		ImGui::RadioButton("Phong", reinterpret_cast<int*>(&shading.current), res::ShaderType::phong);
-		ImGui::RadioButton("Gouraud", reinterpret_cast<int*>(&shading.current), res::ShaderType::gouraud);
-		ImGui::RadioButton("Flat", reinterpret_cast<int*>(&shading.current), res::ShaderType::flat);
+		drawShaderOption(ResourceManager<Shader>::unlit());
+		drawShaderOption(ResourceManager<Shader>::pbr());
+		drawShaderOption(ResourceManager<Shader>::blinnPhong());
+		drawShaderOption(ResourceManager<Shader>::phong());
+		drawShaderOption(ResourceManager<Shader>::gouraud());
+		drawShaderOption(ResourceManager<Shader>::flat());
 		ImGui::NextColumn();
 		ImGui::Text("Debugging");
-		ImGui::RadioButton("Normals", reinterpret_cast<int*>(&shading.current), res::ShaderType::debugNormals);
-		ImGui::RadioButton("Texture Coordinates", reinterpret_cast<int*>(&shading.current), res::ShaderType::debugTexCoords);
-		ImGui::RadioButton("Depth Buffer", reinterpret_cast<int*>(&shading.current), res::ShaderType::debugDepthBuffer);
+		drawShaderOption(ResourceManager<Shader>::debugNormals());
+		drawShaderOption(ResourceManager<Shader>::debugTexCoords());
+		drawShaderOption(ResourceManager<Shader>::debugDepthBuffer());
 		ImGui::NextColumn();
 		ImGui::Text("Experimental");
-		ImGui::RadioButton("Reflection", reinterpret_cast<int*>(&shading.current), res::ShaderType::reflection);
-		ImGui::RadioButton("Refraction", reinterpret_cast<int*>(&shading.current), res::ShaderType::refraction);
+		drawShaderOption(ResourceManager<Shader>::reflection());
+		drawShaderOption(ResourceManager<Shader>::refraction());
 		ImGui::Columns(1);
 		ImGui::Separator();
 
-		switch(shading.current)
+		if(ResourceManager<Shader>::isLightingShader(shading.current))
 		{
-			case res::ShaderType::pbr:
-			case res::ShaderType::blinn_phong:
-			case res::ShaderType::phong:
-			case res::ShaderType::gouraud:
-			case res::ShaderType::flat:
-				ImGui::AlignTextToFramePadding();
-				ImGui::Text("Ambient Strength");
-				ImGui::SameLine();
-				ImGui::PushItemWidth(-1);
-				ImGui::SliderFloat("###Ambient Strength", &shading.lighting.ambientStrength, 0.0f, 1.0f);
-				break;
-			case res::ShaderType::refraction:
-				ImGui::Checkbox("Per Channel", &shading.refraction.perChannel);
-				if(!shading.refraction.perChannel)
-				{
-					ImGui::DragFloat("First Medium", &shading.refraction.n1, 0.001f);
-					ImGui::DragFloat("Second Medium", &shading.refraction.n2, 0.001f);
-					shading.refraction.n1RGB = glm::vec3(shading.refraction.n1);
-					shading.refraction.n2RGB = glm::vec3(shading.refraction.n2);
-				}
-				else
-				{
-					ImGui::DragFloat3("First Medium", &shading.refraction.n1RGB.x, 0.001f);
-					ImGui::DragFloat3("Second Medium", &shading.refraction.n2RGB.x, 0.001f);
-				}
-				break;
-			case res::ShaderType::debugNormals:
-				ImGui::Checkbox("View Space", &shading.debugging.normals.viewSpace);
-				ImGui::SameLine();
-				ImGui::Checkbox("Show Lines", &shading.debugging.normals.showLines);
-				ImGui::SameLine();
-				ImGui::Checkbox("Face Normals", &shading.debugging.normals.faceNormals);
-				ImGui::DragFloat("Explode Magnitude", &shading.debugging.normals.explodeMagnitude, 0.01f);
-				if(shading.debugging.normals.showLines)
-				{
-					ImGui::DragFloat("Line length", &shading.debugging.normals.lineLength, 0.001f);
-					ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs);
-				}
-				break;
-			case res::ShaderType::debugTexCoords:
-
-				break;
-			case res::ShaderType::debugDepthBuffer:
-				ImGui::Checkbox("Linearize", &shading.debugging.depthBufferLinear);
-				break;
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text("Ambient Strength");
+			ImGui::SameLine();
+			ImGui::PushItemWidth(-1);
+			ImGui::SliderFloat("###Ambient Strength", &shading.lighting.ambientStrength, 0.0f, 1.0f);
+		}
+		else if(shading.current == ResourceManager<Shader>::refraction())
+		{
+			ImGui::Checkbox("Per Channel", &shading.refraction.perChannel);
+			if(!shading.refraction.perChannel)
+			{
+				ImGui::DragFloat("First Medium", &shading.refraction.n1, 0.001f);
+				ImGui::DragFloat("Second Medium", &shading.refraction.n2, 0.001f);
+				shading.refraction.n1RGB = glm::vec3(shading.refraction.n1);
+				shading.refraction.n2RGB = glm::vec3(shading.refraction.n2);
+			}
+			else
+			{
+				ImGui::DragFloat3("First Medium", &shading.refraction.n1RGB.x, 0.001f);
+				ImGui::DragFloat3("Second Medium", &shading.refraction.n2RGB.x, 0.001f);
+			}
+		}
+		else if(shading.current == ResourceManager<Shader>::debugDepthBuffer())
+		{
+			ImGui::Checkbox("Linearize", &shading.debugging.depthBufferLinear);
+		}
+		else if(shading.current == ResourceManager<Shader>::debugNormals())
+		{
+			ImGui::Checkbox("View Space", &shading.debugging.normals.viewSpace);
+			ImGui::SameLine();
+			ImGui::Checkbox("Show Lines", &shading.debugging.normals.showLines);
+			ImGui::SameLine();
+			ImGui::Checkbox("Face Normals", &shading.debugging.normals.faceNormals);
+			ImGui::DragFloat("Explode Magnitude", &shading.debugging.normals.explodeMagnitude, 0.01f);
+			if(shading.debugging.normals.showLines)
+			{
+				ImGui::DragFloat("Line length", &shading.debugging.normals.lineLength, 0.001f);
+				ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs);
+			}
 		}
 	}
 	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())

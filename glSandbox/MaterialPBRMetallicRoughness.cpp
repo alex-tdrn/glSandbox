@@ -19,67 +19,64 @@ void MaterialPBRMetallicRoughness::setMetallicRoughness(Texture* map, float meta
 	this->roughnessFactor = roughnessFactor;
 }
 
-void MaterialPBRMetallicRoughness::use(Shader& shader) const
+void MaterialPBRMetallicRoughness::use(Shader* shader) const
 {
 	Material::use(shader);
-	if(&shader == &res::shaders()[res::ShaderType::pbr])
+	if(shader == ResourceManager<Shader>::pbr())
 	{
-		shader.set("material.baseColorMapExists", baseColorMap != nullptr);
+		shader->set("material.baseColorMapExists", baseColorMap != nullptr);
 		if(baseColorMap)
 		{
-			shader.set("material.baseColorMap", 4);
+			shader->set("material.baseColorMap", 4);
 			baseColorMap->use(4);
 		}
-		shader.set("material.baseColorFactor", baseColorFactor);
+		shader->set("material.baseColorFactor", baseColorFactor);
 
-		shader.set("material.metallicRoughnessMapExists", metallicRoughnessMap != nullptr);
+		shader->set("material.metallicRoughnessMapExists", metallicRoughnessMap != nullptr);
 		if(metallicRoughnessMap)
 		{
-			shader.set("material.metallicRoughnessMap", 5);
+			shader->set("material.metallicRoughnessMap", 5);
 			metallicRoughnessMap->use(5);
 		}
-		shader.set("material.metallicFactor", metallicFactor);
-		shader.set("material.roughnessFactor", roughnessFactor);
+		shader->set("material.metallicFactor", metallicFactor);
+		shader->set("material.roughnessFactor", roughnessFactor);
 	}
-	else if(&shader == &res::shaders()[res::ShaderType::blinn_phong] ||
-		&shader == &res::shaders()[res::ShaderType::phong] ||
-		&shader == &res::shaders()[res::ShaderType::gouraud] ||
-		&shader == &res::shaders()[res::ShaderType::flat])
+	else if(ResourceManager<Shader>::isLightingShader(shader))	
 	{
-		shader.set("material.hasSpecularMap", false);
-		shader.set("material.overrideSpecular", true);
-		shader.set("material.overrideSpecularColor", glm::vec3(1.0f));
-		shader.set("material.shininess", 256.0f);
-		shader.set("material.hasOpacityMap", false);
+		shader->set("material.hasSpecularMap", false);
+		shader->set("material.overrideSpecular", true);
+		shader->set("material.overrideSpecularColor", glm::vec3(1.0f));
+		shader->set("material.shininess", 256.0f);
+		shader->set("material.hasOpacityMap", false);
 
-		shader.set("material.hasDiffuseMap", baseColorMap != nullptr);
-		shader.set("material.overrideDiffuse", false);
+		shader->set("material.hasDiffuseMap", baseColorMap != nullptr);
+		shader->set("material.overrideDiffuse", false);
 		if(baseColorMap)
 		{
-			shader.set("material.diffuseMap", 4);
+			shader->set("material.diffuseMap", 4);
 			baseColorMap->use(4);
 		}
 		else
 		{
-			shader.set("material.overrideDiffuseColor", glm::vec3(baseColorFactor));
+			shader->set("material.overrideDiffuseColor", glm::vec3(baseColorFactor));
 		}
 	}
-	else if(&shader == &res::shaders()[res::ShaderType::unlit])
+	else if(shader == ResourceManager<Shader>::unlit())
 	{
 		Texture* map = baseColorMap;
 		glm::vec3 color = baseColorFactor;
 
-		shader.set("material.hasMap", map != nullptr);
+		shader->set("material.hasMap", map != nullptr);
 		if(map)
 		{
-			shader.set("material.map", 1);
+			shader->set("material.map", 1);
 			map->use(1);
 		}
-		shader.set("material.color", color);
+		shader->set("material.color", color);
 	}
 	else
 	{
-		assert(false);
+		//assert(false);
 	}
 }
 

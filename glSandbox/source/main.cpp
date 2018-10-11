@@ -31,22 +31,7 @@ double lastMouseY = 300;
 bool mouseDrag = false;
 Renderer& settings::mainRenderer()
 {
-	static Renderer r = {[](){
-		auto defaultScene = std::make_unique<Scene>();
-		const int nPrimitives = 3;
-		const float spacing = 3.0f;
-		glm::vec3 pos{-spacing * (static_cast<float>(nPrimitives - 1) / 2.0f), 0.0f, 0.0f};
-		for(auto const& mesh : {res::meshes::quad(), res::meshes::box(), res::meshes::boxWireframe()})
-		{
-			std::unique_ptr<Node> prop = std::make_unique<Prop>(mesh);
-			prop->setLocalTransformation(glm::translate(glm::mat4(1.0f), pos));
-			pos.x += spacing;
-			defaultScene->getRoot()->addChild(std::move(prop));
-		}
-		auto ret = defaultScene->getAll<Camera>()[0];
-		res::scenes::add(std::move(defaultScene));
-		return ret;
-	}()};
+	static Renderer r = {ResourceManager<Scene>::test()->getAll<Camera>().front()};
 	return r;
 }
 
@@ -112,7 +97,7 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
-	res::loadShaders();
+	initializeResources();
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -189,7 +174,7 @@ void drawUI()
 		}
 		ImGui::EndMainMenuBar();
 	}
-	res::drawUI(&drawResources);
+	drawResourcesUI(&drawResources);
 	settings::mainRenderer().drawUI(&drawMainRenderer);
 	for(int i = 0; i < drawRenderer.size(); i++)
 	{

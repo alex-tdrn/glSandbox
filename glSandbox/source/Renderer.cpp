@@ -354,19 +354,20 @@ void Renderer::render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_CULL_FACE);
 	if(scene.usesSkybox())
 	{
-		//draw skybox
-		/*if(skybox)
-		{
-			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(GL_LEQUAL);
-			skybox->use();
-			resources::ResourceManager<Shader>.use()->;
-			resources::ResourceManager<Shader>.set()->skybox", 0);
-			glBindVertexArray(resources::boxVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}*/
+		if(geometry.skybox.wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		ResourceManager<Shader>::skybox()->use();
+		ResourceManager<Shader>::skybox()->set("skybox", 0);
+		scene.getSkyBox()->use(0);
+		ResourceManager<Mesh>::box()->use();
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -480,6 +481,7 @@ void Renderer::drawUI(bool* open)
 			ImGui::PushItemWidth(-1);
 			ImGui::SliderFloat("###GridLineWidth", &geometry.grid.lineWidth, 0.1f, 32.0f);
 		}
+		ImGui::Checkbox("Skybox Wireframe", &geometry.skybox.wireframe);
 
 		ImGui::NewLine();
 	}

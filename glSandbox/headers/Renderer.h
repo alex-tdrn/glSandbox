@@ -92,6 +92,9 @@ private:
 			float lineWidth = 2.0f;
 			glm::vec3 color{0.0f};
 		}grid;
+		struct{
+			bool wireframe = false;
+		}skybox;
 		float lineWidth = 3.0f;
 		float pointSize = 2.0f;
 	}geometry;

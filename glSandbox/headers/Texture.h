@@ -8,6 +8,7 @@
 
 class Texture
 {
+	friend class Cubemap;
 private:
 	mutable bool loaded = false;
 	mutable unsigned int ID;
@@ -36,7 +37,6 @@ private:
 
 public:
 	void use(int location) const;
-	void copy(unsigned int textureID, int bindTarget, int copyTarget) const;
 	void drawUI();
 
 };

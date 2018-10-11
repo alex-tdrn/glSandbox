@@ -65,8 +65,8 @@ void Texture::load() const
 	}
 	glGenTextures(1, &ID);
 	glBindTexture(GL_TEXTURE_2D, ID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -81,17 +81,6 @@ void Texture::use(int location) const
 		load();
 	glActiveTexture(GL_TEXTURE0 + location);
 	glBindTexture(GL_TEXTURE_2D, ID);
-}
-
-void Texture::copy(unsigned int textureID, int bindTarget, int copyTarget) const
-{
-	if(!loaded)
-		load();
-	glBindTexture(bindTarget, textureID);
-	glTexImage2D(copyTarget, 0, format, width, height, 0, pixelTransfer, GL_UNSIGNED_BYTE, nullptr);
-	glBindTexture(GL_TEXTURE_2D, ID);
-	glCopyTexImage2D(copyTarget, 0, format, 0, 0, width, height, 0);
-	glBindTexture(bindTarget, textureID);
 }
 
 void Texture::drawUI()

@@ -25,10 +25,10 @@ public:
 	~Cubemap() = default;
 
 private:
-	void load();
+	void load() const;
 
 public:
-	void use(int location);
+	void use(int location) const;
 	void drawUI();
 
 };

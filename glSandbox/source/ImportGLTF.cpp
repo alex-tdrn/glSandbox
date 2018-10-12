@@ -267,7 +267,8 @@ std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Mat
 		}
 		else
 		{
-			assert(false);//TODO
+			_material = std::make_unique<Material>();
+			//assert(false);//TODO
 		}
 
 		if(!material.name.empty())

@@ -40,7 +40,7 @@ private:
 public:
 	virtual void setName(std::string const& name);
 	virtual std::string const& getName() const;
-	Scene& getScene() const;
+	Scene* getScene() const;
 	bool isEnabled() const;
 	void enable();
 	void disable();

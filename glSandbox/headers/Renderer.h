@@ -8,11 +8,13 @@
 #include <glm/glm.hpp>
 
 class Camera;
+class Scene;
 
 class Renderer
 {
 private:
-	Camera* sourceCamera = nullptr;
+	Camera* camera = nullptr;
+	Scene* scene = nullptr;
 	unsigned int multisampledFramebuffer = 0;
 	unsigned int multisampledColorbuffer = 0;
 	unsigned int multisampledRenderbuffer = 0;
@@ -20,8 +22,8 @@ private:
 	unsigned int simpleColorbuffer = 0;
 	unsigned int simpleRenderbuffer = 0;
 	bool explicitRendering = true;
-	bool _shouldRender = true;
-	bool shouldRenderSecondary = true;
+	mutable bool _shouldRender = true;
+	mutable bool shouldRenderSecondary = true;
 	struct {
 		int width = 1920;
 		int height = 960;
@@ -74,7 +76,6 @@ private:
 			float ambientStrength = 1.0f;
 		}lighting;
 	}shading;
-
 	struct{
 		enum Mode
 		{
@@ -115,6 +116,18 @@ public:
 	~Renderer();
 
 private:
+	bool skipFrame() const;
+	void configureSampling() const;
+	void configureDepthTesting() const;
+	void configureFaceCulling() const;
+	void configurePolygonMode() const;
+	void clearBuffers() const;
+	void renderAuxiliaryGeometry() const;
+	void renderLights() const;
+	void configureShaders() const;
+	void renderHighlightedProps() const;
+	void renderProps() const;
+	void renderSkybox() const;
 	void updateFramebuffers();
 
 public:

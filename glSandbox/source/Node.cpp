@@ -62,9 +62,9 @@ std::string const& Node::getName() const
 	return name.get();
 }
 
-Scene& Node::getScene() const
+Scene* Node::getScene() const
 {
-	return *scene;
+	return scene;
 }
 
 bool Node::isEnabled() const

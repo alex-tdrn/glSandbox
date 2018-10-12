@@ -11,7 +11,9 @@ class Material
 {
 private:
 	Texture* normalMap = nullptr;
+	bool normalMappingEnabled = true;
 	Texture* occlusionMap = nullptr;
+	bool occlusionMappingEnabled = true;
 	Texture* emissiveMap = nullptr;
 	glm::vec3 emissiveFactor = glm::vec3{0.0f};
 

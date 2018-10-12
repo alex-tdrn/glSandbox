@@ -29,6 +29,12 @@ void Material::use(Shader* shader) const
 {
 	if(shader == ResourceManager<Shader>::pbr())
 	{
+		shader->set("material.occlusionMapExists", occlusionMap != nullptr && occlusionMappingEnabled);
+		if(occlusionMap && occlusionMappingEnabled)
+		{
+			shader->set("material.occlusionMap", 2);
+			occlusionMap->use(2);
+		}
 		shader->set("material.emissiveMapExists", emissiveMap != nullptr);
 		if(emissiveMap)
 		{
@@ -52,6 +58,8 @@ void Material::drawUI()
 	{
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Occlusion");
+		ImGui::SameLine();
+		ImGui::Checkbox("###OcclusionMappingEnabled", &occlusionMappingEnabled);
 		occlusionMap->drawUI();
 		ImGui::Separator();
 	}

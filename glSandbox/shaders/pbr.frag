@@ -36,6 +36,9 @@ struct Material
 	float metallicFactor;
 	float roughnessFactor;
 
+	bool occlusionMapExists;
+	sampler2D occlusionMap;
+
 	bool emissiveMapExists;
 	sampler2D emissiveMap;
 	vec3 emissiveFactor;
@@ -66,7 +69,8 @@ vec3 normal = normalize(fs_in.normal);
 vec3 baseColor = vec3(material.baseColorFactor);
 float metalness = material.metallicFactor;
 float roughness = material.roughnessFactor;
-vec3 emissive = material.emissiveFactor;
+vec3 occlusion = vec3(1.0f);
+vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
 
 vec3 calcAmbientLight();
@@ -78,8 +82,13 @@ vec3 BRDF(vec3 lightDirection);
 void main()
 {
 	if(material.baseColorMapExists)
-		baseColor *= vec3(texture(material.baseColorMap, fs_in.textureCoordinates));
-
+	{
+		baseColor *= texture(material.baseColorMap, fs_in.textureCoordinates).rgb;
+	}
+	if(material.occlusionMapExists)
+	{
+		occlusion *= texture(material.occlusionMap, fs_in.textureCoordinates).r;
+	}
 	if(material.metallicRoughnessMapExists)
 	{
 		vec4 mr = texture(material.metallicRoughnessMap, fs_in.textureCoordinates);
@@ -87,11 +96,13 @@ void main()
 		metalness *= mr.b;
 	}
 	if(material.emissiveMapExists)
-		emissive *= vec3(texture(material.emissiveMap, fs_in.textureCoordinates));
+	{
+		emission *= texture(material.emissiveMap, fs_in.textureCoordinates).rgb;
+	}
 
 	F0 = mix(F0, baseColor, metalness);
 
-	vec3 result = calcAmbientLight() + emissive;
+	vec3 result = calcAmbientLight() * occlusion + emission;
 	for(int i = 0; i < nDirLights; i++)
 		result += calcDirLight(dirLights[i]);
 	for(int i = 0; i < nPointLights; i++)

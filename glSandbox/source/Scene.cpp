@@ -10,32 +10,34 @@
 Scene::Scene()
 {
 	root->setScene(this);
-	root->addChild(std::make_unique<Camera>(), true);
-	root->addChild(std::make_unique<DirectionalLight>(), true);
+	addDefaultNodes();
 }
 
 Scene::Scene(Scene &&other)
 	:root(std::move(other.root))
 {
 	root->setScene(this);
-	if(getAll<Camera>().empty())
-	{
-		auto light = std::make_unique<SpotLight>();
-		light->setIntensity(50.0f);
-		root->addChild(std::make_unique<Camera>(), true)->addChild(std::move(light));
-	}
+	addDefaultNodes();
 }
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
 {
 	this->root->setScene(this);
 	fitToIdealSize();
-	if(getAll<Camera>().empty())
-	{
-		auto light = std::make_unique<SpotLight>();
-		light->setIntensity(50.0f);
-		this->root->addChild(std::make_unique<Camera>(), true)->addChild(std::move(light));
-	}
+	addDefaultNodes();
+}
+
+void Scene::addDefaultNodes()
+{
+	auto light = std::make_unique<DirectionalLight>();
+	light->setIntensity(10.0f);
+	light->setColor(glm::vec3(0.8f, 1.0f, 1.0f));
+	light->setLocalRotation(glm::vec3(-30.0f, 0.0f, 0.0f));
+	root->addChild(std::move(light));
+	auto light2 = std::make_unique<SpotLight>();
+	light2->setIntensity(50.0f);
+	light2->setColor(glm::vec3(1.0f, 0.8f, 0.5f));
+	root->addChild(std::make_unique<Camera>(), true)->addChild(std::move(light2));
 }
 
 void Scene::updateCache() const

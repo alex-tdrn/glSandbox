@@ -581,18 +581,24 @@ void Renderer::drawUI(bool* open)
 		else if(shading.current == ResourceManager<Shader>::unlit())
 		{
 			ImGui::Text("Show Map");
-			auto drawMapOption = [&](std::string_view title, Material::Map value){
+			auto drawMapOption = [&](std::string_view title, Material::Map value, bool r, bool g, bool b, bool a){
 				if(ImGui::RadioButton(title.data(), shading.debugging.unlitMap == value))
+				{
 					shading.debugging.unlitMap = value;
+					shading.debugging.unlitShowRedChannel = r;
+					shading.debugging.unlitShowGreenChannel = g;
+					shading.debugging.unlitShowBlueChannel = b;
+					shading.debugging.unlitShowAlphaChannel = a;
+				}
 			};
 			ImGui::Columns(2, nullptr, true);
-			drawMapOption("None", Material::Map::none);
-			drawMapOption("Normal", Material::Map::normal);
-			drawMapOption("Occlusion", Material::Map::occlusion);
+			drawMapOption("None", Material::Map::none, false, false, false, false);
+			drawMapOption("Normal", Material::Map::normal, true, true, true, false);
+			drawMapOption("Occlusion", Material::Map::occlusion, true, false, false, false);
 			ImGui::NextColumn();
-			drawMapOption("Emissive", Material::Map::emissive);
-			drawMapOption("Base Color", Material::Map::baseColor);
-			drawMapOption("Metallic-Roughness", Material::Map::metallicRoughness);
+			drawMapOption("Emissive", Material::Map::emissive, true, true, true, false);
+			drawMapOption("Base Color", Material::Map::baseColor, true, true, true, true);
+			drawMapOption("Metallic-Roughness", Material::Map::metallicRoughness, false, true, true, false);
 			ImGui::Columns(1);
 			ImGui::Checkbox("R", &shading.debugging.unlitShowRedChannel);
 			ImGui::SameLine();

@@ -44,6 +44,7 @@ public:
 	~Scene() = default;
 
 private:
+	void addDefaultNodes();
 	void updateCache() const;
 
 public:

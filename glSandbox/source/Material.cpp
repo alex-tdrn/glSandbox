@@ -29,6 +29,12 @@ void Material::use(Shader* shader, Material::Map visualizeMap) const
 {
 	if(shader == ResourceManager<Shader>::pbr())
 	{
+		shader->set("material.normalMapExists", normalMap != nullptr && normalMappingEnabled);
+		if(normalMap && normalMappingEnabled)
+		{
+			shader->set("material.normalMap", static_cast<int>(Map::normal));
+			normalMap->use(static_cast<int>(Map::normal));
+		}
 		shader->set("material.occlusionMapExists", occlusionMap != nullptr && occlusionMappingEnabled);
 		if(occlusionMap && occlusionMappingEnabled)
 		{
@@ -79,6 +85,8 @@ void Material::drawUI()
 	{
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Normals");
+		ImGui::SameLine();
+		ImGui::Checkbox("###NormalMappingEnabled", &normalMappingEnabled);
 		normalMap->drawUI();
 		ImGui::Separator();
 	}

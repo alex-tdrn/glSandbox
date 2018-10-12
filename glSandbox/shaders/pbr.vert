@@ -8,20 +8,26 @@ uniform mat4 model;
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 textureCoordinates;
+layout(location = 2) in vec4 tangent;
+layout(location = 3) in vec2 textureCoordinates;
 
 
 out VS_OUT
 {
 	vec3 position;
 	vec3 normal;
+	mat3 TBN;
 	vec2 textureCoordinates;
 } vs_out;
 
 void main()
 {
 	vs_out.position = vec3(view * model * vec4(position, 1.0f));
-	vs_out.normal = mat3(transpose(inverse(view * model))) * normal;
+	mat3 normalMatrix = mat3(transpose(inverse(view * model)));
+	vec3 t = normalMatrix * tangent.xyz;
+	vec3 b = normalMatrix * cross(normal, tangent.xyz) * tangent.w;
+	vs_out.normal = normalMatrix * normal;
+	vs_out.TBN = mat3(t, b, vs_out.normal);
 	vs_out.textureCoordinates = textureCoordinates;
 	gl_Position = projection * view * model * vec4(position, 1.0f);
 }

@@ -146,12 +146,14 @@ std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Do
 				{
 					attributeBuffer.attributeType = Mesh::AttributeType::positions;
 					auto const& aMin = doc.accessors[attribute.second].min;
- 					min = glm::vec3(aMin[0], aMin[1], aMin[2]);
+					min = glm::vec3(aMin[0], aMin[1], aMin[2]);
 					auto const& aMax = doc.accessors[attribute.second].max;
 					max = glm::vec3(aMax[0], aMax[1], aMax[2]);
 				}
 				else if(attribute.first == "NORMAL")
 					attributeBuffer.attributeType = Mesh::AttributeType::normals;
+				else if(attribute.first == "TANGENT")
+					attributeBuffer.attributeType = Mesh::AttributeType::tangents;
 				else if(attribute.first == "TEXCOORD_0")
 					attributeBuffer.attributeType = Mesh::AttributeType::texcoords;
 				else

@@ -27,6 +27,16 @@ struct SpotLight
 
 struct Material
 {
+	bool normalMapExists;
+	sampler2D normalMap;
+
+	bool occlusionMapExists;
+	sampler2D occlusionMap;
+
+	bool emissiveMapExists;
+	sampler2D emissiveMap;
+	vec3 emissiveFactor;
+
 	bool baseColorMapExists;
 	sampler2D baseColorMap;
 	vec4 baseColorFactor;
@@ -35,13 +45,6 @@ struct Material
 	sampler2D metallicRoughnessMap;
 	float metallicFactor;
 	float roughnessFactor;
-
-	bool occlusionMapExists;
-	sampler2D occlusionMap;
-
-	bool emissiveMapExists;
-	sampler2D emissiveMap;
-	vec3 emissiveFactor;
 };
 
 uniform Material material;
@@ -58,6 +61,7 @@ in VS_OUT
 {
 	vec3 position;
 	vec3 normal;
+	mat3 TBN;
 	vec2 textureCoordinates;
 } fs_in;
 
@@ -65,7 +69,7 @@ out vec4 FragColor;
 
 const float PI = 3.14159265359;
 vec3 viewDirection = normalize(-fs_in.position);
-vec3 normal = normalize(fs_in.normal);
+vec3 normal;
 vec3 baseColor = vec3(material.baseColorFactor);
 float metalness = material.metallicFactor;
 float roughness = material.roughnessFactor;
@@ -81,23 +85,33 @@ vec3 BRDF(vec3 lightDirection);
 
 void main()
 {
-	if(material.baseColorMapExists)
+	if(material.normalMapExists)
 	{
-		baseColor *= texture(material.baseColorMap, fs_in.textureCoordinates).rgb;
+		normal = texture(material.normalMap, fs_in.textureCoordinates).xyz;
+		normal = normalize(normal * 2.0 - 1.0);
+		normal = normalize(fs_in.TBN * normal);
+	}
+	else
+	{
+		normal = normalize(fs_in.normal);
 	}
 	if(material.occlusionMapExists)
 	{
 		occlusion *= texture(material.occlusionMap, fs_in.textureCoordinates).r;
+	}
+	if(material.emissiveMapExists)
+	{
+		emission *= texture(material.emissiveMap, fs_in.textureCoordinates).rgb;
+	}
+	if(material.baseColorMapExists)
+	{
+		baseColor *= texture(material.baseColorMap, fs_in.textureCoordinates).rgb;
 	}
 	if(material.metallicRoughnessMapExists)
 	{
 		vec4 mr = texture(material.metallicRoughnessMap, fs_in.textureCoordinates);
 		roughness *= mr.g;
 		metalness *= mr.b;
-	}
-	if(material.emissiveMapExists)
-	{
-		emission *= texture(material.emissiveMap, fs_in.textureCoordinates).rgb;
 	}
 
 	F0 = mix(F0, baseColor, metalness);

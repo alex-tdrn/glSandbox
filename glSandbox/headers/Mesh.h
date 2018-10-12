@@ -15,6 +15,7 @@ public:
 	{
 		positions,
 		normals,
+		tangents,
 		texcoords,
 		N
 	};

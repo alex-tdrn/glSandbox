@@ -83,6 +83,11 @@ void Texture::use(int location) const
 	glBindTexture(GL_TEXTURE_2D, ID);
 }
 
+bool Texture::isLinear() const
+{
+	return linear;
+}
+
 void Texture::drawUI()
 {
 	IDGuard idGuard{this};

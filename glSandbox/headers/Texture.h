@@ -37,6 +37,7 @@ private:
 
 public:
 	void use(int location) const;
+	bool isLinear() const;
 	void drawUI();
 
 };

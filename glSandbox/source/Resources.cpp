@@ -275,7 +275,7 @@ Mesh* ResourceManager<Mesh>::boxWireframe()
 
 Texture* ResourceManager<Texture>::debug()
 {
-	static auto ret = add(std::make_unique<Texture>("textures/debug.png", true));
+	static auto ret = add(std::make_unique<Texture>("textures/debug.png", false));
 	return ret;
 
 }

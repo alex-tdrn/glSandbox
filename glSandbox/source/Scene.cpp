@@ -19,9 +19,11 @@ Scene::Scene(Scene &&other)
 {
 	root->setScene(this);
 	if(getAll<Camera>().empty())
-		root->addChild(std::make_unique<Camera>(), true)->addChild(std::make_unique<SpotLight>());
-	if(getAll<Light>().empty())
-		root->addChild(std::make_unique<DirectionalLight>(), true);
+	{
+		auto light = std::make_unique<SpotLight>();
+		light->setIntensity(50.0f);
+		root->addChild(std::make_unique<Camera>(), true)->addChild(std::move(light));
+	}
 }
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
@@ -29,9 +31,11 @@ Scene::Scene(std::unique_ptr<Node>&& root)
 	this->root->setScene(this);
 	fitToIdealSize();
 	if(getAll<Camera>().empty())
-		this->root->addChild(std::make_unique<Camera>(), true)->addChild(std::make_unique<SpotLight>());
-	if(getAll<Light>().empty())
-		this->root->addChild(std::make_unique<DirectionalLight>(), true);
+	{
+		auto light = std::make_unique<SpotLight>();
+		light->setIntensity(50.0f);
+		this->root->addChild(std::make_unique<Camera>(), true)->addChild(std::move(light));
+	}
 }
 
 void Scene::updateCache() const

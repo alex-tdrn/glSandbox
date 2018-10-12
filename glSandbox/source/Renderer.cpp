@@ -154,6 +154,10 @@ void Renderer::render()
 		{
 			ResourceManager<Shader>::unlit()->set("material.hasMap", geometry.frustum.textured);
 			ResourceManager<Shader>::unlit()->set("material.map", 1);
+			ResourceManager<Shader>::unlit()->set("material.r", true);
+			ResourceManager<Shader>::unlit()->set("material.g", true);
+			ResourceManager<Shader>::unlit()->set("material.b", true);
+			ResourceManager<Shader>::unlit()->set("material.a", true);
 			ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{1.0f, 1.0f, 1.0f});
 			ResourceManager<Mesh>::box()->use();
 		}
@@ -330,7 +334,14 @@ void Renderer::render()
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
 				shading.current->set("model", prop->getGlobalTransformation());
-				prop->getMaterial()->use(shading.current);
+				if(shading.current == ResourceManager<Shader>::unlit())
+				{
+					shading.current->set("material.r", shading.debugging.unlitShowRedChannel);
+					shading.current->set("material.g", shading.debugging.unlitShowGreenChannel);
+					shading.current->set("material.b", shading.debugging.unlitShowBlueChannel);
+					shading.current->set("material.a", shading.debugging.unlitShowAlphaChannel);
+				}
+				prop->getMaterial()->use(shading.current, shading.debugging.unlitMap);
 				prop->getMesh().use();
 			}
 		}
@@ -541,7 +552,6 @@ void Renderer::drawUI(bool* open)
 		};
 		ImGui::Columns(3, nullptr, true);
 		ImGui::Text("Lighting");
-		drawShaderOption(ResourceManager<Shader>::unlit());
 		drawShaderOption(ResourceManager<Shader>::pbr());
 		drawShaderOption(ResourceManager<Shader>::blinnPhong());
 		drawShaderOption(ResourceManager<Shader>::phong());
@@ -549,6 +559,7 @@ void Renderer::drawUI(bool* open)
 		drawShaderOption(ResourceManager<Shader>::flat());
 		ImGui::NextColumn();
 		ImGui::Text("Debugging");
+		drawShaderOption(ResourceManager<Shader>::unlit());
 		drawShaderOption(ResourceManager<Shader>::debugNormals());
 		drawShaderOption(ResourceManager<Shader>::debugTexCoords());
 		drawShaderOption(ResourceManager<Shader>::debugDepthBuffer());
@@ -567,6 +578,48 @@ void Renderer::drawUI(bool* open)
 			ImGui::PushItemWidth(-1);
 			ImGui::SliderFloat("###Ambient Strength", &shading.lighting.ambientStrength, 0.0f, 1.0f);
 		}
+		else if(shading.current == ResourceManager<Shader>::unlit())
+		{
+			ImGui::Text("Show Map");
+			auto drawMapOption = [&](std::string_view title, Material::Map value){
+				if(ImGui::RadioButton(title.data(), shading.debugging.unlitMap == value))
+					shading.debugging.unlitMap = value;
+			};
+			ImGui::Columns(2, nullptr, true);
+			drawMapOption("None", Material::Map::none);
+			drawMapOption("Normal", Material::Map::normal);
+			drawMapOption("Occlusion", Material::Map::occlusion);
+			ImGui::NextColumn();
+			drawMapOption("Emissive", Material::Map::emissive);
+			drawMapOption("Base Color", Material::Map::baseColor);
+			drawMapOption("Metallic-Roughness", Material::Map::metallicRoughness);
+			ImGui::Columns(1);
+			ImGui::Checkbox("R", &shading.debugging.unlitShowRedChannel);
+			ImGui::SameLine();
+			ImGui::Checkbox("G", &shading.debugging.unlitShowGreenChannel);
+			ImGui::SameLine();
+			ImGui::Checkbox("B", &shading.debugging.unlitShowBlueChannel);
+			ImGui::SameLine();
+			ImGui::Checkbox("A", &shading.debugging.unlitShowAlphaChannel);
+		}
+		else if(shading.current == ResourceManager<Shader>::debugNormals())
+		{
+			ImGui::Checkbox("View Space", &shading.debugging.normals.viewSpace);
+			ImGui::SameLine();
+			ImGui::Checkbox("Show Lines", &shading.debugging.normals.showLines);
+			ImGui::SameLine();
+			ImGui::Checkbox("Face Normals", &shading.debugging.normals.faceNormals);
+			ImGui::DragFloat("Explode Magnitude", &shading.debugging.normals.explodeMagnitude, 0.01f);
+			if(shading.debugging.normals.showLines)
+			{
+				ImGui::DragFloat("Line length", &shading.debugging.normals.lineLength, 0.001f);
+				ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
+			}
+		}
+		else if(shading.current == ResourceManager<Shader>::debugDepthBuffer())
+		{
+			ImGui::Checkbox("Linearize", &shading.debugging.depthBufferLinear);
+		}
 		else if(shading.current == ResourceManager<Shader>::refraction())
 		{
 			ImGui::Checkbox("Per Channel", &shading.refraction.perChannel);
@@ -581,24 +634,6 @@ void Renderer::drawUI(bool* open)
 			{
 				ImGui::DragFloat3("First Medium", &shading.refraction.n1RGB.x, 0.001f);
 				ImGui::DragFloat3("Second Medium", &shading.refraction.n2RGB.x, 0.001f);
-			}
-		}
-		else if(shading.current == ResourceManager<Shader>::debugDepthBuffer())
-		{
-			ImGui::Checkbox("Linearize", &shading.debugging.depthBufferLinear);
-		}
-		else if(shading.current == ResourceManager<Shader>::debugNormals())
-		{
-			ImGui::Checkbox("View Space", &shading.debugging.normals.viewSpace);
-			ImGui::SameLine();
-			ImGui::Checkbox("Show Lines", &shading.debugging.normals.showLines);
-			ImGui::SameLine();
-			ImGui::Checkbox("Face Normals", &shading.debugging.normals.faceNormals);
-			ImGui::DragFloat("Explode Magnitude", &shading.debugging.normals.explodeMagnitude, 0.01f);
-			if(shading.debugging.normals.showLines)
-			{
-				ImGui::DragFloat("Line length", &shading.debugging.normals.lineLength, 0.001f);
-				ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 			}
 		}
 	}

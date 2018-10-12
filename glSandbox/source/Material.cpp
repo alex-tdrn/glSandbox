@@ -25,23 +25,51 @@ void Material::setEmissive(Texture* map, std::optional<glm::vec3> factor)
 		emissiveFactor = *factor;
 }
 
-void Material::use(Shader* shader) const
+void Material::use(Shader* shader, Material::Map visualizeMap) const
 {
 	if(shader == ResourceManager<Shader>::pbr())
 	{
 		shader->set("material.occlusionMapExists", occlusionMap != nullptr && occlusionMappingEnabled);
 		if(occlusionMap && occlusionMappingEnabled)
 		{
-			shader->set("material.occlusionMap", 2);
-			occlusionMap->use(2);
+			shader->set("material.occlusionMap", static_cast<int>(Map::occlusion));
+			occlusionMap->use(static_cast<int>(Map::occlusion));
 		}
 		shader->set("material.emissiveMapExists", emissiveMap != nullptr);
 		if(emissiveMap)
 		{
-			shader->set("material.emissiveMap", 3);
-			emissiveMap->use(3);
+			shader->set("material.emissiveMap", static_cast<int>(Map::emissive));
+			emissiveMap->use(static_cast<int>(Map::emissive));
 		}
 		shader->set("material.emissiveFactor", emissiveFactor);
+	}
+	else if(shader == ResourceManager<Shader>::unlit())
+	{
+		Texture* map = nullptr;
+		glm::vec3 color{1.0f};
+		switch(visualizeMap)
+		{
+			case Map::normal:
+				map = normalMap;
+				break;
+			case Map::occlusion:
+				map = occlusionMap;
+				break;
+			case Map::emissive:
+				map = emissiveMap;
+				color = emissiveFactor;
+				break;
+			default:
+				return;
+		}
+		shader->set("material.hasMap", map != nullptr);
+		if(map)
+		{
+			shader->set("material.linear", map->isLinear());
+			shader->set("material.map", 1);
+			map->use(1);
+		}
+		shader->set("material.color", color);
 	}
 }
 

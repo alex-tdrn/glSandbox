@@ -1,6 +1,8 @@
 #include "Shader.h"
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
+#include <imgui.h>
 
 std::string read(std::string_view const path)
 {
@@ -88,5 +90,6 @@ void Shader::set(std::string_view const name, glm::mat4 const& value) const
 
 void Shader::drawUI()
 {
-	//TODO
+	if(ImGui::Button("Reload"))
+		reload();
 }

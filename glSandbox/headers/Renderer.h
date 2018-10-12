@@ -64,6 +64,11 @@ private:
 				glm::vec3 lineColor{1.0f, 1.0f, 1.0f};
 			}normals;
 			bool depthBufferLinear = false;
+			Material::Map unlitMap = Material::Map::baseColor;
+			bool unlitShowRedChannel = true;
+			bool unlitShowGreenChannel = true;
+			bool unlitShowBlueChannel = true;
+			bool unlitShowAlphaChannel = true;
 		}debugging;
 		struct{
 			float ambientStrength = 1.0f;

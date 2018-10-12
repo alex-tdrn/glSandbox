@@ -19,29 +19,29 @@ void MaterialPBRMetallicRoughness::setMetallicRoughness(Texture* map, float meta
 	this->roughnessFactor = roughnessFactor;
 }
 
-void MaterialPBRMetallicRoughness::use(Shader* shader) const
+void MaterialPBRMetallicRoughness::use(Shader* shader, Material::Map visualizeMap) const
 {
-	Material::use(shader);
+	Material::use(shader, visualizeMap);
 	if(shader == ResourceManager<Shader>::pbr())
 	{
 		shader->set("material.baseColorMapExists", baseColorMap != nullptr);
 		if(baseColorMap)
 		{
-			shader->set("material.baseColorMap", 4);
-			baseColorMap->use(4);
+			shader->set("material.baseColorMap", static_cast<int>(Map::baseColor));
+			baseColorMap->use(static_cast<int>(Map::baseColor));
 		}
 		shader->set("material.baseColorFactor", baseColorFactor);
 
 		shader->set("material.metallicRoughnessMapExists", metallicRoughnessMap != nullptr);
 		if(metallicRoughnessMap)
 		{
-			shader->set("material.metallicRoughnessMap", 5);
-			metallicRoughnessMap->use(5);
+			shader->set("material.metallicRoughnessMap", static_cast<int>(Map::metallicRoughness));
+			metallicRoughnessMap->use(static_cast<int>(Map::metallicRoughness));
 		}
 		shader->set("material.metallicFactor", metallicFactor);
 		shader->set("material.roughnessFactor", roughnessFactor);
 	}
-	else if(ResourceManager<Shader>::isLightingShader(shader))	
+	else if(ResourceManager<Shader>::isLightingShader(shader))
 	{
 		shader->set("material.hasSpecularMap", false);
 		shader->set("material.overrideSpecular", true);
@@ -53,8 +53,8 @@ void MaterialPBRMetallicRoughness::use(Shader* shader) const
 		shader->set("material.overrideDiffuse", false);
 		if(baseColorMap)
 		{
-			shader->set("material.diffuseMap", 4);
-			baseColorMap->use(4);
+			shader->set("material.diffuseMap", static_cast<int>(Map::baseColor));
+			baseColorMap->use(static_cast<int>(Map::baseColor));
 		}
 		else
 		{
@@ -63,12 +63,25 @@ void MaterialPBRMetallicRoughness::use(Shader* shader) const
 	}
 	else if(shader == ResourceManager<Shader>::unlit())
 	{
-		Texture* map = baseColorMap;
-		glm::vec3 color = baseColorFactor;
-
+		Texture* map = nullptr;
+		glm::vec3 color{1.0f};
+		switch(visualizeMap)
+		{
+			case Map::baseColor:
+				map = baseColorMap;
+				color = baseColorFactor;
+				break;
+			case Map::metallicRoughness:
+				map = metallicRoughnessMap;
+				color = glm::vec3(metallicFactor, roughnessFactor, 0.0f);
+				break;
+			default:
+				return;
+		}
 		shader->set("material.hasMap", map != nullptr);
 		if(map)
 		{
+			shader->set("material.linear", map->isLinear());
 			shader->set("material.map", 1);
 			map->use(1);
 		}

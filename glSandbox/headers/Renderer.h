@@ -76,8 +76,12 @@ private:
 		}debugging;
 		struct{
 			struct{
-				int resolution = 2048;
+				bool enabled = false;
+				int resolution = 10;
+				float bias = 0.001f;
+				float directionalLightProjectionSize = 10.0f;
 				mutable std::vector<Texture> shadowMapsD;
+				int showMap = -1;
 			}shadows;
 			float ambientStrength = 1.0f;
 		}lighting;
@@ -130,6 +134,7 @@ private:
 	void clearBuffers() const;
 	void renderAuxiliaryGeometry() const;
 	void renderLights() const;
+	void updateShadowMaps() const;
 	void renderShadowMaps() const;
 	void configureShaders() const;
 	void renderHighlightedProps() const;

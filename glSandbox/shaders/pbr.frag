@@ -57,6 +57,8 @@ uniform int nSpotLights;
 uniform DirLight dirLights[MAX_DIR_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
+uniform bool shadowMappingEnabled;
+uniform float shadowMappingBias;
 
 in VS_OUT
 {
@@ -134,12 +136,13 @@ void main()
 
 float calcShadowD(int idx)
 {
+	if(!shadowMappingEnabled)
+		return 1.0f;
 	vec3 projCoordinates = fs_in.positionLightSpaceD[idx].xyz / fs_in.positionLightSpaceD[idx].w;
 	projCoordinates = projCoordinates * 0.5 + 0.5;
 	float closestDepth = texture(dirLights[idx].shadowMap, projCoordinates.xy).r;
 	float currentDepth = projCoordinates.z;
-	float bias = 0.005f;
-	return currentDepth - bias > closestDepth ? 0.0f : 1.0f;
+	return currentDepth - shadowMappingBias > closestDepth ? 0.0f : 1.0f;
 }
 vec3 calcAmbientLight()
 {

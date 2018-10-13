@@ -188,18 +188,26 @@ void Renderer::renderLights() const
 	drawLights(scene->getAll<SpotLight>());
 }
 
+void Renderer::updateShadowMaps() const
+{
+	const int resolution = 1 << shading.lighting.shadows.resolution;
+
+	auto lightsD = scene->getAll<DirectionalLight>();
+	auto& shadowMapsD = shading.lighting.shadows.shadowMapsD;
+	shadowMapsD.clear();
+	shadowMapsD.reserve(lightsD.size());
+	for(auto light : lightsD)
+		shadowMapsD.emplace_back(GL_DEPTH_COMPONENT, resolution, resolution,
+		GL_DEPTH_COMPONENT, GL_FLOAT);
+}
+
 void Renderer::renderShadowMaps() const
 {
 	auto lightsD = scene->getAll<DirectionalLight>();
 	auto& shadowMapsD = shading.lighting.shadows.shadowMapsD;
 	if(lightsD.size() != shadowMapsD.size())
 	{
-		shadowMapsD.clear();
-		shadowMapsD.reserve(lightsD.size());
-		for(auto light : lightsD)
-			shadowMapsD.emplace_back(GL_DEPTH_COMPONENT,
-			shading.lighting.shadows.resolution, shading.lighting.shadows.resolution,
-			GL_DEPTH_COMPONENT, GL_FLOAT);
+		updateShadowMaps();
 	}
 
 	static unsigned int shadowMappingFBO = [](){
@@ -210,8 +218,10 @@ void Renderer::renderShadowMaps() const
 		glReadBuffer(GL_NONE);
 		return fbo;
 	}();
-	glViewport(0, 0, shading.lighting.shadows.resolution, shading.lighting.shadows.resolution);
+	const int resolution = 1 << shading.lighting.shadows.resolution;
+	glViewport(0, 0, resolution, resolution);
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowMappingFBO);
+	
 	for(int i = 0; i < lightsD.size(); i++)
 	{
 		if(!lightsD[i]->isEnabled())
@@ -219,8 +229,8 @@ void Renderer::renderShadowMaps() const
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapsD[i].getID(), 0);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		static float projSize = 10.0f;
-		static glm::mat4 lightProjection = glm::ortho(-projSize, projSize, -projSize, projSize, 1.0f, 100.0f);
+		float const projSize = shading.lighting.shadows.directionalLightProjectionSize;
+		glm::mat4 lightProjection = glm::ortho(-projSize, projSize, -projSize, projSize, 1.0f, 100.0f);
 		glm::vec3 lightDirection = lightsD[i]->getDirection();
 		glm::vec3 eye = -lightDirection * projSize;
 		glm::vec3 center = eye + lightDirection;
@@ -261,7 +271,13 @@ void Renderer::configureShaders() const
 		useLights(scene->getAll<DirectionalLight>(), "dirLights", "nDirLights");
 		useLights(scene->getAll<PointLight>(), "pointLights", "nPointLights");
 		useLights(scene->getAll<SpotLight>(), "spotLights", "nSpotLights");
-		renderShadowMaps();
+
+		shading.current->set("shadowMappingEnabled", shading.lighting.shadows.enabled);
+		if(shading.lighting.shadows.enabled)
+		{
+			shading.current->set("shadowMappingBias", shading.lighting.shadows.bias);
+			renderShadowMaps();
+		}
 	}
 	else if(shading.current == ResourceManager<Shader>::refraction())
 	{
@@ -678,6 +694,55 @@ void Renderer::drawUI(bool* open)
 			ImGui::SameLine();
 			ImGui::PushItemWidth(-1);
 			ImGui::SliderFloat("###Ambient Strength", &shading.lighting.ambientStrength, 0.0f, 1.0f);
+			ImGui::Checkbox("Shadow Mapping", &shading.lighting.shadows.enabled);
+			if(shading.lighting.shadows.enabled)
+			{
+				ImGui::SameLine();
+				ImGui::BeginGroup();
+				ImGui::Text("Resolution: 2^");
+				ImGui::SameLine();
+				ImGui::InputInt("###Resolution", &shading.lighting.shadows.resolution, 1);
+				if(shading.lighting.shadows.resolution < 1)
+					shading.lighting.shadows.resolution = 1;
+				ImGui::EndGroup();
+				if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
+					updateShadowMaps();
+				ImGui::Text("Bias");
+				ImGui::SameLine();
+				ImGui::InputFloat("###Bias", &shading.lighting.shadows.bias, 0.001f, 0.005f);
+				ImGui::Text("Directional Light Projection Size");
+				ImGui::SameLine();
+				ImGui::InputFloat("###directionalLightProjectionSize", &shading.lighting.shadows.directionalLightProjectionSize, 0.1f, 1.0f);
+				std::string currentShadowMapName = "None";
+				auto& lightsD = scene->getAll<DirectionalLight>();
+				if(shading.lighting.shadows.showMap > -1)
+				{
+					currentShadowMapName = lightsD[shading.lighting.shadows.showMap]->name.get();
+				}
+				if(ImGui::BeginCombo("View Shadow Map", currentShadowMapName.data()))
+				{
+					bool isSelected = shading.lighting.shadows.showMap == -1;
+					if(ImGui::Selectable("None", &isSelected))
+						shading.lighting.shadows.showMap = -1;
+					if(isSelected)
+						ImGui::SetItemDefaultFocus();
+					ImGui::Separator();
+					int id = 0;
+					for(int i = 0; i < lightsD.size(); i++)
+					{
+						ImGui::PushID(id++);
+						isSelected = shading.lighting.shadows.showMap == i;
+						if(ImGui::Selectable(lightsD[i]->name.get().data(), &isSelected))
+							shading.lighting.shadows.showMap = i;
+						if(isSelected)
+							ImGui::SetItemDefaultFocus();
+						ImGui::PopID();
+					}
+					ImGui::EndCombo();
+				}
+				if(shading.lighting.shadows.showMap > -1)
+					shading.lighting.shadows.shadowMapsD[shading.lighting.shadows.showMap].drawUI();
+			}
 		}
 		else if(shading.current == ResourceManager<Shader>::unlit())
 		{

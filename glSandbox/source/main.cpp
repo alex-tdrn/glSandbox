@@ -23,6 +23,7 @@
 #include <memory>
 #include <deque>
 #include <vld.h>
+#include <thread>
 
 double deltaTime = 0.0f;
 double lastFrame = 0.0f;
@@ -101,9 +102,14 @@ int main(int argc, char** argv)
 
 	while(!glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();
-		if(info::windowHeight == 0 || info::windowWidth == 0)
-			continue;
+		
+		while(glfwPollEvents(), 
+			!glfwGetWindowAttrib(window, GLFW_FOCUSED)
+			|| info::windowHeight == 0 
+			|| info::windowWidth == 0)
+		{
+			std::this_thread::yield();
+		}
 		processInput(window);
 		drawUI();
 		glfwSwapInterval(settings::rendering::vsync);

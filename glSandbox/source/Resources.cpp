@@ -479,7 +479,7 @@ Shader* ResourceManager<Shader>::shadowMapping()
 {
 	static auto ret = [&]() -> Shader*{
 		auto shader = std::make_unique<Shader>("shaders/shadowMapping.vert", "shaders/shadowMapping.frag");
-		shader->name.set("Debug Depth Buffer");
+		shader->name.set("Shadow Mapping");
 		return add(std::move(shader));
 	}();
 	return ret;
@@ -581,6 +581,7 @@ void initializeResources()
 	ResourceManager<Shader>::debugNormalsShowLines();
 	ResourceManager<Shader>::debugTexCoords();
 	ResourceManager<Shader>::debugDepthBuffer();
+	ResourceManager<Shader>::shadowMapping();
 	ResourceManager<Shader>::skybox();
 	ResourceManager<Shader>::gammaHDR();
 	ResourceManager<Shader>::passthrough();

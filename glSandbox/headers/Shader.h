@@ -25,6 +25,9 @@ public:
 public:
 	Shader(std::string const vertexPath, std::string const fragmentPath, std::optional<std::string const> geometryPath = std::nullopt);
 
+private:
+	int getLocation(std::string_view const name) const;
+
 public:
 	void reload();
 	void use();

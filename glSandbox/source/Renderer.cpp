@@ -233,7 +233,10 @@ void Renderer::renderShadowMaps() const
 	const int resolution = 1 << shading.lighting.shadows.resolution;
 	glViewport(0, 0, resolution, resolution);
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowMappingFBO);
-	
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CCW);
+	int enabledLights = 0;
 	for(int i = 0; i < lightsD.size(); i++)
 	{
 		if(!lightsD[i]->isEnabled())
@@ -242,7 +245,7 @@ void Renderer::renderShadowMaps() const
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		float const projSize = shading.lighting.shadows.directionalLightProjectionSize;
-		glm::mat4 lightProjection = glm::ortho(-projSize, projSize, -projSize, projSize, 1.0f, 100.0f);
+		glm::mat4 lightProjection = glm::ortho(-projSize, projSize, -projSize, projSize, 0.01f, 100.0f);
 		glm::vec3 lightDirection = lightsD[i]->getDirection();
 		glm::vec3 eye = -lightDirection * projSize;
 		glm::vec3 center = eye + lightDirection;
@@ -252,18 +255,18 @@ void Renderer::renderShadowMaps() const
 		ResourceManager<Shader>::shadowMapping()->set("lightSpace", lightSpace);
 		renderProps(ResourceManager<Shader>::shadowMapping());
 		shading.current->use();
-		shading.current->set("lightSpacesD[" + std::to_string(i) + "]", lightSpace);
-		shading.current->set("dirLights[" + std::to_string(i) + "].shadowMap", 10 + i);
+		shading.current->set("lightSpacesD[" + std::to_string(enabledLights) + "]", lightSpace);
+		shading.current->set("dirLights[" + std::to_string(enabledLights++) + "].shadowMap", 10 + i);
 		shadowMapsD[i].use(10 + i);
 	}
-
+	enabledLights = 0;
 	for(int i = 0; i < lightsS.size(); i++)
 	{
 		if(!lightsS[i]->isEnabled())
 			continue;
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapsS[i].getID(), 0);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glm::mat4 lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.001f, 10.0f);
+		glm::mat4 lightProjection = glm::perspective(glm::radians(lightsS[i]->getOuterCutoff() * 2), 1.0f, 0.01f, 100.0f);
 		glm::vec3 eye = lightsS[i]->getPosition();
 		glm::vec3 center = eye + lightsS[i]->getDirection();
 		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
@@ -272,13 +275,14 @@ void Renderer::renderShadowMaps() const
 		ResourceManager<Shader>::shadowMapping()->set("lightSpace", lightSpace);
 		renderProps(ResourceManager<Shader>::shadowMapping());
 		shading.current->use();
-		shading.current->set("lightSpacesS[" + std::to_string(i) + "]", lightSpace);
-		shading.current->set("spotLights[" + std::to_string(i) + "].shadowMap", 10 + i + static_cast<int>(lightsD.size()));
+		shading.current->set("lightSpacesS[" + std::to_string(enabledLights) + "]", lightSpace);
+		shading.current->set("spotLights[" + std::to_string(enabledLights++) + "].shadowMap", 10 + i + static_cast<int>(lightsD.size()));
 		shadowMapsS[i].use(10 + i + lightsD.size());
 	}
 
 	glViewport(0, 0, viewport.width, viewport.height);
 	configureFramebuffers();
+	configureFaceCulling();
 }
 
 void Renderer::configureShaders() const
@@ -745,10 +749,10 @@ void Renderer::drawUI(bool* open)
 				ImGui::Text("Bias");
 				ImGui::Text("Min");
 				ImGui::SameLine();
-				ImGui::InputFloat("###BiasMin", &shading.lighting.shadows.bias[0], 0.001f, 0.005f);
+				ImGui::InputFloat("###BiasMin", &shading.lighting.shadows.bias[0], 0.0001f, 0.0005f, "%.4f");
 				ImGui::Text("Max");
 				ImGui::SameLine();
-				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.001f, 0.005f);
+				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.0001f, 0.0005f, "%.4f");
 				ImGui::Text("PCF Samples");
 				ImGui::SameLine();
 				ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);

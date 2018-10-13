@@ -23,7 +23,7 @@ private:
 	unsigned int simpleFramebuffer = 0;
 	unsigned int simpleColorbuffer = 0;
 	unsigned int simpleRenderbuffer = 0;
-	bool explicitRendering = true;
+	bool explicitRendering = false;
 	mutable bool _shouldRender = true;
 	mutable bool shouldRenderSecondary = true;
 	struct {
@@ -49,7 +49,7 @@ private:
 		bool boundingBox = false;
 	}highlighting;
 	struct{
-		Shader* current = ResourceManager<Shader>::unlit();
+		Shader* current = ResourceManager<Shader>::pbr();
 		struct
 		{
 			bool perChannel = false;
@@ -76,9 +76,9 @@ private:
 		}debugging;
 		struct{
 			struct{
-				bool enabled = false;
+				bool enabled = true;
 				int resolution = 10;
-				float bias[2] = {0.001f, 0.01f};
+				float bias[2] = {0.0000f, 0.0000f};
 				int pcfSamples = 2;
 				float directionalLightProjectionSize = 10.0f;
 				mutable std::vector<Texture> shadowMapsD;
@@ -103,7 +103,7 @@ private:
 			Mode mode = triangles;
 		}prop;
 		struct{
-			bool enabled = true;
+			bool enabled = false;
 			Grid mainGenerator{64};
 			Grid subGenerator{2};
 			float scale = 32.0f;

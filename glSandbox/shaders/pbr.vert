@@ -8,6 +8,9 @@ layout(std140, binding = 0) uniform CameraMatrices
 	uniform mat4 view;
 };
 uniform mat4 model;
+uniform int nDirLights;
+uniform int nPointLights;
+uniform int nSpotLights;
 uniform mat4 lightSpacesD[MAX_DIR_LIGHTS];
 uniform mat4 lightSpacesS[MAX_SPOT_LIGHTS];
 
@@ -30,9 +33,9 @@ out VS_OUT
 void main()
 {
 	vs_out.position = vec3(view * model * vec4(position, 1.0f));
-	for(int i = 0; i < MAX_DIR_LIGHTS; i++)
+	for(int i = 0; i < nDirLights; i++)
 		vs_out.positionLightSpaceD[i] = lightSpacesD[i] * model * vec4(position, 1.0f);
-	for(int i = 0; i < MAX_SPOT_LIGHTS; i++)
+	for(int i = 0; i < nSpotLights; i++)
 		vs_out.positionLightSpaceS[i] = lightSpacesS[i] * model * vec4(position, 1.0f);
 	mat3 normalMatrix = mat3(transpose(inverse(view * model)));
 	vec3 t = normalMatrix * tangent.xyz;

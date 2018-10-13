@@ -1,13 +1,14 @@
 #version 420 core
-#define MAX_DIR_LIGHTS 32
-#define MAX_POINT_LIGHTS 32
-#define MAX_SPOT_LIGHTS 32
+#define MAX_DIR_LIGHTS 4
+#define MAX_POINT_LIGHTS 4
+#define MAX_SPOT_LIGHTS 4
 
 struct DirLight
 {
 	vec3 color;
 	float intensity;
 	vec3 direction;
+	sampler2D shadowMap;
 };
 struct PointLight
 {
@@ -57,15 +58,13 @@ uniform DirLight dirLights[MAX_DIR_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
-uniform sampler2D shadowMap;
-
 in VS_OUT
 {
 	vec3 position;
 	vec3 normal;
 	mat3 TBN;
 	vec2 textureCoordinates;
-	vec4 positionLightSpace;
+	vec4 positionLightSpaceD[MAX_DIR_LIGHTS];
 } fs_in;
 
 out vec4 FragColor;
@@ -80,7 +79,7 @@ vec3 occlusion = vec3(1.0f);
 vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
 
-float calcShadow();
+float calcShadowD(int idx);
 vec3 calcAmbientLight();
 vec3 calcDirLight(DirLight light);
 vec3 calcPointLight(PointLight light);
@@ -122,7 +121,7 @@ void main()
 
 	vec3 result = calcAmbientLight() * occlusion + emission;
 	for(int i = 0; i < nDirLights; i++)
-		result += calcDirLight(dirLights[i]) * calcShadow();
+		result += calcDirLight(dirLights[i]) * calcShadowD(i);
 	for(int i = 0; i < nPointLights; i++)
 		result += calcPointLight(pointLights[i]);
 	for(int i = 0; i < nSpotLights; i++)
@@ -133,11 +132,11 @@ void main()
 	FragColor = vec4(result , 1.0f);
 }
 
-float calcShadow()
+float calcShadowD(int idx)
 {
-	vec3 projCoordinates = fs_in.positionLightSpace.xyz / fs_in.positionLightSpace.w;
+	vec3 projCoordinates = fs_in.positionLightSpaceD[idx].xyz / fs_in.positionLightSpaceD[idx].w;
 	projCoordinates = projCoordinates * 0.5 + 0.5;
-	float closestDepth = texture(shadowMap, projCoordinates.xy).r;
+	float closestDepth = texture(dirLights[idx].shadowMap, projCoordinates.xy).r;
 	float currentDepth = projCoordinates.z;
 	float bias = 0.005f;
 	return currentDepth - bias > closestDepth ? 0.0f : 1.0f;

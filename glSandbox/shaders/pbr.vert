@@ -1,11 +1,14 @@
 #version 420 core
+#define MAX_DIR_LIGHTS 4
+#define MAX_POINT_LIGHTS 4
+#define MAX_SPOT_LIGHTS 4
 layout(std140, binding = 0) uniform CameraMatrices
 {
 	uniform mat4 projection;
 	uniform mat4 view;
 };
 uniform mat4 model;
-uniform mat4 lightSpace;
+uniform mat4 lightSpacesD[MAX_DIR_LIGHTS];
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -19,13 +22,14 @@ out VS_OUT
 	vec3 normal;
 	mat3 TBN;
 	vec2 textureCoordinates;
-	vec4 positionLightSpace;
+	vec4 positionLightSpaceD[MAX_DIR_LIGHTS];
 } vs_out;
 
 void main()
 {
 	vs_out.position = vec3(view * model * vec4(position, 1.0f));
-	vs_out.positionLightSpace = lightSpace * model * vec4(position, 1.0f);
+	for(int i = 0; i < MAX_DIR_LIGHTS; i++)
+		vs_out.positionLightSpaceD[i] = lightSpacesD[i] * model * vec4(position, 1.0f);
 	mat3 normalMatrix = mat3(transpose(inverse(view * model)));
 	vec3 t = normalMatrix * tangent.xyz;
 	vec3 b = normalMatrix * cross(normal, tangent.xyz) * tangent.w;

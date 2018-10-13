@@ -1,7 +1,6 @@
 #include "Lights.h"
 #include "imgui.h"
 #include "Globals.h"
-#include "Util.h"
 #include "Shader.h"
 
 #include <GLFW\glfw3.h>
@@ -27,11 +26,6 @@ float Light::getIntensity() const
 	return intensity;
 }
 
-unsigned int Light::getShadowMap() const
-{
-	return shadowMap;
-}
-
 void Light::use(std::string const& prefix, Shader& shader, bool flash) const
 {
 	shader.set(prefix + "color", getColor());
@@ -47,34 +41,6 @@ void Light::drawUI()
 	ImGui::DragFloat("Intensity", &intensity, 0.1f);
 }
 
-DirectionalLight::DirectionalLight()
-{
-	glGenTextures(1, &shadowMap);
-	glBindTexture(GL_TEXTURE_2D, shadowMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-		shadowResolution, shadowResolution,
-		0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-}
-
-int DirectionalLight::getShadowResolution() const
-{
-	return shadowResolution;
-}
-
-glm::mat4 DirectionalLight::getLightSpaceMatrix() const
-{
-	static float projSize = 10.0f;
-	static glm::mat4 lightProjection = glm::ortho(-projSize, projSize, -projSize, projSize, 1.0f, 100.0f);
-	glm::vec3 eye = -getDirection() * projSize;
-	glm::vec3 center = eye + getDirection();
-	glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
-	return lightProjection * lightView;
-}
-
 void DirectionalLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
 {
 	Light::use(prefix, shader, isHighlighted());
@@ -88,13 +54,6 @@ void DirectionalLight::drawUI()
 {
 	Transformed<Rotation>::drawUI();
 	Light::drawUI();
-	ImGui::Text("Shadow Map");
-	drawTexture(shadowMap, "Shadow Map", shadowResolution, shadowResolution, info::windowWidth, info::windowHeight, 512.0f, true);
-}
-
-glm::mat4 PointLight::getLightSpaceMatrix() const
-{
-	return glm::mat4();
 }
 
 void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
@@ -124,11 +83,6 @@ float SpotLight::getInnerCutoff() const
 float SpotLight::getOuterCutoff() const
 {
 	return outerCutoff;
-}
-
-glm::mat4 SpotLight::getLightSpaceMatrix() const
-{
-	return glm::mat4();
 }
 
 void SpotLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const

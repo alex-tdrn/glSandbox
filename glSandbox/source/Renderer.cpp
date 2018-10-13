@@ -190,11 +190,19 @@ void Renderer::renderLights() const
 
 void Renderer::renderShadowMaps() const
 {
-	if(scene->getAll<DirectionalLight>().empty())
-		return;
-	auto light = scene->getAll<DirectionalLight>().front();
+	auto lightsD = scene->getAll<DirectionalLight>();
+	auto& shadowMapsD = shading.lighting.shadows.shadowMapsD;
+	if(lightsD.size() != shadowMapsD.size())
+	{
+		shadowMapsD.clear();
+		shadowMapsD.reserve(lightsD.size());
+		for(auto light : lightsD)
+			shadowMapsD.emplace_back(GL_DEPTH_COMPONENT,
+			shading.lighting.shadows.resolution, shading.lighting.shadows.resolution,
+			GL_DEPTH_COMPONENT, GL_FLOAT);
+	}
 
-	static unsigned int shadowMapFBO = [&light](){
+	static unsigned int shadowMappingFBO = [](){
 		unsigned int fbo;
 		glGenFramebuffers(1, &fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -202,13 +210,30 @@ void Renderer::renderShadowMaps() const
 		glReadBuffer(GL_NONE);
 		return fbo;
 	}();
-	glViewport(0, 0, light->getShadowResolution(), light->getShadowResolution());
-	glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->getShadowMap(), 0);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	ResourceManager<Shader>::shadowMapping()->use();
-	ResourceManager<Shader>::shadowMapping()->set("lightSpace", light->getLightSpaceMatrix());
-	renderProps(ResourceManager<Shader>::shadowMapping());
+	glViewport(0, 0, shading.lighting.shadows.resolution, shading.lighting.shadows.resolution);
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowMappingFBO);
+	for(int i = 0; i < lightsD.size(); i++)
+	{
+		if(!lightsD[i]->isEnabled())
+			continue;
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapsD[i].getID(), 0);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		static float projSize = 10.0f;
+		static glm::mat4 lightProjection = glm::ortho(-projSize, projSize, -projSize, projSize, 1.0f, 100.0f);
+		glm::vec3 lightDirection = lightsD[i]->getDirection();
+		glm::vec3 eye = -lightDirection * projSize;
+		glm::vec3 center = eye + lightDirection;
+		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
+		glm::mat4 lightSpace = lightProjection * lightView;
+		ResourceManager<Shader>::shadowMapping()->use();
+		ResourceManager<Shader>::shadowMapping()->set("lightSpace", lightSpace);
+		renderProps(ResourceManager<Shader>::shadowMapping());
+		shading.current->use();
+		shading.current->set("lightSpacesD[" + std::to_string(i) + "]", lightSpace);
+		shading.current->set("dirLights[" + std::to_string(i) + "].shadowMap", 10 + i);
+		shadowMapsD[i].use(10 + i);
+	}
 	glViewport(0, 0, viewport.width, viewport.height);
 	configureFramebuffers();
 }
@@ -221,11 +246,6 @@ void Renderer::configureShaders() const
 	{
 		shading.current->set("ambientColor", scene->getBackground());
 		shading.current->set("ambientStrength", shading.lighting.ambientStrength);
-		shading.current->set("lightSpace", scene->getAll<DirectionalLight>().front()->getLightSpaceMatrix());
-		shading.current->set("shadowMap", 10);
-		glActiveTexture(GL_TEXTURE0 + 10);
-		glBindTexture(GL_TEXTURE_2D, scene->getAll<DirectionalLight>().front()->getShadowMap());
-
 		auto useLights = [&](auto const& lights, std::string const& prefix1, std::string const& prefix2){
 			int enabledLights = 0;
 			for(int i = 0; i < lights.size(); i++)

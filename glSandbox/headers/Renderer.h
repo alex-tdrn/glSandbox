@@ -3,9 +3,11 @@
 #include "Resources.h"
 #include "Material.h"
 #include "Grid.h"
+#include "Texture.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <vector>
 
 class Camera;
 class Scene;
@@ -73,6 +75,10 @@ private:
 			bool unlitShowAlphaChannel = true;
 		}debugging;
 		struct{
+			struct{
+				int resolution = 2048;
+				mutable std::vector<Texture> shadowMapsD;
+			}shadows;
 			float ambientStrength = 1.0f;
 		}lighting;
 	}shading;

@@ -58,7 +58,8 @@ uniform DirLight dirLights[MAX_DIR_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform bool shadowMappingEnabled;
-uniform float shadowMappingBias;
+uniform float shadowMappingBiasMin;
+uniform float shadowMappingBiasMax;
 
 in VS_OUT
 {
@@ -81,9 +82,9 @@ vec3 occlusion = vec3(1.0f);
 vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
 
-float calcShadowD(int idx);
+float calcShadowD(int idx, vec3 lightDirection);
 vec3 calcAmbientLight();
-vec3 calcDirLight(DirLight light);
+vec3 calcDirLight(DirLight light, int idx);
 vec3 calcPointLight(PointLight light);
 vec3 calcSpotLight(SpotLight light);
 vec3 BRDF(vec3 lightDirection);
@@ -123,7 +124,7 @@ void main()
 
 	vec3 result = calcAmbientLight() * occlusion + emission;
 	for(int i = 0; i < nDirLights; i++)
-		result += calcDirLight(dirLights[i]) * calcShadowD(i);
+		result += calcDirLight(dirLights[i], i);
 	for(int i = 0; i < nPointLights; i++)
 		result += calcPointLight(pointLights[i]);
 	for(int i = 0; i < nSpotLights; i++)
@@ -134,25 +135,28 @@ void main()
 	FragColor = vec4(result , 1.0f);
 }
 
-float calcShadowD(int idx)
+float calcShadowD(int idx, vec3 lightDirection)
 {
 	if(!shadowMappingEnabled)
 		return 1.0f;
 	vec3 projCoordinates = fs_in.positionLightSpaceD[idx].xyz / fs_in.positionLightSpaceD[idx].w;
 	projCoordinates = projCoordinates * 0.5 + 0.5;
+	if(projCoordinates.z > 1.0f)
+		return 1.0f;
 	float closestDepth = texture(dirLights[idx].shadowMap, projCoordinates.xy).r;
 	float currentDepth = projCoordinates.z;
-	return currentDepth - shadowMappingBias > closestDepth ? 0.0f : 1.0f;
+	float bias = max(shadowMappingBiasMax * (1.0 - dot(normal, lightDirection)), shadowMappingBiasMin);  
+	return currentDepth - bias > closestDepth ? 0.0f : 1.0f;
 }
 vec3 calcAmbientLight()
 {
 	return ambientStrength * ambientColor * baseColor;	
 }
 
-vec3 calcDirLight(DirLight light)
+vec3 calcDirLight(DirLight light, int idx)
 {
 	vec3 lightDirection = normalize(-light.direction);
-    vec3 radiance = light.color * light.intensity;
+    vec3 radiance = light.color * light.intensity * calcShadowD(idx, lightDirection);
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 

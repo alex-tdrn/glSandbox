@@ -326,8 +326,14 @@ Scene* ResourceManager<Scene>::test()
 	static auto ret = [&]() -> Scene*{
 		auto scene = std::make_unique<Scene>();
 		scene->name.set("test");
-		std::unique_ptr<Node> prop = std::make_unique<Prop>(ResourceManager<Mesh>::box());
+		auto prop = std::make_unique<Prop>(ResourceManager<Mesh>::box());
+		prop->setLocalRotation({45.0f, 45.0f, 0.0f});
+		prop->setLocalTranslation({0.0f, 1.0f, 0.0f});
 		scene->getRoot()->addChild(std::move(prop));
+		auto floor = std::make_unique<Prop>(ResourceManager<Mesh>::box());
+		floor->setLocalScale({30.0f, 0.5f, 30.0f});
+		floor->setLocalTranslation({0.0f, -2.0f, 0.0f});
+		scene->getRoot()->addChild(std::move(floor));
 		return add(std::move(scene));
 	}();
 	return ret;

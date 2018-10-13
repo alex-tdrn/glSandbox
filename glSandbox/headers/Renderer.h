@@ -78,7 +78,7 @@ private:
 			struct{
 				bool enabled = false;
 				int resolution = 10;
-				float bias = 0.001f;
+				float bias[2] = {0.001f, 0.01f};
 				float directionalLightProjectionSize = 10.0f;
 				mutable std::vector<Texture> shadowMapsD;
 				int showMap = -1;

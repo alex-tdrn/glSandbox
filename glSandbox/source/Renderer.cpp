@@ -197,8 +197,16 @@ void Renderer::updateShadowMaps() const
 	shadowMapsD.clear();
 	shadowMapsD.reserve(lightsD.size());
 	for(auto light : lightsD)
+	{
 		shadowMapsD.emplace_back(GL_DEPTH_COMPONENT, resolution, resolution,
-		GL_DEPTH_COMPONENT, GL_FLOAT);
+			GL_DEPTH_COMPONENT, GL_FLOAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		static float const borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	}
 }
 
 void Renderer::renderShadowMaps() const
@@ -275,7 +283,8 @@ void Renderer::configureShaders() const
 		shading.current->set("shadowMappingEnabled", shading.lighting.shadows.enabled);
 		if(shading.lighting.shadows.enabled)
 		{
-			shading.current->set("shadowMappingBias", shading.lighting.shadows.bias);
+			shading.current->set("shadowMappingBiasMin", shading.lighting.shadows.bias[0]);
+			shading.current->set("shadowMappingBiasMax", shading.lighting.shadows.bias[1]);
 			renderShadowMaps();
 		}
 	}
@@ -708,8 +717,12 @@ void Renderer::drawUI(bool* open)
 				if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
 					updateShadowMaps();
 				ImGui::Text("Bias");
+				ImGui::Text("Min");
 				ImGui::SameLine();
-				ImGui::InputFloat("###Bias", &shading.lighting.shadows.bias, 0.001f, 0.005f);
+				ImGui::InputFloat("###BiasMin", &shading.lighting.shadows.bias[0], 0.001f, 0.005f);
+				ImGui::Text("Max");
+				ImGui::SameLine();
+				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.001f, 0.005f);
 				ImGui::Text("Directional Light Projection Size");
 				ImGui::SameLine();
 				ImGui::InputFloat("###directionalLightProjectionSize", &shading.lighting.shadows.directionalLightProjectionSize, 0.1f, 1.0f);

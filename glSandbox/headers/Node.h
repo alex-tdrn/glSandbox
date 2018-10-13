@@ -14,7 +14,6 @@ class Node
 	friend class std::unique_ptr<Node>;
 
 private:
-	Name<Node> name{"node"};
 	Scene* scene = nullptr;
 	bool enabled = true;
 	bool highlighted = false;
@@ -22,6 +21,9 @@ private:
 
 protected:
 	Node* parent = nullptr;
+
+public:
+	Name<Node> name{"node"};
 
 public:
 	Node() = default;
@@ -38,8 +40,6 @@ private:
 	std::unique_ptr<Node> releaseChild(Node* node);
 
 public:
-	virtual void setName(std::string const& name);
-	virtual std::string const& getName() const;
 	Scene* getScene() const;
 	bool isEnabled() const;
 	void enable();

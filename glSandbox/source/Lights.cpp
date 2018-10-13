@@ -1,9 +1,11 @@
 #include "Lights.h"
 #include "imgui.h"
+#include "Globals.h"
 #include "Util.h"
 #include "Shader.h"
 
 #include <GLFW\glfw3.h>
+#include <glad/glad.h>
 
 void Light::setColor(glm::vec3 color)
 {
@@ -25,6 +27,11 @@ float Light::getIntensity() const
 	return intensity;
 }
 
+unsigned int Light::getShadowMap() const
+{
+	return shadowMap;
+}
+
 void Light::use(std::string const& prefix, Shader& shader, bool flash) const
 {
 	shader.set(prefix + "color", getColor());
@@ -40,14 +47,32 @@ void Light::drawUI()
 	ImGui::DragFloat("Intensity", &intensity, 0.1f);
 }
 
-void DirectionalLight::setName(std::string const& name)
+DirectionalLight::DirectionalLight()
 {
-	this->name.set(name);
+	glGenTextures(1, &shadowMap);
+	glBindTexture(GL_TEXTURE_2D, shadowMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+		shadowResolution, shadowResolution,
+		0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
-std::string const& DirectionalLight::getName() const
+int DirectionalLight::getShadowResolution() const
 {
-	return name.get();
+	return shadowResolution;
+}
+
+glm::mat4 DirectionalLight::getLightSpaceMatrix() const
+{
+	static float projSize = 10.0f;
+	static glm::mat4 lightProjection = glm::ortho(-projSize, projSize, -projSize, projSize, 1.0f, 100.0f);
+	glm::vec3 eye = -getDirection() * projSize;
+	glm::vec3 center = eye + getDirection();
+	glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
+	return lightProjection * lightView;
 }
 
 void DirectionalLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
@@ -63,16 +88,13 @@ void DirectionalLight::drawUI()
 {
 	Transformed<Rotation>::drawUI();
 	Light::drawUI();
+	ImGui::Text("Shadow Map");
+	drawTexture(shadowMap, "Shadow Map", shadowResolution, shadowResolution, info::windowWidth, info::windowHeight, 512.0f, true);
 }
 
-void PointLight::setName(std::string const& name)
+glm::mat4 PointLight::getLightSpaceMatrix() const
 {
-	this->name.set(name);
-}
-
-std::string const& PointLight::getName() const
-{
-	return name.get();
+	return glm::mat4();
 }
 
 void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
@@ -86,16 +108,6 @@ void PointLight::drawUI()
 {
 	Transformed<Translation>::drawUI();
 	Light::drawUI();
-}
-
-void SpotLight::setName(std::string const& name)
-{
-	this->name.set(name);
-}
-
-std::string const& SpotLight::getName() const
-{
-	return name.get();
 }
 
 void SpotLight::setCutoff(float inner, float outer)
@@ -112,6 +124,11 @@ float SpotLight::getInnerCutoff() const
 float SpotLight::getOuterCutoff() const
 {
 	return outerCutoff;
+}
+
+glm::mat4 SpotLight::getLightSpaceMatrix() const
+{
+	return glm::mat4();
 }
 
 void SpotLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const

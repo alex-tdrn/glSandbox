@@ -94,7 +94,6 @@ void Texture::drawUI()
 	if(!loaded)
 		load();
 	
-	float const size = std::min(ImGui::GetContentRegionAvailWidth(), 512.0f);
 	ImGui::Text("ID %i", ID);
 	ImGui::Text("Encoding: %s", linear ? "Linear" : "Gamma");
 	ImGui::Text("Format: ");
@@ -145,34 +144,5 @@ void Texture::drawUI()
 	ImGui::Text("# channels %i", nrChannels);
 	if(path)
 		ImGui::Text("Path: %s", path->data());
-	
-	if(ImGui::ImageButton(ImTextureID(ID), ImVec2(size, size)))
-		ImGui::OpenPopup(name.get().data());
-	if(ImGui::BeginPopupModal(name.get().data(), nullptr, 
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoResize | 
-		ImGuiWindowFlags_NoScrollbar | 
-		ImGuiWindowFlags_NoTitleBar))
-	{
-		float const percentOfScreen = 0.9f;
-		glm::vec2 scale{width / info::windowWidth, height / info::windowHeight};
-		glm::vec2 imageSize;
-		if(scale.x > scale.y)//stretch by width
-		{
-			imageSize.x =  info::windowWidth * percentOfScreen;
-			imageSize.y = static_cast<float>(height) / width * imageSize.x;
-		}
-		else//stretch by height
-		{
-			imageSize.y = info::windowHeight * percentOfScreen;
-			imageSize.x = static_cast<float>(width) / height * imageSize.y;
-		}
-		ImGui::BeginPopupModal(name.get().data());
-		ImGui::Image(ImTextureID(ID), ImVec2(imageSize.x, imageSize.y));
-		if(ImGui::IsAnyItemActive())
-			ImGui::CloseCurrentPopup();
-		ImGui::EndPopup();
-	}
-
+	drawTexture(ID, name.get().data(), width, height, info::windowWidth, info::windowHeight, 512.0f);
 }

@@ -16,6 +16,41 @@
 #include <vector>
 #include <memory>
 
+inline void drawTexture(unsigned int ID, char const *name, int width, int height, int windowWidth, int windowHeight, float maxSize, bool flipY = false)
+{
+	float const size = std::min(ImGui::GetContentRegionAvailWidth(), maxSize);
+	ImVec2 uv1{0.0, flipY ? 1.0f : 0.0f};
+	ImVec2 uv2{1.0, flipY ? 0.0f : 1.0f};
+	if(ImGui::ImageButton(ImTextureID(ID), ImVec2(size, size), uv1, uv2))
+		ImGui::OpenPopup(name);
+	if(ImGui::BeginPopupModal(name, nullptr,
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoTitleBar))
+	{
+		float const percentOfScreen = 0.9f;
+		glm::vec2 scale{width / windowWidth, height / windowHeight};
+		glm::vec2 imageSize;
+		if(scale.x > scale.y)//stretch by width
+		{
+			imageSize.x = windowWidth * percentOfScreen;
+			imageSize.y = static_cast<float>(height) / width * imageSize.x;
+		}
+		else//stretch by height
+		{
+			imageSize.y = windowHeight * percentOfScreen;
+			imageSize.x = static_cast<float>(width) / height * imageSize.y;
+		}
+		ImGui::BeginPopupModal(name);
+		ImGui::Image(ImTextureID(ID), ImVec2(imageSize.x, imageSize.y), uv1, uv2);
+		if(ImGui::IsAnyItemActive())
+			ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
+	}
+}
+
 template <typename...>
 struct is_one_of
 {
@@ -287,45 +322,6 @@ T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possi
 		ImGui::EndCombo();
 	}
 	return currentValue;
-}
-
-inline void wrapAround(float& x, float const min, float const max)
-{
-	float const diff = max - min;
-	while(x < min)
-		x += diff;
-	while(x > max)
-		x -= diff;
-}
-
-inline bool drag2(const char* title, float const sensitivity, float& x, float& y)
-{
-	bool valueChanged = false;
-	ImGui::Button(title);
-	if(ImGui::IsItemActive())
-	{
-		ImVec2 mouseDelta = ImGui::GetMouseDragDelta(0, 0.0f);
-		x += mouseDelta.x  * sensitivity;
-		y -= mouseDelta.y * sensitivity;
-		valueChanged |= mouseDelta.x != 0 || mouseDelta.y != 0;
-	}
-	return valueChanged;
-}
-
-inline bool drag2(const char* title, float const sensitivity, float& x, float& y, float const min, float const max)
-{
-	bool ret = drag2(title, sensitivity, x, y);
-	wrapAround(x, min, max);
-	wrapAround(y, min, max);
-	return ret;
-}
-
-inline bool drag2(const char* title, float const sensitivity, float& x, float& y, float const xmin, float const xmax, const float ymin, const float ymax)
-{
-	bool ret = drag2(title, sensitivity, x, y);
-	wrapAround(x, xmin, xmax);
-	wrapAround(y, ymin, ymax);
-	return ret;
 }
 
 inline glm::mat4 composeTransformation(glm::vec3 const& translation, glm::vec3 const& rotation, glm::vec3 const& scale)

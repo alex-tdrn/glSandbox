@@ -57,12 +57,15 @@ uniform DirLight dirLights[MAX_DIR_LIGHTS];
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
+uniform sampler2D shadowMap;
+
 in VS_OUT
 {
 	vec3 position;
 	vec3 normal;
 	mat3 TBN;
 	vec2 textureCoordinates;
+	vec4 positionLightSpace;
 } fs_in;
 
 out vec4 FragColor;
@@ -77,6 +80,7 @@ vec3 occlusion = vec3(1.0f);
 vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
 
+float calcShadow();
 vec3 calcAmbientLight();
 vec3 calcDirLight(DirLight light);
 vec3 calcPointLight(PointLight light);
@@ -118,7 +122,7 @@ void main()
 
 	vec3 result = calcAmbientLight() * occlusion + emission;
 	for(int i = 0; i < nDirLights; i++)
-		result += calcDirLight(dirLights[i]);
+		result += calcDirLight(dirLights[i]) * calcShadow();
 	for(int i = 0; i < nPointLights; i++)
 		result += calcPointLight(pointLights[i]);
 	for(int i = 0; i < nSpotLights; i++)
@@ -129,6 +133,15 @@ void main()
 	FragColor = vec4(result , 1.0f);
 }
 
+float calcShadow()
+{
+	vec3 projCoordinates = fs_in.positionLightSpace.xyz / fs_in.positionLightSpace.w;
+	projCoordinates = projCoordinates * 0.5 + 0.5;
+	float closestDepth = texture(shadowMap, projCoordinates.xy).r;
+	float currentDepth = projCoordinates.z;
+	float bias = 0.005f;
+	return currentDepth - bias > closestDepth ? 0.0f : 1.0f;
+}
 vec3 calcAmbientLight()
 {
 	return ambientStrength * ambientColor * baseColor;	

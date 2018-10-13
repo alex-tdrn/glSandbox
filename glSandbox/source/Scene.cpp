@@ -141,6 +141,26 @@ void Scene::drawUI()
 	ImGui::SameLine();
 	ImGui::InputFloat("###IdealSize", &idealSize);
 	
+	auto getName = [](Node* node) -> char const*{
+		//TODO find a better solution
+		auto camera = dynamic_cast<Camera*>(node);
+		if(camera)
+			return camera->name.get().data();
+		auto prop = dynamic_cast<Prop*>(node);
+		if(prop)
+			return prop->name.get().data();
+		auto dLight = dynamic_cast<DirectionalLight*>(node);
+		if(dLight)
+			return dLight->name.get().data();
+		auto sLight = dynamic_cast<SpotLight*>(node);
+		if(sLight)
+			return sLight->name.get().data();
+		auto pLight = dynamic_cast<PointLight*>(node);
+		if(pLight)
+			return pLight->name.get().data();
+		return node->name.get().data();
+
+	};
 	static bool hierarchyView = false;
 	ImGui::NewLine();
 	ImGui::AlignTextToFramePadding();
@@ -279,7 +299,7 @@ void Scene::drawUI()
 				flags = flags | ImGuiTreeNodeFlags_Leaf;
 			if(current == node)
 				flags = flags | ImGuiTreeNodeFlags_Selected;
-			bool expandNode = ImGui::TreeNodeEx(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), flags);
+			bool expandNode = ImGui::TreeNodeEx(((root ? "Root Node" : getName(node)) + std::string(node->enabled ? "" : " *")).data(), flags);
 			if(ImGui::IsItemClicked())
 				current = node;
 			if(ImGui::IsItemHovered() || current == node)
@@ -313,7 +333,7 @@ void Scene::drawUI()
 	else
 	{
 		auto drawNode = [&](Node* node, bool root = false){
-			if(ImGui::Selectable(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), current == node))
+			if(ImGui::Selectable(((root ? "Root Node" : getName(node)) + std::string(node->enabled ? "" : " *")).data(), current == node))
 				current = node;
 			if(ImGui::IsItemHovered() || current == node)
 				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
@@ -384,7 +404,7 @@ void Scene::drawUI()
 	ImGui::EndChild();
 
 	ImGui::NextColumn();
-	ImGui::Text(current ? current->getName().data() : "No selection...");
+	ImGui::Text(current ? getName(current) : "No selection...");
 	ImGui::BeginChild("###Edit Node", {0, 0}, true);
 	if(current) current->drawUI();
 	ImGui::EndChild();

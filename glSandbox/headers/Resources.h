@@ -105,6 +105,7 @@ public:
 	static Shader* debugNormalsShowLines();
 	static Shader* debugTexCoords();
 	static Shader* debugDepthBuffer();
+	static Shader* shadowMapping();
 	static Shader* skybox();
 	static Shader* gammaHDR();
 	static Shader* passthrough();

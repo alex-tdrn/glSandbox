@@ -117,16 +117,17 @@ public:
 
 private:
 	bool skipFrame() const;
-	void configureSampling() const;
+	void configureFramebuffers() const;
 	void configureDepthTesting() const;
 	void configureFaceCulling() const;
 	void configurePolygonMode() const;
 	void clearBuffers() const;
 	void renderAuxiliaryGeometry() const;
 	void renderLights() const;
+	void renderShadowMaps() const;
 	void configureShaders() const;
 	void renderHighlightedProps() const;
-	void renderProps() const;
+	void renderProps(Shader* shader) const;
 	void renderSkybox() const;
 	void updateFramebuffers();
 

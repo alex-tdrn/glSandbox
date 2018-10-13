@@ -234,6 +234,14 @@ public:
 		this->translate(diff);
 	}
 
+	template<typename Dummy = glm::vec3>
+	std::enable_if_t<isTransformUsed<Rotation>::value, Dummy>
+		getDirection() const
+	{
+		glm::vec4 dir{0.0f, 0.0f, -1.0f, 0.0f};
+		return glm::normalize(getGlobalTransformation() * dir);
+	}
+
 	void drawUI()
 	{
 		Node::drawUI();

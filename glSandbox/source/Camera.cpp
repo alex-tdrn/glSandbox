@@ -33,16 +33,6 @@ void Camera::use() const
 	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, glm::value_ptr(getViewMatrix()));
 }
 
-void Camera::setName(std::string const& name)
-{
-	this->name.set(name);
-}
-
-std::string const& Camera::getName() const
-{
-	return name.get();
-}
-
 float Camera::getNearPlane() const
 {
 	return nearPlane;

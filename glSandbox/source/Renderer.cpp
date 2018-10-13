@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Globals.h"
 #include "Lights.h"
 #include "Prop.h"
 
@@ -67,7 +68,7 @@ bool Renderer::skipFrame() const
 	return false;
 }
 
-void Renderer::configureSampling() const
+void Renderer::configureFramebuffers() const
 {
 	if(pipeline.samples > 0)
 	{
@@ -187,6 +188,31 @@ void Renderer::renderLights() const
 	drawLights(scene->getAll<SpotLight>());
 }
 
+void Renderer::renderShadowMaps() const
+{
+	if(scene->getAll<DirectionalLight>().empty())
+		return;
+	auto light = scene->getAll<DirectionalLight>().front();
+
+	static unsigned int shadowMapFBO = [&light](){
+		unsigned int fbo;
+		glGenFramebuffers(1, &fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+		return fbo;
+	}();
+	glViewport(0, 0, light->getShadowResolution(), light->getShadowResolution());
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->getShadowMap(), 0);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	ResourceManager<Shader>::shadowMapping()->use();
+	ResourceManager<Shader>::shadowMapping()->set("lightSpace", light->getLightSpaceMatrix());
+	renderProps(ResourceManager<Shader>::shadowMapping());
+	glViewport(0, 0, viewport.width, viewport.height);
+	configureFramebuffers();
+}
+
 void Renderer::configureShaders() const
 {
 	shading.current->use();
@@ -195,6 +221,11 @@ void Renderer::configureShaders() const
 	{
 		shading.current->set("ambientColor", scene->getBackground());
 		shading.current->set("ambientStrength", shading.lighting.ambientStrength);
+		shading.current->set("lightSpace", scene->getAll<DirectionalLight>().front()->getLightSpaceMatrix());
+		shading.current->set("shadowMap", 10);
+		glActiveTexture(GL_TEXTURE0 + 10);
+		glBindTexture(GL_TEXTURE_2D, scene->getAll<DirectionalLight>().front()->getShadowMap());
+
 		auto useLights = [&](auto const& lights, std::string const& prefix1, std::string const& prefix2){
 			int enabledLights = 0;
 			for(int i = 0; i < lights.size(); i++)
@@ -210,6 +241,7 @@ void Renderer::configureShaders() const
 		useLights(scene->getAll<DirectionalLight>(), "dirLights", "nDirLights");
 		useLights(scene->getAll<PointLight>(), "pointLights", "nPointLights");
 		useLights(scene->getAll<SpotLight>(), "spotLights", "nSpotLights");
+		renderShadowMaps();
 	}
 	else if(shading.current == ResourceManager<Shader>::refraction())
 	{
@@ -276,7 +308,7 @@ void Renderer::renderHighlightedProps() const
 		for(auto const& prop : scene->getAll<Prop>())
 		{
 			if(!prop->isHighlighted())
-				return;
+				continue;
 			ResourceManager<Shader>::unlit()->set("model", prop->getGlobalTransformation());
 			prop->getMesh().use();
 		}
@@ -301,24 +333,24 @@ void Renderer::renderHighlightedProps() const
 	}
 }
 
-void Renderer::renderProps() const
+void Renderer::renderProps(Shader* shader) const
 {
-	shading.current->use();
+	shader->use();
 	if(geometry.prop.mode != geometry.lines)
 	{
 		for(auto const& prop : scene->getAll<Prop>())
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
-				shading.current->set("model", prop->getGlobalTransformation());
-				if(shading.current == ResourceManager<Shader>::unlit())
+				shader->set("model", prop->getGlobalTransformation());
+				if(shader == ResourceManager<Shader>::unlit())
 				{
-					shading.current->set("material.r", shading.debugging.unlitShowRedChannel);
-					shading.current->set("material.g", shading.debugging.unlitShowGreenChannel);
-					shading.current->set("material.b", shading.debugging.unlitShowBlueChannel);
-					shading.current->set("material.a", shading.debugging.unlitShowAlphaChannel);
+					shader->set("material.r", shading.debugging.unlitShowRedChannel);
+					shader->set("material.g", shading.debugging.unlitShowGreenChannel);
+					shader->set("material.b", shading.debugging.unlitShowBlueChannel);
+					shader->set("material.a", shading.debugging.unlitShowAlphaChannel);
 				}
-				prop->getMaterial()->use(shading.current, shading.debugging.unlitMap);
+				prop->getMaterial()->use(shader, shading.debugging.unlitMap);
 				prop->getMesh().use();
 			}
 		}
@@ -417,7 +449,7 @@ void Renderer::render()
 {
 	if(skipFrame())
 		return;
-	configureSampling();
+	configureFramebuffers();
 	configureDepthTesting();
 	configureFaceCulling();
 	configurePolygonMode();
@@ -428,7 +460,7 @@ void Renderer::render()
 
 	configureShaders();
 	renderHighlightedProps();
-	renderProps();
+	renderProps(shading.current);
 
 	renderSkybox();
 
@@ -460,7 +492,7 @@ void Renderer::drawUI(bool* open)
 	ImGui::Text("Camera");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	if(ImGui::BeginCombo("###Camera", camera ? camera->getName().data() : "None"))
+	if(ImGui::BeginCombo("###Camera", camera ? camera->name.get().data() : "None"))
 	{
 		int id = 0;
 		if(ImGui::Selectable("None"), camera == nullptr)
@@ -475,7 +507,7 @@ void Renderer::drawUI(bool* open)
 			{
 				ImGui::PushID(id++);
 				bool isSelected = camera == _camera;
-				if(ImGui::Selectable(_camera->getName().data(), &isSelected))
+				if(ImGui::Selectable(_camera->name.get().data(), &isSelected))
 					setCamera(_camera);
 				if(isSelected)
 					ImGui::SetItemDefaultFocus();

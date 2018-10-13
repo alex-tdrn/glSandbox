@@ -289,5 +289,7 @@
     <None Include="shaders\pbr.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\shadowMapping.frag" />
+    <None Include="shaders\shadowMapping.vert" />
   </ItemGroup>
 </Project>

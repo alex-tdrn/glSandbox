@@ -469,6 +469,16 @@ Shader* ResourceManager<Shader>::debugDepthBuffer()
 	return ret;
 }
 
+Shader* ResourceManager<Shader>::shadowMapping()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/shadowMapping.vert", "shaders/shadowMapping.frag");
+		shader->name.set("Debug Depth Buffer");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
 Shader* ResourceManager<Shader>::skybox()
 {
 	static auto ret = [&]() -> Shader*{

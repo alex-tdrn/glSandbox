@@ -38,15 +38,6 @@ Bounds Prop::getBounds() const
 	return getMesh().getBounds() * getGlobalTransformation() + childBounds;
 }
 
-void Prop::setName(std::string const& name)
-{
-	this->name.set(name);
-}
-
-std::string const& Prop::getName() const
-{
-	return name.get();
-}
 template <typename PM>
 void addProceduralMeshItem(std::unique_ptr<ProceduralMesh>& proceduralMesh, Mesh*& staticMesh)
 {

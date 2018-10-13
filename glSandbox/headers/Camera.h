@@ -9,13 +9,15 @@
 class Camera final : public Transformed<Translation, Rotation>
 {
 private:
-	Name<Camera> name{"camera"};
 	bool visualizeFrustum = true;
 	bool projectionOrtho = false;
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 	float fov = 45.0f;
 	float orthoScale = 0.005f;
+
+public:
+	Name<Camera> name{"camera"};
 
 public:
 	Camera();
@@ -26,8 +28,6 @@ private:
 
 public:
 	void use() const;
-	void setName(std::string const& name) override;
-	std::string const& getName() const override;
 	glm::mat4 getProjectionMatrix() const;
 	glm::mat4 getViewMatrix() const;
 	float getNearPlane() const;

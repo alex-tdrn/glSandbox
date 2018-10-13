@@ -60,6 +60,7 @@ uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform bool shadowMappingEnabled;
 uniform float shadowMappingBiasMin;
 uniform float shadowMappingBiasMax;
+uniform int shadowMappingPCFSamples;
 
 in VS_OUT
 {
@@ -135,18 +136,36 @@ void main()
 	FragColor = vec4(result , 1.0f);
 }
 
+float calcShadow(vec3 coords, sampler2D shadowMap, vec3 lightDirection)
+{
+	if(coords.z > 1.0f)
+		return 1.0f;
+	float closestDepth = texture(shadowMap, coords.xy).r;
+	float bias = max(shadowMappingBiasMax * (1.0 - dot(normal, lightDirection)), shadowMappingBiasMin);  
+	return coords.z - bias > closestDepth ? 0.0f : 1.0f;
+}
 float calcShadowD(int idx, vec3 lightDirection)
 {
 	if(!shadowMappingEnabled)
 		return 1.0f;
 	vec3 projCoordinates = fs_in.positionLightSpaceD[idx].xyz / fs_in.positionLightSpaceD[idx].w;
 	projCoordinates = projCoordinates * 0.5 + 0.5;
-	if(projCoordinates.z > 1.0f)
-		return 1.0f;
-	float closestDepth = texture(dirLights[idx].shadowMap, projCoordinates.xy).r;
-	float currentDepth = projCoordinates.z;
-	float bias = max(shadowMappingBiasMax * (1.0 - dot(normal, lightDirection)), shadowMappingBiasMin);  
-	return currentDepth - bias > closestDepth ? 0.0f : 1.0f;
+	
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(dirLights[idx].shadowMap, 0);
+	for(int x = -shadowMappingPCFSamples; x <= shadowMappingPCFSamples; ++x)
+	{
+		for(int y = -shadowMappingPCFSamples; y <= shadowMappingPCFSamples; ++y)
+		{
+			shadow += calcShadow(
+			projCoordinates + vec3(vec2(x, y) * texelSize, 0.0f),
+			dirLights[idx].shadowMap, lightDirection);
+		}    
+	}
+	float sampleCount = shadowMappingPCFSamples * 2;
+	sampleCount += 1;
+	sampleCount *= sampleCount;
+	return shadow /= sampleCount;
 }
 vec3 calcAmbientLight()
 {

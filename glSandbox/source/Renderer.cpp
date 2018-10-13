@@ -285,6 +285,7 @@ void Renderer::configureShaders() const
 		{
 			shading.current->set("shadowMappingBiasMin", shading.lighting.shadows.bias[0]);
 			shading.current->set("shadowMappingBiasMax", shading.lighting.shadows.bias[1]);
+			shading.current->set("shadowMappingPCFSamples", shading.lighting.shadows.pcfSamples);
 			renderShadowMaps();
 		}
 	}
@@ -723,6 +724,11 @@ void Renderer::drawUI(bool* open)
 				ImGui::Text("Max");
 				ImGui::SameLine();
 				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.001f, 0.005f);
+				ImGui::Text("PCF Samples");
+				ImGui::SameLine();
+				ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
+				if(shading.lighting.shadows.pcfSamples < 0)
+					shading.lighting.shadows.pcfSamples = 0;
 				ImGui::Text("Directional Light Projection Size");
 				ImGui::SameLine();
 				ImGui::InputFloat("###directionalLightProjectionSize", &shading.lighting.shadows.directionalLightProjectionSize, 0.1f, 1.0f);

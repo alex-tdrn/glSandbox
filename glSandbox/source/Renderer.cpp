@@ -191,29 +191,33 @@ void Renderer::renderLights() const
 void Renderer::updateShadowMaps() const
 {
 	const int resolution = 1 << shading.lighting.shadows.resolution;
+	auto resetMaps = [resolution](auto& lights, auto& shadowMaps)		{
+		shadowMaps.clear();
+		shadowMaps.reserve(lights.size());
+		for(auto light : lights)
+		{
+			shadowMaps.emplace_back(GL_DEPTH_COMPONENT, resolution, resolution,
+				GL_DEPTH_COMPONENT, GL_FLOAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			static float const borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		}
 
-	auto lightsD = scene->getAll<DirectionalLight>();
-	auto& shadowMapsD = shading.lighting.shadows.shadowMapsD;
-	shadowMapsD.clear();
-	shadowMapsD.reserve(lightsD.size());
-	for(auto light : lightsD)
-	{
-		shadowMapsD.emplace_back(GL_DEPTH_COMPONENT, resolution, resolution,
-			GL_DEPTH_COMPONENT, GL_FLOAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		static float const borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	}
+	};
+	resetMaps(scene->getAll<DirectionalLight>(), shading.lighting.shadows.shadowMapsD);
+	resetMaps(scene->getAll<SpotLight>(), shading.lighting.shadows.shadowMapsS);
 }
 
 void Renderer::renderShadowMaps() const
 {
 	auto lightsD = scene->getAll<DirectionalLight>();
+	auto lightsS = scene->getAll<SpotLight>();
 	auto& shadowMapsD = shading.lighting.shadows.shadowMapsD;
-	if(lightsD.size() != shadowMapsD.size())
+	auto& shadowMapsS = shading.lighting.shadows.shadowMapsS;
+	if(lightsD.size() != shadowMapsD.size() || lightsS.size() != shadowMapsS.size())
 	{
 		updateShadowMaps();
 	}
@@ -252,6 +256,27 @@ void Renderer::renderShadowMaps() const
 		shading.current->set("dirLights[" + std::to_string(i) + "].shadowMap", 10 + i);
 		shadowMapsD[i].use(10 + i);
 	}
+
+	for(int i = 0; i < lightsS.size(); i++)
+	{
+		if(!lightsS[i]->isEnabled())
+			continue;
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapsS[i].getID(), 0);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glm::mat4 lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.001f, 10.0f);
+		glm::vec3 eye = lightsS[i]->getPosition();
+		glm::vec3 center = eye + lightsS[i]->getDirection();
+		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
+		glm::mat4 lightSpace = lightProjection * lightView;
+		ResourceManager<Shader>::shadowMapping()->use();
+		ResourceManager<Shader>::shadowMapping()->set("lightSpace", lightSpace);
+		renderProps(ResourceManager<Shader>::shadowMapping());
+		shading.current->use();
+		shading.current->set("lightSpacesS[" + std::to_string(i) + "]", lightSpace);
+		shading.current->set("spotLights[" + std::to_string(i) + "].shadowMap", 10 + i + static_cast<int>(lightsD.size()));
+		shadowMapsS[i].use(10 + i + lightsD.size());
+	}
+
 	glViewport(0, 0, viewport.width, viewport.height);
 	configureFramebuffers();
 }
@@ -734,15 +759,20 @@ void Renderer::drawUI(bool* open)
 				ImGui::InputFloat("###directionalLightProjectionSize", &shading.lighting.shadows.directionalLightProjectionSize, 0.1f, 1.0f);
 				std::string currentShadowMapName = "None";
 				auto& lightsD = scene->getAll<DirectionalLight>();
-				if(shading.lighting.shadows.showMap > -1)
+				auto& lightsS = scene->getAll<SpotLight>();
+				int& showMap = shading.lighting.shadows.showMap;
+				if(showMap > -1)
 				{
-					currentShadowMapName = lightsD[shading.lighting.shadows.showMap]->name.get();
+					if(showMap < lightsD.size())
+						currentShadowMapName = lightsD[showMap]->name.get();
+					else
+						currentShadowMapName = lightsS[showMap - lightsD.size()]->name.get();
 				}
 				if(ImGui::BeginCombo("View Shadow Map", currentShadowMapName.data()))
 				{
-					bool isSelected = shading.lighting.shadows.showMap == -1;
+					bool isSelected = showMap == -1;
 					if(ImGui::Selectable("None", &isSelected))
-						shading.lighting.shadows.showMap = -1;
+						showMap = -1;
 					if(isSelected)
 						ImGui::SetItemDefaultFocus();
 					ImGui::Separator();
@@ -750,17 +780,33 @@ void Renderer::drawUI(bool* open)
 					for(int i = 0; i < lightsD.size(); i++)
 					{
 						ImGui::PushID(id++);
-						isSelected = shading.lighting.shadows.showMap == i;
+						isSelected = showMap == i;
 						if(ImGui::Selectable(lightsD[i]->name.get().data(), &isSelected))
-							shading.lighting.shadows.showMap = i;
+							showMap = i;
+						if(isSelected)
+							ImGui::SetItemDefaultFocus();
+						ImGui::PopID();
+					}
+					ImGui::Separator();
+					for(int i = 0; i < lightsS.size(); i++)
+					{
+						ImGui::PushID(id++);
+						isSelected = showMap == lightsD.size() + i;
+						if(ImGui::Selectable(lightsS[i]->name.get().data(), &isSelected))
+							showMap = lightsD.size() + i;
 						if(isSelected)
 							ImGui::SetItemDefaultFocus();
 						ImGui::PopID();
 					}
 					ImGui::EndCombo();
 				}
-				if(shading.lighting.shadows.showMap > -1)
-					shading.lighting.shadows.shadowMapsD[shading.lighting.shadows.showMap].drawUI();
+				if(showMap > -1)
+				{
+					if(showMap < lightsD.size())
+						shading.lighting.shadows.shadowMapsD[showMap].drawUI();
+					else
+						shading.lighting.shadows.shadowMapsS[showMap - lightsD.size()].drawUI();
+				}
 			}
 		}
 		else if(shading.current == ResourceManager<Shader>::unlit())

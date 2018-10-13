@@ -242,6 +242,13 @@ public:
 		return glm::normalize(getGlobalTransformation() * dir);
 	}
 
+	template<typename Dummy = glm::vec3>
+	std::enable_if_t<isTransformUsed<Translation>::value, Dummy>
+		getPosition() const
+	{
+		return extractTranslationVector(getGlobalTransformation());
+	}
+
 	void drawUI()
 	{
 		Node::drawUI();

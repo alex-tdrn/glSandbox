@@ -82,6 +82,7 @@ private:
 				int pcfSamples = 2;
 				float directionalLightProjectionSize = 10.0f;
 				mutable std::vector<Texture> shadowMapsD;
+				mutable std::vector<Texture> shadowMapsS;
 				int showMap = -1;
 			}shadows;
 			float ambientStrength = 1.0f;

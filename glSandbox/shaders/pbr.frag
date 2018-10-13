@@ -24,6 +24,7 @@ struct SpotLight
 	vec3 direction;
 	float innerCutoff;
 	float outerCutoff;
+	sampler2D shadowMap;
 };
 
 struct Material
@@ -69,6 +70,7 @@ in VS_OUT
 	mat3 TBN;
 	vec2 textureCoordinates;
 	vec4 positionLightSpaceD[MAX_DIR_LIGHTS];
+	vec4 positionLightSpaceS[MAX_SPOT_LIGHTS];
 } fs_in;
 
 out vec4 FragColor;
@@ -83,11 +85,10 @@ vec3 occlusion = vec3(1.0f);
 vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
 
-float calcShadowD(int idx, vec3 lightDirection);
 vec3 calcAmbientLight();
 vec3 calcDirLight(DirLight light, int idx);
 vec3 calcPointLight(PointLight light);
-vec3 calcSpotLight(SpotLight light);
+vec3 calcSpotLight(SpotLight light, int idx);
 vec3 BRDF(vec3 lightDirection);
 
 void main()
@@ -129,7 +130,7 @@ void main()
 	for(int i = 0; i < nPointLights; i++)
 		result += calcPointLight(pointLights[i]);
 	for(int i = 0; i < nSpotLights; i++)
-		result += calcSpotLight(spotLights[i]);
+		result += calcSpotLight(spotLights[i], i);
 
 	result /= result + vec3(1.0f);//tonemap
 	//result = pow(result, vec3(1.0f / 2.2f));//gamma
@@ -144,22 +145,21 @@ float calcShadow(vec3 coords, sampler2D shadowMap, vec3 lightDirection)
 	float bias = max(shadowMappingBiasMax * (1.0 - dot(normal, lightDirection)), shadowMappingBiasMin);  
 	return coords.z - bias > closestDepth ? 0.0f : 1.0f;
 }
-float calcShadowD(int idx, vec3 lightDirection)
+
+float calcShadowDirectional(vec4 coords, sampler2D shadowMap, vec3 lightDirection)
 {
 	if(!shadowMappingEnabled)
 		return 1.0f;
-	vec3 projCoordinates = fs_in.positionLightSpaceD[idx].xyz / fs_in.positionLightSpaceD[idx].w;
-	projCoordinates = projCoordinates * 0.5 + 0.5;
-	
+	coords /= coords.w;
+	coords = coords * 0.5 + 0.5;
 	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(dirLights[idx].shadowMap, 0);
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
 	for(int x = -shadowMappingPCFSamples; x <= shadowMappingPCFSamples; ++x)
 	{
 		for(int y = -shadowMappingPCFSamples; y <= shadowMappingPCFSamples; ++y)
 		{
-			shadow += calcShadow(
-			projCoordinates + vec3(vec2(x, y) * texelSize, 0.0f),
-			dirLights[idx].shadowMap, lightDirection);
+			shadow += calcShadow(coords.xyz + vec3(vec2(x, y) * texelSize, 0.0f),
+				shadowMap, lightDirection);
 		}    
 	}
 	float sampleCount = shadowMappingPCFSamples * 2;
@@ -167,6 +167,7 @@ float calcShadowD(int idx, vec3 lightDirection)
 	sampleCount *= sampleCount;
 	return shadow /= sampleCount;
 }
+
 vec3 calcAmbientLight()
 {
 	return ambientStrength * ambientColor * baseColor;	
@@ -175,7 +176,8 @@ vec3 calcAmbientLight()
 vec3 calcDirLight(DirLight light, int idx)
 {
 	vec3 lightDirection = normalize(-light.direction);
-    vec3 radiance = light.color * light.intensity * calcShadowD(idx, lightDirection);
+	float shadow = calcShadowDirectional(fs_in.positionLightSpaceD[idx], light.shadowMap, lightDirection);
+    vec3 radiance = light.color * light.intensity * shadow;
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 
@@ -188,7 +190,7 @@ vec3 calcPointLight(PointLight light)
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 
-vec3 calcSpotLight(SpotLight light)
+vec3 calcSpotLight(SpotLight light, int idx)
 {
 	vec3 lightDirection = normalize(light.position - fs_in.position);
 	float theta = dot(lightDirection, normalize(-light.direction));
@@ -196,7 +198,8 @@ vec3 calcSpotLight(SpotLight light)
 	float distance = length(light.position - fs_in.position);
 	float attenuation = 1.0 / (distance * distance);
 	attenuation *= clamp((theta - light.outerCutoff) / epsilon, 0.0f, 1.0f);
-	vec3 radiance = light.color * light.intensity * attenuation;
+	float shadow = calcShadowDirectional(fs_in.positionLightSpaceS[idx], light.shadowMap, lightDirection);
+	vec3 radiance = light.color * light.intensity * attenuation * shadow;
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 

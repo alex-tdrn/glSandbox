@@ -140,6 +140,9 @@ void Texture::drawUI()
 		case GL_SRGB8_ALPHA8:
 			ImGui::Text("GL_SRGB8_ALPHA8");
 			break;
+		case GL_DEPTH_COMPONENT:
+			ImGui::Text("GL_DEPTH_COMPONENT");
+			break;
 		default:
 			assert(false);
 	}
@@ -158,6 +161,9 @@ void Texture::drawUI()
 			break;
 		case GL_RGBA:
 			ImGui::Text("GL_RGBA");
+			break;
+		case GL_DEPTH_COMPONENT:
+			ImGui::Text("GL_DEPTH_COMPONENT");
 			break;
 		default:
 			assert(false);

@@ -77,6 +77,7 @@ private:
 		struct{
 			struct{
 				bool enabled = true;
+				int depthComparison = GL_GEQUAL;
 				int resolution = 10;
 				float bias[2] = {0.0000f, 0.0000f};
 				int pcfSamples = 2;

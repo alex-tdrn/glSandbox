@@ -8,7 +8,7 @@ struct DirLight
 	vec3 color;
 	float intensity;
 	vec3 direction;
-	sampler2D shadowMap;
+	sampler2DShadow shadowMap;
 };
 struct PointLight
 {
@@ -24,7 +24,7 @@ struct SpotLight
 	vec3 direction;
 	float innerCutoff;
 	float outerCutoff;
-	sampler2D shadowMap;
+	sampler2DShadow shadowMap;
 };
 
 struct Material
@@ -137,27 +137,41 @@ void main()
 	FragColor = vec4(result , 1.0f);
 }
 
-float calcShadow(vec3 coords, sampler2D shadowMap, vec3 lightDirection)
+float calcShadow(vec3 coords, sampler2DShadow shadowMap, vec3 lightDirection)
 {
-	if(coords.z > 1.0f)
+	float currentDepth = coords.z;
+	if(currentDepth > 1.0f)
 		return 1.0f;
-	float closestDepth = texture(shadowMap, coords.xy).r;
 	float bias = max(shadowMappingBiasMax * (1.0 - dot(normal, lightDirection)), shadowMappingBiasMin);  
-	return coords.z - bias > closestDepth ? 0.0f : 1.0f;
+	return 1.0f - texture(shadowMap, vec3(coords.xy, currentDepth - bias));
 }
 
-float calcShadowDirectional(vec4 coords, sampler2D shadowMap, vec3 lightDirection)
+float calcShadowDirectional(vec4 coords, sampler2DShadow shadowMap, vec3 lightDirection)
 {
 	if(!shadowMappingEnabled)
 		return 1.0f;
 	coords /= coords.w;
 	coords = coords * 0.5 + 0.5;
-	float shadow = 0.0;
+	float shadow = calcShadow(coords.xyz, shadowMap, lightDirection);
 	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-	for(int x = -shadowMappingPCFSamples; x <= shadowMappingPCFSamples; ++x)
+	//early exit test
+	vec3 sampleCoord = vec3(-texelSize*shadowMappingPCFSamples, 0.0f);
+	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
+	sampleCoord *= vec3(-1, 1, 1);
+	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
+	sampleCoord *= vec3(1, -1, 1);
+	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
+	sampleCoord *= vec3(-1, 1, 1);
+	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
+	if(shadow <= 0.0f || shadow == 5.0f)
+	//discard;
+		return shadow / 5;
+	for(int x = -shadowMappingPCFSamples + 1; x <= shadowMappingPCFSamples - 1; ++x)
 	{
-		for(int y = -shadowMappingPCFSamples; y <= shadowMappingPCFSamples; ++y)
+		for(int y = -shadowMappingPCFSamples + 1; y <= shadowMappingPCFSamples - 1; ++y)
 		{
+			if(x == 0 && y == 0) 
+				continue;
 			shadow += calcShadow(coords.xyz + vec3(vec2(x, y) * texelSize, 0.0f),
 				shadowMap, lightDirection);
 		}    

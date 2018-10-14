@@ -191,7 +191,7 @@ void Renderer::renderLights() const
 void Renderer::updateShadowMaps() const
 {
 	const int resolution = 1 << shading.lighting.shadows.resolution;
-	auto resetMaps = [resolution](auto& lights, auto& shadowMaps)		{
+	auto resetMaps = [&](auto& lights, auto& shadowMaps)		{
 		shadowMaps.clear();
 		shadowMaps.reserve(lights.size());
 		for(auto light : lights)
@@ -200,8 +200,8 @@ void Renderer::updateShadowMaps() const
 				GL_DEPTH_COMPONENT, GL_FLOAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, shading.lighting.shadows.depthComparison);
 			static float const borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
 			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 		}
@@ -679,24 +679,18 @@ void Renderer::drawUI(bool* open)
 		ImGui::Separator();
 		ImGui::NextColumn();
 		ImGui::Text("Function");
-		ImGui::RadioButton("GL_ALWAYS", &pipeline.depthFunction, GL_ALWAYS);
-		ImGui::RadioButton("GL_NEVER", &pipeline.depthFunction, GL_NEVER);
-		ImGui::RadioButton("GL_LESS", &pipeline.depthFunction, GL_LESS);
-		ImGui::RadioButton("GL_EQUAL", &pipeline.depthFunction, GL_EQUAL);
-		ImGui::RadioButton("GL_LEQUAL", &pipeline.depthFunction, GL_LEQUAL);
-		ImGui::RadioButton("GL_GREATER", &pipeline.depthFunction, GL_GREATER);
-		ImGui::RadioButton("GL_NOTEQUAL", &pipeline.depthFunction, GL_NOTEQUAL);
-		ImGui::RadioButton("GL_GEQUAL", &pipeline.depthFunction, GL_GEQUAL);
+		chooseComparisonFunctionFromCombo(pipeline.depthFunction);
 		ImGui::NextColumn();
 
 		ImGui::Text("Mode");
-		ImGui::RadioButton("GL_FRONT_AND_BACK", &pipeline.faceCullingMode, GL_FRONT_AND_BACK);
-		ImGui::RadioButton("GL_FRONT", &pipeline.faceCullingMode, GL_FRONT);
-		ImGui::RadioButton("GL_BACK", &pipeline.faceCullingMode, GL_BACK);
+		chooseGLEnumFromCombo(pipeline.faceCullingMode, {
+			GL_FRONT_AND_BACK, GL_FRONT, GL_BACK
+		});
 		ImGui::NewLine();
 		ImGui::Text("Ordering");
-		ImGui::RadioButton("GL_CCW", &pipeline.faceCullingOrdering, GL_CCW);
-		ImGui::RadioButton("GL_CW ", &pipeline.faceCullingOrdering, GL_CW);
+		chooseGLEnumFromCombo(pipeline.faceCullingOrdering, {
+			GL_CCW, GL_CW
+		});
 		ImGui::Columns(1);
 
 	}
@@ -743,6 +737,9 @@ void Renderer::drawUI(bool* open)
 				ImGui::InputInt("###Resolution", &shading.lighting.shadows.resolution, 1);
 				if(shading.lighting.shadows.resolution < 1)
 					shading.lighting.shadows.resolution = 1;
+				ImGui::Text("Shadow Comparison Function");
+				ImGui::SameLine();
+				chooseComparisonFunctionFromCombo(shading.lighting.shadows.depthComparison);
 				ImGui::EndGroup();
 				if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
 					updateShadowMaps();
@@ -772,7 +769,9 @@ void Renderer::drawUI(bool* open)
 					else
 						currentShadowMapName = lightsS[showMap - lightsD.size()]->name.get();
 				}
-				if(ImGui::BeginCombo("View Shadow Map", currentShadowMapName.data()))
+				ImGui::Text("View Shadow Map");
+				ImGui::SameLine();
+				if(ImGui::BeginCombo("###ViewShadowMap", currentShadowMapName.data()))
 				{
 					bool isSelected = showMap == -1;
 					if(ImGui::Selectable("None", &isSelected))

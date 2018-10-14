@@ -16,6 +16,64 @@
 #include <vector>
 #include <memory>
 
+inline std::string glEnumToString(GLenum e)
+{
+	switch(e)
+	{
+		case GL_POINTS:
+			return "GL_POINTS";
+		case GL_LINES:
+			return "GL_LINES";
+		case GL_LINE_LOOP:
+			return "GL_LINE_LOOP";
+		case GL_TRIANGLE_FAN:
+			return "GL_TRIANGLE_FAN";
+		case GL_TRIANGLE_STRIP:
+			return "GL_TRIANGLE_STRIP";
+		case GL_TRIANGLES:
+			return "GL_TRIANGLES";
+		case GL_BYTE:
+			return "GL_BYTE";
+		case GL_UNSIGNED_BYTE:
+			return "GL_UNSIGNED_BYTE";
+		case GL_SHORT:
+			return "GL_SHORT";
+		case GL_UNSIGNED_SHORT:
+			return "GL_UNSIGNED_SHORT";
+		case GL_FLOAT:
+			return "GL_FLOAT";
+		case GL_UNSIGNED_INT:
+			return "GL_UNSIGNED_INT";
+		case GL_ALWAYS:
+			return "GL_ALWAYS";
+		case GL_NEVER:
+			return "GL_NEVER";
+		case GL_LESS:
+			return "GL_LESS";
+		case GL_EQUAL:
+			return "GL_EQUAL";
+		case GL_LEQUAL:
+			return "GL_LEQUAL";
+		case GL_GREATER:
+			return "GL_GREATER";
+		case GL_NOTEQUAL:
+			return "GL_NOTEQUAL";
+		case GL_GEQUAL:
+			return "GL_GEQUAL";
+		case GL_FRONT_AND_BACK:
+			return "GL_FRONT_AND_BACK";
+		case GL_FRONT:
+			return "GL_FRONT";
+		case GL_BACK:
+			return "GL_BACK";
+		case GL_CCW:
+			return "GL_CCW";
+		case GL_CW:
+			return "GL_CW";
+	}
+	return "Unrecognized GL enum";
+}
+
 template <typename...>
 struct is_one_of
 {
@@ -258,6 +316,35 @@ public:
 	}
 };
 
+
+inline void chooseGLEnumFromCombo(int& currentValue, std::vector<int> const& possibleValues)
+{
+	IDGuard idGuard{&currentValue};
+	if(ImGui::BeginCombo("###Combo", glEnumToString(currentValue).data()))
+	{
+		int id = 0;
+		for(int possibleValue : possibleValues)
+		{
+			ImGui::PushID(id++);
+			bool isSelected = currentValue == possibleValue;
+			if(ImGui::Selectable(glEnumToString(possibleValue).data(), &isSelected))
+				currentValue = possibleValue;
+			if(isSelected)
+				ImGui::SetItemDefaultFocus();
+			ImGui::PopID();
+		}
+		ImGui::EndCombo();
+	}
+}
+
+inline void chooseComparisonFunctionFromCombo(int& currentValue)
+{
+	chooseGLEnumFromCombo(currentValue,{
+		GL_ALWAYS, GL_NEVER, GL_LESS, GL_LEQUAL, 
+		GL_EQUAL, GL_NOTEQUAL, GL_GEQUAL, GL_GREATER
+	});
+}
+
 template <typename T>
 T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possibleValues, bool nullable = false)
 {
@@ -329,34 +416,3 @@ inline glm::mat4 removeScaling(glm::mat4 matrix)
 	return matrix;
 }
 
-inline std::string glEnumToString(GLenum e)
-{
-	switch(e)
-	{
-		case GL_POINTS:
-			return "GL_POINTS";
-		case GL_LINES:
-			return "GL_LINES";
-		case GL_LINE_LOOP:
-			return "GL_LINE_LOOP";
-		case GL_TRIANGLE_FAN:
-			return "GL_TRIANGLE_FAN";
-		case GL_TRIANGLE_STRIP:
-			return "GL_TRIANGLE_STRIP";
-		case GL_TRIANGLES:
-			return "GL_TRIANGLES";
-		case GL_BYTE:
-			return "GL_BYTE";
-		case GL_UNSIGNED_BYTE:
-			return "GL_UNSIGNED_BYTE";
-		case GL_SHORT:
-			return "GL_SHORT";
-		case GL_UNSIGNED_SHORT:
-			return "GL_UNSIGNED_SHORT";
-		case GL_FLOAT:
-			return "GL_FLOAT";
-		case GL_UNSIGNED_INT:
-			return "GL_UNSIGNED_INT";
-	}
-	return "Unrecognized GL enum";
-}

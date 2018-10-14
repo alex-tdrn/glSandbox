@@ -321,11 +321,11 @@ Scene* ResourceManager<Scene>::importGLTF(std::string_view const filename)
 	return ret;
 }
 
-Scene* ResourceManager<Scene>::test()
+Scene* ResourceManager<Scene>::basic()
 {
 	static auto ret = [&]() -> Scene*{
 		auto scene = std::make_unique<Scene>();
-		scene->name.set("test");
+		scene->name.set("basic");
 		auto prop = std::make_unique<Prop>(ResourceManager<Mesh>::box());
 		prop->setLocalRotation({45.0f, 45.0f, 0.0f});
 		prop->setLocalTranslation({0.0f, 1.0f, 0.0f});
@@ -334,6 +334,55 @@ Scene* ResourceManager<Scene>::test()
 		floor->setLocalScale({30.0f, 0.5f, 30.0f});
 		floor->setLocalTranslation({0.0f, -2.0f, 0.0f});
 		scene->getRoot()->addChild(std::move(floor));
+		return add(std::move(scene));
+	}();
+	return ret;
+}
+
+Scene* ResourceManager<Scene>::testShadowMapping()
+{
+	static auto ret = [&]() -> Scene*{
+		auto scene = std::make_unique<Scene>();
+		scene->name.set("testShadowMapping");
+		auto getRandomFloat = [](float min, float max) -> float{
+			int const precision = 1'000;
+			float r = rand() % precision;
+			r /= precision;
+			float range = std::abs(max - min);
+			return min + r * range;
+		};
+		auto getRandomVector = [&](float min, float max)->glm::vec3{
+			return {
+				getRandomFloat(min, max),
+				getRandomFloat(min, max),
+				getRandomFloat(min, max)
+			};
+		};
+		const int gridSize = 8;
+		const float stepSize = 3.0f;
+		for(int x = -gridSize / 2; x <= gridSize / 2; x++)
+		{
+			for(int z = -gridSize / 2; z <= gridSize / 2; z++)
+			{
+				if(x == 0 && z == 0)
+					continue;
+				auto prop = std::make_unique<Prop>(ResourceManager<Mesh>::box());
+				prop->setLocalRotation(getRandomVector(-90.0f, 90.0f));
+				glm::vec3 pos{x * stepSize, getRandomFloat(0.0f, 10.0f), z * stepSize};
+				pos += getRandomVector(-stepSize / 10, stepSize / 10);
+				prop->setLocalTranslation(pos);
+				scene->getRoot()->addChild(std::move(prop));
+
+			}
+		}
+		auto floor = std::make_unique<Prop>(ResourceManager<Mesh>::box());
+		floor->setLocalScale({100.0f, 0.5f, 100.0f});
+		floor->setLocalTranslation({0.0f, -2.0f, 0.0f});
+		scene->getRoot()->addChild(std::move(floor));
+		auto light = std::make_unique<PointLight>();
+		light->setIntensity(10'000.0f);
+		light->setColor({1.0f, 0.8f, 0.5f});
+		scene->getRoot()->addChild(std::move(light));
 		return add(std::move(scene));
 	}();
 	return ret;
@@ -475,11 +524,21 @@ Shader* ResourceManager<Shader>::debugDepthBuffer()
 	return ret;
 }
 
-Shader* ResourceManager<Shader>::shadowMapping()
+Shader* ResourceManager<Shader>::shadowMappingUnidirectional()
 {
 	static auto ret = [&]() -> Shader*{
-		auto shader = std::make_unique<Shader>("shaders/shadowMapping.vert", "shaders/shadowMapping.frag");
-		shader->name.set("Shadow Mapping");
+		auto shader = std::make_unique<Shader>("shaders/shadowMappingUnidirectional.vert", "shaders/shadowMappingUnidirectional.frag");
+		shader->name.set("Shadow Mapping Unidirectional");
+		return add(std::move(shader));
+	}();
+	return ret;
+}
+
+Shader* ResourceManager<Shader>::shadowMappingOmnidirectional()
+{
+	static auto ret = [&]() -> Shader*{
+		auto shader = std::make_unique<Shader>("shaders/shadowMappingOmnidirectional.vert", "shaders/shadowMappingOmnidirectional.frag", "shaders/shadowMappingOmnidirectional.geom");
+		shader->name.set("Shadow Mapping Omnidirectional");
 		return add(std::move(shader));
 	}();
 	return ret;
@@ -567,7 +626,8 @@ void initializeResources()
 
 	ResourceManager<Cubemap>::skybox();
 
-	ResourceManager<Scene>::test();
+	ResourceManager<Scene>::basic();
+	ResourceManager<Scene>::testShadowMapping();
 
 	ResourceManager<Shader>::unlit();
 	ResourceManager<Shader>::pbr();
@@ -581,7 +641,8 @@ void initializeResources()
 	ResourceManager<Shader>::debugNormalsShowLines();
 	ResourceManager<Shader>::debugTexCoords();
 	ResourceManager<Shader>::debugDepthBuffer();
-	ResourceManager<Shader>::shadowMapping();
+	ResourceManager<Shader>::shadowMappingUnidirectional();
+	ResourceManager<Shader>::shadowMappingOmnidirectional();
 	ResourceManager<Shader>::skybox();
 	ResourceManager<Shader>::gammaHDR();
 	ResourceManager<Shader>::passthrough();

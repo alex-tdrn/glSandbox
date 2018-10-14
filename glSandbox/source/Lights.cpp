@@ -59,8 +59,8 @@ void DirectionalLight::drawUI()
 void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const
 {
 	Light::use(prefix, shader, flash);
-	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
-	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(t, 1.0f)));
+	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(getPosition(), 1.0f)));
+	shader.set(prefix + "worldPosition", getPosition());
 }
 
 void PointLight::drawUI()

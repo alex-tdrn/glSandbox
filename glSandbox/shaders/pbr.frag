@@ -15,6 +15,8 @@ struct PointLight
 	vec3 color;
 	float intensity;
 	vec3 position;
+	vec3 worldPosition;
+	samplerCube shadowMap;
 };
 struct SpotLight
 {
@@ -62,10 +64,12 @@ uniform bool shadowMappingEnabled;
 uniform float shadowMappingBiasMin;
 uniform float shadowMappingBiasMax;
 uniform int shadowMappingPCFSamples;
+uniform float shadowMappingOmniFarPlane;
 
 in VS_OUT
 {
 	vec3 position;
+	vec3 worldPosition;
 	vec3 normal;
 	mat3 TBN;
 	vec2 textureCoordinates;
@@ -87,7 +91,7 @@ vec3 F0 = vec3(0.04);
 
 vec3 calcAmbientLight();
 vec3 calcDirLight(DirLight light, int idx);
-vec3 calcPointLight(PointLight light);
+vec3 calcPointLight(PointLight light, int idx);
 vec3 calcSpotLight(SpotLight light, int idx);
 vec3 BRDF(vec3 lightDirection);
 
@@ -128,13 +132,13 @@ void main()
 	for(int i = 0; i < nDirLights; i++)
 		result += calcDirLight(dirLights[i], i);
 	for(int i = 0; i < nPointLights; i++)
-		result += calcPointLight(pointLights[i]);
+		result += calcPointLight(pointLights[i], i);
 	for(int i = 0; i < nSpotLights; i++)
 		result += calcSpotLight(spotLights[i], i);
 
 	result /= result + vec3(1.0f);//tonemap
 	//result = pow(result, vec3(1.0f / 2.2f));//gamma
-	FragColor = vec4(result , 1.0f);
+	//FragColor = vec4(result , 1.0f);
 }
 
 float calcShadow(vec3 coords, sampler2DShadow shadowMap, vec3 lightDirection)
@@ -146,7 +150,7 @@ float calcShadow(vec3 coords, sampler2DShadow shadowMap, vec3 lightDirection)
 	return 1.0f - texture(shadowMap, vec3(coords.xy, currentDepth - bias));
 }
 
-float calcShadowDirectional(vec4 coords, sampler2DShadow shadowMap, vec3 lightDirection)
+float calcShadow(vec4 coords, sampler2DShadow shadowMap, vec3 lightDirection)
 {
 	if(!shadowMappingEnabled)
 		return 1.0f;
@@ -186,6 +190,20 @@ float calcShadowDirectional(vec4 coords, sampler2DShadow shadowMap, vec3 lightDi
 	return shadow /= sampleCount;
 }
 
+float calcShadow(vec3 coords, samplerCube shadowMap)
+{
+	if(!shadowMappingEnabled)
+		return 1.0f;
+	float closestDepth = texture(shadowMap, coords.xyz).r;
+	float currentDepth = length(coords);
+	FragColor = vec4(vec3(closestDepth), 1.0f);
+	if(currentDepth > closestDepth)
+	 return 0.0f;
+	else
+	 return 1.0f; 
+	//return 1.0f - ;
+}
+
 vec3 calcAmbientLight()
 {
 	return ambientStrength * ambientColor * baseColor;	
@@ -194,17 +212,18 @@ vec3 calcAmbientLight()
 vec3 calcDirLight(DirLight light, int idx)
 {
 	vec3 lightDirection = normalize(-light.direction);
-	float shadow = calcShadowDirectional(fs_in.positionLightSpaceD[idx], light.shadowMap, lightDirection);
+	float shadow = calcShadow(fs_in.positionLightSpaceD[idx], light.shadowMap, lightDirection);
     vec3 radiance = light.color * light.intensity * shadow;
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 
-vec3 calcPointLight(PointLight light)
+vec3 calcPointLight(PointLight light, int idx)
 {
-	float distance = length(light.position - fs_in.position);
+	float distance = length(fs_in.position - light.position);
 	float attenuation = 1.0 / (distance * distance);
-	vec3 lightDirection = normalize(light.position - fs_in.position);
-	vec3 radiance = light.color * light.intensity * attenuation;
+	vec3 lightDirection = normalize(-fs_in.position + light.position);
+	float shadow = calcShadow(fs_in.worldPosition - light.worldPosition, light.shadowMap);
+	vec3 radiance = light.color * light.intensity * attenuation * shadow;
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 
@@ -216,7 +235,7 @@ vec3 calcSpotLight(SpotLight light, int idx)
 	float distance = length(light.position - fs_in.position);
 	float attenuation = 1.0 / (distance * distance);
 	attenuation *= clamp((theta - light.outerCutoff) / epsilon, 0.0f, 1.0f);
-	float shadow = calcShadowDirectional(fs_in.positionLightSpaceS[idx], light.shadowMap, lightDirection);
+	float shadow = calcShadow(fs_in.positionLightSpaceS[idx], light.shadowMap, lightDirection);
 	vec3 radiance = light.color * light.intensity * attenuation * shadow;
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }

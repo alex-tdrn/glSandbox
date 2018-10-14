@@ -24,6 +24,28 @@ Texture::Texture(std::string const& path, bool linear)
 	name.set(filename.filename().string());
 }
 
+Texture::Texture(Texture && other)
+	: allocated(other.allocated), ID(other.ID),
+	width(other.width), height(other.height),
+	nrChannels(other.nrChannels), format(other.format),
+	pixelTransfer(other.pixelTransfer), dataType(other.dataType),
+	mipmapping(other.mipmapping), linear(other.linear), path(other.path)
+{
+	other.ID = 0;
+}
+
+Texture& Texture::operator=(Texture&& other)
+{
+	allocated = other.allocated;  ID = other.ID;
+	width = other.width; height = other.height;
+	nrChannels = other.nrChannels; format = other.format;
+	pixelTransfer = other.pixelTransfer; dataType = other.dataType;
+	mipmapping = other.mipmapping; linear = other.linear; path = other.path;
+
+	other.ID = 0;
+	return *this;
+}
+
 Texture::~Texture()
 {
 	glDeleteTextures(1, &ID);

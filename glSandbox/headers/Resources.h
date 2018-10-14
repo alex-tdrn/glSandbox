@@ -83,7 +83,8 @@ class ResourceManager<Scene> : public detail::ResourceManagerBase<Scene>
 {
 public:
 	static Scene* importGLTF(std::string_view const filename);
-	static Scene* test();
+	static Scene* basic();
+	static Scene* testShadowMapping();
 
 };
 
@@ -105,7 +106,8 @@ public:
 	static Shader* debugNormalsShowLines();
 	static Shader* debugTexCoords();
 	static Shader* debugDepthBuffer();
-	static Shader* shadowMapping();
+	static Shader* shadowMappingUnidirectional();
+	static Shader* shadowMappingOmnidirectional();
 	static Shader* skybox();
 	static Shader* gammaHDR();
 	static Shader* passthrough();

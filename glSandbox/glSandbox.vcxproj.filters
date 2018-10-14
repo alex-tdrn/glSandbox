@@ -289,7 +289,10 @@
     <None Include="shaders\pbr.vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\shadowMapping.frag" />
-    <None Include="shaders\shadowMapping.vert" />
+    <None Include="shaders\shadowMappingUnidirectional.vert" />
+    <None Include="shaders\shadowMappingUnidirectional.frag" />
+    <None Include="shaders\shadowMappingOmnidirectional.vert" />
+    <None Include="shaders\shadowMappingOmnidirectional.frag" />
+    <None Include="shaders\shadowMappingOmnidirectional.geom" />
   </ItemGroup>
 </Project>

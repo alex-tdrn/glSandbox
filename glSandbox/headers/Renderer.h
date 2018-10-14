@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Grid.h"
 #include "Texture.h"
+#include "Cubemap.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -43,7 +44,7 @@ private:
 		int faceCullingOrdering = GL_CCW;
 	} pipeline;
 	struct{
-		bool enabled = true;
+		bool enabled = false;
 		glm::vec3 color{1.0f};
 		bool overlay = false;
 		bool boundingBox = false;
@@ -84,6 +85,7 @@ private:
 				float directionalLightProjectionSize = 10.0f;
 				mutable std::vector<Texture> shadowMapsD;
 				mutable std::vector<Texture> shadowMapsS;
+				mutable std::vector<Cubemap> shadowMapsP;
 				int showMap = -1;
 			}shadows;
 			float ambientStrength = 1.0f;

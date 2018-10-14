@@ -191,33 +191,48 @@ void Renderer::renderLights() const
 void Renderer::updateShadowMaps() const
 {
 	const int resolution = 1 << shading.lighting.shadows.resolution;
-	auto resetMaps = [&](auto& lights, auto& shadowMaps)		{
+	auto allocateShadowMap = [&]() -> Texture{
+		Texture ret{GL_DEPTH_COMPONENT, resolution, resolution,
+			GL_DEPTH_COMPONENT, GL_FLOAT};
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, shading.lighting.shadows.depthComparison);
+		static float const borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		return std::move(ret);
+	};
+	auto resetMaps = [&](auto& lights, auto& shadowMaps){
 		shadowMaps.clear();
 		shadowMaps.reserve(lights.size());
-		for(auto light : lights)
-		{
-			shadowMaps.emplace_back(GL_DEPTH_COMPONENT, resolution, resolution,
-				GL_DEPTH_COMPONENT, GL_FLOAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, shading.lighting.shadows.depthComparison);
-			static float const borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-		}
+		for(auto& light : lights)
+			shadowMaps.emplace_back(allocateShadowMap());
 
 	};
 	resetMaps(scene->getAll<DirectionalLight>(), shading.lighting.shadows.shadowMapsD);
 	resetMaps(scene->getAll<SpotLight>(), shading.lighting.shadows.shadowMapsS);
+	auto& pointLights = scene->getAll<PointLight>();
+	auto& shadowMapsP = shading.lighting.shadows.shadowMapsP;
+	shadowMapsP.clear();
+	shadowMapsP.reserve(pointLights.size());
+	for(auto& light : pointLights)
+	{
+		shadowMapsP.emplace_back(GL_DEPTH_COMPONENT, resolution, resolution,
+			GL_DEPTH_COMPONENT, GL_FLOAT);
+	}
 }
 
 void Renderer::renderShadowMaps() const
 {
 	auto lightsD = scene->getAll<DirectionalLight>();
 	auto lightsS = scene->getAll<SpotLight>();
+	auto lightsP = scene->getAll<PointLight>();
 	auto& shadowMapsD = shading.lighting.shadows.shadowMapsD;
 	auto& shadowMapsS = shading.lighting.shadows.shadowMapsS;
-	if(lightsD.size() != shadowMapsD.size() || lightsS.size() != shadowMapsS.size())
+	auto& shadowMapsP = shading.lighting.shadows.shadowMapsP;
+	if(lightsD.size() != shadowMapsD.size() || 
+		lightsS.size() != shadowMapsS.size() ||
+		lightsP.size() != shadowMapsP.size())
 	{
 		updateShadowMaps();
 	}
@@ -236,7 +251,7 @@ void Renderer::renderShadowMaps() const
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 	glFrontFace(GL_CCW);
-	int enabledLights = 0;
+	int enabledDirectionalLights = 0;
 	for(int i = 0; i < lightsD.size(); i++)
 	{
 		if(!lightsD[i]->isEnabled())
@@ -251,15 +266,15 @@ void Renderer::renderShadowMaps() const
 		glm::vec3 center = eye + lightDirection;
 		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
 		glm::mat4 lightSpace = lightProjection * lightView;
-		ResourceManager<Shader>::shadowMapping()->use();
-		ResourceManager<Shader>::shadowMapping()->set("lightSpace", lightSpace);
-		renderProps(ResourceManager<Shader>::shadowMapping());
+		ResourceManager<Shader>::shadowMappingUnidirectional()->use();
+		ResourceManager<Shader>::shadowMappingUnidirectional()->set("lightSpace", lightSpace);
+		renderProps(ResourceManager<Shader>::shadowMappingUnidirectional());
 		shading.current->use();
-		shading.current->set("lightSpacesD[" + std::to_string(enabledLights) + "]", lightSpace);
-		shading.current->set("dirLights[" + std::to_string(enabledLights++) + "].shadowMap", 10 + i);
+		shading.current->set("lightSpacesD[" + std::to_string(enabledDirectionalLights) + "]", lightSpace);
+		shading.current->set("dirLights[" + std::to_string(enabledDirectionalLights++) + "].shadowMap", 10 + i);
 		shadowMapsD[i].use(10 + i);
 	}
-	enabledLights = 0;
+	int enabledSpotLights = 0;
 	for(int i = 0; i < lightsS.size(); i++)
 	{
 		if(!lightsS[i]->isEnabled())
@@ -271,13 +286,46 @@ void Renderer::renderShadowMaps() const
 		glm::vec3 center = eye + lightsS[i]->getDirection();
 		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
 		glm::mat4 lightSpace = lightProjection * lightView;
-		ResourceManager<Shader>::shadowMapping()->use();
-		ResourceManager<Shader>::shadowMapping()->set("lightSpace", lightSpace);
-		renderProps(ResourceManager<Shader>::shadowMapping());
+		ResourceManager<Shader>::shadowMappingUnidirectional()->use();
+		ResourceManager<Shader>::shadowMappingUnidirectional()->set("lightSpace", lightSpace);
+		renderProps(ResourceManager<Shader>::shadowMappingUnidirectional());
 		shading.current->use();
-		shading.current->set("lightSpacesS[" + std::to_string(enabledLights) + "]", lightSpace);
-		shading.current->set("spotLights[" + std::to_string(enabledLights++) + "].shadowMap", 10 + i + static_cast<int>(lightsD.size()));
-		shadowMapsS[i].use(10 + i + lightsD.size());
+		shading.current->set("lightSpacesS[" + std::to_string(enabledSpotLights) + "]", lightSpace);
+		shading.current->set("spotLights[" + std::to_string(enabledSpotLights++) + "].shadowMap", 
+			10 + i + enabledDirectionalLights);
+		shadowMapsS[i].use(10 + i + enabledDirectionalLights);
+	}
+
+	int enabledPointLights = 0;
+	for(int i = 0; i < lightsP.size(); i++)
+	{
+		if(!lightsP[i]->isEnabled())
+			continue;
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMapsP[i].getID(), 0);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		static float const farPlane = 1000.0f;
+		glm::mat4 lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, farPlane);
+		glm::vec3 eye = lightsP[i]->getPosition();
+		std::array<glm::mat4, 6> lightSpaceMatrices = {
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{+1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, +1.0f, 0.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{-1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, +1.0f, 0.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, +1.0f, 0.0f}, glm::vec3{0.0f, 0.0f, +1.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, -1.0f, 0.0f}, glm::vec3{0.0f, 0.0f, -1.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, +1.0f}, glm::vec3{0.0f, +1.0f, 0.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, -1.0f}, glm::vec3{0.0f, +1.0f, 0.0f})
+		};
+		ResourceManager<Shader>::shadowMappingOmnidirectional()->use();
+		ResourceManager<Shader>::shadowMappingOmnidirectional()->set("lightPos", eye);
+		ResourceManager<Shader>::shadowMappingOmnidirectional()->set("farPlane", farPlane);
+		for(int i = 0; i < 6; i++)
+			ResourceManager<Shader>::shadowMappingOmnidirectional()->set(
+			"lightSpaces[" + std::to_string(i) + "]", lightSpaceMatrices[i]);
+		renderProps(ResourceManager<Shader>::shadowMappingOmnidirectional());
+		shading.current->use();
+		shading.current->set("shadowMappingOmniFarPlane", farPlane);
+		shading.current->set("pointLights[" + std::to_string(enabledPointLights++) + "].shadowMap",
+			10 + i + enabledDirectionalLights + enabledSpotLights);
+		shadowMapsP[i].use(10 + i + enabledDirectionalLights + enabledSpotLights);
 	}
 
 	glViewport(0, 0, viewport.width, viewport.height);

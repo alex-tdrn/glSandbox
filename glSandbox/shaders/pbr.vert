@@ -7,6 +7,7 @@ layout(std140, binding = 0) uniform CameraMatrices
 	uniform mat4 projection;
 	uniform mat4 view;
 };
+
 uniform mat4 model;
 uniform int nDirLights;
 uniform int nPointLights;
@@ -23,6 +24,7 @@ layout(location = 3) in vec2 textureCoordinates;
 out VS_OUT
 {
 	vec3 position;
+	vec3 worldPosition;
 	vec3 normal;
 	mat3 TBN;
 	vec2 textureCoordinates;
@@ -32,7 +34,8 @@ out VS_OUT
 
 void main()
 {
-	vs_out.position = vec3(view * model * vec4(position, 1.0f));
+	vs_out.worldPosition = vec3(model * vec4(position, 1.0f));
+	vs_out.position = vec3(view * vec4(vs_out.worldPosition, 1.0f));
 	for(int i = 0; i < nDirLights; i++)
 		vs_out.positionLightSpaceD[i] = lightSpacesD[i] * model * vec4(position, 1.0f);
 	for(int i = 0; i < nSpotLights; i++)

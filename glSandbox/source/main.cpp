@@ -32,7 +32,7 @@ double lastMouseY = 300;
 bool mouseDrag = false;
 Renderer& settings::mainRenderer()
 {
-	static Renderer r = {ResourceManager<Scene>::test()->getAll<Camera>().front()};
+	static Renderer r = {ResourceManager<Scene>::basic()->getAll<Camera>().front()};
 	return r;
 }
 

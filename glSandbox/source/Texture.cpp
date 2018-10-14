@@ -26,7 +26,7 @@ Texture::Texture(std::string const& path, bool linear)
 
 Texture::~Texture()
 {
-	//TODO
+	glDeleteTextures(1, &ID);
 }
 
 void Texture::allocate(void* imageData) const

@@ -300,7 +300,7 @@ void Renderer::configureShaders() const
 				if(!lights[i]->isEnabled() && !lights[i]->isHighlighted())
 					continue;
 				std::string prefix = prefix1 + "[" + std::to_string(enabledLights) + "].";
-				lights[i]->use(prefix, viewMatrix, *(shading.current));
+				lights[i]->use(prefix, viewMatrix, *(shading.current), highlighting.enabled && lights[i]->isHighlighted());
 				enabledLights++;
 			}
 			shading.current->set(prefix2, enabledLights);

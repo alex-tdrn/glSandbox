@@ -41,9 +41,9 @@ void Light::drawUI()
 	ImGui::DragFloat("Intensity", &intensity, 0.1f);
 }
 
-void DirectionalLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
+void DirectionalLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const
 {
-	Light::use(prefix, shader, isHighlighted());
+	Light::use(prefix, shader, flash);
 	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
 	glm::vec3 direction = glm::mat3_cast(r) * glm::vec3{0.0f, 0.0f, -1.0f};
 	direction = glm::normalize(direction);
@@ -56,9 +56,9 @@ void DirectionalLight::drawUI()
 	Light::drawUI();
 }
 
-void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
+void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const
 {
-	Light::use(prefix, shader, isHighlighted());
+	Light::use(prefix, shader, flash);
 	auto[t, r, s] = decomposeTransformation(getGlobalTransformation());
 	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4(t, 1.0f)));
 }
@@ -85,9 +85,9 @@ float SpotLight::getOuterCutoff() const
 	return outerCutoff;
 }
 
-void SpotLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const
+void SpotLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const
 {
-	Light::use(prefix, shader, isHighlighted());
+	Light::use(prefix, shader, flash);
 	shader.set(prefix + "position", glm::vec3(viewMatrix * glm::vec4{getPosition(), 1.0f}));
 	shader.set(prefix + "direction", glm::vec3(viewMatrix * glm::vec4{getDirection(), 0.0f}));
 	shader.set(prefix + "innerCutoff", glm::cos(glm::radians(getInnerCutoff())));

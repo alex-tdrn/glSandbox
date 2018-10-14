@@ -301,6 +301,7 @@ public:
 				ImGui::SameLine();
 				ImGui::RadioButton("Orbital", reinterpret_cast<int*>(&rotationStyleOrbital), 1);
 			}
+			else rotationStyleOrbital = false;
 			bool limitPitch = this->getLimitPitch();
 			ImGui::SameLine();
 			if(ImGui::Checkbox("Limit Pitch", &limitPitch))

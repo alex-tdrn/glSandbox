@@ -34,7 +34,7 @@ public:
 	virtual ~DirectionalLight() = default;
 
 public:
-	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const;
+	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const;
 	void drawUI() override;
 
 };
@@ -49,7 +49,7 @@ public:
 	virtual ~PointLight() = default;
 
 public:
-	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const;
+	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const;
 	void drawUI() override;
 
 };
@@ -71,7 +71,7 @@ public:
 	void setCutoff(float inner, float outer);
 	float getInnerCutoff() const;
 	float getOuterCutoff() const;
-	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const;
+	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const;
 	void drawUI() override;
 
 };

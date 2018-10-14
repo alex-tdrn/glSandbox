@@ -155,25 +155,29 @@ float calcShadowDirectional(vec4 coords, sampler2DShadow shadowMap, vec3 lightDi
 	float shadow = calcShadow(coords.xyz, shadowMap, lightDirection);
 	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
 	//early exit test
-	vec3 sampleCoord = vec3(-texelSize*shadowMappingPCFSamples, 0.0f);
-	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
-	sampleCoord *= vec3(-1, 1, 1);
-	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
-	sampleCoord *= vec3(1, -1, 1);
-	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
-	sampleCoord *= vec3(-1, 1, 1);
-	shadow += calcShadow(coords.xyz + sampleCoord, shadowMap, lightDirection);
-	if(shadow <= 0.0f || shadow == 5.0f)
-	//discard;
+	vec3 sampleDL = vec3(-texelSize*shadowMappingPCFSamples, 0.0f);
+	shadow += calcShadow(coords.xyz + sampleDL, shadowMap, lightDirection);
+	vec3 sampleDR = sampleDL * vec3(-1, 1, 1);
+	shadow += calcShadow(coords.xyz + sampleDR, shadowMap, lightDirection);
+	vec3 sampleUR = sampleDR * vec3(1, -1, 1);
+	shadow += calcShadow(coords.xyz + sampleUR, shadowMap, lightDirection);
+	vec3 sampleUL = sampleUR * vec3(-1, 1, 1);
+	shadow += calcShadow(coords.xyz + sampleUL, shadowMap, lightDirection);
+	if(shadow == 0.0f || shadow == 5.0f)
 		return shadow / 5;
-	for(int x = -shadowMappingPCFSamples + 1; x <= shadowMappingPCFSamples - 1; ++x)
+	for(int x = -shadowMappingPCFSamples; x <= shadowMappingPCFSamples; ++x)
 	{
-		for(int y = -shadowMappingPCFSamples + 1; y <= shadowMappingPCFSamples - 1; ++y)
+		for(int y = -shadowMappingPCFSamples; y <= shadowMappingPCFSamples; ++y)
 		{
-			if(x == 0 && y == 0) 
+			if(x == 0 && y == 0 ) 
 				continue;
-			shadow += calcShadow(coords.xyz + vec3(vec2(x, y) * texelSize, 0.0f),
-				shadowMap, lightDirection);
+			vec3 offset = vec3(vec2(x, y) * texelSize, 0.0f);
+			if(offset == sampleDL
+			|| offset == sampleDR
+			|| offset == sampleUR
+			|| offset == sampleUL)
+				continue;
+			shadow += calcShadow(coords.xyz + offset, shadowMap, lightDirection);
 		}    
 	}
 	float sampleCount = shadowMappingPCFSamples * 2;

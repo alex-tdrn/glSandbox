@@ -1,5 +1,8 @@
 #include "ImportGLTF.h"
-#include "Resources.h"
+#include "Texture.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "Scene.h"
 #include "Prop.h"
 #include "MaterialPBRMetallicRoughness.h"
 

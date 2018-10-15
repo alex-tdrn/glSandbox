@@ -138,7 +138,7 @@ void main()
 
 	result /= result + vec3(1.0f);//tonemap
 	//result = pow(result, vec3(1.0f / 2.2f));//gamma
-	//FragColor = vec4(result , 1.0f);
+	FragColor = vec4(result , 1.0f);
 }
 
 float calcShadow(vec3 coords, sampler2DShadow shadowMap, vec3 lightDirection)
@@ -196,12 +196,10 @@ float calcShadow(vec3 coords, samplerCube shadowMap)
 		return 1.0f;
 	float closestDepth = texture(shadowMap, coords.xyz).r;
 	float currentDepth = length(coords);
-	FragColor = vec4(vec3(closestDepth), 1.0f);
 	if(currentDepth > closestDepth)
 	 return 0.0f;
 	else
 	 return 1.0f; 
-	//return 1.0f - ;
 }
 
 vec3 calcAmbientLight()
@@ -213,7 +211,7 @@ vec3 calcDirLight(DirLight light, int idx)
 {
 	vec3 lightDirection = normalize(-light.direction);
 	float shadow = calcShadow(fs_in.positionLightSpaceD[idx], light.shadowMap, lightDirection);
-    vec3 radiance = light.color * light.intensity * shadow;
+	vec3 radiance = light.color * light.intensity * shadow;
 	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
 }
 

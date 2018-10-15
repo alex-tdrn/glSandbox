@@ -1,6 +1,7 @@
 #include "Util.h"
 #include "PostProcessingStep.h"
 #include "Globals.h"
+#include "MeshManager.h"
 
 void PostProcessingStep::initFramebuffer()
 {
@@ -52,14 +53,14 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	currentShader->use();
 	currentShader->set("screenTexture", 0);
 
-	if(currentShader == ResourceManager<Shader>::convolution())
+	if(currentShader == ShaderManager::convolution())
 	{
 		currentShader->set("offset", convolutionOffset);
 		currentShader->set("divisor", convolutionDivisor);
 		for(int i = 0; i < 9; i++)
 			currentShader->set("kernel[" + std::to_string(i) + "]", convolutionKernel[i]);
 	}
-	else if(currentShader == ResourceManager<Shader>::chromaticAberration())
+	else if(currentShader == ShaderManager::chromaticAberration())
 	{
 		currentShader->set("intensity", chromaticAberrationIntensity);
 		currentShader->set("offsetR", chromaticAberrationOffsetR);
@@ -70,7 +71,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	ResourceManager<Mesh>::quad()->use();
+	MeshManager::quad()->use();
 
 	if(doGammaHDR)
 	{
@@ -80,8 +81,8 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glDisable(GL_CULL_FACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		ResourceManager<Shader>::gammaHDR()->use();
-		ResourceManager<Shader>::gammaHDR()->set("screenTexture", 0);
+		ShaderManager::gammaHDR()->use();
+		ShaderManager::gammaHDR()->set("screenTexture", 0);
 		/*if(settings::rendering::gammaCorrection)
 			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
 		else
@@ -97,7 +98,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorbuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		ResourceManager<Mesh>::quad()->use();
+		MeshManager::quad()->use();
 	}
 }
 

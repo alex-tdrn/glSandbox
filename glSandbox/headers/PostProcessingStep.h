@@ -1,6 +1,5 @@
 #pragma once
-#include "Shader.h"
-#include "Resources.h"
+#include "ShaderManager.h"
 
 class PostProcessingStep
 {
@@ -9,7 +8,7 @@ private:
 	unsigned int inputColorbuffer;
 	unsigned int framebuffer;
 	unsigned int colorbuffer;
-	Shader* currentShader = ResourceManager<Shader>::passthrough();
+	Shader* currentShader = ShaderManager::passthrough();
 	float convolutionKernel[9];
 	float convolutionDivisor = 1.0f;
 	float convolutionOffset = 0.001f;

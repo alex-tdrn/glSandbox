@@ -2,6 +2,9 @@
 #include "Globals.h"
 #include "Lights.h"
 #include "Prop.h"
+#include "SceneManager.h"
+#include "TextureManager.h"
+#include "MeshManager.h"
 
 Renderer::Renderer(Camera* camera)
 {
@@ -123,45 +126,45 @@ void Renderer::renderAuxiliaryGeometry() const
 {
 	camera->use();
 	glDisable(GL_CULL_FACE);
-	ResourceManager<Shader>::unlit()->use();
+	ShaderManager::unlit()->use();
 	for(auto const& _camera : scene->getAll<Camera>())
 	{
 		if(camera == _camera || !_camera->isEnabled() || !_camera->getVisualizeFrustum())
 			continue;
-		ResourceManager<Shader>::unlit()->set("model", glm::inverse(_camera->getProjectionMatrix() * _camera->getViewMatrix()));
-		ResourceManager<Texture>::debug()->use(1);
+		ShaderManager::unlit()->set("model", glm::inverse(_camera->getProjectionMatrix() * _camera->getViewMatrix()));
+		TextureManager::debug()->use(1);
 		if(geometry.frustum.mode != geometry.lines)
 		{
-			ResourceManager<Shader>::unlit()->set("material.hasMap", geometry.frustum.textured);
-			ResourceManager<Shader>::unlit()->set("material.map", 1);
-			ResourceManager<Shader>::unlit()->set("material.r", true);
-			ResourceManager<Shader>::unlit()->set("material.g", true);
-			ResourceManager<Shader>::unlit()->set("material.b", true);
-			ResourceManager<Shader>::unlit()->set("material.a", true);
-			ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{1.0f, 1.0f, 1.0f});
-			ResourceManager<Mesh>::box()->use();
+			ShaderManager::unlit()->set("material.hasMap", geometry.frustum.textured);
+			ShaderManager::unlit()->set("material.map", 1);
+			ShaderManager::unlit()->set("material.r", true);
+			ShaderManager::unlit()->set("material.g", true);
+			ShaderManager::unlit()->set("material.b", true);
+			ShaderManager::unlit()->set("material.a", true);
+			ShaderManager::unlit()->set("material.color", glm::vec3{1.0f, 1.0f, 1.0f});
+			MeshManager::box()->use();
 		}
 		if(geometry.frustum.mode != geometry.triangles)
 		{
-			ResourceManager<Shader>::unlit()->set("material.hasMap", false);
-			ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
-			ResourceManager<Mesh>::boxWireframe()->use();
+			ShaderManager::unlit()->set("material.hasMap", false);
+			ShaderManager::unlit()->set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
+			MeshManager::boxWireframe()->use();
 		}
 	}
 	Node* currentNode = scene->getCurrent();
 	if(highlighting.boundingBox && currentNode)
 	{
-		ResourceManager<Shader>::unlit()->set("model", currentNode->getBounds().getTransformation());
-		ResourceManager<Shader>::unlit()->set("material.hasMap", false);
-		ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
-		ResourceManager<Mesh>::boxWireframe()->use();
+		ShaderManager::unlit()->set("model", currentNode->getBounds().getTransformation());
+		ShaderManager::unlit()->set("material.hasMap", false);
+		ShaderManager::unlit()->set("material.color", glm::vec3{0.0f, 0.0f, 0.0f});
+		MeshManager::boxWireframe()->use();
 	}
 	if(geometry.grid.enabled)
 	{
 		glLineWidth(geometry.grid.lineWidth);
-		ResourceManager<Shader>::unlit()->set("model", glm::scale(glm::mat4{1.0f}, glm::vec3{geometry.grid.scale}));
-		ResourceManager<Shader>::unlit()->set("material.hasMap", false);
-		ResourceManager<Shader>::unlit()->set("material.color", geometry.grid.color);
+		ShaderManager::unlit()->set("model", glm::scale(glm::mat4{1.0f}, glm::vec3{geometry.grid.scale}));
+		ShaderManager::unlit()->set("material.hasMap", false);
+		ShaderManager::unlit()->set("material.color", geometry.grid.color);
 		geometry.grid.mainGenerator.get()->use();
 		glLineWidth(geometry.grid.lineWidth * 4);
 		geometry.grid.subGenerator.get()->use();
@@ -178,10 +181,10 @@ void Renderer::renderLights() const
 			if(!light->isEnabled())
 				continue;
 			glm::vec3 lightColor = light->getColor() * light->getIntensity() / (light->getIntensity() + 1);
-			ResourceManager<Shader>::unlit()->set("material.hasMap", false);
-			ResourceManager<Shader>::unlit()->set("material.color", lightColor);
-			ResourceManager<Shader>::unlit()->set("model", light->getGlobalTransformation() * glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
-			ResourceManager<Mesh>::box()->use();
+			ShaderManager::unlit()->set("material.hasMap", false);
+			ShaderManager::unlit()->set("material.color", lightColor);
+			ShaderManager::unlit()->set("model", light->getGlobalTransformation() * glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			MeshManager::box()->use();
 		}
 	};
 	drawLights(scene->getAll<PointLight>());
@@ -266,9 +269,9 @@ void Renderer::renderShadowMaps() const
 		glm::vec3 center = eye + lightDirection;
 		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
 		glm::mat4 lightSpace = lightProjection * lightView;
-		ResourceManager<Shader>::shadowMappingUnidirectional()->use();
-		ResourceManager<Shader>::shadowMappingUnidirectional()->set("lightSpace", lightSpace);
-		renderProps(ResourceManager<Shader>::shadowMappingUnidirectional());
+		ShaderManager::shadowMappingUnidirectional()->use();
+		ShaderManager::shadowMappingUnidirectional()->set("lightSpace", lightSpace);
+		renderProps(ShaderManager::shadowMappingUnidirectional());
 		shading.current->use();
 		shading.current->set("lightSpacesD[" + std::to_string(enabledDirectionalLights) + "]", lightSpace);
 		shading.current->set("dirLights[" + std::to_string(enabledDirectionalLights++) + "].shadowMap", 10 + i);
@@ -286,9 +289,9 @@ void Renderer::renderShadowMaps() const
 		glm::vec3 center = eye + lightsS[i]->getDirection();
 		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
 		glm::mat4 lightSpace = lightProjection * lightView;
-		ResourceManager<Shader>::shadowMappingUnidirectional()->use();
-		ResourceManager<Shader>::shadowMappingUnidirectional()->set("lightSpace", lightSpace);
-		renderProps(ResourceManager<Shader>::shadowMappingUnidirectional());
+		ShaderManager::shadowMappingUnidirectional()->use();
+		ShaderManager::shadowMappingUnidirectional()->set("lightSpace", lightSpace);
+		renderProps(ShaderManager::shadowMappingUnidirectional());
 		shading.current->use();
 		shading.current->set("lightSpacesS[" + std::to_string(enabledSpotLights) + "]", lightSpace);
 		shading.current->set("spotLights[" + std::to_string(enabledSpotLights++) + "].shadowMap", 
@@ -314,13 +317,13 @@ void Renderer::renderShadowMaps() const
 			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, +1.0f}, glm::vec3{0.0f, +1.0f, 0.0f}),
 			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, -1.0f}, glm::vec3{0.0f, +1.0f, 0.0f})
 		};
-		ResourceManager<Shader>::shadowMappingOmnidirectional()->use();
-		ResourceManager<Shader>::shadowMappingOmnidirectional()->set("lightPos", eye);
-		ResourceManager<Shader>::shadowMappingOmnidirectional()->set("farPlane", farPlane);
+		ShaderManager::shadowMappingOmnidirectional()->use();
+		ShaderManager::shadowMappingOmnidirectional()->set("lightPos", eye);
+		ShaderManager::shadowMappingOmnidirectional()->set("farPlane", farPlane);
 		for(int i = 0; i < 6; i++)
-			ResourceManager<Shader>::shadowMappingOmnidirectional()->set(
+			ShaderManager::shadowMappingOmnidirectional()->set(
 			"lightSpaces[" + std::to_string(i) + "]", lightSpaceMatrices[i]);
-		renderProps(ResourceManager<Shader>::shadowMappingOmnidirectional());
+		renderProps(ShaderManager::shadowMappingOmnidirectional());
 		shading.current->use();
 		shading.current->set("shadowMappingOmniFarPlane", farPlane);
 		shading.current->set("pointLights[" + std::to_string(enabledPointLights++) + "].shadowMap",
@@ -337,7 +340,7 @@ void Renderer::configureShaders() const
 {
 	shading.current->use();
 	glm::mat4 viewMatrix = camera->getViewMatrix();
-	if(ResourceManager<Shader>::isLightingShader(shading.current))
+	if(ShaderManager::isLightingShader(shading.current))
 	{
 		shading.current->set("ambientColor", scene->getBackground());
 		shading.current->set("ambientStrength", shading.lighting.ambientStrength);
@@ -366,7 +369,7 @@ void Renderer::configureShaders() const
 			renderShadowMaps();
 		}
 	}
-	else if(shading.current == ResourceManager<Shader>::refraction())
+	else if(shading.current == ShaderManager::refraction())
 	{
 		/*shading.current->set("perChannel", shading.refraction.perChannel);
 		shading.current->set("n1", shading.refraction.n1);
@@ -374,7 +377,7 @@ void Renderer::configureShaders() const
 		shading.current->set("n2", shading.refraction.n2);
 		shading.current->set("n2RGB", shading.refraction.n2RGB);*/
 	}
-	else if(shading.current == ResourceManager<Shader>::reflection())
+	else if(shading.current == ShaderManager::reflection())
 	{
 		/*if(skybox)
 		{
@@ -384,30 +387,30 @@ void Renderer::configureShaders() const
 		}*/
 
 	}
-	else if(shading.current == ResourceManager<Shader>::debugDepthBuffer())
+	else if(shading.current == ShaderManager::debugDepthBuffer())
 	{
 		shading.current->set("linearize", shading.debugging.depthBufferLinear);
 		shading.current->set("nearPlane", camera->getNearPlane());
 		shading.current->set("farPlane", camera->getFarPlane());
 	}
-	else if(shading.current == ResourceManager<Shader>::debugNormals())
+	else if(shading.current == ShaderManager::debugNormals())
 	{
 		shading.current->set("viewSpace", shading.debugging.normals.viewSpace);
 		shading.current->set("faceNormals", shading.debugging.normals.faceNormals);
 		shading.current->set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 		if(shading.debugging.normals.showLines)
 		{
-			ResourceManager<Shader>::debugNormalsShowLines()->use();
-			ResourceManager<Shader>::debugNormalsShowLines()->set("lineLength", shading.debugging.normals.lineLength);
-			ResourceManager<Shader>::debugNormalsShowLines()->set("color", shading.debugging.normals.lineColor);
-			ResourceManager<Shader>::debugNormalsShowLines()->set("viewSpace", shading.debugging.normals.viewSpace);
-			ResourceManager<Shader>::debugNormalsShowLines()->set("faceNormals", shading.debugging.normals.faceNormals);
-			ResourceManager<Shader>::debugNormalsShowLines()->set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
+			ShaderManager::debugNormalsShowLines()->use();
+			ShaderManager::debugNormalsShowLines()->set("lineLength", shading.debugging.normals.lineLength);
+			ShaderManager::debugNormalsShowLines()->set("color", shading.debugging.normals.lineColor);
+			ShaderManager::debugNormalsShowLines()->set("viewSpace", shading.debugging.normals.viewSpace);
+			ShaderManager::debugNormalsShowLines()->set("faceNormals", shading.debugging.normals.faceNormals);
+			ShaderManager::debugNormalsShowLines()->set("explodeMagnitude", shading.debugging.normals.explodeMagnitude);
 			for(auto const& prop : scene->getAll<Prop>())
 			{
 				if(!prop->isEnabled())
 					continue;
-				ResourceManager<Shader>::debugNormalsShowLines()->set("model", prop->getGlobalTransformation());
+				ShaderManager::debugNormalsShowLines()->set("model", prop->getGlobalTransformation());
 				prop->getMesh().use();
 			}
 			shading.current->use();
@@ -432,20 +435,20 @@ void Renderer::renderHighlightedProps() const
 		{
 			if(!prop->isHighlighted())
 				continue;
-			ResourceManager<Shader>::unlit()->set("model", prop->getGlobalTransformation());
+			ShaderManager::unlit()->set("model", prop->getGlobalTransformation());
 			prop->getMesh().use();
 		}
 	};
-	ResourceManager<Shader>::unlit()->use();
+	ShaderManager::unlit()->use();
 	if(geometry.prop.mode != geometry.lines)
 	{
-		ResourceManager<Shader>::unlit()->set("material.color", highlighting.color);
+		ShaderManager::unlit()->set("material.color", highlighting.color);
 		drawProps();
 	}
 	if(geometry.prop.mode != geometry.triangles)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		ResourceManager<Shader>::unlit()->set("material.color", glm::vec3{1.0f - highlighting.color});
+		ShaderManager::unlit()->set("material.color", glm::vec3{1.0f - highlighting.color});
 		drawProps();
 		configurePolygonMode();
 	}
@@ -466,7 +469,7 @@ void Renderer::renderProps(Shader* shader) const
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
 				shader->set("model", prop->getGlobalTransformation());
-				if(shader == ResourceManager<Shader>::unlit())
+				if(shader == ShaderManager::unlit())
 				{
 					shader->set("material.r", shading.debugging.unlitShowRedChannel);
 					shader->set("material.g", shading.debugging.unlitShowGreenChannel);
@@ -482,15 +485,15 @@ void Renderer::renderProps(Shader* shader) const
 	if(geometry.prop.mode != geometry.triangles)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		ResourceManager<Shader>::unlit()->use();
-		ResourceManager<Shader>::unlit()->set("material.hasMap", false);
-		ResourceManager<Shader>::unlit()->set("material.color", glm::vec3(0.0f));
+		ShaderManager::unlit()->use();
+		ShaderManager::unlit()->set("material.hasMap", false);
+		ShaderManager::unlit()->set("material.color", glm::vec3(0.0f));
 
 		for(auto const& prop : scene->getAll<Prop>())
 		{
 			if((!highlighting.enabled || !prop->isHighlighted()) && prop->isEnabled())
 			{
-				ResourceManager<Shader>::unlit()->set("model", prop->getGlobalTransformation());
+				ShaderManager::unlit()->set("model", prop->getGlobalTransformation());
 				prop->getMesh().use();
 			}
 		}
@@ -511,10 +514,10 @@ void Renderer::renderSkybox() const
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		ResourceManager<Shader>::skybox()->use();
-		ResourceManager<Shader>::skybox()->set("skybox", 0);
+		ShaderManager::skybox()->use();
+		ShaderManager::skybox()->set("skybox", 0);
 		scene->getSkyBox()->use(0);
-		ResourceManager<Mesh>::box()->use();
+		MeshManager::box()->use();
 	}
 	configureFaceCulling();
 	configurePolygonMode();
@@ -525,7 +528,7 @@ void Renderer::updateFramebuffers()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorbuffer);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, pipeline.samples > 0 && pipeline.samples < 16? pipeline.samples : 1, GL_RGB16F, viewport.width, viewport.height, GL_TRUE);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, pipeline.samples > 0 && pipeline.samples < 16 ? pipeline.samples : 1, GL_RGB16F, viewport.width, viewport.height, GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, multisampledRenderbuffer);
@@ -622,7 +625,7 @@ void Renderer::drawUI(bool* open)
 			camera = nullptr;
 		if(camera == nullptr)
 			ImGui::SetItemDefaultFocus();
-		for(auto& s : ResourceManager<Scene>::getAll())
+		for(auto& s : SceneManager::getAll())
 		{
 			ImGui::Text(("Scene: " + s->name.get()).data());
 			ImGui::Separator();
@@ -750,25 +753,25 @@ void Renderer::drawUI(bool* open)
 		};
 		ImGui::Columns(3, nullptr, true);
 		ImGui::Text("Lighting");
-		drawShaderOption(ResourceManager<Shader>::pbr());
-		drawShaderOption(ResourceManager<Shader>::blinnPhong());
-		drawShaderOption(ResourceManager<Shader>::phong());
-		drawShaderOption(ResourceManager<Shader>::gouraud());
-		drawShaderOption(ResourceManager<Shader>::flat());
+		drawShaderOption(ShaderManager::pbr());
+		drawShaderOption(ShaderManager::blinnPhong());
+		drawShaderOption(ShaderManager::phong());
+		drawShaderOption(ShaderManager::gouraud());
+		drawShaderOption(ShaderManager::flat());
 		ImGui::NextColumn();
 		ImGui::Text("Debugging");
-		drawShaderOption(ResourceManager<Shader>::unlit());
-		drawShaderOption(ResourceManager<Shader>::debugNormals());
-		drawShaderOption(ResourceManager<Shader>::debugTexCoords());
-		drawShaderOption(ResourceManager<Shader>::debugDepthBuffer());
+		drawShaderOption(ShaderManager::unlit());
+		drawShaderOption(ShaderManager::debugNormals());
+		drawShaderOption(ShaderManager::debugTexCoords());
+		drawShaderOption(ShaderManager::debugDepthBuffer());
 		ImGui::NextColumn();
 		ImGui::Text("Experimental");
-		drawShaderOption(ResourceManager<Shader>::reflection());
-		drawShaderOption(ResourceManager<Shader>::refraction());
+		drawShaderOption(ShaderManager::reflection());
+		drawShaderOption(ShaderManager::refraction());
 		ImGui::Columns(1);
 		ImGui::Separator();
 
-		if(ResourceManager<Shader>::isLightingShader(shading.current))
+		if(ShaderManager::isLightingShader(shading.current))
 		{
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Ambient Strength");
@@ -860,7 +863,7 @@ void Renderer::drawUI(bool* open)
 				}
 			}
 		}
-		else if(shading.current == ResourceManager<Shader>::unlit())
+		else if(shading.current == ShaderManager::unlit())
 		{
 			ImGui::Text("Show Map");
 			auto drawMapOption = [&](std::string_view title, Material::Map value, bool r, bool g, bool b, bool a){
@@ -890,7 +893,7 @@ void Renderer::drawUI(bool* open)
 			ImGui::SameLine();
 			ImGui::Checkbox("A", &shading.debugging.unlitShowAlphaChannel);
 		}
-		else if(shading.current == ResourceManager<Shader>::debugNormals())
+		else if(shading.current == ShaderManager::debugNormals())
 		{
 			ImGui::Checkbox("View Space", &shading.debugging.normals.viewSpace);
 			ImGui::SameLine();
@@ -904,11 +907,11 @@ void Renderer::drawUI(bool* open)
 				ImGui::ColorEdit3("Line color", &shading.debugging.normals.lineColor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
 			}
 		}
-		else if(shading.current == ResourceManager<Shader>::debugDepthBuffer())
+		else if(shading.current == ShaderManager::debugDepthBuffer())
 		{
 			ImGui::Checkbox("Linearize", &shading.debugging.depthBufferLinear);
 		}
-		else if(shading.current == ResourceManager<Shader>::refraction())
+		else if(shading.current == ShaderManager::refraction())
 		{
 			ImGui::Checkbox("Per Channel", &shading.refraction.perChannel);
 			if(!shading.refraction.perChannel)

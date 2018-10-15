@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Prop.h"
 #include "Util.h"
+#include "CubemapManager.h"
 
 #include <imgui.h>
 #include <set>
@@ -139,7 +140,7 @@ void Scene::drawUI()
 	if(ImGui::RadioButton("Cubemap", useSkybox == true && skybox != nullptr))
 		useSkybox = true;
 	ImGui::SameLine();
-	skybox = chooseFromCombo(skybox, ResourceManager<Cubemap>::getAll());
+	skybox = chooseFromCombo(skybox, CubemapManager::getAll());
 	if(ImGui::Button("Fit To:"))
 		fitToIdealSize();
 	ImGui::SameLine();

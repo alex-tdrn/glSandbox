@@ -1,298 +1,343 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Resource Management">
+      <UniqueIdentifier>{dc53e677-5a63-48e4-81c0-b7f198f87783}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="shaders">
+    <Filter Include="Assets">
+      <UniqueIdentifier>{f3d8dfef-71ff-482e-a782-83e1661eff00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{138197ba-61b6-4e73-9aa5-49e971333377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{838bd94a-af0b-4707-954b-7764bb4dc0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
       <UniqueIdentifier>{57158bad-027a-45fd-b26a-87ea12bced3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Lighting">
+      <UniqueIdentifier>{b2ae2996-b30b-4d62-994a-23559803cd6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Debugging">
+      <UniqueIdentifier>{f0342fc4-f91a-42e6-992e-5f7354a81d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\PostProcessing">
+      <UniqueIdentifier>{7d9105a7-e17c-453a-8629-549e76c6f68c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Camera.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\CubemapManager.cpp">
+      <Filter>Resource Management</Filter>
     </ClCompile>
-    <ClCompile Include="source\glad.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\MaterialManager.cpp">
+      <Filter>Resource Management</Filter>
     </ClCompile>
-    <ClCompile Include="source\imgui_impl_glfw_gl3.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\MeshManager.cpp">
+      <Filter>Resource Management</Filter>
     </ClCompile>
-    <ClCompile Include="source\Lights.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\ResourceManager.cpp">
+      <Filter>Resource Management</Filter>
     </ClCompile>
-    <ClCompile Include="source\main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\SceneManager.cpp">
+      <Filter>Resource Management</Filter>
     </ClCompile>
-    <ClCompile Include="source\Material.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\ShaderManager.cpp">
+      <Filter>Resource Management</Filter>
     </ClCompile>
-    <ClCompile Include="source\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\PostProcessingStep.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Texture.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\TextureManager.cpp">
+      <Filter>Resource Management</Filter>
     </ClCompile>
     <ClCompile Include="source\Cubemap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Prop.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ImportGLTF.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Resources.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Profiler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ProceduralMesh.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="source\Grid.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="source\SierpinskiTriangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SierpinskiTetrahedon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SierpinskiCarpet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Globals.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\Material.cpp">
+      <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="source\MaterialPBRMetallicRoughness.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mesh.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ProceduralMesh.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Scene.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Shader.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SierpinskiCarpet.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SierpinskiTetrahedon.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SierpinskiTriangle.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Texture.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Lights.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Node.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Prop.cpp">
+      <Filter>Assets</Filter>
     </ClCompile>
     <ClCompile Include="source\FileSelector.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="source\ImportGLTF.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Profiler.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Renderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PostProcessingStep.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="source\glad.c" />
+    <ClCompile Include="source\Globals.cpp" />
+    <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
+    <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\Camera.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\ResourceManager.h">
+      <Filter>Resource Management</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Globals.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\SceneManager.h">
+      <Filter>Resource Management</Filter>
     </ClInclude>
-    <ClInclude Include="headers\imgui_impl_glfw_gl3.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\ShaderManager.h">
+      <Filter>Resource Management</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Lights.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\TextureManager.h">
+      <Filter>Resource Management</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Material.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\MeshManager.h">
+      <Filter>Resource Management</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Mesh.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\CubemapManager.h">
+      <Filter>Resource Management</Filter>
     </ClInclude>
-    <ClInclude Include="headers\PostProcessingStep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Util.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\MaterialManager.h">
+      <Filter>Resource Management</Filter>
     </ClInclude>
     <ClInclude Include="headers\Cubemap.h">
-      <Filter>Header Files</Filter>
+      <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Resources.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Named.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Prop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\ImportGLTF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\TransformedNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Profiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\ProceduralMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Grid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\SierpinskiTriangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\SierpinskiTetrahedon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\SierpinskiCarpet.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\Material.h">
+      <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="headers\MaterialPBRMetallicRoughness.h">
-      <Filter>Header Files</Filter>
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Mesh.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Scene.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Shader.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiCarpet.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiTetrahedon.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SierpinskiTriangle.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Texture.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Grid.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\ProceduralMesh.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Camera.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Lights.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Node.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Prop.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\TransformedNode.h">
+      <Filter>Assets</Filter>
     </ClInclude>
     <ClInclude Include="headers\FileSelector.h">
-      <Filter>Header Files</Filter>
+      <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="headers\glad.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="headers\ImportGLTF.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="headers\Named.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Profiler.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Util.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\PostProcessingStep.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Renderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\glad.h" />
+    <ClInclude Include="headers\Globals.h" />
+    <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\phong.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\phong.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugNormals.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugNormals.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugDepthBuffer.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugDepthBuffer.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\ppBW.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\ppConvolution.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\ppInvert.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\ppPassthrough.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugTextureCoords.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugTextureCoords.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\gouraud.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\gouraud.frag">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\skybox.frag">
-      <Filter>shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\skybox.vert">
-      <Filter>shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\reflection.vert">
-      <Filter>shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\reflection.frag">
-      <Filter>shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\refraction.frag">
-      <Filter>shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\refraction.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\pp.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugNormalsShowLines.geom">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugNormalsShowLines.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugNormalsShowLines.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\debugNormals.geom">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\flat.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\flat.geom">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\flat.vert">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\ppChromaticAberration.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\ppGammaHDR.frag">
-      <Filter>shaders</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\blinn-phong.frag">
-      <Filter>shaders</Filter>
+      <Filter>Shaders\Lighting</Filter>
     </None>
-    <None Include="shaders\unlit.vert">
-      <Filter>shaders</Filter>
+    <None Include="shaders\flat.frag">
+      <Filter>Shaders\Lighting</Filter>
     </None>
-    <None Include="shaders\unlit.frag">
-      <Filter>shaders</Filter>
+    <None Include="shaders\flat.geom">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\flat.vert">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\gouraud.frag">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\gouraud.vert">
+      <Filter>Shaders\Lighting</Filter>
     </None>
     <None Include="shaders\pbr.frag">
-      <Filter>shaders</Filter>
+      <Filter>Shaders\Lighting</Filter>
     </None>
     <None Include="shaders\pbr.vert">
-      <Filter>shaders</Filter>
+      <Filter>Shaders\Lighting</Filter>
     </None>
-    <None Include="shaders\shadowMappingUnidirectional.vert" />
-    <None Include="shaders\shadowMappingUnidirectional.frag" />
-    <None Include="shaders\shadowMappingOmnidirectional.vert" />
-    <None Include="shaders\shadowMappingOmnidirectional.frag" />
-    <None Include="shaders\shadowMappingOmnidirectional.geom" />
+    <None Include="shaders\phong.frag">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\phong.vert">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\shadowMappingOmnidirectional.frag">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\shadowMappingOmnidirectional.geom">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\shadowMappingOmnidirectional.vert">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\shadowMappingUnidirectional.frag">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\shadowMappingUnidirectional.vert">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="shaders\debugDepthBuffer.vert">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugNormals.frag">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugNormals.geom">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugNormals.vert">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugNormalsShowLines.frag">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugNormalsShowLines.geom">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugNormalsShowLines.vert">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugTextureCoords.frag">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugTextureCoords.vert">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\unlit.frag">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\unlit.vert">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\debugDepthBuffer.frag">
+      <Filter>Shaders\Debugging</Filter>
+    </None>
+    <None Include="shaders\pp.vert">
+      <Filter>Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="shaders\ppBW.frag">
+      <Filter>Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="shaders\ppChromaticAberration.frag">
+      <Filter>Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="shaders\ppConvolution.frag">
+      <Filter>Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="shaders\ppGammaHDR.frag">
+      <Filter>Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="shaders\ppInvert.frag">
+      <Filter>Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="shaders\ppPassthrough.frag">
+      <Filter>Shaders\PostProcessing</Filter>
+    </None>
   </ItemGroup>
 </Project>

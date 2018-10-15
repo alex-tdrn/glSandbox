@@ -1,6 +1,5 @@
 #include "Prop.h"
-#include "Resources.h"
-#include "Mesh.h"
+#include "MeshManager.h"
 #include "Grid.h"
 #include "SierpinskiTriangle.h"
 #include "SierpinskiTetrahedon.h"
@@ -24,7 +23,7 @@ Mesh& Prop::getMesh() const
 		return *staticMesh;
 	else if(proceduralMesh)
 		return *proceduralMesh->get();
-	else return *ResourceManager<Mesh>::boxWireframe();
+	else return *MeshManager::boxWireframe();
 }
 
 Material* Prop::getMaterial() const
@@ -76,7 +75,7 @@ void Prop::drawUI()
 	{
 		int id = 0;
 		//static meshes
-		for(auto& m : ResourceManager<Mesh>::getAll())
+		for(auto& m : MeshManager::getAll())
 		{
 			ImGui::PushID(id++);
 			bool isSelected = staticMesh == m.get();
@@ -100,7 +99,7 @@ void Prop::drawUI()
 	if(proceduralMesh)
 		proceduralMesh->drawUI();
 	assert(material);
-	material = chooseFromCombo(material, ResourceManager<Material>::getAll());
+	material = chooseFromCombo(material, MaterialManager::getAll());
 
 	ImGui::EndChild();
 }

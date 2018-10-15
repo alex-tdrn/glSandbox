@@ -1,8 +1,8 @@
-﻿#include "Shader.h"
+﻿#include "ShaderManager.h"
 #include "Camera.h"
 #include "Lights.h"
 #include "Globals.h"
-#include "Scene.h"
+#include "SceneManager.h"
 #include "Node.h"
 #include "Prop.h"
 #include "Renderer.h"
@@ -32,7 +32,7 @@ double lastMouseY = 300;
 bool mouseDrag = false;
 Renderer& settings::mainRenderer()
 {
-	static Renderer r = {ResourceManager<Scene>::basic()->getAll<Camera>().front()};
+	static Renderer r = {SceneManager::basic()->getAll<Camera>().front()};
 	return r;
 }
 

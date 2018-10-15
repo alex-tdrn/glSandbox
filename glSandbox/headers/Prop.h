@@ -1,7 +1,7 @@
 #pragma once
 #include "TransformedNode.h"
 #include "Util.h"
-#include "Resources.h"
+#include "MaterialManager.h"
 #include "ProceduralMesh.h"
 #include <memory>
 
@@ -13,15 +13,15 @@ class Prop final : public Transformed<Translation, Rotation, Scale>
 private:
 	Mesh* staticMesh = nullptr;
 	std::unique_ptr<ProceduralMesh> proceduralMesh = nullptr;
-	Material* material = ResourceManager<Material>::basic();
+	Material* material = MaterialManager::basic();
 
 public:
 	Name<Prop> name{"prop"};
 
 public:
 	Prop() = default;
-	Prop(Mesh* mesh, Material* material = ResourceManager<Material>::basic());
-	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = ResourceManager<Material>::basic());
+	Prop(Mesh* mesh, Material* material = MaterialManager::basic());
+	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = MaterialManager::basic());
 	virtual ~Prop() = default;
 
 public:

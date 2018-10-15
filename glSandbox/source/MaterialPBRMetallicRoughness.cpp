@@ -1,7 +1,6 @@
 #include "MaterialPBRMetallicRoughness.h"
 #include "Util.h"
-#include "Shader.h"
-#include "Resources.h"
+#include "ShaderManager.h"
 
 void MaterialPBRMetallicRoughness::setBaseColor(Texture* map, std::optional<glm::vec4> factor)
 {
@@ -22,7 +21,7 @@ void MaterialPBRMetallicRoughness::setMetallicRoughness(Texture* map, float meta
 void MaterialPBRMetallicRoughness::use(Shader* shader, Material::Map visualizeMap) const
 {
 	Material::use(shader, visualizeMap);
-	if(shader == ResourceManager<Shader>::pbr())
+	if(shader == ShaderManager::pbr())
 	{
 		shader->set("material.baseColorMapExists", baseColorMap != nullptr);
 		if(baseColorMap)
@@ -41,7 +40,7 @@ void MaterialPBRMetallicRoughness::use(Shader* shader, Material::Map visualizeMa
 		shader->set("material.metallicFactor", metallicFactor);
 		shader->set("material.roughnessFactor", roughnessFactor);
 	}
-	else if(ResourceManager<Shader>::isLightingShader(shader))
+	else if(ShaderManager::isLightingShader(shader))
 	{
 		shader->set("material.hasSpecularMap", false);
 		shader->set("material.overrideSpecular", true);
@@ -61,7 +60,7 @@ void MaterialPBRMetallicRoughness::use(Shader* shader, Material::Map visualizeMa
 			shader->set("material.overrideDiffuseColor", glm::vec3(baseColorFactor));
 		}
 	}
-	else if(shader == ResourceManager<Shader>::unlit())
+	else if(shader == ShaderManager::unlit())
 	{
 		Texture* map = nullptr;
 		glm::vec3 color{1.0f};

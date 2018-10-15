@@ -154,16 +154,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\CubemapManager.cpp" />
     <ClCompile Include="source\FileSelector.cpp" />
     <ClCompile Include="source\Globals.cpp" />
+    <ClCompile Include="source\MaterialManager.cpp" />
     <ClCompile Include="source\MaterialPBRMetallicRoughness.cpp" />
+    <ClCompile Include="source\MeshManager.cpp" />
+    <ClCompile Include="source\SceneManager.cpp" />
+    <ClCompile Include="source\ShaderManager.cpp" />
     <ClCompile Include="source\SierpinskiCarpet.cpp" />
     <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
     <ClCompile Include="source\SierpinskiTriangle.cpp" />
     <ClCompile Include="source\Grid.cpp" />
     <ClCompile Include="source\ProceduralMesh.cpp" />
     <ClCompile Include="source\Profiler.cpp" />
-    <ClCompile Include="source\Resources.cpp" />
+    <ClCompile Include="source\ResourceManager.cpp" />
     <ClCompile Include="source\Node.cpp" />
     <ClCompile Include="source\Prop.cpp" />
     <ClCompile Include="source\ImportGLTF.cpp" />
@@ -180,11 +185,15 @@
     <ClCompile Include="source\Scene.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\Texture.cpp" />
+    <ClCompile Include="source\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\CubemapManager.h" />
     <ClInclude Include="headers\FileSelector.h" />
     <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Grid.h" />
+    <ClInclude Include="headers\MaterialManager.h" />
+    <ClInclude Include="headers\MeshManager.h" />
     <ClInclude Include="headers\Named.h" />
     <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />
@@ -200,11 +209,14 @@
     <ClInclude Include="headers\Profiler.h" />
     <ClInclude Include="headers\Prop.h" />
     <ClInclude Include="headers\Renderer.h" />
-    <ClInclude Include="headers\Resources.h" />
+    <ClInclude Include="headers\ResourceManager.h" />
     <ClInclude Include="headers\Scene.h" />
+    <ClInclude Include="headers\SceneManager.h" />
     <ClInclude Include="headers\Shader.h" />
+    <ClInclude Include="headers\ShaderManager.h" />
     <ClInclude Include="headers\SierpinskiTriangle.h" />
     <ClInclude Include="headers\Texture.h" />
+    <ClInclude Include="headers\TextureManager.h" />
     <ClInclude Include="headers\Util.h" />
     <ClInclude Include="headers\TransformedNode.h" />
     <ClInclude Include="headers\SierpinskiTetrahedon.h" />

@@ -1,6 +1,6 @@
 #pragma once
 #include "Named.h"
-#include "Resources.h"
+#include "ShaderManager.h"
 #include "Material.h"
 #include "Grid.h"
 #include "Texture.h"
@@ -50,7 +50,7 @@ private:
 		bool boundingBox = false;
 	}highlighting;
 	struct{
-		Shader* current = ResourceManager<Shader>::pbr();
+		Shader* current = ShaderManager::pbr();
 		struct
 		{
 			bool perChannel = false;

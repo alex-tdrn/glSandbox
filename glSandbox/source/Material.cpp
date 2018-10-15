@@ -1,8 +1,7 @@
 #include "Material.h"
-#include "Shader.h"
 #include "Texture.h"
 #include "Util.h"
-#include "Resources.h"
+#include "ShaderManager.h"
 
 #include <imgui.h>
 
@@ -27,7 +26,7 @@ void Material::setEmissive(Texture* map, std::optional<glm::vec3> factor)
 
 void Material::use(Shader* shader, Material::Map visualizeMap) const
 {
-	if(shader == ResourceManager<Shader>::pbr())
+	if(shader == ShaderManager::pbr())
 	{
 		shader->set("material.normalMapExists", normalMap != nullptr && normalMappingEnabled);
 		if(normalMap && normalMappingEnabled)
@@ -49,7 +48,7 @@ void Material::use(Shader* shader, Material::Map visualizeMap) const
 		}
 		shader->set("material.emissiveFactor", emissiveFactor);
 	}
-	else if(shader == ResourceManager<Shader>::unlit())
+	else if(shader == ShaderManager::unlit())
 	{
 		Texture* map = nullptr;
 		glm::vec3 color{1.0f};

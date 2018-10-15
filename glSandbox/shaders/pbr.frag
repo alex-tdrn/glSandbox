@@ -194,7 +194,7 @@ float calcShadow(vec3 coords, samplerCube shadowMap)
 {
 	if(!shadowMappingEnabled)
 		return 1.0f;
-	float closestDepth = texture(shadowMap, coords.xyz).r;
+	float closestDepth = texture(shadowMap, coords.xyz).r * shadowMappingOmniFarPlane;
 	float currentDepth = length(coords);
 	if(currentDepth > closestDepth)
 	 return 0.0f;

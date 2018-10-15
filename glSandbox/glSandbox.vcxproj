@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ResourceRenderer.cpp" />
     <ClCompile Include="source\CubemapManager.cpp" />
     <ClCompile Include="source\FileSelector.cpp" />
     <ClCompile Include="source\Globals.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="headers\SierpinskiTetrahedon.h" />
     <ClInclude Include="headers\SierpinskiCarpet.h" />
     <ClInclude Include="headers\MaterialPBRMetallicRoughness.h" />
+    <ClInclude Include="ResourceRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\blinn-phong.frag" />

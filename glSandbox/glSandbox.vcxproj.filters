@@ -119,6 +119,9 @@
     <ClCompile Include="source\Globals.cpp" />
     <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="ResourceRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\ResourceManager.h">
@@ -217,6 +220,7 @@
     <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Globals.h" />
     <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="ResourceRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\skybox.frag">

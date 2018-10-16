@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\MeshRenderer.cpp" />
     <ClCompile Include="source\ResourceRenderer.cpp" />
     <ClCompile Include="source\CubemapManager.cpp" />
     <ClCompile Include="source\FileSelector.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="headers\ResourceRenderer.h" />
     <ClInclude Include="headers\TextureRenderer.h" />
     <ClInclude Include="headers\UIUtilities.h" />
+    <ClInclude Include="headers\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\blinn-phong.frag" />
@@ -269,6 +271,8 @@
     <None Include="shaders\shadowMappingOmnidirectional.frag" />
     <None Include="shaders\shadowMappingOmnidirectional.geom" />
     <None Include="shaders\shadowMappingOmnidirectional.vert" />
+    <None Include="shaders\visualizeMesh.frag" />
+    <None Include="shaders\visualizeMesh.vert" />
     <None Include="shaders\visualizeTexture.frag" />
     <None Include="shaders\visualizeTexture.vert" />
   </ItemGroup>

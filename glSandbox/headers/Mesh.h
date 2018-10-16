@@ -54,6 +54,8 @@ private:
 	GLenum const indexDataType;
 	bool indexedDrawing;
 	Bounds const bounds;
+	bool availableAttributes[AttributeType::N];
+
 public:
 	Name<Mesh> name{"mesh"};
 
@@ -66,6 +68,7 @@ public:
 	Mesh& operator=(Mesh&&) = delete;
 
 public:
+	bool hasAttribute(AttributeType attributeType) const;
 	Bounds const& getBounds() const;
 	void use() const;
 	void drawUI();

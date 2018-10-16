@@ -3,6 +3,7 @@
 void ShaderManager::initialize()
 {
 	visualizeTexture();
+	visualizeMesh();
 	unlit();
 	pbr();
 	blinnPhong();
@@ -54,6 +55,14 @@ Shader* ShaderManager::visualizeTexture()
 {
 	static auto ret = load("Visualize Texture",
 		"shaders/visualizeTexture.vert", "shaders/visualizeTexture.frag"
+	);
+	return ret;
+}
+
+Shader* ShaderManager::visualizeMesh()
+{
+	static auto ret = load("Visualize Mesh",
+		"shaders/visualizeMesh.vert", "shaders/visualizeMesh.frag"
 	);
 	return ret;
 }

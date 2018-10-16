@@ -128,6 +128,9 @@
     <ClCompile Include="source\TextureRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="source\MeshRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\ResourceManager.h">
@@ -229,8 +232,13 @@
     <ClInclude Include="headers\ResourceRenderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="headers\TextureRenderer.h" />
     <ClInclude Include="headers\UIUtilities.h" />
+    <ClInclude Include="headers\TextureRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\MeshRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\skybox.frag">
@@ -357,6 +365,12 @@
       <Filter>Shaders\ResourceRendering</Filter>
     </None>
     <None Include="shaders\visualizeTexture.frag">
+      <Filter>Shaders\ResourceRendering</Filter>
+    </None>
+    <None Include="shaders\visualizeMesh.vert">
+      <Filter>Shaders\ResourceRendering</Filter>
+    </None>
+    <None Include="shaders\visualizeMesh.frag">
       <Filter>Shaders\ResourceRendering</Filter>
     </None>
   </ItemGroup>

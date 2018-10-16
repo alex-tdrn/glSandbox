@@ -12,6 +12,8 @@ TextureRenderer::TextureRenderer(Texture* texture)
 
 void TextureRenderer::drawSettings()
 {
+	ImGui::Text("Visualize Channels ");
+	ImGui::SameLine();
 	ImGui::Checkbox("R", &visualizeChannel[0]);
 	if(texture->getNumberOfChannels() == 1)
 		return;

@@ -9,6 +9,7 @@ public:
 	static void reloadAll();
 	static bool isLightingShader(Shader*);
 	static Shader* visualizeTexture();
+	static Shader* visualizeMesh();
 	static Shader* unlit();
 	static Shader* pbr();
 	static Shader* blinnPhong();

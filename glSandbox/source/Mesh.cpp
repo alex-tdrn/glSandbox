@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "MeshRenderer.h"
 #include "UIUtilities.h"
 
 #include <imgui.h>
@@ -8,6 +9,9 @@ Mesh::Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optiona
 	vertexCount((attributes.interleaved ? attributes.size : attributes.array[AttributeType::positions]->size) / attributes.array[AttributeType::positions]->stride),
 	indexCount(indices? indices->count : 0), indexDataType(indices? indices->dataType : 0), indexedDrawing(indices)
 {
+	for(int i = 0; i < AttributeType::N; i++)
+		availableAttributes[i] = attributes.array[i].has_value();
+
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -60,6 +64,8 @@ Mesh::Mesh(Mesh&& other)
 	indexCount(other.indexCount), indexDataType(other.indexDataType), indexedDrawing(other.indexedDrawing),
 	VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 {
+	for(int i = 0; i < AttributeType::N; i++)
+		availableAttributes[i] = other.availableAttributes[i];
 	other.VAO = 0;
 	other.VBO = 0;
 	other.EBO = 0;
@@ -70,6 +76,11 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+}
+
+bool Mesh::hasAttribute(AttributeType attributeType) const
+{
+	return availableAttributes[static_cast<int>(attributeType)];
 }
 
 Bounds const& Mesh::getBounds() const
@@ -113,6 +124,7 @@ void Mesh::drawUI()
 	ImGui::Text(glEnumToString(drawMode).data());
 	auto[bMin, bMax] = getBounds().getValues();
 	ImGui::Text("Bounds (%.1f, %.1f, %.1f) - (%.1f, %.1f, %.1f)", bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
+	OnDemandRenderer<MeshRenderer>::drawUI(this);
 	ImGui::EndChild();
 }
 

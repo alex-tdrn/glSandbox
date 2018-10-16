@@ -2,12 +2,13 @@
 #include "ResourceManager.h"
 #include "Shader.h"
 
-class ShaderManager : public detail::ResourceManagerBase<Shader>
+class ShaderManager : public ResourceManager<Shader>
 {
 public:
 	static void initialize();
 	static void reloadAll();
 	static bool isLightingShader(Shader*);
+	static Shader* visualizeTexture();
 	static Shader* unlit();
 	static Shader* pbr();
 	static Shader* blinnPhong();

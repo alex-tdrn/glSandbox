@@ -1,5 +1,6 @@
 #include "Grid.h"
 #include "Mesh.h"
+#include "UIUtilities.h"
 
 #include <vector>
 

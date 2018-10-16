@@ -1,10 +1,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Texture.h"
-#include "Globals.h"
-#include "Util.h"
+#include "UIUtilities.h"
+#include "TextureRenderer.h"
 
 #include <stb_image.h>
-#include <imgui.h>
 #include <filesystem>
 
 Texture::Texture(unsigned int format, int width, int height, 
@@ -24,7 +23,7 @@ Texture::Texture(std::string const& path, bool linear)
 	name.set(filename.filename().string());
 }
 
-Texture::Texture(Texture && other)
+Texture::Texture(Texture&& other)
 	: allocated(other.allocated), ID(other.ID),
 	width(other.width), height(other.height),
 	nrChannels(other.nrChannels), format(other.format),
@@ -42,7 +41,7 @@ Texture& Texture::operator=(Texture&& other)
 	pixelTransfer = other.pixelTransfer; dataType = other.dataType;
 	mipmapping = other.mipmapping; linear = other.linear; path = other.path;
 
-	other.ID = 0;
+	std::swap(this->ID, other.ID);
 	return *this;
 }
 
@@ -116,7 +115,30 @@ void Texture::load() const
 
 unsigned int Texture::getID() const
 {
+	if(!allocated)
+		load();
 	return ID;
+}
+
+int Texture::getWidth() const
+{
+	if(!allocated)
+		load();
+	return width;
+}
+
+int Texture::getHeight() const
+{
+	if(!allocated)
+		load();
+	return height;
+}
+
+int Texture::getNumberOfChannels() const
+{
+	if(!allocated)
+		load();
+	return nrChannels;
 }
 
 void Texture::use(int location) const
@@ -194,37 +216,5 @@ void Texture::drawUI()
 	ImGui::Text("# channels %i", nrChannels);
 	if(path)
 		ImGui::Text("Path: %s", path->data());
-
-	float const size = std::min(ImGui::GetContentRegionAvailWidth(), 512.0f);
-	bool flipY = !path;
-	ImVec2 uv1{0.0, flipY ? 1.0f : 0.0f};
-	ImVec2 uv2{1.0, flipY ? 0.0f : 1.0f};
-	if(ImGui::ImageButton(ImTextureID(ID), ImVec2(size, size), uv1, uv2))
-		ImGui::OpenPopup(name.get().data());
-	if(ImGui::BeginPopupModal(name.get().data(), nullptr,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoTitleBar))
-	{
-		float const percentOfScreen = 0.9f;
-		glm::vec2 scale{width / info::windowWidth, height / info::windowHeight};
-		glm::vec2 imageSize;
-		if(scale.x > scale.y)//stretch by width
-		{
-			imageSize.x = info::windowWidth * percentOfScreen;
-			imageSize.y = static_cast<float>(height) / width * imageSize.x;
-		}
-		else//stretch by height
-		{
-			imageSize.y = info::windowHeight * percentOfScreen;
-			imageSize.x = static_cast<float>(width) / height * imageSize.y;
-		}
-		ImGui::BeginPopupModal(name.get().data());
-		ImGui::Image(ImTextureID(ID), ImVec2(imageSize.x, imageSize.y), uv1, uv2);
-		if(ImGui::IsAnyItemActive())
-			ImGui::CloseCurrentPopup();
-		ImGui::EndPopup();
-	}
+	OnDemandRenderer<TextureRenderer>::drawUI(this);
 }

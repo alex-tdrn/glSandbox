@@ -13,15 +13,15 @@ class Prop final : public Transformed<Translation, Rotation, Scale>
 private:
 	Mesh* staticMesh = nullptr;
 	std::unique_ptr<ProceduralMesh> proceduralMesh = nullptr;
-	Material* material = MaterialManager::basic();
+	Material* material = MaterialManager::uvChecker();
 
 public:
 	Name<Prop> name{"prop"};
 
 public:
 	Prop() = default;
-	Prop(Mesh* mesh, Material* material = MaterialManager::basic());
-	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = MaterialManager::basic());
+	Prop(Mesh* mesh, Material* material = MaterialManager::uvChecker());
+	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = MaterialManager::uvChecker());
 	virtual ~Prop() = default;
 
 public:

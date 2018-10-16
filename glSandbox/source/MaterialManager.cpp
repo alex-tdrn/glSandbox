@@ -4,15 +4,15 @@
 
 void MaterialManager::initialize()
 {
-	basic();
+	uvChecker();
 }
 
-Material* MaterialManager::basic()
+Material* MaterialManager::uvChecker()
 {
 	static auto ret = [&]() -> Material*{
 		auto material = std::make_unique<MaterialPBRMetallicRoughness>();
-		material->setBaseColor(TextureManager::debug(), std::nullopt);
-		material->name.set("basic");
+		material->setBaseColor(TextureManager::uvChecker3M(), std::nullopt);
+		material->name.set("UV Checker");
 		return add(std::move(material));
 	}();
 	return ret;

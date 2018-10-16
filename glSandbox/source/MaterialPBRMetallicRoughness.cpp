@@ -1,6 +1,7 @@
 #include "MaterialPBRMetallicRoughness.h"
-#include "Util.h"
+#include "UIUtilities.h"
 #include "ShaderManager.h"
+#include "TextureManager.h"
 
 void MaterialPBRMetallicRoughness::setBaseColor(Texture* map, std::optional<glm::vec4> factor)
 {
@@ -103,12 +104,18 @@ void MaterialPBRMetallicRoughness::drawUI()
 	ImGui::Text("Base Color");
 	ImGui::SameLine();
 	ImGui::ColorEdit4("###FactorBaseColor", &baseColorFactor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	baseColorMap = chooseFromCombo(baseColorMap, TextureManager::getAll(), true, "BaseColor");
 	if(baseColorMap)
 		baseColorMap->drawUI();
 	ImGui::Separator();
 	ImGui::Text("Metallic-Roughness");
 	ImGui::SliderFloat("Metallic", &metallicFactor, 0.0f, 1.0f);
 	ImGui::SliderFloat("Roughness", &roughnessFactor, 0.0f, 1.0f);
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	metallicRoughnessMap = chooseFromCombo(metallicRoughnessMap, TextureManager::getAll(), true, "MetallicRoughness");
 	if(metallicRoughnessMap)
 		metallicRoughnessMap->drawUI();
 	ImGui::EndChild();

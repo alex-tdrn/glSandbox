@@ -2,9 +2,9 @@
 #include "ResourceManager.h"
 #include "Material.h"
 
-class MaterialManager : public detail::ResourceManagerBase<Material>
+class MaterialManager : public ResourceManager<Material>
 {
 public:
 	static void initialize();
-	static Material* basic();
+	static Material* uvChecker();
 };

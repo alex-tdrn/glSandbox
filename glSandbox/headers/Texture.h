@@ -43,6 +43,9 @@ private:
 
 public:
 	unsigned int getID() const;
+	int getWidth() const;
+	int getHeight() const;
+	int getNumberOfChannels() const;
 	void use(int location) const;
 	bool isLinear() const;
 	void drawUI();

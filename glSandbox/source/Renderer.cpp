@@ -132,7 +132,7 @@ void Renderer::renderAuxiliaryGeometry() const
 		if(camera == _camera || !_camera->isEnabled() || !_camera->getVisualizeFrustum())
 			continue;
 		ShaderManager::unlit()->set("model", glm::inverse(_camera->getProjectionMatrix() * _camera->getViewMatrix()));
-		TextureManager::debug()->use(1);
+		TextureManager::uvChecker3M()->use(1);
 		if(geometry.frustum.mode != geometry.lines)
 		{
 			ShaderManager::unlit()->set("material.hasMap", geometry.frustum.textured);
@@ -537,7 +537,7 @@ void Renderer::updateFramebuffers()
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, simpleColorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, viewport.width, viewport.height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, viewport.width, viewport.height, 0, GL_RGB, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);

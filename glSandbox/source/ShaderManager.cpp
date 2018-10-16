@@ -2,6 +2,7 @@
 
 void ShaderManager::initialize()
 {
+	visualizeTexture();
 	unlit();
 	pbr();
 	blinnPhong();
@@ -47,6 +48,14 @@ Shader* load(std::string&& name, Sources&&... sources)
 	auto shader = std::make_unique<Shader>(sources...);
 	shader->name.set(std::move(name));
 	return ShaderManager::add(std::move(shader));
+}
+
+Shader* ShaderManager::visualizeTexture()
+{
+	static auto ret = load("Visualize Texture",
+		"shaders/visualizeTexture.vert", "shaders/visualizeTexture.frag"
+	);
+	return ret;
 }
 
 Shader* ShaderManager::unlit()

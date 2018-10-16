@@ -1,13 +1,11 @@
 #pragma once
 #define GLM_ENABLE_EXPERIMENTAL
-#include "Texture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
-#include <imgui.h>
 #include <string_view>
 #include <tuple>
 #include <algorithm>
@@ -292,88 +290,6 @@ inline Bounds operator+(Bounds const& lhs, Bounds const& rhs)
 		max[i] = std::max(lhs.max[i], rhs.max[i]);
 	}
 	return {min, max};
-}
-
-class IDGuard
-{
-public:
-	IDGuard() = delete;
-	IDGuard(int* ID)
-	{
-		ImGui::PushID(ID);
-	}
-	IDGuard(char const* ID)
-	{
-		ImGui::PushID(ID);
-	}
-	IDGuard(void* ID)
-	{
-		ImGui::PushID(ID);
-	}
-	~IDGuard()
-	{
-		ImGui::PopID();
-	}
-};
-
-
-inline void chooseGLEnumFromCombo(int& currentValue, std::vector<int> const& possibleValues)
-{
-	IDGuard idGuard{&currentValue};
-	if(ImGui::BeginCombo("###Combo", glEnumToString(currentValue).data()))
-	{
-		int id = 0;
-		for(int possibleValue : possibleValues)
-		{
-			ImGui::PushID(id++);
-			bool isSelected = currentValue == possibleValue;
-			if(ImGui::Selectable(glEnumToString(possibleValue).data(), &isSelected))
-				currentValue = possibleValue;
-			if(isSelected)
-				ImGui::SetItemDefaultFocus();
-			ImGui::PopID();
-		}
-		ImGui::EndCombo();
-	}
-}
-
-inline void chooseComparisonFunctionFromCombo(int& currentValue)
-{
-	chooseGLEnumFromCombo(currentValue,{
-		GL_ALWAYS, GL_NEVER, GL_LESS, GL_LEQUAL, 
-		GL_EQUAL, GL_NOTEQUAL, GL_GEQUAL, GL_GREATER
-	});
-}
-
-template <typename T>
-T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possibleValues, bool nullable = false)
-{
-	IDGuard idGuard{currentValue};
-	if(ImGui::BeginCombo("###Combo", currentValue ? currentValue->name.get().data() : "None"))
-	{
-		bool isSelected = !currentValue;
-		if(nullable)
-		{
-			if(ImGui::Selectable("None", &isSelected))
-				currentValue = nullptr;
-			if(isSelected)
-				ImGui::SetItemDefaultFocus();
-			ImGui::Separator();
-		}
-		int id = 0;
-		for(auto& v : possibleValues)
-		{
-			ImGui::PushID(id++);
-			isSelected = currentValue == v.get();
-			if(ImGui::Selectable(v->name.get().data(), &isSelected))
-				currentValue = v.get();
-			if(isSelected)
-				ImGui::SetItemDefaultFocus();
-			ImGui::PopID();
-		}
-		ImGui::EndCombo();
-	}
-	return currentValue;
 }
 
 inline glm::mat4 composeTransformation(glm::vec3 const& translation, glm::vec3 const& rotation, glm::vec3 const& scale)

@@ -2,7 +2,7 @@
 #include "ResourceManager.h"
 #include "Mesh.h"
 
-class MeshManager : public detail::ResourceManagerBase<Mesh>
+class MeshManager : public ResourceManager<Mesh>
 {
 public:
 	static void initialize();

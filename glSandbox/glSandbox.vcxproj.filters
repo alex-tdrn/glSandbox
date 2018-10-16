@@ -29,6 +29,9 @@
     <Filter Include="Shaders\PostProcessing">
       <UniqueIdentifier>{7d9105a7-e17c-453a-8629-549e76c6f68c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\ResourceRendering">
+      <UniqueIdentifier>{5ecb0321-1a03-4e33-ab8b-65785ba4e263}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CubemapManager.cpp">
@@ -119,7 +122,10 @@
     <ClCompile Include="source\Globals.cpp" />
     <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="ResourceRenderer.cpp">
+    <ClCompile Include="source\ResourceRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TextureRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
@@ -220,7 +226,11 @@
     <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Globals.h" />
     <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
-    <ClInclude Include="ResourceRenderer.h" />
+    <ClInclude Include="headers\ResourceRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\TextureRenderer.h" />
+    <ClInclude Include="headers\UIUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\skybox.frag">
@@ -342,6 +352,12 @@
     </None>
     <None Include="shaders\ppPassthrough.frag">
       <Filter>Shaders\PostProcessing</Filter>
+    </None>
+    <None Include="shaders\visualizeTexture.vert">
+      <Filter>Shaders\ResourceRendering</Filter>
+    </None>
+    <None Include="shaders\visualizeTexture.frag">
+      <Filter>Shaders\ResourceRendering</Filter>
     </None>
   </ItemGroup>
 </Project>

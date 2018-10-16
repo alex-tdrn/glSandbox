@@ -1,9 +1,7 @@
 #include "Material.h"
-#include "Texture.h"
-#include "Util.h"
+#include "TextureManager.h"
+#include "UIUtilities.h"
 #include "ShaderManager.h"
-
-#include <imgui.h>
 
 void Material::setNormal(Texture* map)
 {
@@ -80,19 +78,25 @@ void Material::use(Shader* shader, Material::Map visualizeMap) const
 
 void Material::drawUI()
 {
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Normals");
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	normalMap = chooseFromCombo(normalMap, TextureManager::getAll(), true, "Normals");
 	if(normalMap)
 	{
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("Normals");
 		ImGui::SameLine();
 		ImGui::Checkbox("###NormalMappingEnabled", &normalMappingEnabled);
 		normalMap->drawUI();
 		ImGui::Separator();
 	}
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Occlusion");
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	occlusionMap = chooseFromCombo(occlusionMap, TextureManager::getAll(), true, "Occlusion");
 	if(occlusionMap)
 	{
-		ImGui::AlignTextToFramePadding();
-		ImGui::Text("Occlusion");
 		ImGui::SameLine();
 		ImGui::Checkbox("###OcclusionMappingEnabled", &occlusionMappingEnabled);
 		occlusionMap->drawUI();
@@ -102,6 +106,9 @@ void Material::drawUI()
 	ImGui::Text("Emissive");
 	ImGui::SameLine();
 	ImGui::ColorEdit3("###FactorEmissive", &emissiveFactor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	emissiveMap = chooseFromCombo(emissiveMap, TextureManager::getAll(), true, "Emmissive");
 	if(emissiveMap)
 		emissiveMap->drawUI();
 }

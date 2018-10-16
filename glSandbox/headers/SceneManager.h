@@ -2,7 +2,7 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 
-class SceneManager : public detail::ResourceManagerBase<Scene>
+class SceneManager : public ResourceManager<Scene>
 {
 public:
 	static void initialize();

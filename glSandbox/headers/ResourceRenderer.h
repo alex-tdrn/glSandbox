@@ -10,6 +10,8 @@ private:
 	int width = 0;
 	int height = 0;
 	bool outDated = true;
+	static inline bool flipX = false;
+	static inline bool flipY = false;
 
 protected:
 	ResourceRenderer() = delete;

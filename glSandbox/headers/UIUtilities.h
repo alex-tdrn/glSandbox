@@ -83,10 +83,12 @@ T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possi
 	return currentValue;
 }
 
-inline void drawImage(unsigned int ID, int width, int height)
+inline void drawImage(unsigned int ID, int width, int height, bool flipX = false, bool flipY = false)
 {
 	float const size = std::min(ImGui::GetContentRegionAvailWidth(), 512.0f);
-	if(ImGui::ImageButton(ImTextureID(ID), ImVec2(size, size)))
+	ImVec2 uv1{flipX ? 1.0f : 0.0f, flipY ? 1.0f : 0.0f};
+	ImVec2 uv2{1.0f - uv1.x, 1.0f - uv1.y};
+	if(ImGui::ImageButton(ImTextureID(ID), ImVec2(size, size), uv1, uv2))
 		ImGui::OpenPopup("###ResourceRenderer");
 	if(ImGui::BeginPopupModal("###ResourceRenderer", nullptr,
 		ImGuiWindowFlags_NoMove |
@@ -108,7 +110,7 @@ inline void drawImage(unsigned int ID, int width, int height)
 			imageSize.y = info::windowHeight * percentOfScreen;
 			imageSize.x = static_cast<float>(width) / height * imageSize.y;
 		}
-		ImGui::Image(ImTextureID(ID), ImVec2(imageSize.x, imageSize.y));
+		ImGui::Image(ImTextureID(ID), ImVec2(imageSize.x, imageSize.y), uv1, uv2);
 		if(ImGui::IsAnyItemActive())
 			ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();

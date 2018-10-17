@@ -284,7 +284,9 @@ void Renderer::renderShadowMaps() const
 			continue;
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapsS[i].getID(), 0);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		glm::mat4 lightProjection = glm::perspective(glm::radians(lightsS[i]->getOuterCutoff() * 2), 1.0f, 0.01f, 100.0f);
+		float const nearPlane = shading.lighting.shadows.spotLightNearPlane;
+		float const farPlane = shading.lighting.shadows.spotLightFarPlane;
+		glm::mat4 lightProjection = glm::perspective(glm::radians(lightsS[i]->getOuterCutoff() * 2), 1.0f, nearPlane, farPlane);
 		glm::vec3 eye = lightsS[i]->getPosition();
 		glm::vec3 center = eye + lightsS[i]->getDirection();
 		glm::mat4 lightView = glm::lookAt(eye, center, glm::vec3{0.0f, 1.0f, 0.0f});
@@ -558,6 +560,8 @@ void Renderer::setCamera(Camera* camera)
 {
 	this->camera = camera;
 	scene = camera->getScene();
+	shading.lighting.shadows.showMap = -1;
+	updateShadowMaps();
 	shouldRender();
 }
 
@@ -622,7 +626,7 @@ void Renderer::drawUI(bool* open)
 	{
 		int id = 0;
 		if(ImGui::Selectable("None"), camera == nullptr)
-			camera = nullptr;
+			setCamera(nullptr);
 		if(camera == nullptr)
 			ImGui::SetItemDefaultFocus();
 		for(auto& s : SceneManager::getAll())
@@ -809,6 +813,12 @@ void Renderer::drawUI(bool* open)
 				ImGui::Text("Directional Light Projection Size");
 				ImGui::SameLine();
 				ImGui::InputFloat("###directionalLightProjectionSize", &shading.lighting.shadows.directionalLightProjectionSize, 0.1f, 1.0f);
+				ImGui::Text("Spotlight Near Plane");
+				ImGui::SameLine();
+				ImGui::InputFloat("###spotlightnearplane", &shading.lighting.shadows.spotLightNearPlane, 0.01f, 1.0f);
+				ImGui::Text("Spotlight Far Plane");
+				ImGui::SameLine();
+				ImGui::InputFloat("###spotlightfarplane", &shading.lighting.shadows.spotLightFarPlane, 1.0f, 5.0f);
 				std::string currentShadowMapName = "None";
 				auto& lightsD = scene->getAll<DirectionalLight>();
 				auto& lightsS = scene->getAll<SpotLight>();

@@ -30,10 +30,8 @@ void TextureRenderer::drawSettings()
 	ImGui::Checkbox("Linearize", &linearize);
 	if(linearize)
 	{
-		ImGui::SameLine();
-		ImGui::InputFloat("###NearPlane", &nearPlane, 0.01f, 1.0f);
-		ImGui::SameLine();
-		ImGui::InputFloat("###FarPlane", &farPlane, 1.0f, 5.0f);
+		ImGui::InputFloat("Near Plane", &nearPlane, 0.01f, 1.0f);
+		ImGui::InputFloat("Far Plane", &farPlane, 1.0f, 5.0f);
 	}
 }
 

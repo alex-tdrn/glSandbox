@@ -76,7 +76,12 @@ void ResourceRenderer::initializeRenderState()
 void ResourceRenderer::drawUI()
 {
 	IDGuard idGuard{this};
-	drawImage(colorbuffer, width, height);
+	drawImage(colorbuffer, width, height, flipX, flipY);
+	ImGui::Text("Flip");
+	ImGui::SameLine();
+	ImGui::Checkbox("X", &flipX);
+	ImGui::SameLine();
+	ImGui::Checkbox("Y", &flipY);
 	drawSettings();
 }
 

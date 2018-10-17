@@ -83,6 +83,8 @@ private:
 				float bias[2] = {0.0000f, 0.0000f};
 				int pcfSamples = 2;
 				float directionalLightProjectionSize = 10.0f;
+				float spotLightNearPlane = 0.1f;
+				float spotLightFarPlane = 20.0f;
 				mutable std::vector<Texture> shadowMapsD;
 				mutable std::vector<Texture> shadowMapsS;
 				mutable std::vector<Cubemap> shadowMapsP;

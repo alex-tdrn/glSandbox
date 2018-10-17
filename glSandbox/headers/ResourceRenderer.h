@@ -6,6 +6,7 @@ class ResourceRenderer
 private:
 	unsigned int framebuffer = 0;
 	unsigned int colorbuffer = 0;
+	unsigned int renderbuffer = 0;
 	int width = 0;
 	int height = 0;
 	bool outDated = true;

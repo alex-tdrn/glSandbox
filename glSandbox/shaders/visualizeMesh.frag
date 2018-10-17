@@ -1,6 +1,6 @@
 #version 420 core
 uniform int visualizeAttribute;
-
+uniform vec3 color;
 out vec3 FragColor;
 
 in VS_OUT{
@@ -15,6 +15,9 @@ void main()
 {
 	switch(visualizeAttribute)
 	{
+		case -1:
+			FragColor = color;
+			return;
 		case 0:
 			FragColor = fs_in.position;	
 			return;

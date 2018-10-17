@@ -232,12 +232,14 @@
     <ClInclude Include="headers\ResourceRenderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="headers\UIUtilities.h" />
     <ClInclude Include="headers\TextureRenderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="headers\MeshRenderer.h">
       <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\UIUtilities.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

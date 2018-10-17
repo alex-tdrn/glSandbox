@@ -249,15 +249,21 @@ public:
 	{
 		return (min + max) * 0.5f;
 	}
-	glm::mat4 getTransformation() const
+	glm::mat4 getTransformation(bool invertible = false) const
 	{
+		if(empty())
+			return glm::mat4(1.0f);
 		glm::vec3 translation = -getCenter();
 		auto aux{*this};
 		aux += translation;
 
 		glm::vec3 scale;
 		for(int i = 0; i < 3; i++)
+		{
 			scale[i] = std::max(std::abs(aux.min[i]), std::abs(aux.max[i]));
+			if(invertible && scale[i] == 0.0f)
+				scale[i] = 1.0f;
+		}
 		glm::mat4 t = glm::translate(glm::mat4{1.0f}, -translation);
 		glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
 		return t * s;

@@ -69,6 +69,7 @@ public:
 
 public:
 	bool hasAttribute(AttributeType attributeType) const;
+	bool hasSurface() const;
 	Bounds const& getBounds() const;
 	void use() const;
 	void drawUI();
@@ -118,6 +119,6 @@ Bounds calculateBounds(std::vector<T> const& vertices)
 {
 	Bounds bounds;
 	for(auto const& vertex : vertices)
-		bounds += vertex.position;
+		bounds += Bounds(vertex.position);
 	return bounds;
 }

@@ -117,9 +117,9 @@ void Renderer::configurePolygonMode() const
 
 void Renderer::clearBuffers() const
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glm::vec3 background = scene->getBackground();
 	glClearColor(background.r, background.g, background.b, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void Renderer::renderAuxiliaryGeometry() const

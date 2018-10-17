@@ -8,7 +8,16 @@ public:
 
 private:
 	Mesh const* const mesh;
-	Mesh::AttributeType visualizeAttribute = Mesh::AttributeType::positions;
+	static inline int visualizeAttribute = Mesh::AttributeType::positions;
+	static inline bool faceCulling = false;
+	static inline enum PolygonMode
+	{
+		triangles,
+		lines,
+		both
+	} polygonMode = both;
+	static inline glm::vec3 wireframeColor{0.0f};
+	static inline float lineWidth = 3.0f;
 
 public:
 	MeshRenderer() = delete;

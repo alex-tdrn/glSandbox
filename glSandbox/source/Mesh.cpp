@@ -83,6 +83,11 @@ bool Mesh::hasAttribute(AttributeType attributeType) const
 	return availableAttributes[static_cast<int>(attributeType)];
 }
 
+bool Mesh::hasSurface() const
+{
+	return drawMode == GL_TRIANGLES || drawMode == GL_TRIANGLE_FAN || drawMode == GL_TRIANGLE_STRIP;
+}
+
 Bounds const& Mesh::getBounds() const
 {
 	return bounds;

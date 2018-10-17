@@ -39,4 +39,5 @@ void TextureRenderer::render()
 	ShaderManager::visualizeTexture()->set("textureLocation", 0);
 	texture->use(0);
 	MeshManager::quad()->use();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

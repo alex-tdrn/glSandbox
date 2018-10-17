@@ -9,9 +9,12 @@ public:
 
 private:
 	Texture const* const texture;
-	bool visualizeChannel[4] = {
+	static inline bool visualizeChannel[4] = {
 		true, true, true, true
 	};
+	static inline bool linearize = false;
+	static inline float nearPlane = 1.0f;
+	static inline float farPlane = 100.0f;
 
 public:
 	TextureRenderer() = delete;

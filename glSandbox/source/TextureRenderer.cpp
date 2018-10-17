@@ -27,6 +27,14 @@ void TextureRenderer::drawSettings()
 		return;
 	ImGui::SameLine();
 	ImGui::Checkbox("A", &visualizeChannel[3]);
+	ImGui::Checkbox("Linearize", &linearize);
+	if(linearize)
+	{
+		ImGui::SameLine();
+		ImGui::InputFloat("###NearPlane", &nearPlane, 0.01f, 1.0f);
+		ImGui::SameLine();
+		ImGui::InputFloat("###FarPlane", &farPlane, 1.0f, 5.0f);
+	}
 }
 
 void TextureRenderer::render()
@@ -36,6 +44,12 @@ void TextureRenderer::render()
 	for(int i = 0; i < 4; i++)
 		ShaderManager::visualizeTexture()->set("visualizeChannel[" + std::to_string(i) + "]", visualizeChannel[i]);
 	ShaderManager::visualizeTexture()->set("linear", texture->isLinear());
+	ShaderManager::visualizeTexture()->set("linearize", linearize);
+	if(linearize)
+	{
+		ShaderManager::visualizeTexture()->set("nearPlane", nearPlane);
+		ShaderManager::visualizeTexture()->set("farPlane", farPlane);
+	}
 	ShaderManager::visualizeTexture()->set("textureLocation", 0);
 	texture->use(0);
 	MeshManager::quad()->use();

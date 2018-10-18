@@ -372,6 +372,7 @@ void Renderer::configureShaders() const
 			shading.current->set("shadowMappingBiasMin", shading.lighting.shadows.bias[0]);
 			shading.current->set("shadowMappingBiasMax", shading.lighting.shadows.bias[1]);
 			shading.current->set("shadowMappingPCFSamples", shading.lighting.shadows.pcfSamples);
+			shading.current->set("shadowMappingPCFRadius", shading.lighting.shadows.pcfRadius);
 			shading.current->set("shadowMappingPCFEarlyExit", shading.lighting.shadows.pcfEarlyExit);
 			renderShadowMaps();
 		}
@@ -913,6 +914,9 @@ void Renderer::drawUI(bool* open)
 				ImGui::Text("PCF Samples(%i)", totalPCFSamples);
 				ImGui::SameLine();
 				ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
+				ImGui::Text("PCF Radius");
+				ImGui::SameLine();
+				ImGui::InputFloat("###PCFRadius", &shading.lighting.shadows.pcfRadius, 0.1f, 1.0f);
 				ImGui::Checkbox("PCF Early Exit", &shading.lighting.shadows.pcfEarlyExit);
 				if(shading.lighting.shadows.pcfSamples < 0)
 					shading.lighting.shadows.pcfSamples = 0;

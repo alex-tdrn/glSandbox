@@ -82,6 +82,7 @@ private:
 				int resolution = 10;
 				float bias[2] = {0.0000f, 0.0000f};
 				int pcfSamples = 2;
+				float pcfRadius = 1.0f;
 				bool pcfEarlyExit = true;
 				float directionalLightProjectionSize = 10.0f;
 				float spotLightNearPlane = 0.1f;

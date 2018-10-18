@@ -64,6 +64,7 @@ uniform bool shadowMappingEnabled;
 uniform float shadowMappingBiasMin;
 uniform float shadowMappingBiasMax;
 uniform int shadowMappingPCFSamples;
+uniform float shadowMappingPCFRadius;
 uniform float shadowMappingOmniFarPlane;
 uniform bool shadowMappingPCFEarlyExit;
 
@@ -272,7 +273,7 @@ float calculateShadowFactorPCF(vec4 coords, sampler2DShadow shadowMap, float bia
 	float shadow = sampleShadow(coords.xyz, shadowMap, bias);
 	if(shadowMappingPCFSamples == 0)
 		return shadow;
-	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	vec2 texelSize = shadowMappingPCFRadius / textureSize(shadowMap, 0);
 	//early exit test
 	vec3 corners[4] = {
 		vec3(-texelSize * shadowMappingPCFSamples, 0.0f),
@@ -317,7 +318,7 @@ float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float b
 	float shadow = sampleShadow(coords, shadowMap, bias);
 	if(shadowMappingPCFSamples == 0)
 		return shadow;
-	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	vec2 texelSize = shadowMappingPCFRadius / textureSize(shadowMap, 0);
 	//early exit test
 	vec3 corners[4] = {
 		(-texelSize.x * xBase -texelSize.y * yBase) * shadowMappingPCFSamples,

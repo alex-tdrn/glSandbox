@@ -85,6 +85,8 @@ private:
 				float directionalLightProjectionSize = 10.0f;
 				float spotLightNearPlane = 0.1f;
 				float spotLightFarPlane = 20.0f;
+				float pointLightNearPlane = 0.1f;
+				float pointLightFarPlane = 20.0f;
 				mutable std::vector<Texture> shadowMapsD;
 				mutable std::vector<Texture> shadowMapsS;
 				mutable std::vector<Cubemap> shadowMapsP;

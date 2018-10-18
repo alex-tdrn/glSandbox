@@ -309,16 +309,17 @@ void Renderer::renderShadowMaps() const
 			continue;
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMapsP[i].getID(), 0);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		static float const farPlane = 1000.0f;
-		glm::mat4 lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, farPlane);
+		float const nearPlane = shading.lighting.shadows.pointLightNearPlane;
+		float const farPlane = shading.lighting.shadows.pointLightFarPlane;
+		glm::mat4 lightProjection = glm::perspective(glm::radians(90.0f), 1.0f, nearPlane, farPlane);
 		glm::vec3 eye = lightsP[i]->getPosition();
 		std::array<glm::mat4, 6> lightSpaceMatrices = {
-			lightProjection * glm::lookAt(eye, eye + glm::vec3{+1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, +1.0f, 0.0f}),
-			lightProjection * glm::lookAt(eye, eye + glm::vec3{-1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, +1.0f, 0.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{+1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, -1.0f, 0.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{-1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, -1.0f, 0.0f}),
 			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, +1.0f, 0.0f}, glm::vec3{0.0f, 0.0f, +1.0f}),
 			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, -1.0f, 0.0f}, glm::vec3{0.0f, 0.0f, -1.0f}),
-			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, +1.0f}, glm::vec3{0.0f, +1.0f, 0.0f}),
-			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, -1.0f}, glm::vec3{0.0f, +1.0f, 0.0f})
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, +1.0f}, glm::vec3{0.0f, -1.0f, 0.0f}),
+			lightProjection * glm::lookAt(eye, eye + glm::vec3{0.0f, 0.0f, -1.0f}, glm::vec3{0.0f, -1.0f, 0.0f})
 		};
 		ShaderManager::shadowMappingOmnidirectional()->use();
 		ShaderManager::shadowMappingOmnidirectional()->set("lightPos", eye);
@@ -820,6 +821,12 @@ void Renderer::drawUI(bool* open)
 				ImGui::Text("Spotlight Far Plane");
 				ImGui::SameLine();
 				ImGui::InputFloat("###spotlightfarplane", &shading.lighting.shadows.spotLightFarPlane, 1.0f, 5.0f);
+				ImGui::Text("Pointlight Near Plane");
+				ImGui::SameLine();
+				ImGui::InputFloat("###pointlightnearplane", &shading.lighting.shadows.pointLightNearPlane, 0.01f, 1.0f);
+				ImGui::Text("Pointlight Far Plane");
+				ImGui::SameLine();
+				ImGui::InputFloat("###pointlightfarplane", &shading.lighting.shadows.pointLightFarPlane, 1.0f, 5.0f);
 				std::string currentShadowMapName = "None";
 				auto& lightsD = scene->getAll<DirectionalLight>();
 				auto& lightsS = scene->getAll<SpotLight>();

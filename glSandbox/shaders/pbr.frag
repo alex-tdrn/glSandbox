@@ -16,7 +16,7 @@ struct PointLight
 	float intensity;
 	vec3 position;
 	vec3 worldPosition;
-	samplerCube shadowMap;
+	samplerCubeShadow shadowMap;
 };
 struct SpotLight
 {
@@ -190,16 +190,11 @@ float calcShadow(vec4 coords, sampler2DShadow shadowMap, vec3 lightDirection)
 	return shadow /= sampleCount;
 }
 
-float calcShadow(vec3 coords, samplerCube shadowMap)
+float calcShadow(vec3 coords, samplerCubeShadow shadowMap)
 {
 	if(!shadowMappingEnabled)
 		return 1.0f;
-	float closestDepth = texture(shadowMap, coords.xyz).r * shadowMappingOmniFarPlane;
-	float currentDepth = length(coords);
-	if(currentDepth > closestDepth)
-	 return 0.0f;
-	else
-	 return 1.0f; 
+	return texture(shadowMap, vec4(coords.xyz, length(coords) / shadowMappingOmniFarPlane));
 }
 
 vec3 calcAmbientLight()
@@ -210,9 +205,12 @@ vec3 calcAmbientLight()
 vec3 calcDirLight(DirLight light, int idx)
 {
 	vec3 lightDirection = normalize(-light.direction);
-	float shadow = calcShadow(fs_in.positionLightSpaceD[idx], light.shadowMap, lightDirection);
+	float fragmentOrientationToLight = max(dot(normal, lightDirection), 0.0f);
+	float shadow = 0.0f;
+	if(fragmentOrientationToLight > 0.0f)
+		shadow = calcShadow(fs_in.positionLightSpaceD[idx], light.shadowMap, lightDirection);
 	vec3 radiance = light.color * light.intensity * shadow;
-	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
+	return BRDF(lightDirection) * radiance * fragmentOrientationToLight;
 }
 
 vec3 calcPointLight(PointLight light, int idx)
@@ -220,9 +218,12 @@ vec3 calcPointLight(PointLight light, int idx)
 	float distance = length(fs_in.position - light.position);
 	float attenuation = 1.0 / (distance * distance);
 	vec3 lightDirection = normalize(-fs_in.position + light.position);
-	float shadow = calcShadow(fs_in.worldPosition - light.worldPosition, light.shadowMap);
+	float fragmentOrientationToLight = max(dot(normal, lightDirection), 0.0f);
+	float shadow = 0.0f;
+	if(fragmentOrientationToLight > 0.0f)
+		shadow = calcShadow(fs_in.worldPosition - light.worldPosition, light.shadowMap);
 	vec3 radiance = light.color * light.intensity * attenuation * shadow;
-	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
+	return BRDF(lightDirection) * radiance * fragmentOrientationToLight;
 }
 
 vec3 calcSpotLight(SpotLight light, int idx)
@@ -233,9 +234,12 @@ vec3 calcSpotLight(SpotLight light, int idx)
 	float distance = length(light.position - fs_in.position);
 	float attenuation = 1.0 / (distance * distance);
 	attenuation *= clamp((theta - light.outerCutoff) / epsilon, 0.0f, 1.0f);
-	float shadow = calcShadow(fs_in.positionLightSpaceS[idx], light.shadowMap, lightDirection);
+	float fragmentOrientationToLight = max(dot(normal, lightDirection), 0.0f);
+	float shadow = 0.0f;
+	if(fragmentOrientationToLight > 0.0f)
+		shadow = calcShadow(fs_in.positionLightSpaceS[idx], light.shadowMap, lightDirection);
 	vec3 radiance = light.color * light.intensity * attenuation * shadow;
-	return BRDF(lightDirection) * radiance * max(dot(normal, lightDirection), 0.0f);
+	return BRDF(lightDirection) * radiance * fragmentOrientationToLight;
 }
 
 float DistributionGGX(vec3 halfwayVector)

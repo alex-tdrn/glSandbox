@@ -81,6 +81,9 @@ private:
 				int depthComparison = GL_LEQUAL;
 				int resolution = 10;
 				float bias[2] = {0.0000f, 0.0000f};
+				bool usePoissonSampling = false;
+				int poissonSamples = 1;
+				float poissonRadius = 1.0f;
 				int pcfSamples = 2;
 				float pcfRadius = 1.0f;
 				bool pcfEarlyExit = true;

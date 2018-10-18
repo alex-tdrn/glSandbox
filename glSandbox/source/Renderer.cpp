@@ -371,9 +371,18 @@ void Renderer::configureShaders() const
 		{
 			shading.current->set("shadowMappingBiasMin", shading.lighting.shadows.bias[0]);
 			shading.current->set("shadowMappingBiasMax", shading.lighting.shadows.bias[1]);
-			shading.current->set("shadowMappingPCFSamples", shading.lighting.shadows.pcfSamples);
-			shading.current->set("shadowMappingPCFRadius", shading.lighting.shadows.pcfRadius);
-			shading.current->set("shadowMappingPCFEarlyExit", shading.lighting.shadows.pcfEarlyExit);
+			shading.current->set("shadowMappingUsePoisson", shading.lighting.shadows.usePoissonSampling);
+			if(shading.lighting.shadows.usePoissonSampling)
+			{
+				shading.current->set("shadowMappingSamples", shading.lighting.shadows.poissonSamples);
+				shading.current->set("shadowMappingRadius", shading.lighting.shadows.poissonRadius);
+			}
+			else
+			{
+				shading.current->set("shadowMappingSamples", shading.lighting.shadows.pcfSamples);
+				shading.current->set("shadowMappingRadius", shading.lighting.shadows.pcfRadius);
+				shading.current->set("shadowMappingEarlyExit", shading.lighting.shadows.pcfEarlyExit);
+			}
 			renderShadowMaps();
 		}
 	}
@@ -908,18 +917,37 @@ void Renderer::drawUI(bool* open)
 				ImGui::Text("Max Bias");
 				ImGui::SameLine();
 				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.0001f, 0.0005f, "%.4f");
-				ImGui::AlignTextToFramePadding();
-				int totalPCFSamples = shading.lighting.shadows.pcfSamples * 2 + 1;
-				totalPCFSamples *= totalPCFSamples;
-				ImGui::Text("PCF Samples(%i)", totalPCFSamples);
+				ImGui::Text("Sampling Method ");
 				ImGui::SameLine();
-				ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
-				ImGui::Text("PCF Radius");
+				if(ImGui::RadioButton("PCF", !shading.lighting.shadows.usePoissonSampling))
+					shading.lighting.shadows.usePoissonSampling = false;
 				ImGui::SameLine();
-				ImGui::InputFloat("###PCFRadius", &shading.lighting.shadows.pcfRadius, 0.1f, 1.0f);
-				ImGui::Checkbox("PCF Early Exit", &shading.lighting.shadows.pcfEarlyExit);
-				if(shading.lighting.shadows.pcfSamples < 0)
-					shading.lighting.shadows.pcfSamples = 0;
+				if(ImGui::RadioButton("Poisson Disk", shading.lighting.shadows.usePoissonSampling))
+					shading.lighting.shadows.usePoissonSampling = true;
+				if(shading.lighting.shadows.usePoissonSampling)
+				{
+					ImGui::Text("Samples");
+					ImGui::SameLine();
+					ImGui::SliderInt("###PoissonSamples", &shading.lighting.shadows.poissonSamples, 1, 64);
+					ImGui::Text("Radius");
+					ImGui::SameLine();
+					ImGui::InputFloat("###PoissonRadius", &shading.lighting.shadows.poissonRadius, 0.1f, 1.0f);
+				}
+				else
+				{
+					ImGui::AlignTextToFramePadding();
+					int totalPCFSamples = shading.lighting.shadows.pcfSamples * 2 + 1;
+					totalPCFSamples *= totalPCFSamples;
+					ImGui::Text("Samples(%i)", totalPCFSamples);
+					ImGui::SameLine();
+					ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
+					ImGui::Text("Radius");
+					ImGui::SameLine();
+					ImGui::InputFloat("###PCFRadius", &shading.lighting.shadows.pcfRadius, 0.1f, 1.0f);
+					ImGui::Checkbox("Early Exit", &shading.lighting.shadows.pcfEarlyExit);
+					if(shading.lighting.shadows.pcfSamples < 0)
+						shading.lighting.shadows.pcfSamples = 0;
+				}
 			}
 		}
 		else if(shading.current == ShaderManager::unlit())

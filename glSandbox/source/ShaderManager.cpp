@@ -4,6 +4,7 @@ void ShaderManager::initialize()
 {
 	visualizeTexture();
 	visualizeMesh();
+	visualizeCubemap();
 	unlit();
 	pbr();
 	blinnPhong();
@@ -63,6 +64,14 @@ Shader* ShaderManager::visualizeMesh()
 {
 	static auto ret = load("Visualize Mesh",
 		"shaders/visualizeMesh.vert", "shaders/visualizeMesh.frag"
+	);
+	return ret;
+}
+
+Shader* ShaderManager::visualizeCubemap()
+{
+	static auto ret = load("Visualize Cubemap",
+		"shaders/visualizeCubemap.vert", "shaders/visualizeCubemap.frag"
 	);
 	return ret;
 }

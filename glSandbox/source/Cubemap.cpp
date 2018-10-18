@@ -1,4 +1,5 @@
 #include "Cubemap.h"
+#include "CubemapRenderer.h"
 #include "UIUtilities.h"
 
 #include <glad/glad.h>
@@ -17,14 +18,7 @@ Cubemap::Cubemap(unsigned int format, int width, int height,
 Cubemap::Cubemap(std::array<Texture, 6>&& faces)
 	:faces(std::move(faces))
 {
-	width = this->faces->front().width;
-	height = this->faces->front().height;
-	nrChannels= this->faces->front().nrChannels;
-	format = this->faces->front().format;
-	pixelTransfer = this->faces->front().pixelTransfer;
-	dataType = this->faces->front().dataType;
-	mipmapping = this->faces->front().mipmapping;
-	linear = this->faces->front().linear;
+	
 }
 
 Cubemap::~Cubemap()
@@ -56,6 +50,15 @@ void Cubemap::load() const
 {
 	if(!faces)
 		assert(false);
+	faces->front().load();
+	width = faces->front().width;
+	height = faces->front().height;
+	nrChannels = faces->front().nrChannels;
+	format = faces->front().format;
+	pixelTransfer = faces->front().pixelTransfer;
+	dataType = faces->front().dataType;
+	mipmapping = faces->front().mipmapping;
+	linear = faces->front().linear;
 	allocate();
 	for(int i = 0; i < faces->size(); i++)
 	{
@@ -86,19 +89,5 @@ void Cubemap::drawUI()
 	if(!allocated)
 		load();
 	ImGui::Text("ID: %i", ID);
-	if(faces)
-	{
-		ImGui::Text("Face +X");
-		(*faces)[0].drawUI();
-		ImGui::Text("Face -X");
-		(*faces)[1].drawUI();
-		ImGui::Text("Face +Y");
-		(*faces)[2].drawUI();
-		ImGui::Text("Face -Y");
-		(*faces)[3].drawUI();
-		ImGui::Text("Face +Z");
-		(*faces)[4].drawUI();
-		ImGui::Text("Face -Z");
-		(*faces)[5].drawUI();
-	}
+	OnDemandRenderer<CubemapRenderer>::drawUI(this);
 }

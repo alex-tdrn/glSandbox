@@ -823,13 +823,16 @@ void Renderer::drawUI(bool* open)
 				std::string currentShadowMapName = "None";
 				auto& lightsD = scene->getAll<DirectionalLight>();
 				auto& lightsS = scene->getAll<SpotLight>();
+				auto& lightsP = scene->getAll<PointLight>();
 				int& showMap = shading.lighting.shadows.showMap;
 				if(showMap > -1)
 				{
 					if(showMap < lightsD.size())
 						currentShadowMapName = lightsD[showMap]->name.get();
-					else
+					else if(showMap < lightsD.size() + lightsS.size())
 						currentShadowMapName = lightsS[showMap - lightsD.size()]->name.get();
+					else
+						currentShadowMapName = lightsP[showMap - lightsD.size() - lightsS.size()]->name.get();
 				}
 				ImGui::Text("View Shadow Map");
 				ImGui::SameLine();
@@ -853,12 +856,25 @@ void Renderer::drawUI(bool* open)
 						ImGui::PopID();
 					}
 					ImGui::Separator();
+					int offset = lightsD.size();
 					for(int i = 0; i < lightsS.size(); i++)
 					{
 						ImGui::PushID(id++);
-						isSelected = showMap == lightsD.size() + i;
+						isSelected = showMap == offset + i;
 						if(ImGui::Selectable(lightsS[i]->name.get().data(), &isSelected))
-							showMap = lightsD.size() + i;
+							showMap = offset + i;
+						if(isSelected)
+							ImGui::SetItemDefaultFocus();
+						ImGui::PopID();
+					}
+					ImGui::Separator();
+					offset += lightsS.size();
+					for(int i = 0; i < lightsP.size(); i++)
+					{
+						ImGui::PushID(id++);
+						isSelected = showMap == offset + i;
+						if(ImGui::Selectable(lightsP[i]->name.get().data(), &isSelected))
+							showMap = offset + i;
 						if(isSelected)
 							ImGui::SetItemDefaultFocus();
 						ImGui::PopID();
@@ -869,8 +885,10 @@ void Renderer::drawUI(bool* open)
 				{
 					if(showMap < lightsD.size())
 						shading.lighting.shadows.shadowMapsD[showMap].drawUI();
-					else
+					else if(showMap < lightsD.size() + lightsS.size())
 						shading.lighting.shadows.shadowMapsS[showMap - lightsD.size()].drawUI();
+					else
+						shading.lighting.shadows.shadowMapsP[showMap - lightsD.size() - lightsS.size()].drawUI();
 				}
 			}
 		}

@@ -16,8 +16,8 @@ private:
 	mutable unsigned int format = 0;
 	mutable unsigned int pixelTransfer = 0;
 	mutable unsigned int dataType = 0;
-	bool mipmapping = true;
-	bool linear;
+	mutable bool mipmapping = true;
+	mutable bool linear;
 	std::optional<std::array<Texture, 6>> faces = std::nullopt;
 
 public:

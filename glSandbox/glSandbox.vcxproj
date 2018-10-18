@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\CubemapRenderer.cpp" />
     <ClCompile Include="source\MeshRenderer.cpp" />
     <ClCompile Include="source\ResourceRenderer.cpp" />
     <ClCompile Include="source\CubemapManager.cpp" />
@@ -191,6 +192,7 @@
     <ClCompile Include="source\TextureRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\CubemapRenderer.h" />
     <ClInclude Include="headers\CubemapManager.h" />
     <ClInclude Include="headers\FileSelector.h" />
     <ClInclude Include="headers\glad.h" />
@@ -275,6 +277,8 @@
     <None Include="shaders\visualizeMesh.vert" />
     <None Include="shaders\visualizeTexture.frag" />
     <None Include="shaders\visualizeTexture.vert" />
+    <None Include="shaders\visualizeCubemap.frag" />
+    <None Include="shaders\visualizeCubemap.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

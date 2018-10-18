@@ -131,6 +131,9 @@
     <ClCompile Include="source\MeshRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="source\CubemapRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\ResourceManager.h">
@@ -240,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="headers\UIUtilities.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\CubemapRenderer.h">
+      <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +379,12 @@
       <Filter>Shaders\ResourceRendering</Filter>
     </None>
     <None Include="shaders\visualizeMesh.frag">
+      <Filter>Shaders\ResourceRendering</Filter>
+    </None>
+    <None Include="shaders\visualizeCubemap.frag">
+      <Filter>Shaders\ResourceRendering</Filter>
+    </None>
+    <None Include="shaders\visualizeCubemap.vert">
       <Filter>Shaders\ResourceRendering</Filter>
     </None>
   </ItemGroup>

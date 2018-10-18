@@ -10,6 +10,7 @@ public:
 	static bool isLightingShader(Shader*);
 	static Shader* visualizeTexture();
 	static Shader* visualizeMesh();
+	static Shader* visualizeCubemap();
 	static Shader* unlit();
 	static Shader* pbr();
 	static Shader* blinnPhong();

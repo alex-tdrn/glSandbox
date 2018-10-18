@@ -50,7 +50,7 @@ private:
 		bool boundingBox = false;
 	}highlighting;
 	struct{
-		Shader* current = ShaderManager::pbr();
+		Shader* current = ShaderManager::unlit();
 		struct
 		{
 			bool perChannel = false;

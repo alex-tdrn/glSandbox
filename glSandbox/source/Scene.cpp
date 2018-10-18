@@ -3,6 +3,7 @@
 #include "Prop.h"
 #include "Util.h"
 #include "CubemapManager.h"
+#include "MeshManager.h"
 
 #include <imgui.h>
 #include <set>
@@ -18,7 +19,6 @@ Scene::Scene(Scene &&other)
 	:root(std::move(other.root))
 {
 	root->setScene(this);
-	addDefaultNodes();
 }
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
@@ -30,19 +30,20 @@ Scene::Scene(std::unique_ptr<Node>&& root)
 
 void Scene::addDefaultNodes()
 {
-	auto light = std::make_unique<PointLight>();
-	light->setIntensity(1000.0f);
-	light->setLocalTranslation(glm::vec3(0.0f, +5.0f, 0.0f));
-	root->addChild(std::move(light));
-	/*auto light = std::make_unique<DirectionalLight>();
+	auto light = std::make_unique<DirectionalLight>();
 	light->setIntensity(10.0f);
 	light->setColor(glm::vec3(0.8f, 1.0f, 1.0f));
 	light->setLocalRotation(glm::vec3(-30.0f, 0.0f, 0.0f));
-	root->addChild(std::move(light));
+	root->addChild(std::move(light), true);
 	auto light2 = std::make_unique<SpotLight>();
 	light2->setIntensity(50.0f);
-	light2->setColor(glm::vec3(1.0f, 0.8f, 0.5f));*/
+	light2->setColor(glm::vec3(1.0f, 0.8f, 0.5f));
 	root->addChild(std::make_unique<Camera>(), true);// ->addChild(std::move(light2));
+	auto floor = std::make_unique<Prop>(MeshManager::box());
+	floor->name.set("Floor");
+	floor->setLocalScale({100.0f, 0.5f, 100.0f});
+	floor->setLocalTranslation({0.0f, -2.0f, 0.0f});
+	root->addChild(std::move(floor), true);
 }
 
 void Scene::updateCache() const

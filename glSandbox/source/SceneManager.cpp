@@ -31,10 +31,6 @@ Scene* SceneManager::basic()
 		prop->setLocalRotation({45.0f, 45.0f, 0.0f});
 		prop->setLocalTranslation({0.0f, 1.0f, 0.0f});
 		scene->getRoot()->addChild(std::move(prop));
-		auto floor = std::make_unique<Prop>(MeshManager::box());
-		floor->setLocalScale({30.0f, 0.5f, 30.0f});
-		floor->setLocalTranslation({0.0f, -2.0f, 0.0f});
-		scene->getRoot()->addChild(std::move(floor));
 		return add(std::move(scene));
 	}();
 	return ret;
@@ -76,10 +72,6 @@ Scene* SceneManager::testShadowMapping()
 
 			}
 		}
-		auto floor = std::make_unique<Prop>(MeshManager::box());
-		floor->setLocalScale({100.0f, 0.5f, 100.0f});
-		floor->setLocalTranslation({0.0f, -2.0f, 0.0f});
-		scene->getRoot()->addChild(std::move(floor));
 		auto light = std::make_unique<PointLight>();
 		light->setIntensity(10'000.0f);
 		light->setColor({1.0f, 0.8f, 0.5f});

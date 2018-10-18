@@ -65,6 +65,7 @@ uniform float shadowMappingBiasMin;
 uniform float shadowMappingBiasMax;
 uniform int shadowMappingPCFSamples;
 uniform float shadowMappingOmniFarPlane;
+uniform bool shadowMappingPCFEarlyExit;
 
 in VS_OUT
 {
@@ -89,11 +90,10 @@ vec3 occlusion = vec3(1.0f);
 vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
 
-vec3 calcAmbientLight();
-vec3 calcDirLight(DirLight light, int idx);
-vec3 calcPointLight(PointLight light, int idx);
-vec3 calcSpotLight(SpotLight light, int idx);
-vec3 BRDF(vec3 lightDirection);
+vec3 calculateAmbientLight();
+vec3 calculateDirLight(DirLight light, vec4 positionInLightSpace);
+vec3 calculatePointLight(PointLight light);
+vec3 calculateSpotLight(SpotLight light, vec4 positionInLightSpace);
 
 void main()
 {
@@ -128,105 +128,60 @@ void main()
 
 	F0 = mix(F0, baseColor, metalness);
 
-	vec3 result = calcAmbientLight() * occlusion + emission;
+	vec3 result = calculateAmbientLight() * occlusion + emission;
 	for(int i = 0; i < nDirLights; i++)
-		result += calcDirLight(dirLights[i], i);
+		result += calculateDirLight(dirLights[i], fs_in.positionLightSpaceD[i]);
 	for(int i = 0; i < nPointLights; i++)
-		result += calcPointLight(pointLights[i], i);
+		result += calculatePointLight(pointLights[i]);
 	for(int i = 0; i < nSpotLights; i++)
-		result += calcSpotLight(spotLights[i], i);
+		result += calculateSpotLight(spotLights[i], fs_in.positionLightSpaceS[i]);
 
 	result /= result + vec3(1.0f);//tonemap
 	//result = pow(result, vec3(1.0f / 2.2f));//gamma
 	FragColor = vec4(result , 1.0f);
 }
 
-float calcShadow(vec3 coords, sampler2DShadow shadowMap, vec3 lightDirection)
-{
-	float currentDepth = coords.z;
-	if(currentDepth > 1.0f)
-		return 1.0f;
-	float bias = max(shadowMappingBiasMax * (1.0 - dot(normal, lightDirection)), shadowMappingBiasMin);  
-	return 1.0f - texture(shadowMap, vec3(coords.xy, currentDepth - bias));
-}
+vec3 BRDF(vec3 lightDirection);
+float calculateShadowBias(vec3 lightDirection);
+float calculateShadowFactorPCF(vec4 coords, sampler2DShadow shadowMap, float bias);
+float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float bias);
 
-float calcShadow(vec4 coords, sampler2DShadow shadowMap, vec3 lightDirection)
-{
-	if(!shadowMappingEnabled)
-		return 1.0f;
-	coords /= coords.w;
-	coords = coords * 0.5 + 0.5;
-	float shadow = calcShadow(coords.xyz, shadowMap, lightDirection);
-	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-	//early exit test
-	vec3 sampleDL = vec3(-texelSize*shadowMappingPCFSamples, 0.0f);
-	shadow += calcShadow(coords.xyz + sampleDL, shadowMap, lightDirection);
-	vec3 sampleDR = sampleDL * vec3(-1, 1, 1);
-	shadow += calcShadow(coords.xyz + sampleDR, shadowMap, lightDirection);
-	vec3 sampleUR = sampleDR * vec3(1, -1, 1);
-	shadow += calcShadow(coords.xyz + sampleUR, shadowMap, lightDirection);
-	vec3 sampleUL = sampleUR * vec3(-1, 1, 1);
-	shadow += calcShadow(coords.xyz + sampleUL, shadowMap, lightDirection);
-	if(shadow == 0.0f || shadow == 5.0f)
-		return shadow / 5;
-	for(int x = -shadowMappingPCFSamples; x <= shadowMappingPCFSamples; ++x)
-	{
-		for(int y = -shadowMappingPCFSamples; y <= shadowMappingPCFSamples; ++y)
-		{
-			if(x == 0 && y == 0 ) 
-				continue;
-			vec3 offset = vec3(vec2(x, y) * texelSize, 0.0f);
-			if(offset == sampleDL
-			|| offset == sampleDR
-			|| offset == sampleUR
-			|| offset == sampleUL)
-				continue;
-			shadow += calcShadow(coords.xyz + offset, shadowMap, lightDirection);
-		}    
-	}
-	float sampleCount = shadowMappingPCFSamples * 2;
-	sampleCount += 1;
-	sampleCount *= sampleCount;
-	return shadow /= sampleCount;
-}
-
-float calcShadow(vec3 coords, samplerCubeShadow shadowMap)
-{
-	if(!shadowMappingEnabled)
-		return 1.0f;
-	return texture(shadowMap, vec4(coords.xyz, length(coords) / shadowMappingOmniFarPlane));
-}
-
-vec3 calcAmbientLight()
+vec3 calculateAmbientLight()
 {
 	return ambientStrength * ambientColor * baseColor;	
 }
 
-vec3 calcDirLight(DirLight light, int idx)
+vec3 calculateDirLight(DirLight light, vec4 positionInLightSpace)
 {
 	vec3 lightDirection = normalize(-light.direction);
 	float fragmentOrientationToLight = max(dot(normal, lightDirection), 0.0f);
-	float shadow = 0.0f;
-	if(fragmentOrientationToLight > 0.0f)
-		shadow = calcShadow(fs_in.positionLightSpaceD[idx], light.shadowMap, lightDirection);
-	vec3 radiance = light.color * light.intensity * shadow;
+	float shadowFactor = 1.0f;
+	if(shadowMappingEnabled && fragmentOrientationToLight > 0.0f)
+	{
+		shadowFactor = calculateShadowFactorPCF(positionInLightSpace, 
+		light.shadowMap, calculateShadowBias(lightDirection));
+	}
+	vec3 radiance = light.color * light.intensity * shadowFactor;
 	return BRDF(lightDirection) * radiance * fragmentOrientationToLight;
 }
 
-vec3 calcPointLight(PointLight light, int idx)
+vec3 calculatePointLight(PointLight light)
 {
 	float distance = length(fs_in.position - light.position);
 	float attenuation = 1.0 / (distance * distance);
 	vec3 lightDirection = normalize(-fs_in.position + light.position);
 	float fragmentOrientationToLight = max(dot(normal, lightDirection), 0.0f);
-	float shadow = 0.0f;
-	if(fragmentOrientationToLight > 0.0f)
-		shadow = calcShadow(fs_in.worldPosition - light.worldPosition, light.shadowMap);
-	vec3 radiance = light.color * light.intensity * attenuation * shadow;
+	float shadowFactor = 1.0f;
+	if(shadowMappingEnabled && fragmentOrientationToLight > 0.0f)
+	{
+		shadowFactor = calculateShadowFactorPCF(fs_in.worldPosition - light.worldPosition,
+		light.shadowMap, calculateShadowBias(lightDirection));
+	}
+	vec3 radiance = light.color * light.intensity * attenuation * shadowFactor;
 	return BRDF(lightDirection) * radiance * fragmentOrientationToLight;
 }
 
-vec3 calcSpotLight(SpotLight light, int idx)
+vec3 calculateSpotLight(SpotLight light, vec4 positionInLightSpace)
 {
 	vec3 lightDirection = normalize(light.position - fs_in.position);
 	float theta = dot(lightDirection, normalize(-light.direction));
@@ -235,13 +190,17 @@ vec3 calcSpotLight(SpotLight light, int idx)
 	float attenuation = 1.0 / (distance * distance);
 	attenuation *= clamp((theta - light.outerCutoff) / epsilon, 0.0f, 1.0f);
 	float fragmentOrientationToLight = max(dot(normal, lightDirection), 0.0f);
-	float shadow = 0.0f;
-	if(fragmentOrientationToLight > 0.0f)
-		shadow = calcShadow(fs_in.positionLightSpaceS[idx], light.shadowMap, lightDirection);
-	vec3 radiance = light.color * light.intensity * attenuation * shadow;
+	float shadowFactor = 1.0f;
+	if(shadowMappingEnabled && fragmentOrientationToLight > 0.0f)
+	{
+		shadowFactor = calculateShadowFactorPCF(positionInLightSpace,
+		light.shadowMap, calculateShadowBias(lightDirection));
+	}
+	vec3 radiance = light.color * light.intensity * attenuation * shadowFactor;
 	return BRDF(lightDirection) * radiance * fragmentOrientationToLight;
 }
 
+//Lighting functions
 float DistributionGGX(vec3 halfwayVector)
 {
 	float r4 = roughness * roughness;
@@ -290,3 +249,104 @@ vec3 BRDF(vec3 lightDirection)
 	return diffuse + specular;
 }
 
+//Shadowing sampling functions
+float calculateShadowBias(vec3 lightDirection)
+{
+	return max(shadowMappingBiasMax * (1.0 - dot(normal, lightDirection)), shadowMappingBiasMin);
+}
+
+float sampleShadow(vec3 coords, sampler2DShadow shadowMap, float bias)
+{
+	return texture(shadowMap, vec3(coords.xy, coords.z - bias));
+}
+
+float sampleShadow(vec3 coords, samplerCubeShadow shadowMap, float bias)
+{
+	return texture(shadowMap, vec4(coords.xyz, length(coords) / shadowMappingOmniFarPlane - bias));
+}
+
+float calculateShadowFactorPCF(vec4 coords, sampler2DShadow shadowMap, float bias)
+{
+	coords /= coords.w;
+	coords = coords * 0.5 + 0.5;
+	float shadow = sampleShadow(coords.xyz, shadowMap, bias);
+	if(shadowMappingPCFSamples == 0)
+		return shadow;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	//early exit test
+	vec3 corners[4] = {
+		vec3(-texelSize * shadowMappingPCFSamples, 0.0f),
+		vec3(vec2(-texelSize.x, +texelSize.y) * shadowMappingPCFSamples, 0.0f),
+		vec3(vec2(+texelSize.x, -texelSize.y) * shadowMappingPCFSamples, 0.0f),
+		vec3(+texelSize * shadowMappingPCFSamples, 0.0f)
+	};
+	for(int i = 0; i < 4; i++)
+		shadow += sampleShadow(coords.xyz + corners[i], shadowMap, bias);
+	if(shadowMappingPCFEarlyExit && (shadow == 0.0f || shadow == 5.0f))
+		return shadow / 5;
+
+	for(int x = -shadowMappingPCFSamples; x <= shadowMappingPCFSamples; ++x)
+	{
+		for(int y = -shadowMappingPCFSamples; y <= shadowMappingPCFSamples; ++y)
+		{
+			if(x == 0 && y == 0 ) 
+				continue;
+			vec3 offset = vec3(vec2(x, y) * texelSize, 0.0f);
+			if(offset == corners[0]
+			|| offset == corners[1]
+			|| offset == corners[2]
+			|| offset == corners[3])
+				continue;
+			shadow += sampleShadow(coords.xyz + offset, shadowMap, bias);
+		}    
+	}
+	float sampleCount = shadowMappingPCFSamples * 2;
+	sampleCount += 1;
+	sampleCount *= sampleCount;
+	return shadow / sampleCount;
+}
+
+float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float bias)
+{
+	vec3 aux = vec3(0.0f, 1.0f, 0.0f);//use as helper vector to find base vectors
+	if(dot(coords, aux) == 1.0f)
+		aux = vec3(0.0f, 0.0f, 1.0f);
+	vec3 xBase = cross(aux, coords);
+	vec3 yBase = cross(aux, xBase);
+	//now do normal pcf sampling using x, y as offset base
+	float shadow = sampleShadow(coords, shadowMap, bias);
+	if(shadowMappingPCFSamples == 0)
+		return shadow;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	//early exit test
+	vec3 corners[4] = {
+		(-texelSize.x * xBase -texelSize.y * yBase) * shadowMappingPCFSamples,
+		(-texelSize.x * xBase +texelSize.y * yBase) * shadowMappingPCFSamples,
+		(+texelSize.x * xBase -texelSize.y * yBase) * shadowMappingPCFSamples,
+		(+texelSize.x * xBase +texelSize.y * yBase) * shadowMappingPCFSamples
+	};
+	for(int i = 0; i < 4; i++)
+		shadow += sampleShadow(coords + corners[i], shadowMap, bias);
+	if(shadowMappingPCFEarlyExit && (shadow == 0.0f || shadow == 5.0f))
+		return shadow / 5;
+
+	for(int x = -shadowMappingPCFSamples; x <= shadowMappingPCFSamples; ++x)
+	{
+		for(int y = -shadowMappingPCFSamples; y <= shadowMappingPCFSamples; ++y)
+		{
+			if(x == 0 && y == 0 ) 
+				continue;
+			vec3 offset = texelSize.x * xBase * x + texelSize.y * yBase * y;
+			if(offset == corners[0]
+			|| offset == corners[1]
+			|| offset == corners[2]
+			|| offset == corners[3])
+				continue;
+			shadow += sampleShadow(coords + offset, shadowMap, bias);
+		}    
+	}
+	float sampleCount = shadowMappingPCFSamples * 2;
+	sampleCount += 1;
+	sampleCount *= sampleCount;
+	return shadow / sampleCount;
+}

@@ -78,10 +78,11 @@ private:
 		struct{
 			struct{
 				bool enabled = true;
-				int depthComparison = GL_GEQUAL;
+				int depthComparison = GL_LEQUAL;
 				int resolution = 10;
 				float bias[2] = {0.0000f, 0.0000f};
 				int pcfSamples = 2;
+				bool pcfEarlyExit = true;
 				float directionalLightProjectionSize = 10.0f;
 				float spotLightNearPlane = 0.1f;
 				float spotLightFarPlane = 20.0f;

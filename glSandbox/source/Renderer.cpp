@@ -223,6 +223,8 @@ void Renderer::updateShadowMaps() const
 	{
 		shadowMapsP.emplace_back(GL_DEPTH_COMPONENT, resolution, resolution,
 			GL_DEPTH_COMPONENT, GL_FLOAT);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, shading.lighting.shadows.depthComparison);
 	}
 }
 
@@ -370,6 +372,7 @@ void Renderer::configureShaders() const
 			shading.current->set("shadowMappingBiasMin", shading.lighting.shadows.bias[0]);
 			shading.current->set("shadowMappingBiasMax", shading.lighting.shadows.bias[1]);
 			shading.current->set("shadowMappingPCFSamples", shading.lighting.shadows.pcfSamples);
+			shading.current->set("shadowMappingPCFEarlyExit", shading.lighting.shadows.pcfEarlyExit);
 			renderShadowMaps();
 		}
 	}
@@ -659,7 +662,7 @@ void Renderer::drawUI(bool* open)
 	ImGui::Checkbox("Bounding Box", &highlighting.boundingBox);
 
 	ImGui::NewLine();
-	if(ImGui::CollapsingHeader("Geometry", ImGuiTreeNodeFlags_DefaultOpen))
+	if(ImGui::CollapsingHeader("Geometry"))
 	{
 		ImGui::AlignTextToFramePadding();
 		ImGui::Text("Line Width");
@@ -787,43 +790,34 @@ void Renderer::drawUI(bool* open)
 			ImGui::Checkbox("Shadow Mapping", &shading.lighting.shadows.enabled);
 			if(shading.lighting.shadows.enabled)
 			{
+				ImGui::Text("Shadow Map Generation ");
+				ImGui::AlignTextToFramePadding();
+				ImGui::Text("Resolution Exponent");
 				ImGui::SameLine();
 				ImGui::BeginGroup();
-				ImGui::Text("Resolution: 2^");
-				ImGui::SameLine();
 				ImGui::InputInt("###Resolution", &shading.lighting.shadows.resolution, 1);
 				if(shading.lighting.shadows.resolution < 1)
 					shading.lighting.shadows.resolution = 1;
-				ImGui::Text("Shadow Comparison Function");
-				ImGui::SameLine();
-				chooseComparisonFunctionFromCombo(shading.lighting.shadows.depthComparison);
 				ImGui::EndGroup();
 				if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
 					updateShadowMaps();
-				ImGui::Text("Bias");
-				ImGui::Text("Min");
-				ImGui::SameLine();
-				ImGui::InputFloat("###BiasMin", &shading.lighting.shadows.bias[0], 0.0001f, 0.0005f, "%.4f");
-				ImGui::Text("Max");
-				ImGui::SameLine();
-				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.0001f, 0.0005f, "%.4f");
-				ImGui::Text("PCF Samples");
-				ImGui::SameLine();
-				ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
-				if(shading.lighting.shadows.pcfSamples < 0)
-					shading.lighting.shadows.pcfSamples = 0;
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Directional Light Projection Size");
 				ImGui::SameLine();
 				ImGui::InputFloat("###directionalLightProjectionSize", &shading.lighting.shadows.directionalLightProjectionSize, 0.1f, 1.0f);
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Spotlight Near Plane");
 				ImGui::SameLine();
 				ImGui::InputFloat("###spotlightnearplane", &shading.lighting.shadows.spotLightNearPlane, 0.01f, 1.0f);
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Spotlight Far Plane");
 				ImGui::SameLine();
 				ImGui::InputFloat("###spotlightfarplane", &shading.lighting.shadows.spotLightFarPlane, 1.0f, 5.0f);
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Pointlight Near Plane");
 				ImGui::SameLine();
 				ImGui::InputFloat("###pointlightnearplane", &shading.lighting.shadows.pointLightNearPlane, 0.01f, 1.0f);
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Pointlight Far Plane");
 				ImGui::SameLine();
 				ImGui::InputFloat("###pointlightfarplane", &shading.lighting.shadows.pointLightFarPlane, 1.0f, 5.0f);
@@ -841,6 +835,7 @@ void Renderer::drawUI(bool* open)
 					else
 						currentShadowMapName = lightsP[showMap - lightsD.size() - lightsS.size()]->name.get();
 				}
+				ImGui::AlignTextToFramePadding();
 				ImGui::Text("View Shadow Map");
 				ImGui::SameLine();
 				if(ImGui::BeginCombo("###ViewShadowMap", currentShadowMapName.data()))
@@ -897,6 +892,30 @@ void Renderer::drawUI(bool* open)
 					else
 						shading.lighting.shadows.shadowMapsP[showMap - lightsD.size() - lightsS.size()].drawUI();
 				}
+				ImGui::Separator();
+				ImGui::Text("Shadow Map Sampling");
+				ImGui::AlignTextToFramePadding();
+				ImGui::Text("Shadow Comparison Function");
+				ImGui::SameLine();
+				chooseComparisonFunctionFromCombo(shading.lighting.shadows.depthComparison);
+				
+				ImGui::AlignTextToFramePadding();
+				ImGui::Text("Min Bias");
+				ImGui::SameLine();
+				ImGui::InputFloat("###BiasMin", &shading.lighting.shadows.bias[0], 0.0001f, 0.0005f, "%.4f");
+				ImGui::AlignTextToFramePadding();
+				ImGui::Text("Max Bias");
+				ImGui::SameLine();
+				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.0001f, 0.0005f, "%.4f");
+				ImGui::AlignTextToFramePadding();
+				int totalPCFSamples = shading.lighting.shadows.pcfSamples * 2 + 1;
+				totalPCFSamples *= totalPCFSamples;
+				ImGui::Text("PCF Samples(%i)", totalPCFSamples);
+				ImGui::SameLine();
+				ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
+				ImGui::Checkbox("PCF Early Exit", &shading.lighting.shadows.pcfEarlyExit);
+				if(shading.lighting.shadows.pcfSamples < 0)
+					shading.lighting.shadows.pcfSamples = 0;
 			}
 		}
 		else if(shading.current == ShaderManager::unlit())

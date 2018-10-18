@@ -83,6 +83,7 @@ void Renderer::configureFramebuffers() const
 		glDisable(GL_MULTISAMPLE);
 		glBindFramebuffer(GL_FRAMEBUFFER, simpleFramebuffer);
 	}
+	glViewport(0, 0, viewport.width, viewport.height);
 }
 
 void Renderer::configureDepthTesting() const

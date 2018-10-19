@@ -42,7 +42,7 @@ void Scene::addDefaultNodes()
 	auto floor = std::make_unique<Prop>(MeshManager::box());
 	floor->name.set("Floor");
 	floor->setLocalScale({100.0f, 0.5f, 100.0f});
-	floor->setLocalTranslation({0.0f, -2.0f, 0.0f});
+	floor->setLocalTranslation({0.0f, -1.0f, 0.0f});
 	root->addChild(std::move(floor), true);
 }
 

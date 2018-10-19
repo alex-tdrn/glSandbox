@@ -78,15 +78,9 @@ private:
 		struct{
 			struct{
 				bool enabled = true;
-				int depthComparison = GL_LEQUAL;
+				bool faceCulling = true;
+				int faceCullingMode = GL_BACK;
 				int resolution = 10;
-				float bias[2] = {0.0000f, 0.0000f};
-				bool usePoissonSampling = false;
-				int poissonSamples = 1;
-				float poissonRadius = 1.0f;
-				int pcfSamples = 2;
-				float pcfRadius = 1.0f;
-				bool pcfEarlyExit = true;
 				float directionalLightProjectionSize = 10.0f;
 				float spotLightNearPlane = 0.1f;
 				float spotLightFarPlane = 20.0f;
@@ -96,6 +90,14 @@ private:
 				mutable std::vector<Texture> shadowMapsS;
 				mutable std::vector<Cubemap> shadowMapsP;
 				int showMap = -1;
+				int depthComparison = GL_LEQUAL;
+				float bias[2] = {0.0000f, 0.0010f};
+				bool usePoissonSampling = true;
+				int poissonSamples = 32;
+				float poissonRadius = 1.5f;
+				int pcfSamples = 2;
+				float pcfRadius = 0.5f;
+				bool pcfEarlyExit = true;
 			}shadows;
 			float ambientStrength = 1.0f;
 		}lighting;

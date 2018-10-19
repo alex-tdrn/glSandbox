@@ -254,9 +254,16 @@ void Renderer::renderShadowMaps() const
 	const int resolution = 1 << shading.lighting.shadows.resolution;
 	glViewport(0, 0, resolution, resolution);
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowMappingFBO);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	if(shading.lighting.shadows.faceCulling)
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(shading.lighting.shadows.faceCullingMode);
+		glFrontFace(GL_CCW);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
 	int enabledDirectionalLights = 0;
 	for(int i = 0; i < lightsD.size(); i++)
 	{
@@ -801,6 +808,14 @@ void Renderer::drawUI(bool* open)
 			if(shading.lighting.shadows.enabled)
 			{
 				ImGui::Text("Shadow Map Generation ");
+				ImGui::Checkbox("Face Culling", &shading.lighting.shadows.faceCulling);
+				if(shading.lighting.shadows.faceCulling)
+				{
+					ImGui::SameLine();
+					chooseGLEnumFromCombo(shading.lighting.shadows.faceCullingMode, {
+						GL_FRONT_AND_BACK, GL_FRONT, GL_BACK
+					});
+				}
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Resolution Exponent");
 				ImGui::SameLine();

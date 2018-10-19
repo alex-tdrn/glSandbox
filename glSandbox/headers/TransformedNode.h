@@ -182,6 +182,13 @@ public:
 		}
 	}
 
+	void setGlobalTransformation(glm::mat4&& m) override
+	{
+		setLocalTransformation(glm::mat4(1.0f));
+		m = m * glm::inverse(getGlobalTransformation());
+		setLocalTransformation(std::move(m));
+	}
+
 	glm::mat4 getLocalTransformation() const override
 	{
 		glm::mat4 transformation{1.0f};

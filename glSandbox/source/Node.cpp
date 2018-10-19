@@ -86,10 +86,10 @@ Node* Node::addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformati
 	auto desiredGlobalTransformation = node->getGlobalTransformation();
 	node->parent = this;
 	node->setScene(scene);
-	if(retainGlobalTransformation)
-		node->setLocalTransformation(glm::inverse(glm::inverse(node->getLocalTransformation()) * node->getGlobalTransformation()) * desiredGlobalTransformation);
 	auto ret = node.get();
 	children.push_back(std::move(node));
+	if(retainGlobalTransformation)
+		ret->setGlobalTransformation(std::move(desiredGlobalTransformation));
 
 	invalidateSceneCache();
 	return ret;

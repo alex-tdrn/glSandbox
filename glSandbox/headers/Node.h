@@ -52,6 +52,7 @@ public:
 	std::vector<std::unique_ptr<Node>> releaseChildren();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
 	virtual void setLocalTransformation(glm::mat4&&) = 0;
+	virtual void setGlobalTransformation(glm::mat4&&) = 0;
 	virtual glm::mat4 getLocalTransformation() const = 0;
 	virtual glm::mat4 getGlobalTransformation() const = 0;
 	virtual Bounds getBounds() const;

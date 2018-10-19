@@ -255,7 +255,7 @@ void Renderer::renderShadowMaps() const
 	glViewport(0, 0, resolution, resolution);
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowMappingFBO);
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
+	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	int enabledDirectionalLights = 0;
 	for(int i = 0; i < lightsD.size(); i++)

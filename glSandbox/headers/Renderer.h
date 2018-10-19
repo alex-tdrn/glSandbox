@@ -91,7 +91,7 @@ private:
 				mutable std::vector<Cubemap> shadowMapsP;
 				int showMap = -1;
 				int depthComparison = GL_LEQUAL;
-				float bias[2] = {0.0000f, 0.0010f};
+				float bias[2] = {0.0005f, 0.0020f};
 				bool usePoissonSampling = true;
 				int poissonSamples = 32;
 				float poissonRadius = 1.5f;

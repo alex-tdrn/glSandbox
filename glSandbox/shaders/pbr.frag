@@ -182,8 +182,12 @@ vec3 calculatePointLight(PointLight light)
 	float shadowFactor = 1.0f;
 	if(shadowMappingEnabled && fragmentOrientationToLight > 0.0f)
 	{
-		shadowFactor = calculateShadowFactorPCF(fs_in.worldPosition - light.worldPosition,
-		light.shadowMap, calculateShadowBias(lightDirection));
+		if(shadowMappingUsePoisson)
+			shadowFactor = calculateShadowFactorPoisson(fs_in.worldPosition - light.worldPosition,
+			light.shadowMap, calculateShadowBias(lightDirection));
+		else
+			shadowFactor = calculateShadowFactorPCF(fs_in.worldPosition - light.worldPosition,
+			light.shadowMap, calculateShadowBias(lightDirection));
 	}
 	vec3 radiance = light.color * light.intensity * attenuation * shadowFactor;
 	return BRDF(lightDirection) * radiance * fragmentOrientationToLight;
@@ -272,9 +276,9 @@ float sampleShadow(vec3 coords, sampler2DShadow shadowMap, float bias)
 	return texture(shadowMap, vec3(coords.xy, coords.z - bias));
 }
 
-float sampleShadow(vec3 coords, samplerCubeShadow shadowMap, float bias)
+float sampleShadow(vec4 coords, samplerCubeShadow shadowMap)
 {
-	return texture(shadowMap, vec4(coords.xyz, length(coords) / shadowMappingOmniFarPlane - bias));
+	return texture(shadowMap, coords);
 }
 
 float calculateShadowFactorPCF(vec4 coords, sampler2DShadow shadowMap, float bias)
@@ -326,7 +330,8 @@ float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float b
 	vec3 xBase = cross(aux, coords);
 	vec3 yBase = cross(aux, xBase);
 	//now do normal pcf sampling using x, y as offset base
-	float shadow = sampleShadow(coords, shadowMap, bias);
+	float currentDepth = length(coords) / shadowMappingOmniFarPlane - bias;
+	float shadow = sampleShadow(vec4(coords, currentDepth), shadowMap);
 	if(shadowMappingSamples == 0)
 		return shadow;
 	vec2 texelSize = shadowMappingRadius / textureSize(shadowMap, 0);
@@ -338,7 +343,7 @@ float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float b
 		(+texelSize.x * xBase +texelSize.y * yBase) * shadowMappingSamples
 	};
 	for(int i = 0; i < 4; i++)
-		shadow += sampleShadow(coords + corners[i], shadowMap, bias);
+		shadow += sampleShadow(vec4(coords + corners[i], currentDepth), shadowMap);
 	if(shadowMappingEarlyExit && (shadow == 0.0f || shadow == 5.0f))
 		return shadow / 5;
 
@@ -354,7 +359,7 @@ float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float b
 			|| offset == corners[2]
 			|| offset == corners[3])
 				continue;
-			shadow += sampleShadow(coords + offset, shadowMap, bias);
+			shadow += sampleShadow(vec4(coords + offset, currentDepth), shadowMap);
 		}    
 	}
 	float sampleCount = shadowMappingSamples * 2;
@@ -406,5 +411,23 @@ float calculateShadowFactorPoisson(vec4 coords, sampler2DShadow shadowMap, float
 	float shadow = 0.0f;
 	for(int i = 0; i < shadowMappingSamples; i++)
 		shadow += sampleShadow(coords.xyz + vec3(texelSize * poissonDisk[i], 0.0f), shadowMap, bias);
+	return shadow / shadowMappingSamples;
+}
+
+float calculateShadowFactorPoisson(vec3 coords, samplerCubeShadow shadowMap, float bias)
+{
+	vec3 aux = vec3(0.0f, 1.0f, 0.0f);//use as helper vector to find base vectors
+	if(dot(coords, aux) == 1.0f)
+		aux = vec3(0.0f, 0.0f, 1.0f);
+	vec3 xBase = cross(aux, coords);
+	vec3 yBase = cross(aux, xBase);
+	vec2 texelSize = shadowMappingRadius / textureSize(shadowMap, 0);
+	float currentDepth = length(coords) / shadowMappingOmniFarPlane - bias;
+	float shadow = 0.0f;
+	for(int i = 0; i < shadowMappingSamples; i++)
+	{
+		vec3 offset = texelSize.x * poissonDisk[i].x * xBase + texelSize.y * poissonDisk[i].y * yBase;
+		shadow += sampleShadow(vec4(coords + offset, currentDepth), shadowMap);
+	}
 	return shadow / shadowMappingSamples;
 }

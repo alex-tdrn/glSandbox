@@ -76,11 +76,12 @@ private:
 			bool unlitShowAlphaChannel = true;
 		}debugging;
 		struct{
-			struct{
+			struct
+			{
 				bool enabled = true;
 				bool faceCulling = true;
 				int faceCullingMode = GL_BACK;
-				int resolution = 10;
+				int resolution = 11;
 				float directionalLightProjectionSize = 10.0f;
 				float spotLightNearPlane = 0.1f;
 				float spotLightFarPlane = 20.0f;
@@ -93,10 +94,15 @@ private:
 				int depthComparison = GL_LEQUAL;
 				float bias[2] = {0.0005f, 0.0020f};
 				bool usePoissonSampling = true;
+				enum PoissonSampling{
+					simple,
+					stratified,
+					rotated
+				}poissonVariant = simple;
 				int poissonSamples = 32;
-				float poissonRadius[2] = {1.0f, 1.5f};
+				float poissonRadius[2] = {1.5f, 20.0f};
 				int pcfSamples = 2;
-				float pcfRadius[2] = {0.5f, 1.0f};
+				float pcfRadius[2] = {0.5f, 10.0f};
 				bool pcfEarlyExit = true;
 			}shadows;
 			float ambientStrength = 1.0f;

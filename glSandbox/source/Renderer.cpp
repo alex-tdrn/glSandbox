@@ -382,6 +382,7 @@ void Renderer::configureShaders() const
 			shading.current->set("shadowMappingUsePoisson", shading.lighting.shadows.usePoissonSampling);
 			if(shading.lighting.shadows.usePoissonSampling)
 			{
+				shading.current->set("shadowMappingPoissonVariant", shading.lighting.shadows.poissonVariant);
 				shading.current->set("shadowMappingSamples", shading.lighting.shadows.poissonSamples);
 				shading.current->set("shadowMappingRadius[0]", shading.lighting.shadows.poissonRadius[0]);
 				shading.current->set("shadowMappingRadius[1]", shading.lighting.shadows.poissonRadius[1]);
@@ -810,12 +811,13 @@ void Renderer::drawUI(bool* open)
 			ImGui::Checkbox("Shadow Mapping", &shading.lighting.shadows.enabled);
 			if(shading.lighting.shadows.enabled)
 			{
+				auto& shadows = shading.lighting.shadows;
 				ImGui::Text("Shadow Map Generation ");
-				ImGui::Checkbox("Face Culling", &shading.lighting.shadows.faceCulling);
-				if(shading.lighting.shadows.faceCulling)
+				ImGui::Checkbox("Face Culling", &shadows.faceCulling);
+				if(shadows.faceCulling)
 				{
 					ImGui::SameLine();
-					chooseGLEnumFromCombo(shading.lighting.shadows.faceCullingMode, {
+					chooseGLEnumFromCombo(shadows.faceCullingMode, {
 						GL_FRONT_AND_BACK, GL_FRONT, GL_BACK
 					});
 				}
@@ -823,37 +825,37 @@ void Renderer::drawUI(bool* open)
 				ImGui::Text("Resolution Exponent");
 				ImGui::SameLine();
 				ImGui::BeginGroup();
-				ImGui::InputInt("###Resolution", &shading.lighting.shadows.resolution, 1);
-				if(shading.lighting.shadows.resolution < 1)
-					shading.lighting.shadows.resolution = 1;
+				ImGui::InputInt("###Resolution", &shadows.resolution, 1);
+				if(shadows.resolution < 1)
+					shadows.resolution = 1;
 				ImGui::EndGroup();
 				if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
 					updateShadowMaps();
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Directional Light Projection Size");
 				ImGui::SameLine();
-				ImGui::InputFloat("###directionalLightProjectionSize", &shading.lighting.shadows.directionalLightProjectionSize, 0.1f, 1.0f);
+				ImGui::InputFloat("###directionalLightProjectionSize", &shadows.directionalLightProjectionSize, 0.1f, 1.0f);
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Spotlight Near Plane");
 				ImGui::SameLine();
-				ImGui::InputFloat("###spotlightnearplane", &shading.lighting.shadows.spotLightNearPlane, 0.01f, 1.0f);
+				ImGui::InputFloat("###spotlightnearplane", &shadows.spotLightNearPlane, 0.01f, 1.0f);
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Spotlight Far Plane");
 				ImGui::SameLine();
-				ImGui::InputFloat("###spotlightfarplane", &shading.lighting.shadows.spotLightFarPlane, 1.0f, 5.0f);
+				ImGui::InputFloat("###spotlightfarplane", &shadows.spotLightFarPlane, 1.0f, 5.0f);
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Pointlight Near Plane");
 				ImGui::SameLine();
-				ImGui::InputFloat("###pointlightnearplane", &shading.lighting.shadows.pointLightNearPlane, 0.01f, 1.0f);
+				ImGui::InputFloat("###pointlightnearplane", &shadows.pointLightNearPlane, 0.01f, 1.0f);
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Pointlight Far Plane");
 				ImGui::SameLine();
-				ImGui::InputFloat("###pointlightfarplane", &shading.lighting.shadows.pointLightFarPlane, 1.0f, 5.0f);
+				ImGui::InputFloat("###pointlightfarplane", &shadows.pointLightFarPlane, 1.0f, 5.0f);
 				std::string currentShadowMapName = "None";
 				auto& lightsD = scene->getAll<DirectionalLight>();
 				auto& lightsS = scene->getAll<SpotLight>();
 				auto& lightsP = scene->getAll<PointLight>();
-				int& showMap = shading.lighting.shadows.showMap;
+				int& showMap = shadows.showMap;
 				if(showMap > -1)
 				{
 					if(showMap < lightsD.size())
@@ -914,63 +916,73 @@ void Renderer::drawUI(bool* open)
 				if(showMap > -1)
 				{
 					if(showMap < lightsD.size())
-						shading.lighting.shadows.shadowMapsD[showMap].drawUI();
+						shadows.shadowMapsD[showMap].drawUI();
 					else if(showMap < lightsD.size() + lightsS.size())
-						shading.lighting.shadows.shadowMapsS[showMap - lightsD.size()].drawUI();
+						shadows.shadowMapsS[showMap - lightsD.size()].drawUI();
 					else
-						shading.lighting.shadows.shadowMapsP[showMap - lightsD.size() - lightsS.size()].drawUI();
+						shadows.shadowMapsP[showMap - lightsD.size() - lightsS.size()].drawUI();
 				}
 				ImGui::Separator();
 				ImGui::Text("Shadow Map Sampling");
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Shadow Comparison Function");
 				ImGui::SameLine();
-				chooseComparisonFunctionFromCombo(shading.lighting.shadows.depthComparison);
+				chooseComparisonFunctionFromCombo(shadows.depthComparison);
 				
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Min Bias");
 				ImGui::SameLine();
-				ImGui::InputFloat("###BiasMin", &shading.lighting.shadows.bias[0], 0.0001f, 0.0005f, "%.4f");
+				ImGui::InputFloat("###BiasMin", &shadows.bias[0], 0.0001f, 0.0005f, "%.4f");
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("Max Bias");
 				ImGui::SameLine();
-				ImGui::InputFloat("###BiasMax", &shading.lighting.shadows.bias[1], 0.0001f, 0.0005f, "%.4f");
+				ImGui::InputFloat("###BiasMax", &shadows.bias[1], 0.0001f, 0.0005f, "%.4f");
 				ImGui::Text("Sampling Method ");
 				ImGui::SameLine();
-				if(ImGui::RadioButton("PCF", !shading.lighting.shadows.usePoissonSampling))
-					shading.lighting.shadows.usePoissonSampling = false;
+				if(ImGui::RadioButton("PCF", !shadows.usePoissonSampling))
+					shadows.usePoissonSampling = false;
 				ImGui::SameLine();
-				if(ImGui::RadioButton("Poisson Disk", shading.lighting.shadows.usePoissonSampling))
-					shading.lighting.shadows.usePoissonSampling = true;
-				if(shading.lighting.shadows.usePoissonSampling)
+				if(ImGui::RadioButton("Poisson Disk", shadows.usePoissonSampling))
+					shadows.usePoissonSampling = true;
+				if(shadows.usePoissonSampling)
 				{
+					ImGui::Text("Poisson Variant ");
+					ImGui::SameLine();
+					if(ImGui::RadioButton("Simple", shadows.poissonVariant == shadows.simple))
+						shadows.poissonVariant = shadows.simple;
+					ImGui::SameLine();
+					if(ImGui::RadioButton("Stratified", shadows.poissonVariant == shadows.stratified))
+						shadows.poissonVariant = shadows.stratified;
+					ImGui::SameLine();
+					if(ImGui::RadioButton("Rotated", shadows.poissonVariant == shadows.rotated))
+						shadows.poissonVariant = shadows.rotated;
 					ImGui::Text("Samples");
 					ImGui::SameLine();
-					ImGui::SliderInt("###PoissonSamples", &shading.lighting.shadows.poissonSamples, 1, 64);
+					ImGui::SliderInt("###PoissonSamples", &shadows.poissonSamples, 1, 64);
 					ImGui::Text("Min Radius");
 					ImGui::SameLine();
-					ImGui::InputFloat("###PoissonMinRadius", &shading.lighting.shadows.poissonRadius[0], 0.1f, 1.0f);
+					ImGui::InputFloat("###PoissonMinRadius", &shadows.poissonRadius[0], 0.1f, 1.0f);
 					ImGui::Text("Max Radius");
 					ImGui::SameLine();
-					ImGui::InputFloat("###PoissonMaxRadius", &shading.lighting.shadows.poissonRadius[1], 0.1f, 1.0f);
+					ImGui::InputFloat("###PoissonMaxRadius", &shadows.poissonRadius[1], 0.1f, 1.0f);
 				}
 				else
 				{
 					ImGui::AlignTextToFramePadding();
-					int totalPCFSamples = shading.lighting.shadows.pcfSamples * 2 + 1;
+					int totalPCFSamples = shadows.pcfSamples * 2 + 1;
 					totalPCFSamples *= totalPCFSamples;
 					ImGui::Text("Samples(%i)", totalPCFSamples);
 					ImGui::SameLine();
-					ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
+					ImGui::InputInt("###PCFSamples", &shadows.pcfSamples, 1, 1);
 					ImGui::Text("Min Radius");
 					ImGui::SameLine();
-					ImGui::InputFloat("###PCFMinRadius", &shading.lighting.shadows.pcfRadius[0], 0.1f, 1.0f);
+					ImGui::InputFloat("###PCFMinRadius", &shadows.pcfRadius[0], 0.1f, 1.0f);
 					ImGui::Text("Max Radius");
 					ImGui::SameLine();
-					ImGui::InputFloat("###PCFMaxRadius", &shading.lighting.shadows.pcfRadius[1], 0.1f, 1.0f);
-					ImGui::Checkbox("Early Exit", &shading.lighting.shadows.pcfEarlyExit);
-					if(shading.lighting.shadows.pcfSamples < 0)
-						shading.lighting.shadows.pcfSamples = 0;
+					ImGui::InputFloat("###PCFMaxRadius", &shadows.pcfRadius[1], 0.1f, 1.0f);
+					ImGui::Checkbox("Early Exit", &shadows.pcfEarlyExit);
+					if(shadows.pcfSamples < 0)
+						shadows.pcfSamples = 0;
 				}
 			}
 		}

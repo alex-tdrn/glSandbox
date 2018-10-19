@@ -64,6 +64,7 @@ uniform bool shadowMappingEnabled;
 uniform float shadowMappingBiasMin;
 uniform float shadowMappingBiasMax;
 uniform bool shadowMappingUsePoisson;
+uniform int shadowMappingPoissonVariant;
 uniform int shadowMappingSamples;
 uniform float shadowMappingRadius[2];
 uniform bool shadowMappingEarlyExit;
@@ -408,6 +409,12 @@ uniform vec2 poissonDisk[64] = vec2[64](
 	vec2(-0.545396, 0.538133), vec2(-0.178564, -0.596057)
 );
 
+float rand(vec4 seed)
+{
+	float dot_product = dot(seed, vec4(12.9898,78.233,45.164,94.673));
+    return fract(sin(dot_product) * 43758.5453);
+}
+
 float calculateShadowFactorPoisson(vec4 coords, sampler2DShadow shadowMap, float bias)
 {
 	coords /= coords.w;
@@ -415,7 +422,27 @@ float calculateShadowFactorPoisson(vec4 coords, sampler2DShadow shadowMap, float
 	vec2 texelSize = shadowSamplingRadius / textureSize(shadowMap, 0);
 	float shadow = 0.0f;
 	for(int i = 0; i < shadowMappingSamples; i++)
-		shadow += sampleShadow(coords.xyz + vec3(texelSize * poissonDisk[i], 0.0f), shadowMap, bias);
+	{
+		vec2 offset;
+		if(shadowMappingPoissonVariant == 1)//stratified
+		{
+			offset = poissonDisk[int(shadowMappingSamples * rand(vec4(floor(fs_in.worldPosition * 1000.0f), i)))];
+		}
+		else if(shadowMappingPoissonVariant == 2)//rotated
+		{
+			
+			float angle = rand(vec4(floor(fs_in.worldPosition * 1000.0f), i)) * 2 * PI;
+			float c = cos(angle);
+			float s = sin(angle);
+			offset = poissonDisk[i];
+			offset = vec2(offset.x * c + offset.y * s, offset.x * -s + offset.y * c);
+		}
+		else//simple
+		{
+			offset = poissonDisk[i];
+		}
+		shadow += sampleShadow(coords.xyz + vec3(texelSize * offset, 0.0f), shadowMap, bias);
+	}
 	return shadow / shadowMappingSamples;
 }
 

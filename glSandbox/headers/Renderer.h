@@ -94,9 +94,9 @@ private:
 				float bias[2] = {0.0005f, 0.0020f};
 				bool usePoissonSampling = true;
 				int poissonSamples = 32;
-				float poissonRadius = 1.5f;
+				float poissonRadius[2] = {1.0f, 1.5f};
 				int pcfSamples = 2;
-				float pcfRadius = 0.5f;
+				float pcfRadius[2] = {0.5f, 1.0f};
 				bool pcfEarlyExit = true;
 			}shadows;
 			float ambientStrength = 1.0f;

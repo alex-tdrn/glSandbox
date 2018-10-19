@@ -65,9 +65,10 @@ uniform float shadowMappingBiasMin;
 uniform float shadowMappingBiasMax;
 uniform bool shadowMappingUsePoisson;
 uniform int shadowMappingSamples;
-uniform float shadowMappingRadius;
+uniform float shadowMappingRadius[2];
 uniform bool shadowMappingEarlyExit;
 uniform float shadowMappingOmniFarPlane;
+uniform float cameraFarPlane;
 
 in VS_OUT
 {
@@ -91,6 +92,9 @@ float roughness = material.roughnessFactor;
 vec3 occlusion = vec3(1.0f);
 vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
+const float shadowSamplingRadius = 
+	shadowMappingRadius[0] + (length(fs_in.position) / cameraFarPlane)
+	* (shadowMappingRadius[1] - shadowMappingRadius[0]);
 
 vec3 calculateAmbientLight();
 vec3 calculateDirLight(DirLight light, vec4 positionInLightSpace);
@@ -288,7 +292,7 @@ float calculateShadowFactorPCF(vec4 coords, sampler2DShadow shadowMap, float bia
 	float shadow = sampleShadow(coords.xyz, shadowMap, bias);
 	if(shadowMappingSamples == 0)
 		return shadow;
-	vec2 texelSize = shadowMappingRadius / textureSize(shadowMap, 0);
+	vec2 texelSize = shadowSamplingRadius / textureSize(shadowMap, 0);
 	//early exit test
 	vec3 corners[4] = {
 		vec3(-texelSize * shadowMappingSamples, 0.0f),
@@ -334,7 +338,8 @@ float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float b
 	float shadow = sampleShadow(vec4(coords, currentDepth), shadowMap);
 	if(shadowMappingSamples == 0)
 		return shadow;
-	vec2 texelSize = shadowMappingRadius / textureSize(shadowMap, 0);
+	
+	vec2 texelSize = shadowSamplingRadius / textureSize(shadowMap, 0);
 	//early exit test
 	vec3 corners[4] = {
 		(-texelSize.x * xBase -texelSize.y * yBase) * shadowMappingSamples,
@@ -407,7 +412,7 @@ float calculateShadowFactorPoisson(vec4 coords, sampler2DShadow shadowMap, float
 {
 	coords /= coords.w;
 	coords = coords * 0.5 + 0.5;
-	vec2 texelSize = shadowMappingRadius / textureSize(shadowMap, 0);
+	vec2 texelSize = shadowSamplingRadius / textureSize(shadowMap, 0);
 	float shadow = 0.0f;
 	for(int i = 0; i < shadowMappingSamples; i++)
 		shadow += sampleShadow(coords.xyz + vec3(texelSize * poissonDisk[i], 0.0f), shadowMap, bias);
@@ -421,7 +426,7 @@ float calculateShadowFactorPoisson(vec3 coords, samplerCubeShadow shadowMap, flo
 		aux = vec3(0.0f, 0.0f, 1.0f);
 	vec3 xBase = cross(aux, coords);
 	vec3 yBase = cross(aux, xBase);
-	vec2 texelSize = shadowMappingRadius / textureSize(shadowMap, 0);
+	vec2 texelSize = shadowSamplingRadius / textureSize(shadowMap, 0);
 	float currentDepth = length(coords) / shadowMappingOmniFarPlane - bias;
 	float shadow = 0.0f;
 	for(int i = 0; i < shadowMappingSamples; i++)

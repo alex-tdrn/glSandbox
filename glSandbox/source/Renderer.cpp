@@ -355,6 +355,7 @@ void Renderer::configureShaders() const
 	glm::mat4 viewMatrix = camera->getViewMatrix();
 	if(ShaderManager::isLightingShader(shading.current))
 	{
+		shading.current->set("cameraFarPlane", camera->getFarPlane());
 		shading.current->set("ambientColor", scene->getBackground());
 		shading.current->set("ambientStrength", shading.lighting.ambientStrength);
 		auto useLights = [&](auto const& lights, std::string const& prefix1, std::string const& prefix2){
@@ -382,12 +383,14 @@ void Renderer::configureShaders() const
 			if(shading.lighting.shadows.usePoissonSampling)
 			{
 				shading.current->set("shadowMappingSamples", shading.lighting.shadows.poissonSamples);
-				shading.current->set("shadowMappingRadius", shading.lighting.shadows.poissonRadius);
+				shading.current->set("shadowMappingRadius[0]", shading.lighting.shadows.poissonRadius[0]);
+				shading.current->set("shadowMappingRadius[1]", shading.lighting.shadows.poissonRadius[1]);
 			}
 			else
 			{
 				shading.current->set("shadowMappingSamples", shading.lighting.shadows.pcfSamples);
-				shading.current->set("shadowMappingRadius", shading.lighting.shadows.pcfRadius);
+				shading.current->set("shadowMappingRadius[0]", shading.lighting.shadows.pcfRadius[0]);
+				shading.current->set("shadowMappingRadius[1]", shading.lighting.shadows.pcfRadius[1]);
 				shading.current->set("shadowMappingEarlyExit", shading.lighting.shadows.pcfEarlyExit);
 			}
 			renderShadowMaps();
@@ -944,9 +947,12 @@ void Renderer::drawUI(bool* open)
 					ImGui::Text("Samples");
 					ImGui::SameLine();
 					ImGui::SliderInt("###PoissonSamples", &shading.lighting.shadows.poissonSamples, 1, 64);
-					ImGui::Text("Radius");
+					ImGui::Text("Min Radius");
 					ImGui::SameLine();
-					ImGui::InputFloat("###PoissonRadius", &shading.lighting.shadows.poissonRadius, 0.1f, 1.0f);
+					ImGui::InputFloat("###PoissonMinRadius", &shading.lighting.shadows.poissonRadius[0], 0.1f, 1.0f);
+					ImGui::Text("Max Radius");
+					ImGui::SameLine();
+					ImGui::InputFloat("###PoissonMaxRadius", &shading.lighting.shadows.poissonRadius[1], 0.1f, 1.0f);
 				}
 				else
 				{
@@ -956,9 +962,12 @@ void Renderer::drawUI(bool* open)
 					ImGui::Text("Samples(%i)", totalPCFSamples);
 					ImGui::SameLine();
 					ImGui::InputInt("###PCFSamples", &shading.lighting.shadows.pcfSamples, 1, 1);
-					ImGui::Text("Radius");
+					ImGui::Text("Min Radius");
 					ImGui::SameLine();
-					ImGui::InputFloat("###PCFRadius", &shading.lighting.shadows.pcfRadius, 0.1f, 1.0f);
+					ImGui::InputFloat("###PCFMinRadius", &shading.lighting.shadows.pcfRadius[0], 0.1f, 1.0f);
+					ImGui::Text("Max Radius");
+					ImGui::SameLine();
+					ImGui::InputFloat("###PCFMaxRadius", &shading.lighting.shadows.pcfRadius[1], 0.1f, 1.0f);
 					ImGui::Checkbox("Early Exit", &shading.lighting.shadows.pcfEarlyExit);
 					if(shading.lighting.shadows.pcfSamples < 0)
 						shading.lighting.shadows.pcfSamples = 0;

@@ -1,6 +1,7 @@
 #include "Cubemap.h"
 #include "CubemapRenderer.h"
 #include "UIUtilities.h"
+#include "MeshManager.h"
 
 #include <glad/glad.h>
 #include <imgui.h>
@@ -19,6 +20,11 @@ Cubemap::Cubemap(std::array<Texture, 6>&& faces)
 	:faces(std::move(faces))
 {
 	
+}
+
+Cubemap::Cubemap(Texture&& equirectangularMap)
+	:equirectangularMap(std::move(equirectangularMap))
+{
 }
 
 Cubemap::~Cubemap()
@@ -48,22 +54,66 @@ void Cubemap::allocate() const
 
 void Cubemap::load() const
 {
-	if(!faces)
-		assert(false);
-	faces->front().load();
-	width = faces->front().width;
-	height = faces->front().height;
-	nrChannels = faces->front().nrChannels;
-	format = faces->front().format;
-	pixelTransfer = faces->front().pixelTransfer;
-	dataType = faces->front().dataType;
-	mipmapping = faces->front().mipmapping;
-	linear = faces->front().linear;
-	allocate();
-	for(int i = 0; i < faces->size(); i++)
+	if(faces)
 	{
-		glCopyImageSubData((*faces)[i].getID(), GL_TEXTURE_2D, 0, 0, 0, 0,
-			ID, GL_TEXTURE_CUBE_MAP, 0, 0, 0, i, width, height, 1);
+		faces->front().load();
+		width = faces->front().width;
+		height = faces->front().height;
+		nrChannels = faces->front().nrChannels;
+		format = faces->front().format;
+		pixelTransfer = faces->front().pixelTransfer;
+		dataType = faces->front().dataType;
+		mipmapping = faces->front().mipmapping;
+		linear = faces->front().linear;
+		allocate();
+		for(int i = 0; i < faces->size(); i++)
+		{
+			glCopyImageSubData((*faces)[i].getID(), GL_TEXTURE_2D, 0, 0, 0, 0,
+				ID, GL_TEXTURE_CUBE_MAP, 0, 0, 0, i, width, height, 1);
+		}
+	}
+	else if(equirectangularMap)
+	{
+		equirectangularMap->load();
+		height = equirectangularMap->height;
+		width = height;
+		nrChannels = equirectangularMap->nrChannels;
+		format = equirectangularMap->format;
+		pixelTransfer = equirectangularMap->pixelTransfer;
+		dataType = equirectangularMap->dataType;
+		mipmapping = equirectangularMap->mipmapping;
+		linear = equirectangularMap->linear;
+		allocate();
+
+		glViewport(0, 0, width, height);
+		unsigned int captureFBO;
+		glGenFramebuffers(1, &captureFBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+		//glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, ID, 0);
+		glm::mat4 projection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+		std::array<glm::mat4, 6> views = {
+			projection * glm::lookAt(glm::vec3(.0), glm::vec3{+1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, -1.0f, 0.0f}),
+			projection * glm::lookAt(glm::vec3(.0), glm::vec3{-1.0f, 0.0f, 0.0f}, glm::vec3{0.0f, -1.0f, 0.0f}),
+			projection * glm::lookAt(glm::vec3(.0), glm::vec3{0.0f, +1.0f, 0.0f}, glm::vec3{0.0f, 0.0f, +1.0f}),
+			projection * glm::lookAt(glm::vec3(.0), glm::vec3{0.0f, -1.0f, 0.0f}, glm::vec3{0.0f, 0.0f, -1.0f}),
+			projection * glm::lookAt(glm::vec3(.0), glm::vec3{0.0f, 0.0f, +1.0f}, glm::vec3{0.0f, -1.0f, 0.0f}),
+			projection * glm::lookAt(glm::vec3(.0), glm::vec3{0.0f, 0.0f, -1.0f}, glm::vec3{0.0f, -1.0f, 0.0f})
+		};
+		ShaderManager::equirectangularToCubemap()->use();
+		for(int i = 0; i < 6; i++)
+			ShaderManager::equirectangularToCubemap()->set(
+			"views[" + std::to_string(i) + "]", views[i]);
+		ShaderManager::equirectangularToCubemap()->set("equirectangularMap", 0);
+		equirectangularMap->use(0);
+		MeshManager::box()->use();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteFramebuffers(1, &captureFBO);
+	}
+	else
+	{
+		assert(false);
 	}
 }
 

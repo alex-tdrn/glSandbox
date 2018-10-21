@@ -143,7 +143,7 @@ void main()
 	for(int i = 0; i < nSpotLights; i++)
 		result += calculateSpotLight(spotLights[i], fs_in.positionLightSpaceS[i]);
 
-	result /= result + vec3(1.0f);//tonemap
+	//result /= result + vec3(1.0f);//tonemap
 	//result = pow(result, vec3(1.0f / 2.2f));//gamma
 	FragColor = vec4(result , 1.0f);
 }

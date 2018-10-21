@@ -233,6 +233,9 @@
     <ClInclude Include="headers\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\equirectangularToCubemap.frag" />
+    <None Include="shaders\equirectangularToCubemap.geom" />
+    <None Include="shaders\equirectangularToCubemap.vert" />
     <None Include="shaders\blinn-phong.frag" />
     <None Include="shaders\debugNormals.geom" />
     <None Include="shaders\debugDepthBuffer.frag" />

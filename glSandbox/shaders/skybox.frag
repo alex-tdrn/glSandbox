@@ -10,5 +10,5 @@ out vec4 FragColor;
 
 void main()
 {    
-    FragColor = texture(skybox, fs_in.textureCoordinates);
+	FragColor = texture(skybox, fs_in.textureCoordinates);
 }

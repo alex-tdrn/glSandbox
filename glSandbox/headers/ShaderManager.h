@@ -19,6 +19,7 @@ public:
 	static Shader* flat();
 	static Shader* reflection();
 	static Shader* refraction();
+	static Shader* equirectangularToCubemap();
 	static Shader* debugNormals();
 	static Shader* debugNormalsShowLines();
 	static Shader* debugTexCoords();

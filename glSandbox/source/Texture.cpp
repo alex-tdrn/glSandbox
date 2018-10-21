@@ -20,17 +20,17 @@ Texture::Texture(std::string const& path, bool linear)
 	:path(path), linear(linear)
 {
 	std::filesystem::path filename = path;
-	if(filename.extension() == "hdr")
+	if(filename.extension() == ".hdr" || filename.extension() == ".HDR")
 	{
 		hdr = true;
-		linear = true;
+		this->linear = true;
 	}
 	name.set(filename.filename().string());
 }
 
 Texture::Texture(Texture&& other)
 	: allocated(other.allocated), ID(other.ID),
-	width(other.width), height(other.height),
+	width(other.width), height(other.height), hdr(other.hdr),
 	nrChannels(other.nrChannels), format(other.format),
 	pixelTransfer(other.pixelTransfer), dataType(other.dataType),
 	mipmapping(other.mipmapping), linear(other.linear), path(other.path)
@@ -41,7 +41,7 @@ Texture::Texture(Texture&& other)
 Texture& Texture::operator=(Texture&& other)
 {
 	allocated = other.allocated;  ID = other.ID;
-	width = other.width; height = other.height;
+	width = other.width; height = other.height; hdr = other.hdr;
 	nrChannels = other.nrChannels; format = other.format;
 	pixelTransfer = other.pixelTransfer; dataType = other.dataType;
 	mipmapping = other.mipmapping; linear = other.linear; path = other.path;
@@ -78,6 +78,7 @@ void Texture::load() const
 	void* imageData = nullptr;
 	if(hdr)
 	{
+		stbi_set_flip_vertically_on_load(true);
 		imageData = stbi_loadf(path->data(), &width, &height, &nrChannels, STBI_default);
 		dataType = GL_FLOAT;
 		switch(nrChannels)
@@ -100,6 +101,7 @@ void Texture::load() const
 	}
 	else
 	{
+		stbi_set_flip_vertically_on_load(false);
 		imageData = stbi_load(path->data(), &width, &height, &nrChannels, STBI_default);
 		dataType = GL_UNSIGNED_BYTE;
 		switch(nrChannels)

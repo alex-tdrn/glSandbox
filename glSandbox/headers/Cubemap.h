@@ -19,6 +19,7 @@ private:
 	mutable bool mipmapping = true;
 	mutable bool linear;
 	std::optional<std::array<Texture, 6>> faces = std::nullopt;
+	std::optional<Texture> equirectangularMap = std::nullopt;
 
 public:
 	Name<Cubemap> name{"cubemap"};
@@ -28,6 +29,7 @@ public:
 	Cubemap(unsigned int format, int width, int height,
 		unsigned int pixelTransfer, unsigned int dataType);
 	Cubemap(std::array<Texture, 6>&& faces);
+	Cubemap(Texture&& equirectangularMap);
 	Cubemap(Cubemap const&) = delete;
 	Cubemap(Cubemap&&) = default;
 	Cubemap& operator= (Cubemap const&) = delete;

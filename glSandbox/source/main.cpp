@@ -117,10 +117,11 @@ int main(int argc, char** argv)
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		settings::mainRenderer().render();
-		
-		glEnable(GL_FRAMEBUFFER_SRGB);
-		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
 		glDisable(GL_FRAMEBUFFER_SRGB);
+
+		//glEnable(GL_FRAMEBUFFER_SRGB);
+		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
+		//glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);

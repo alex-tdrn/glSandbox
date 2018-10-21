@@ -13,6 +13,7 @@ void ShaderManager::initialize()
 	flat();
 	reflection();
 	refraction();
+	equirectangularToCubemap();
 	debugNormals();
 	debugNormalsShowLines();
 	debugTexCoords();
@@ -136,6 +137,14 @@ Shader* ShaderManager::refraction()
 {
 	static auto ret = load("Refraction",
 		"shaders/refraction.vert", "shaders/refraction.frag"
+	);
+	return ret;
+}
+
+Shader* ShaderManager::equirectangularToCubemap()
+{
+	static auto ret = load("Equirectangular Conversion",
+		"shaders/equirectangularToCubemap.vert", "shaders/equirectangularToCubemap.frag", "shaders/equirectangularToCubemap.geom"
 	);
 	return ret;
 }

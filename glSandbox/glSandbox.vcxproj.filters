@@ -387,5 +387,14 @@
     <None Include="shaders\visualizeCubemap.vert">
       <Filter>Shaders\ResourceRendering</Filter>
     </None>
+    <None Include="shaders\equirectangularToCubemap.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\equirectangularToCubemap.geom">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\equirectangularToCubemap.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

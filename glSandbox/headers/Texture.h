@@ -19,7 +19,8 @@ private:
 	mutable unsigned int pixelTransfer = 0;
 	mutable unsigned int dataType = 0;
 	bool mipmapping = true;
-	bool linear;
+	bool linear = true;
+	bool hdr = false;
 	std::optional<std::string> path = std::nullopt;
 
 public:

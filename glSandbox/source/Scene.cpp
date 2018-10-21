@@ -39,11 +39,11 @@ void Scene::addDefaultNodes()
 	light2->setIntensity(50.0f);
 	light2->setColor(glm::vec3(1.0f, 0.8f, 0.5f));
 	root->addChild(std::make_unique<Camera>(), true);// ->addChild(std::move(light2));
-	auto floor = std::make_unique<Prop>(MeshManager::box());
-	floor->name.set("Floor");
-	floor->setLocalScale({100.0f, 0.5f, 100.0f});
-	floor->setLocalTranslation({0.0f, -1.0f, 0.0f});
-	root->addChild(std::move(floor), true);
+	//auto floor = std::make_unique<Prop>(MeshManager::box());
+	//floor->name.set("Floor");
+	//floor->setLocalScale({100.0f, 0.5f, 100.0f});
+	//floor->setLocalTranslation({0.0f, -1.0f, 0.0f});
+	//root->addChild(std::move(floor), true);
 }
 
 void Scene::updateCache() const

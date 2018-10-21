@@ -20,6 +20,11 @@ Texture::Texture(std::string const& path, bool linear)
 	:path(path), linear(linear)
 {
 	std::filesystem::path filename = path;
+	if(filename.extension() == "hdr")
+	{
+		hdr = true;
+		linear = true;
+	}
 	name.set(filename.filename().string());
 }
 
@@ -70,45 +75,84 @@ void Texture::load() const
 	if(!path)
 		assert(false);
 	
-	std::uint8_t* imageData = stbi_load(path->data(), &width, &height, &nrChannels, STBI_default);
-	if(!imageData)
-		throw "Could not load image from disk";
-	dataType = GL_UNSIGNED_BYTE;
-	switch(nrChannels)
+	void* imageData = nullptr;
+	if(hdr)
 	{
-		case 1:
-			format = GL_R8;
-			pixelTransfer = GL_RED;
-			break;
-		case 2:
-			format = GL_RG8;
-			pixelTransfer = GL_RG;
-			break;
-		case 3:
-			format = GL_RGB8;
-			pixelTransfer = GL_RGB;
-			break;
-		case 4:
-			format = GL_RGBA8;
-			pixelTransfer = GL_RGBA;
-			break;
-		default:
-			assert(false);
-	}
-	if(!linear)
-	{
+		imageData = stbi_loadf(path->data(), &width, &height, &nrChannels, STBI_default);
+		dataType = GL_FLOAT;
 		switch(nrChannels)
 		{
+			case 1:
+				format = GL_R16F;
+				break;
+			case 2:
+				format = GL_RG16F;
+				break;
 			case 3:
-				format = GL_SRGB8;
+				format = GL_RGB16F;
 				break;
 			case 4:
-				format = GL_SRGB8_ALPHA8;
+				format = GL_RGBA16F;
 				break;
 			default:
 				assert(false);
 		}
 	}
+	else
+	{
+		imageData = stbi_load(path->data(), &width, &height, &nrChannels, STBI_default);
+		dataType = GL_UNSIGNED_BYTE;
+		switch(nrChannels)
+		{
+			case 1:
+				format = GL_R8;
+				break;
+			case 2:
+				format = GL_RG8;
+				break;
+			case 3:
+				format = GL_RGB8;
+				break;
+			case 4:
+				format = GL_RGBA8;
+				break;
+			default:
+				assert(false);
+		}
+		if(!linear)
+		{
+			switch(nrChannels)
+			{
+				case 3:
+					format = GL_SRGB8;
+					break;
+				case 4:
+					format = GL_SRGB8_ALPHA8;
+					break;
+				default:
+					assert(false);
+			}
+		}
+	}
+	switch(nrChannels)
+	{
+		case 1:
+			pixelTransfer = GL_RED;
+			break;
+		case 2:
+			pixelTransfer = GL_RG;
+			break;
+		case 3:
+			pixelTransfer = GL_RGB;
+			break;
+		case 4:
+			pixelTransfer = GL_RGBA;
+			break;
+		default:
+			assert(false);
+	}
+	if(!imageData)
+		throw "Could not load image from disk";
 	allocate(imageData);
 	stbi_image_free(imageData);
 }
@@ -161,11 +205,23 @@ void Texture::drawUI()
 		load();
 	
 	ImGui::Text("ID %i", ID);
-	ImGui::Text("Encoding: %s", linear ? "Linear" : "Gamma");
+	ImGui::Text("Encoding: %s, %s", linear ? "Linear" : "Gamma", hdr ? "HDR" : "SDR");
 	ImGui::Text("Format: ");
 	ImGui::SameLine();
 	switch(format)
 	{
+		case GL_R16F:
+			ImGui::Text("GL_R16F");
+			break;
+		case GL_RG16F:
+			ImGui::Text("GL_RG16F");
+			break;
+		case GL_RGB16F:
+			ImGui::Text("GL_RGB16F");
+			break;
+		case GL_RGBA16F:
+			ImGui::Text("GL_RGB16F");
+			break;
 		case GL_R8:
 			ImGui::Text("GL_R8");
 			break;

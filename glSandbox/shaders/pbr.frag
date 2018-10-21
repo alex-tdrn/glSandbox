@@ -412,7 +412,7 @@ uniform vec2 poissonDisk[64] = vec2[64](
 float rand(vec4 seed)
 {
 	float dot_product = dot(seed, vec4(12.9898,78.233,45.164,94.673));
-    return fract(sin(dot_product) * 43758.5453);
+	return fract(sin(dot_product) * 43758.5453);
 }
 
 float calculateShadowFactorPoisson(vec4 coords, sampler2DShadow shadowMap, float bias)

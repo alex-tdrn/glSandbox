@@ -209,7 +209,7 @@ void drawResourcesUI(bool* open)
 		{
 			if(!browser && !importCallback)
 			{
-				browser = new FileSelector({".jpg", ".png", ".tga"});
+				browser = new FileSelector({".jpg", ".png", ".tga", ".hdr"});
 				importCallback = [](std::filesystem::path file){
 					TextureManager::add(std::make_unique<Texture>(file.string(), true));
 				};

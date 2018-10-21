@@ -78,7 +78,7 @@ private:
 		struct{
 			struct
 			{
-				bool enabled = true;
+				bool enabled = false;
 				bool faceCulling = true;
 				int faceCullingMode = GL_BACK;
 				int resolution = 11;
@@ -93,7 +93,7 @@ private:
 				int showMap = -1;
 				int depthComparison = GL_LEQUAL;
 				float bias[2] = {0.0005f, 0.0020f};
-				bool usePoissonSampling = true;
+				bool usePoissonSampling = false;
 				enum PoissonSampling{
 					simple,
 					stratified,

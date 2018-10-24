@@ -3,6 +3,11 @@
 #include "UIUtilities.h"
 #include "ShaderManager.h"
 
+std::string Material::getNamePrefix() const
+{
+	return "material";
+}
+
 void Material::setNormal(Texture* map)
 {
 	normalMap = map;

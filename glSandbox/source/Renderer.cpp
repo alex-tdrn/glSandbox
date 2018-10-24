@@ -583,6 +583,11 @@ void Renderer::updateFramebuffers()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
+std::string Renderer::getNamePrefix() const
+{
+	return "renderer";
+}
+
 void Renderer::resizeViewport(int width, int height)
 {
 	viewport.width = width;
@@ -646,7 +651,7 @@ void Renderer::drawUI(bool* open)
 {
 	if(!*open)
 		return;
-	ImGui::Begin(name.get().data(), open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin(getName().data(), open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 	ImGui::Image(ImTextureID(getOutput()), ImVec2(512, 512 / viewport.aspect()), ImVec2(0, 1), ImVec2(1, 0));
 	ImGui::NewLine();
 	ImGui::Columns(2, nullptr, true);
@@ -656,7 +661,7 @@ void Renderer::drawUI(bool* open)
 	ImGui::Text("Camera");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	if(ImGui::BeginCombo("###Camera", camera ? camera->name.get().data() : "None"))
+	if(ImGui::BeginCombo("###Camera", camera ? camera->getName().data() : "None"))
 	{
 		int id = 0;
 		if(ImGui::Selectable("None"), camera == nullptr)
@@ -665,13 +670,13 @@ void Renderer::drawUI(bool* open)
 			ImGui::SetItemDefaultFocus();
 		for(auto& s : SceneManager::getAll())
 		{
-			ImGui::Text(("Scene: " + s->name.get()).data());
+			ImGui::Text(("Scene: " + s->getName()).data());
 			ImGui::Separator();
 			for(auto& _camera : s->getAll<Camera>())
 			{
 				ImGui::PushID(id++);
 				bool isSelected = camera == _camera;
-				if(ImGui::Selectable(_camera->name.get().data(), &isSelected))
+				if(ImGui::Selectable(_camera->getName().data(), &isSelected))
 					setCamera(_camera);
 				if(isSelected)
 					ImGui::SetItemDefaultFocus();
@@ -786,7 +791,7 @@ void Renderer::drawUI(bool* open)
 	if(ImGui::CollapsingHeader("Shaders", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		auto drawShaderOption = [&](Shader* shaderOption){
-			if(ImGui::RadioButton(shaderOption->name.get().data(), shading.current == shaderOption))
+			if(ImGui::RadioButton(shaderOption->getName().data(), shading.current == shaderOption))
 				shading.current = shaderOption;
 		};
 		ImGui::Columns(3, nullptr, true);
@@ -867,11 +872,11 @@ void Renderer::drawUI(bool* open)
 				if(showMap > -1)
 				{
 					if(showMap < lightsD.size())
-						currentShadowMapName = lightsD[showMap]->name.get();
+						currentShadowMapName = lightsD[showMap]->getName();
 					else if(showMap < lightsD.size() + lightsS.size())
-						currentShadowMapName = lightsS[showMap - lightsD.size()]->name.get();
+						currentShadowMapName = lightsS[showMap - lightsD.size()]->getName();
 					else
-						currentShadowMapName = lightsP[showMap - lightsD.size() - lightsS.size()]->name.get();
+						currentShadowMapName = lightsP[showMap - lightsD.size() - lightsS.size()]->getName();
 				}
 				ImGui::AlignTextToFramePadding();
 				ImGui::Text("View Shadow Map");
@@ -889,7 +894,7 @@ void Renderer::drawUI(bool* open)
 					{
 						ImGui::PushID(id++);
 						isSelected = showMap == i;
-						if(ImGui::Selectable(lightsD[i]->name.get().data(), &isSelected))
+						if(ImGui::Selectable(lightsD[i]->getName().data(), &isSelected))
 							showMap = i;
 						if(isSelected)
 							ImGui::SetItemDefaultFocus();
@@ -901,7 +906,7 @@ void Renderer::drawUI(bool* open)
 					{
 						ImGui::PushID(id++);
 						isSelected = showMap == offset + i;
-						if(ImGui::Selectable(lightsS[i]->name.get().data(), &isSelected))
+						if(ImGui::Selectable(lightsS[i]->getName().data(), &isSelected))
 							showMap = offset + i;
 						if(isSelected)
 							ImGui::SetItemDefaultFocus();
@@ -913,7 +918,7 @@ void Renderer::drawUI(bool* open)
 					{
 						ImGui::PushID(id++);
 						isSelected = showMap == offset + i;
-						if(ImGui::Selectable(lightsP[i]->name.get().data(), &isSelected))
+						if(ImGui::Selectable(lightsP[i]->getName().data(), &isSelected))
 							showMap = offset + i;
 						if(isSelected)
 							ImGui::SetItemDefaultFocus();

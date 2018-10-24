@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "Camera.h"
 #include "Lights.h"
 #include "Cubemap.h"
@@ -11,7 +11,7 @@ class Prop;
 class Camera;
 class Node;
 
-class Scene
+class Scene : public AutoName<Scene>
 {
 
 private:
@@ -32,9 +32,6 @@ private:
 	Node* current = nullptr;
 
 public:
-	Name<Scene> name{"scene"};
-
-public:
 	Scene();
 	Scene(Scene const&) = delete;
 	Scene(Scene&&);
@@ -46,6 +43,9 @@ public:
 private:
 	void addDefaultNodes();
 	void updateCache() const;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	void cacheOutdated() const;

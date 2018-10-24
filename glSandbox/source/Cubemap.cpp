@@ -118,6 +118,11 @@ void Cubemap::load() const
 	}
 }
 
+std::string Cubemap::getNamePrefix() const
+{
+	return "cubemap";
+}
+
 Cubemap* Cubemap::convolute() const
 {
 	if(convolutedMap)

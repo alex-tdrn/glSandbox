@@ -26,7 +26,7 @@ Scene* SceneManager::basic()
 {
 	static auto ret = [&]() -> Scene*{
 		auto scene = std::make_unique<Scene>();
-		scene->name.set("basic");
+		scene->setName("basic");
 		auto prop = std::make_unique<Prop>(MeshManager::box());
 		prop->setLocalRotation({45.0f, 45.0f, 0.0f});
 		prop->setLocalTranslation({0.0f, 1.0f, 0.0f});
@@ -40,7 +40,7 @@ Scene* SceneManager::testShadowMapping()
 {
 	static auto ret = [&]() -> Scene*{
 		auto scene = std::make_unique<Scene>();
-		scene->name.set("testShadowMapping");
+		scene->setName("testShadowMapping");
 		auto getRandomFloat = [](float min, float max) -> float{
 			int const precision = 1'000;
 			float r = rand() % precision;

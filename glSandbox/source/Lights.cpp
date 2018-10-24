@@ -41,6 +41,11 @@ void Light::drawUI()
 	ImGui::DragFloat("Intensity", &intensity, 0.1f);
 }
 
+std::string DirectionalLight::getNamePrefix() const
+{
+	return "light(D)";
+}
+
 void DirectionalLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const
 {
 	Light::use(prefix, shader, flash);
@@ -56,6 +61,11 @@ void DirectionalLight::drawUI()
 	Light::drawUI();
 }
 
+std::string PointLight::getNamePrefix() const
+{
+	return "light(P)";
+}
+
 void PointLight::use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const
 {
 	Light::use(prefix, shader, flash);
@@ -67,6 +77,11 @@ void PointLight::drawUI()
 {
 	Transformed<Translation>::drawUI();
 	Light::drawUI();
+}
+
+std::string SpotLight::getNamePrefix() const
+{
+	return "light(S)";
 }
 
 void SpotLight::setCutoff(float inner, float outer)

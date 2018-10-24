@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 
 #include <glm\gtc\matrix_transform.hpp>
 #include <glad\glad.h>
@@ -10,7 +10,7 @@
 #include <iostream>
 #include <optional>
 
-class Shader
+class Shader : public AutoName<Shader>
 {
 private:
 	unsigned int ID = -1;
@@ -20,13 +20,13 @@ private:
 	std::optional<std::string const> const geometryPath;
 
 public:
-	Name<Shader> name{"shader"};
-
-public:
 	Shader(std::string const vertexPath, std::string const fragmentPath, std::optional<std::string const> geometryPath = std::nullopt);
 
 private:
 	int getLocation(std::string_view const name) const;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	void reload();

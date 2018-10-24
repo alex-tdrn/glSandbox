@@ -78,6 +78,11 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &EBO);
 }
 
+std::string Mesh::getNamePrefix() const
+{
+	return "mesh";
+}
+
 bool Mesh::hasAttribute(AttributeType attributeType) const
 {
 	return availableAttributes[static_cast<int>(attributeType)];

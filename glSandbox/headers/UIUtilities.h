@@ -56,7 +56,7 @@ inline void chooseComparisonFunctionFromCombo(int& currentValue)
 template <typename T>
 T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possibleValues, bool nullable = false, std::string postfix = "")
 {
-	if(ImGui::BeginCombo(("###Combo" + postfix).data(), currentValue ? currentValue->name.get().data() : "None"))
+	if(ImGui::BeginCombo(("###Combo" + postfix).data(), currentValue ? currentValue->getName().data() : "None"))
 	{
 		bool isSelected = !currentValue;
 		if(nullable)
@@ -72,7 +72,7 @@ T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possi
 		{
 			ImGui::PushID(id++);
 			isSelected = currentValue == v.get();
-			if(ImGui::Selectable(v->name.get().data(), &isSelected))
+			if(ImGui::Selectable(v->getName().data(), &isSelected))
 				currentValue = v.get();
 			if(isSelected)
 				ImGui::SetItemDefaultFocus();

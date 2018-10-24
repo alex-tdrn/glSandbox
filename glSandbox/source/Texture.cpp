@@ -25,7 +25,7 @@ Texture::Texture(std::string const& path, bool linear)
 		hdr = true;
 		this->linear = true;
 	}
-	name.set(filename.filename().string());
+	setName(filename.filename().string());
 }
 
 Texture::Texture(Texture&& other)
@@ -157,6 +157,11 @@ void Texture::load() const
 		throw "Could not load image from disk";
 	allocate(imageData);
 	stbi_image_free(imageData);
+}
+
+std::string Texture::getNamePrefix() const
+{
+	return "texture";
 }
 
 unsigned int Texture::getID() const

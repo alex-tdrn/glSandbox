@@ -47,6 +47,11 @@ std::unique_ptr<Node> Node::releaseChild(Node * node)
 	assert(0);
 }
 
+std::string Node::getNamePrefix() const
+{
+	return "node";
+}
+
 std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
 {
 	return children;
@@ -137,14 +142,14 @@ void Node::drawUI()
 		ImGui::BeginChild("###SubNodes", {-1, heightSubNodes}, true);
 		ctAllSubNodes = 0;
 		for(auto& node : children)
-			node->recursive([&](Node* node){ ImGui::BulletText(node->name.get().data()); ctAllSubNodes++; });
+			node->recursive([&](Node* node){ ImGui::BulletText(node->getName().data()); ctAllSubNodes++; });
 		ImGui::EndChild();
 
 		ImGui::NextColumn();
 		ImGui::Text("Direct Sub Nodes (%i)", children.size());
 		ImGui::BeginChild("###DirectSubNodes", {-1, heightSubNodes}, true);
 		for(auto& node : children)
-			ImGui::BulletText(node->name.get().data());
+			ImGui::BulletText(node->getName().data());
 		ImGui::EndChild();
 		ImGui::Columns(1);
 		ImGui::EndChild();

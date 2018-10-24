@@ -214,9 +214,6 @@
     <ClInclude Include="headers\ImportGLTF.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Named.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="headers\Profiler.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -246,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="headers\CubemapRenderer.h">
       <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\AutoName.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

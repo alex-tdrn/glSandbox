@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "Util.h"
 
 #include <glm/glm.hpp>
@@ -8,7 +8,7 @@
 #include <array>
 #include <vector>
 
-class Mesh
+class Mesh : public AutoName<Mesh>
 {
 public:
 	enum AttributeType
@@ -57,15 +57,15 @@ private:
 	bool availableAttributes[AttributeType::N];
 
 public:
-	Name<Mesh> name{"mesh"};
-
-public:
 	Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
 	Mesh(Mesh const&) = delete;
 	Mesh(Mesh&&);
 	~Mesh();
 	Mesh& operator=(Mesh const&) = delete;
 	Mesh& operator=(Mesh&&) = delete;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	bool hasAttribute(AttributeType attributeType) const;

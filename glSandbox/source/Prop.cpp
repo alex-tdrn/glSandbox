@@ -17,6 +17,11 @@ Prop::Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material)
 
 }
 
+std::string Prop::getNamePrefix() const
+{
+	return "prop";
+}
+
 Mesh& Prop::getMesh() const
 {
 	if(staticMesh)
@@ -68,7 +73,7 @@ void Prop::drawUI()
 	ImGui::Text("Mesh");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	std::string meshName = getMesh().name.get();
+	std::string meshName = getMesh().getName();
 	if(proceduralMesh)
 		meshName = "Procedural";//TODO
 	if(ImGui::BeginCombo("###Mesh", meshName.data()))
@@ -79,7 +84,7 @@ void Prop::drawUI()
 		{
 			ImGui::PushID(id++);
 			bool isSelected = staticMesh == m.get();
-			if(ImGui::Selectable(m->name.get().data(), &isSelected))
+			if(ImGui::Selectable(m->getName().data(), &isSelected))
 			{
 				staticMesh = m.get();
 				proceduralMesh = nullptr;

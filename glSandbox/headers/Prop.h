@@ -16,13 +16,13 @@ private:
 	Material* material = MaterialManager::uvChecker();
 
 public:
-	Name<Prop> name{"prop"};
-
-public:
 	Prop() = default;
 	Prop(Mesh* mesh, Material* material = MaterialManager::uvChecker());
 	Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material = MaterialManager::uvChecker());
-	virtual ~Prop() = default;
+	~Prop() = default;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	Mesh& getMesh() const;

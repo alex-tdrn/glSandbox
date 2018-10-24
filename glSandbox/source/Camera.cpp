@@ -26,6 +26,11 @@ unsigned int Camera::ubo()
 	return ubo;
 }
 
+std::string Camera::getNamePrefix() const
+{
+	return "camera";
+}
+
 void Camera::use() const
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo());

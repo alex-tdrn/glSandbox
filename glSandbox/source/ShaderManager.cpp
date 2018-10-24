@@ -50,7 +50,7 @@ template <typename ...Sources>
 Shader* load(std::string&& name, Sources&&... sources)
 {
 	auto shader = std::make_unique<Shader>(sources...);
-	shader->name.set(std::move(name));
+	shader->setName(std::move(name));
 	return ShaderManager::add(std::move(shader));
 }
 

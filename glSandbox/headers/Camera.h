@@ -17,14 +17,13 @@ private:
 	float orthoScale = 0.005f;
 
 public:
-	Name<Camera> name{"camera"};
-
-public:
 	Camera();
-	virtual ~Camera() = default;
 
 private:
 	static unsigned int ubo();
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	void use() const;

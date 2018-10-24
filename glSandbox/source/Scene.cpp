@@ -40,7 +40,7 @@ void Scene::addDefaultNodes()
 	light2->setColor(glm::vec3(1.0f, 0.8f, 0.5f));
 	root->addChild(std::make_unique<Camera>(), true);// ->addChild(std::move(light2));
 	//auto floor = std::make_unique<Prop>(MeshManager::box());
-	//floor->name.set("Floor");
+	//floor->setName("Floor");
 	//floor->setLocalScale({100.0f, 0.5f, 100.0f});
 	//floor->setLocalTranslation({0.0f, -1.0f, 0.0f});
 	//root->addChild(std::move(floor), true);
@@ -72,6 +72,11 @@ void Scene::updateCache() const
 		});
 	}
 	cache.dirty = false;
+}
+
+std::string Scene::getNamePrefix() const
+{
+	return "scene";
 }
 
 void Scene::cacheOutdated() const
@@ -151,20 +156,20 @@ void Scene::drawUI()
 		//TODO find a better solution
 		auto camera = dynamic_cast<Camera*>(node);
 		if(camera)
-			return camera->name.get().data();
+			return camera->getName().data();
 		auto prop = dynamic_cast<Prop*>(node);
 		if(prop)
-			return prop->name.get().data();
+			return prop->getName().data();
 		auto dLight = dynamic_cast<DirectionalLight*>(node);
 		if(dLight)
-			return dLight->name.get().data();
+			return dLight->getName().data();
 		auto sLight = dynamic_cast<SpotLight*>(node);
 		if(sLight)
-			return sLight->name.get().data();
+			return sLight->getName().data();
 		auto pLight = dynamic_cast<PointLight*>(node);
 		if(pLight)
-			return pLight->name.get().data();
-		return node->name.get().data();
+			return pLight->getName().data();
+		return node->getName().data();
 
 	};
 	static bool hierarchyView = false;

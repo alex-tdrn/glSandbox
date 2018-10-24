@@ -41,9 +41,9 @@ Asset import(std::string_view const& filename)
 	for(int i = 0; i < scenes.size(); i++)
 	{
 		if(i > 0)
-			scenes[i]->name.set(name + "#" + std::to_string(i));
+			scenes[i]->setName(name + "#" + std::to_string(i));
 		else
-			scenes[i]->name.set(name);
+			scenes[i]->setName(name);
 	}
 	
 	return {std::move(scenes), std::move(meshes), std::move(textures), std::move(materials)};
@@ -84,7 +84,7 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc,
 		n = std::make_unique<TransformedNode>();
 	}
 	if(!node.name.empty())
-		n->name.set(node.name);
+		n->setName(node.name);
 	glm::mat4 transformation{1.0f};
 	for(int row = 0; row < 4; row++)
 	{
@@ -124,7 +124,7 @@ std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc,
 			nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap, materials));
 		auto s = std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes)));
 		if(!scene.name.empty())
-			s->name.set(scene.name);
+			s->setName(scene.name);
 		scenes.emplace_back(std::move(s));
 	}
 	return scenes;
@@ -213,7 +213,7 @@ std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Do
 			}();
 			auto m = std::make_unique<Mesh>(Bounds{min, max}, drawMode, std::move(attributes), std::move(indices));
 			if(!mesh.name.empty())
-				m->name.set(mesh.name + "#" + std::to_string(idx++));
+				m->setName(mesh.name + "#" + std::to_string(idx++));
 			primitivesMap[&primitive] = m.get();
 			meshes.push_back(std::move(m));
 		}
@@ -252,7 +252,7 @@ std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Mat
 				assert(false);
 			auto path = currentPath / image.uri;
 			auto texture = std::make_unique<Texture>(path.string(), linear);
-			texture->name.set(image.name.empty() ? path.filename().string() : image.name);
+			texture->setName(image.name.empty() ? path.filename().string() : image.name);
 			textures.push_back(std::move(texture));
 			return textures.back().get();
 		}
@@ -275,7 +275,7 @@ std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Mat
 		}
 
 		if(!material.name.empty())
-			_material->name.set(material.name);
+			_material->setName(material.name);
 		_material->setNormal(getMap(material.normalTexture));
 		_material->setOcclusion(getMap(material.occlusionTexture));
 		_material->setEmissive(getMap(material.emissiveTexture, false), getFactor(material.emissiveFactor));

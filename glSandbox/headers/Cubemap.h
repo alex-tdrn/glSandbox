@@ -1,11 +1,11 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "Texture.h"
 
 #include <array>
 #include <optional>
 
-class Cubemap
+class Cubemap : public AutoName<Cubemap>
 {
 private:
 	mutable bool allocated = false;
@@ -23,9 +23,6 @@ private:
 	mutable Cubemap* convolutedMap = nullptr;
 
 public:
-	Name<Cubemap> name{"cubemap"};
-
-public:
 	Cubemap() = delete;
 	Cubemap(unsigned int format, int width, int height,
 		unsigned int pixelTransfer, unsigned int dataType);
@@ -40,6 +37,9 @@ public:
 private:
 	void allocate() const;
 	void load() const;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	Cubemap* convolute() const;

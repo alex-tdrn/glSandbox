@@ -35,6 +35,11 @@ int Shader::getLocation(std::string_view const name) const
 	return res;
 }
 
+std::string Shader::getNamePrefix() const
+{
+	return "shader";
+}
+
 void Shader::reload()
 {
 	if(initialized)

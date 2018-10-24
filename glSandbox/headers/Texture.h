@@ -1,12 +1,12 @@
 #pragma once
 #include "glad/glad.h"
-#include "Named.h"
+#include "AutoName.h"
 
 #include <string>
 #include <glm/glm.hpp>
 #include <optional>
 
-class Texture
+class Texture : public AutoName<Texture>
 {
 	friend class Cubemap;
 private:
@@ -24,9 +24,6 @@ private:
 	std::optional<std::string> path = std::nullopt;
 
 public:
-	Name<Texture> name{"texture"};
-
-public:
 	Texture() = delete;
 	Texture(unsigned int format, int width, int height,
 		unsigned int pixelTransfer, unsigned int dataType,
@@ -41,6 +38,9 @@ public:
 private:
 	void allocate(void* imageData = nullptr) const;
 	void load() const;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	unsigned int getID() const;

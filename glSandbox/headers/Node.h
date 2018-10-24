@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "Util.h"
 
 #include <glm/glm.hpp>
@@ -8,7 +8,7 @@
 #include <type_traits>
 class Scene;
 
-class Node
+class Node : public AutoName<Node>
 {
 	friend class Scene;
 	friend class std::unique_ptr<Node>;
@@ -23,9 +23,6 @@ protected:
 	Node* parent = nullptr;
 
 public:
-	Name<Node> name{"node"};
-
-public:
 	Node() = default;
 	Node(Node const&) = delete;
 	Node(Node&&);
@@ -38,6 +35,9 @@ private:
 	void invalidateSceneCache();
 	void setScene(Scene* scene);
 	std::unique_ptr<Node> releaseChild(Node* node);
+
+protected:
+	virtual std::string getNamePrefix() const override;
 
 public:
 	Scene* getScene() const;

@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 
 #include <glm/glm.hpp>
 #include <optional>
@@ -7,7 +7,7 @@
 class Texture;
 class Shader;
 
-class Material
+class Material : public AutoName<Material>
 {
 public:
 	enum class Map
@@ -28,11 +28,11 @@ private:
 	glm::vec3 emissiveFactor = glm::vec3{0.0f};
 
 public:
-	Name<Material> name{"material"};
-
-public:
 	Material() = default;
 	virtual ~Material() = default;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	void setNormal(Texture* map);

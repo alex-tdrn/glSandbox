@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "ShaderManager.h"
 #include "Material.h"
 #include "Grid.h"
@@ -13,7 +13,7 @@
 class Camera;
 class Scene;
 
-class Renderer
+class Renderer : public AutoName<Renderer>
 {
 private:
 	Camera* camera = nullptr;
@@ -136,8 +136,6 @@ private:
 		float lineWidth = 3.0f;
 		float pointSize = 2.0f;
 	}geometry;
-public:
-	Name<Renderer> name{"renderer"};
 
 public:
 	Renderer(Camera* camera = nullptr);
@@ -163,6 +161,9 @@ private:
 	void renderProps(Shader* shader) const;
 	void renderSkybox() const;
 	void updateFramebuffers();
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	void resizeViewport(int width, int height);

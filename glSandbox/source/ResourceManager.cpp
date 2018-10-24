@@ -78,7 +78,7 @@ public:
 			ImGui::SameLine();
 			if(faces[i])
 			{
-				ImGui::Text("( %s )", faces[i]->name.get().data());
+				ImGui::Text("( %s )", faces[i]->getName().data());
 			}
 			else
 			{
@@ -174,7 +174,7 @@ void drawResourcesUI(bool* open)
 			using T = decltype(resource.get());
 			if(std::holds_alternative<T>(selected))
 				active = std::get<T>(selected) == resource.get();
-			if(ImGui::Selectable(resource->name.get().data(), active))
+			if(ImGui::Selectable(resource->getName().data(), active))
 				selected = resource.get();
 			ImGui::PopID();
 		}
@@ -234,7 +234,7 @@ void drawResourcesUI(bool* open)
 
 	ImGui::NextColumn();
 	std::visit([](auto selected){
-		ImGui::Text(selected ? selected->name.get().data() : "No selection...");
+		ImGui::Text(selected ? selected->getName().data() : "No selection...");
 		ImGui::BeginChild("###Edit Resource", {0, 0}, true);
 		if(selected) selected->drawUI();
 		ImGui::EndChild();

@@ -41,7 +41,7 @@ Mesh* MeshManager::quad()
 			calculateBounds(vertices), GL_TRIANGLES,
 			buildAttributes(std::move(vertices)),
 			buildIndexBuffer(std::move(indices)));
-		mesh->name.set("quad");
+		mesh->setName("quad");
 		return add(std::move(mesh));
 	}();
 	return ret;
@@ -207,7 +207,7 @@ Mesh* MeshManager::box()
 			calculateBounds(vertices), GL_TRIANGLES,
 			buildAttributes(std::move(vertices)),
 			buildIndexBuffer(std::move(indices)));
-		mesh->name.set("box");
+		mesh->setName("box");
 		return add(std::move(mesh));
 	}();
 	return ret;
@@ -263,7 +263,7 @@ Mesh* MeshManager::boxWireframe()
 			calculateBounds(vertices), GL_LINES,
 			buildAttributes(std::move(vertices)),
 			buildIndexBuffer(std::move(indices)));
-		mesh->name.set("box_wireframe");
+		mesh->setName("box_wireframe");
 		return (add(std::move(mesh)));
 	}();
 	return ret;

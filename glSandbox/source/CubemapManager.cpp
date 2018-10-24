@@ -19,14 +19,14 @@ void CubemapManager::initialize()
 Cubemap* load(std::string&& name, std::array<Texture, 6> faces)
 {
 	auto cubemap = std::make_unique<Cubemap>(std::move(faces));
-	cubemap->name.set(std::move(name));
+	cubemap->setName(std::move(name));
 	return CubemapManager::add(std::move(cubemap));
 }
 
 Cubemap* load(std::string&& name, Texture map)
 {
 	auto cubemap = std::make_unique<Cubemap>(std::move(map));
-	cubemap->name.set(std::move(name));
+	cubemap->setName(std::move(name));
 	return CubemapManager::add(std::move(cubemap));
 }
 

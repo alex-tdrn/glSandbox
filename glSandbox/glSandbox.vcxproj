@@ -199,7 +199,7 @@
     <ClInclude Include="headers\Grid.h" />
     <ClInclude Include="headers\MaterialManager.h" />
     <ClInclude Include="headers\MeshManager.h" />
-    <ClInclude Include="headers\Named.h" />
+    <ClInclude Include="headers\AutoName.h" />
     <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />

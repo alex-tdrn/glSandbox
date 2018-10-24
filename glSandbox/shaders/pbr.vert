@@ -26,6 +26,7 @@ out VS_OUT
 	vec3 position;
 	vec3 worldPosition;
 	vec3 normal;
+	vec3 worldNormal;
 	mat3 TBN;
 	vec2 textureCoordinates;
 	vec4 positionLightSpaceD[MAX_DIR_LIGHTS];

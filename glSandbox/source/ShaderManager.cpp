@@ -14,6 +14,7 @@ void ShaderManager::initialize()
 	reflection();
 	refraction();
 	equirectangularToCubemap();
+	convoluteCubemap();
 	debugNormals();
 	debugNormalsShowLines();
 	debugTexCoords();
@@ -145,6 +146,14 @@ Shader* ShaderManager::equirectangularToCubemap()
 {
 	static auto ret = load("Equirectangular Conversion",
 		"shaders/equirectangularToCubemap.vert", "shaders/equirectangularToCubemap.frag", "shaders/equirectangularToCubemap.geom"
+	);
+	return ret;
+}
+
+Shader* ShaderManager::convoluteCubemap()
+{
+	static auto ret = load("Equirectangular Conversion",
+		"shaders/convoluteCubemap.vert", "shaders/convoluteCubemap.frag", "shaders/convoluteCubemap.geom"
 	);
 	return ret;
 }

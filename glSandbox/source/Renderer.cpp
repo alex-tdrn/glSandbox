@@ -356,6 +356,14 @@ void Renderer::configureShaders() const
 	if(ShaderManager::isLightingShader(shading.current))
 	{
 		shading.current->set("cameraFarPlane", camera->getFarPlane());
+		shading.current->set("useIrradianceMap", scene->usesSkybox());
+		if(scene->usesSkybox())
+		{
+			shading.current->set("irradianceMap", 9);
+			scene->getSkyBox()->convolute()->use(9);
+		}
+		shading.current->set("ambientColor", scene->getBackground());
+
 		shading.current->set("ambientColor", scene->getBackground());
 		shading.current->set("ambientStrength", shading.lighting.ambientStrength);
 		auto useLights = [&](auto const& lights, std::string const& prefix1, std::string const& prefix2){

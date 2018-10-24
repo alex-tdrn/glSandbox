@@ -396,5 +396,8 @@
     <None Include="shaders\equirectangularToCubemap.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\convoluteCubemap.vert" />
+    <None Include="shaders\convoluteCubemap.frag" />
+    <None Include="shaders\convoluteCubemap.geom" />
   </ItemGroup>
 </Project>

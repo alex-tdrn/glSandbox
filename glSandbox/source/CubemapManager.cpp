@@ -4,11 +4,16 @@
 void CubemapManager::initialize()
 {
 	skybox();
-	winterForest();
 	studio_small_05_1k();
 	studio_small_05_2k();
 	studio_small_05_4k();
 	studio_small_05_8k();
+	wooden_lounge_1k();
+	wooden_lounge_2k();
+	wooden_lounge_4k();
+	wooden_lounge_8k();
+	fireplace_1k();
+	shanghai_bund_1k();
 }
 
 Cubemap* load(std::string&& name, std::array<Texture, 6> faces)
@@ -35,14 +40,6 @@ Cubemap* CubemapManager::skybox()
 		Texture{"cubemaps/skybox/front.jpg", false},
 		Texture{"cubemaps/skybox/back.jpg", false}
 		});
-	return ret;
-}
-
-Cubemap* CubemapManager::winterForest()
-{
-	static auto ret = load("Winter Forest",
-		Texture{"cubemaps/Winter_forest/WinterForest_Ref.HDR", true}
-	);
 	return ret;
 }
 
@@ -74,6 +71,54 @@ Cubemap* CubemapManager::studio_small_05_8k()
 {
 	static auto ret = load("studio_small_05_8k",
 		Texture{"../../studio_small_05_8k.hdr", true}
+	);
+	return ret;
+}
+
+Cubemap* CubemapManager::wooden_lounge_1k()
+{
+	static auto ret = load("wooden_lounge_1k",
+		Texture{"../../wooden_lounge_1k.hdr", true}
+	);
+	return ret;
+}
+
+Cubemap* CubemapManager::wooden_lounge_2k()
+{
+	static auto ret = load("wooden_lounge_2k",
+		Texture{"../../wooden_lounge_2k.hdr", true}
+	);
+	return ret;
+}
+
+Cubemap* CubemapManager::wooden_lounge_4k()
+{
+	static auto ret = load("wooden_lounge_4k",
+		Texture{"../../wooden_lounge_4k.hdr", true}
+	);
+	return ret;
+}
+
+Cubemap* CubemapManager::wooden_lounge_8k()
+{
+	static auto ret = load("wooden_lounge_8k",
+		Texture{"../../wooden_lounge_8k.hdr", true}
+	);
+	return ret;
+}
+
+Cubemap* CubemapManager::fireplace_1k()
+{
+	static auto ret = load("fireplace_1k",
+		Texture{"../../fireplace_1k.hdr", true}
+	);
+	return ret;
+}
+
+Cubemap* CubemapManager::shanghai_bund_1k()
+{
+	static auto ret = load("shanghai_bund_1k",
+		Texture{"../../shanghai_bund_1k.hdr", true}
 	);
 	return ret;
 }

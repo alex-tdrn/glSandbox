@@ -20,6 +20,7 @@ private:
 	mutable bool linear;
 	std::optional<std::array<Texture, 6>> faces = std::nullopt;
 	std::optional<Texture> equirectangularMap = std::nullopt;
+	mutable Cubemap* convolutedMap = nullptr;
 
 public:
 	Name<Cubemap> name{"cubemap"};
@@ -41,6 +42,7 @@ private:
 	void load() const;
 
 public:
+	Cubemap* convolute() const;
 	unsigned int getID() const;
 	void use(int location) const;
 	void drawUI();

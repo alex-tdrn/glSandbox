@@ -282,6 +282,9 @@
     <None Include="shaders\visualizeTexture.vert" />
     <None Include="shaders\visualizeCubemap.frag" />
     <None Include="shaders\visualizeCubemap.vert" />
+    <None Include="shaders\convoluteCubemap.frag" />
+    <None Include="shaders\convoluteCubemap.geom" />
+    <None Include="shaders\convoluteCubemap.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

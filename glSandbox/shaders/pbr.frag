@@ -52,6 +52,8 @@ struct Material
 };
 
 uniform Material material;
+uniform bool useIrradianceMap;
+uniform samplerCube irradianceMap;
 uniform vec3 ambientColor;
 uniform float ambientStrength;
 uniform int nDirLights;
@@ -76,6 +78,7 @@ in VS_OUT
 	vec3 position;
 	vec3 worldPosition;
 	vec3 normal;
+	vec3 worldNormal;
 	mat3 TBN;
 	vec2 textureCoordinates;
 	vec4 positionLightSpaceD[MAX_DIR_LIGHTS];
@@ -133,16 +136,16 @@ void main()
 		metalness *= mr.b;
 	}
 
-	F0 = mix(F0, baseColor, metalness);
 
 	vec3 result = calculateAmbientLight() * occlusion + emission;
+	F0 = mix(F0, baseColor, metalness);
 	for(int i = 0; i < nDirLights; i++)
 		result += calculateDirLight(dirLights[i], fs_in.positionLightSpaceD[i]);
 	for(int i = 0; i < nPointLights; i++)
 		result += calculatePointLight(pointLights[i]);
 	for(int i = 0; i < nSpotLights; i++)
 		result += calculateSpotLight(spotLights[i], fs_in.positionLightSpaceS[i]);
-
+		
 	//result /= result + vec3(1.0f);//tonemap
 	//result = pow(result, vec3(1.0f / 2.2f));//gamma
 	FragColor = vec4(result , 1.0f);
@@ -155,10 +158,11 @@ float calculateShadowFactorPCF(vec3 coords, samplerCubeShadow shadowMap, float b
 float calculateShadowFactorPoisson(vec4 coords, sampler2DShadow shadowMap, float bias);
 float calculateShadowFactorPoisson(vec3 coords, samplerCubeShadow shadowMap, float bias);
 
-vec3 calculateAmbientLight()
+vec3 fresnelSchlickRoughness(float cosTheta)
 {
-	return ambientStrength * ambientColor * baseColor;	
-}
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}  
+
 
 vec3 calculateDirLight(DirLight light, vec4 positionInLightSpace)
 {
@@ -253,6 +257,24 @@ vec3 FresnelSchlick(float cosAlpha)
 	return F0 + (1.0f - F0) * pow(1.0f - cosAlpha, 5.0f);
 }
 
+vec3 calculateAmbientLight()
+{
+	if(useIrradianceMap)
+	{
+		vec3 kS = fresnelSchlickRoughness(max(dot(normal, viewDirection), 0.0)); 
+		vec3 kD = 1.0 - kS;
+		if(kD.x < 0.0f || kD.y < 0.0f || kD.z < 0.0f)
+			discard;
+		vec3 irradiance = texture(irradianceMap, fs_in.worldNormal).rgb;
+		vec3 diffuse    = irradiance * baseColor;
+		vec3 ambient    = (kD * diffuse) * ambientStrength; 
+		return ambient;
+	}
+	else
+	{
+		return ambientStrength * ambientColor * baseColor;	
+	}
+}
 vec3 BRDF(vec3 lightDirection)
 {
 	vec3 halfwayVector = normalize(viewDirection + lightDirection);

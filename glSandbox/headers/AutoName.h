@@ -26,7 +26,7 @@ public:
 		if(!initialized)
 		{
 			initialized = true;
-			name = getNamePrefix() + "(#" + std::to_string(counter++) + ");
+			name = getNamePrefix() + "(#" + std::to_string(counter++) + ")";
 		}
 		return name;
 	}

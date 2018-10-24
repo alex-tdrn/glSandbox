@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Lights.h"
 #include "Cubemap.h"
+#include "Timestamp.h"
 
 #include <vector>
 #include <memory>

@@ -264,8 +264,11 @@ std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Mat
 		if(auto materialMR = material.pbrMetallicRoughness; !materialMR.empty())
 		{
 			auto _materialMR = new MaterialPBRMetallicRoughness;
-			_materialMR->setBaseColor(getMap(materialMR.baseColorTexture, false), getFactor(materialMR.baseColorFactor));
-			_materialMR->setMetallicRoughness(getMap(materialMR.metallicRoughnessTexture), materialMR.metallicFactor, materialMR.roughnessFactor);
+			_materialMR->setBaseColorMap(getMap(materialMR.baseColorTexture, false));
+			_materialMR->setBaseColorFactor(getFactor(materialMR.baseColorFactor));
+			_materialMR->setMetallicRoughnessMap(getMap(materialMR.metallicRoughnessTexture));
+			_materialMR->setMetallicFactor(materialMR.metallicFactor);
+			_materialMR->setRoughnessFactor(materialMR.roughnessFactor);
 			_material.reset(_materialMR);
 		}
 		else
@@ -276,9 +279,10 @@ std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Mat
 
 		if(!material.name.empty())
 			_material->setName(material.name);
-		_material->setNormal(getMap(material.normalTexture));
-		_material->setOcclusion(getMap(material.occlusionTexture));
-		_material->setEmissive(getMap(material.emissiveTexture, false), getFactor(material.emissiveFactor));
+		_material->setNormalMap(getMap(material.normalTexture));
+		_material->setOcclusionMap(getMap(material.occlusionTexture));
+		_material->setEmissiveMap(getMap(material.emissiveTexture, false));
+		_material->setEmissiveFactor(getFactor(material.emissiveFactor));
 		if(material.doubleSided)
 		{
 			//TODO

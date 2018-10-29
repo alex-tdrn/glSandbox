@@ -8,37 +8,59 @@ std::string Material::getNamePrefix() const
 	return "material";
 }
 
-void Material::setNormal(Texture* map)
+void Material::setNormalMap(Texture* map)
 {
 	normalMap = map;
 }
 
-void Material::setOcclusion(Texture* map)
+void Material::enableNormalMapping()
+{
+	normalMapping = true;
+}
+
+void Material::disableNormalMapping()
+{
+	normalMapping = false;
+}
+
+void Material::setOcclusionMap(Texture* map)
 {
 	occlusionMap = map;
 }
 
-void Material::setEmissive(Texture* map, std::optional<glm::vec3> factor)
+void Material::enableOcclusionMapping()
+{
+	occlusionMapping = true;
+}
+
+void Material::disableOcclusionMapping()
+{
+	occlusionMapping = false;
+}
+
+void Material::setEmissiveMap(Texture* map)
 {
 	emissiveMap = map;
-	if(!factor)
-		emissiveFactor = glm::vec3{0.0f};
-	else
-		emissiveFactor = *factor;
 }
+
+void Material::setEmissiveFactor(glm::vec3 factor)
+{
+	emissiveFactor = factor;
+}
+
 
 void Material::use(Shader* shader, Material::Map visualizeMap) const
 {
 	if(shader == ShaderManager::pbr())
 	{
-		shader->set("material.normalMapExists", normalMap != nullptr && normalMappingEnabled);
-		if(normalMap && normalMappingEnabled)
+		shader->set("material.normalMapExists", normalMap != nullptr && normalMapping);
+		if(normalMap && normalMapping)
 		{
 			shader->set("material.normalMap", static_cast<int>(Map::normal));
 			normalMap->use(static_cast<int>(Map::normal));
 		}
-		shader->set("material.occlusionMapExists", occlusionMap != nullptr && occlusionMappingEnabled);
-		if(occlusionMap && occlusionMappingEnabled)
+		shader->set("material.occlusionMapExists", occlusionMap != nullptr && occlusionMapping);
+		if(occlusionMap && occlusionMapping)
 		{
 			shader->set("material.occlusionMap", static_cast<int>(Map::occlusion));
 			occlusionMap->use(static_cast<int>(Map::occlusion));
@@ -87,11 +109,13 @@ void Material::drawUI()
 	ImGui::Text("Normals");
 	ImGui::Text("Map");
 	ImGui::SameLine();
-	normalMap = chooseFromCombo(normalMap, TextureManager::getAll(), true, "Normals");
+	ImGui::ChooseFromCombo("Normals", normalMap, TextureManager::getAll(), true,
+		&Material::setNormalMap, this);
 	if(normalMap)
 	{
 		ImGui::SameLine();
-		ImGui::Checkbox("###NormalMappingEnabled", &normalMappingEnabled);
+		ImGui::Checkbox("###NormalMappingEnabled", normalMapping, 
+			&Material::enableNormalMapping, &Material::disableNormalMapping, this);
 		normalMap->drawUI();
 		ImGui::Separator();
 	}
@@ -99,21 +123,25 @@ void Material::drawUI()
 	ImGui::Text("Occlusion");
 	ImGui::Text("Map");
 	ImGui::SameLine();
-	occlusionMap = chooseFromCombo(occlusionMap, TextureManager::getAll(), true, "Occlusion");
+	ImGui::ChooseFromCombo("Occlusion", occlusionMap, TextureManager::getAll(), true,
+		&Material::setOcclusionMap, this);
 	if(occlusionMap)
 	{
 		ImGui::SameLine();
-		ImGui::Checkbox("###OcclusionMappingEnabled", &occlusionMappingEnabled);
+		ImGui::Checkbox("###OcclusionMappingEnabled", occlusionMapping, 
+			&Material::enableOcclusionMapping, &Material::disableOcclusionMapping, this);
 		occlusionMap->drawUI();
 		ImGui::Separator();
 	}
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Emissive");
 	ImGui::SameLine();
-	ImGui::ColorEdit3("###FactorEmissive", &emissiveFactor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
+	ImGui::ColorEdit3("###FactorEmissive", emissiveFactor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float, 
+		&Material::setEmissiveFactor, this);
 	ImGui::Text("Map");
 	ImGui::SameLine();
-	emissiveMap = chooseFromCombo(emissiveMap, TextureManager::getAll(), true, "Emmissive");
+	ImGui::ChooseFromCombo("Emmissive", emissiveMap, TextureManager::getAll(), true,
+		&Material::setEmissiveMap, this);
 	if(emissiveMap)
 		emissiveMap->drawUI();
 }

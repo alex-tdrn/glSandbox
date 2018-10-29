@@ -54,9 +54,9 @@ inline void chooseComparisonFunctionFromCombo(int& currentValue)
 }
 
 template <typename T>
-T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possibleValues, bool nullable = false, std::string postfix = "")
+T* chooseFromCombo(T* currentValue, std::vector<std::unique_ptr<T>> const& possibleValues, bool nullable = false, std::string prefix = "")
 {
-	if(ImGui::BeginCombo(("###Combo" + postfix).data(), currentValue ? currentValue->getName().data() : "None"))
+	if(ImGui::BeginCombo(("###Combo" + prefix).data(), currentValue ? currentValue->getName().data() : "None"))
 	{
 		bool isSelected = !currentValue;
 		if(nullable)
@@ -118,3 +118,86 @@ inline void drawImage(unsigned int ID, int width, int height, bool flipX = false
 
 }
 
+namespace ImGui
+{
+	template <typename MemberFunction, typename Class>
+	void Checkbox(const char* label, bool flag, 
+		MemberFunction setFlag, Class* instance)
+	{
+		if(ImGui::Checkbox(label, &flag))
+			(instance->*setFlag)(flag);
+	}
+
+	template <typename MemberFunction, typename Class>
+	void Checkbox(const char* label, bool flag, 
+		MemberFunction enableFlag, MemberFunction disableFlag, Class* instance)
+	{
+		if(ImGui::Checkbox(label, &flag))
+		{
+			if(flag)
+				(instance->*enableFlag)();
+			else
+				(instance->*disableFlag)();
+		}
+	}
+	
+	template <typename MemberFunction, typename Class>
+	void ColorEdit3(const char* label, glm::vec3 color, ImGuiColorEditFlags flags, 
+		MemberFunction setColor, Class* instance)
+	{
+		if(ImGui::ColorEdit3(label, &color.r, flags))
+			(instance->*setColor)(color);
+	}
+
+	template <typename MemberFunction, typename Class>
+	void ColorEdit4(const char* label, glm::vec4 color, ImGuiColorEditFlags flags,
+		MemberFunction setColor, Class* instance)
+	{
+		if(ImGui::ColorEdit4(label, &color.r, flags))
+			(instance->*setColor)(color);
+	}
+
+	template <typename MemberFunction, typename Class>
+	void SliderFloat(const char* label, float value, float min, float max,
+		MemberFunction setValue, Class* instance)
+	{
+		if(ImGui::SliderFloat(label, &value, min, max))
+			(instance->*setValue)(value);
+	}
+
+	template <typename T, typename MemberFunction, typename Class>
+	void ChooseFromCombo(const char* label, T* currentValue, std::vector<std::unique_ptr<T>> const& possibleValues, bool nullable, 
+		MemberFunction setValue, Class* instance)
+	{
+		if(ImGui::BeginCombo((std::string("###Combo") + label).data(), currentValue ? currentValue->getName().data() : "None"))
+		{
+			bool isSelected = !currentValue;
+			if(nullable)
+			{
+				if(ImGui::Selectable("None", &isSelected))
+				{
+					currentValue = nullptr;
+					(instance->*setValue)(currentValue);
+				}
+				if(isSelected)
+					ImGui::SetItemDefaultFocus();
+				ImGui::Separator();
+			}
+			int id = 0;
+			for(auto& v : possibleValues)
+			{
+				ImGui::PushID(id++);
+				isSelected = currentValue == v.get();
+				if(ImGui::Selectable(v->getName().data(), &isSelected))
+				{
+					currentValue = v.get();
+					(instance->*setValue)(currentValue);
+				}
+				if(isSelected)
+					ImGui::SetItemDefaultFocus();
+				ImGui::PopID();
+			}
+			ImGui::EndCombo();
+		}
+	}
+}

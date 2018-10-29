@@ -11,8 +11,11 @@ private:
 	float roughnessFactor = 1.0f;
 
 public:
-	void setBaseColor(Texture* map, std::optional<glm::vec4> factor);
-	void setMetallicRoughness(Texture* map, float metallicFactor, float roughnessFactor);
+	void setBaseColorMap(Texture* map);
+	void setBaseColorFactor(glm::vec4 factor);
+	void setMetallicRoughnessMap(Texture* map);
+	void setMetallicFactor(float factor);
+	void setRoughnessFactor(float factor);
 	void use(Shader* shader, Material::Map visualizeMap = Material::Map::none) const override;
 	void drawUI() override;
 };

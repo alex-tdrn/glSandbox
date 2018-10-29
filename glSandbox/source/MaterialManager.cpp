@@ -11,7 +11,7 @@ Material* MaterialManager::uvChecker()
 {
 	static auto ret = [&]() -> Material*{
 		auto material = std::make_unique<MaterialPBRMetallicRoughness>();
-		material->setBaseColor(TextureManager::uvChecker3M(), std::nullopt);
+		material->setBaseColorMap(TextureManager::uvChecker3M());
 		material->setName("UV Checker");
 		return add(std::move(material));
 	}();

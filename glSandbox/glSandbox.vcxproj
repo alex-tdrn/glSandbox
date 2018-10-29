@@ -231,6 +231,7 @@
     <ClInclude Include="headers\TextureRenderer.h" />
     <ClInclude Include="headers\UIUtilities.h" />
     <ClInclude Include="headers\MeshRenderer.h" />
+    <ClInclude Include="headers\Timestamp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\equirectangularToCubemap.frag" />

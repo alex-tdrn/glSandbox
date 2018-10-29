@@ -3,20 +3,29 @@
 #include "ShaderManager.h"
 #include "TextureManager.h"
 
-void MaterialPBRMetallicRoughness::setBaseColor(Texture* map, std::optional<glm::vec4> factor)
+void MaterialPBRMetallicRoughness::setBaseColorMap(Texture* map)
 {
 	baseColorMap = map;
-	if(!factor)
-		baseColorFactor = glm::vec4{1.0f};
-	else
-		baseColorFactor = *factor;
 }
 
-void MaterialPBRMetallicRoughness::setMetallicRoughness(Texture* map, float metallicFactor, float roughnessFactor)
+void MaterialPBRMetallicRoughness::setBaseColorFactor(glm::vec4 factor)
+{
+	baseColorFactor = factor;
+}
+
+void MaterialPBRMetallicRoughness::setMetallicRoughnessMap(Texture* map)
 {
 	metallicRoughnessMap = map;
-	this->metallicFactor = metallicFactor;
-	this->roughnessFactor = roughnessFactor;
+}
+
+void MaterialPBRMetallicRoughness::setMetallicFactor(float factor)
+{
+	metallicFactor = factor;
+}
+
+void MaterialPBRMetallicRoughness::setRoughnessFactor(float factor)
+{
+	roughnessFactor = factor;
 }
 
 void MaterialPBRMetallicRoughness::use(Shader* shader, Material::Map visualizeMap) const
@@ -103,19 +112,24 @@ void MaterialPBRMetallicRoughness::drawUI()
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Base Color");
 	ImGui::SameLine();
-	ImGui::ColorEdit4("###FactorBaseColor", &baseColorFactor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
+	ImGui::ColorEdit4("###FactorBaseColor", baseColorFactor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float,
+		&MaterialPBRMetallicRoughness::setBaseColorFactor, this);
 	ImGui::Text("Map");
 	ImGui::SameLine();
-	baseColorMap = chooseFromCombo(baseColorMap, TextureManager::getAll(), true, "BaseColor");
+	ImGui::ChooseFromCombo("BaseColor", baseColorMap, TextureManager::getAll(), true,
+		&MaterialPBRMetallicRoughness::setBaseColorMap, this);
 	if(baseColorMap)
 		baseColorMap->drawUI();
 	ImGui::Separator();
 	ImGui::Text("Metallic-Roughness");
-	ImGui::SliderFloat("Metallic", &metallicFactor, 0.0f, 1.0f);
-	ImGui::SliderFloat("Roughness", &roughnessFactor, 0.0f, 1.0f);
+	ImGui::SliderFloat("Metallic", metallicFactor, 0.0f, 1.0f,
+		&MaterialPBRMetallicRoughness::setMetallicFactor, this);
+	ImGui::SliderFloat("Roughness", roughnessFactor, 0.0f, 1.0f,
+		&MaterialPBRMetallicRoughness::setRoughnessFactor, this);
 	ImGui::Text("Map");
 	ImGui::SameLine();
-	metallicRoughnessMap = chooseFromCombo(metallicRoughnessMap, TextureManager::getAll(), true, "MetallicRoughness");
+	ImGui::ChooseFromCombo("MetallicRoughness", metallicRoughnessMap, TextureManager::getAll(), true,
+		&MaterialPBRMetallicRoughness::setMetallicRoughnessMap, this);
 	if(metallicRoughnessMap)
 		metallicRoughnessMap->drawUI();
 	ImGui::EndChild();

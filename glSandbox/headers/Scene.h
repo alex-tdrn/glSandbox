@@ -1,7 +1,9 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "Camera.h"
 #include "Lights.h"
+#include "Cubemap.h"
+#include "Timestamp.h"
 
 #include <vector>
 #include <memory>
@@ -10,13 +12,15 @@ class Prop;
 class Camera;
 class Node;
 
-class Scene
+class Scene : public AutoName<Scene>
 {
 
 private:
+	bool useSkybox = false;
 	glm::vec3 backgroundColor{0.0f, 0.015f, 0.015f};
+	Cubemap* skybox = nullptr;
 	std::unique_ptr<Node> root = std::make_unique<TransformedNode>();
-	float idealSize = 2.0f;
+	float idealSize = 4.0f;
 	mutable struct{
 		bool dirty = true;
 		std::vector<TransformedNode*> transformedNodes;
@@ -27,10 +31,6 @@ private:
 		std::vector<SpotLight*> spotLights;
 	}cache;
 	Node* current = nullptr;
-	//7Cubemap* skybox = nullptr;
-
-public:
-	Name<Scene> name{"scene"};
 
 public:
 	Scene();
@@ -42,7 +42,11 @@ public:
 	~Scene() = default;
 
 private:
+	void addDefaultNodes();
 	void updateCache() const;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	void cacheOutdated() const;
@@ -52,7 +56,10 @@ public:
 	std::vector<T*> const& getAll() const;
 	template<typename T>
 	std::vector<T*> getAllEnabled() const;
+	bool usesSkybox() const;
 	glm::vec3 const& getBackground() const;
+	Cubemap const* getSkyBox() const;
+	
 	void fitToIdealSize() const;
 	void drawUI();
 
@@ -77,7 +84,8 @@ std::vector<T*> const& Scene::getAll() const
 		return cache.spotLights;
 	else if constexpr(std::is_same<T, Light>())
 	{
-		std::vector<Light*> ret;
+		static std::vector<Light*> ret;
+		ret.clear();
 		ret.reserve(cache.directionalLights.size() + cache.pointLights.size() + cache.spotLights.size());
 		std::copy(cache.directionalLights.begin(), cache.directionalLights.end(), std::back_inserter(ret));
 		std::copy(cache.pointLights.begin(), cache.pointLights.end(), std::back_inserter(ret));

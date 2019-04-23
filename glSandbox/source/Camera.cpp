@@ -8,7 +8,8 @@
 Camera::Camera()
 {
 	setLimitPitch(true);
-	setLocalTranslation(glm::vec3{0.0f, 0.0f, 8.0f});
+	setLocalTranslation(glm::vec3{0.0f, 3.0f, 10.0f});
+	setLocalRotation(glm::vec3{-15.0f, 0.0f, 0.0f});
 }
 
 unsigned int Camera::ubo()
@@ -25,21 +26,16 @@ unsigned int Camera::ubo()
 	return ubo;
 }
 
+std::string Camera::getNamePrefix() const
+{
+	return "camera";
+}
+
 void Camera::use() const
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo());
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 64, glm::value_ptr(getProjectionMatrix()));
 	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, glm::value_ptr(getViewMatrix()));
-}
-
-void Camera::setName(std::string const& name)
-{
-	this->name.set(name);
-}
-
-std::string const& Camera::getName() const
-{
-	return name.get();
 }
 
 float Camera::getNearPlane() const

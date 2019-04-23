@@ -47,24 +47,19 @@ std::unique_ptr<Node> Node::releaseChild(Node * node)
 	assert(0);
 }
 
+std::string Node::getNamePrefix() const
+{
+	return "node";
+}
+
 std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
 {
 	return children;
 }
 
-void Node::setName(std::string const& name)
+Scene* Node::getScene() const
 {
-	this->name.set(name);
-}
-
-std::string const& Node::getName() const
-{
-	return name.get();
-}
-
-Scene& Node::getScene() const
-{
-	return *scene;
+	return scene;
 }
 
 bool Node::isEnabled() const
@@ -91,16 +86,18 @@ void Node::disable()
 	enabled = false;
 }
 
-void Node::addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation)
+Node* Node::addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation)
 {
 	auto desiredGlobalTransformation = node->getGlobalTransformation();
 	node->parent = this;
 	node->setScene(scene);
-	if(retainGlobalTransformation)
-		node->setLocalTransformation(glm::inverse(glm::inverse(node->getLocalTransformation()) * node->getGlobalTransformation()) * desiredGlobalTransformation);
+	auto ret = node.get();
 	children.push_back(std::move(node));
+	if(retainGlobalTransformation)
+		ret->setGlobalTransformation(std::move(desiredGlobalTransformation));
 
 	invalidateSceneCache();
+	return ret;
 }
 
 void Node::addChildren(std::vector<std::unique_ptr<Node>>&& nodes, bool retainGlobalTransformation)

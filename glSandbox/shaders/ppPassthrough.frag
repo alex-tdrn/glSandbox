@@ -10,5 +10,8 @@ out vec4 FragColor;
 
 void main()
 {
-	FragColor = texture(screenTexture, fs_in.textureCoordinates);
+	vec3 result = texture(screenTexture, fs_in.textureCoordinates).rgb;
+	result /= result + vec3(1.0f);//tonemap
+	result = pow(result, vec3(1.0f / 2.2f));//gamma
+	FragColor = vec4(result, 1.0f);
 }

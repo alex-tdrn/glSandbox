@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "Util.h"
 
 #include <glm/glm.hpp>
@@ -8,13 +8,12 @@
 #include <type_traits>
 class Scene;
 
-class Node
+class Node : public AutoName<Node>
 {
 	friend class Scene;
 	friend class std::unique_ptr<Node>;
 
 private:
-	Name<Node> name{"node"};
 	Scene* scene = nullptr;
 	bool enabled = true;
 	bool highlighted = false;
@@ -37,21 +36,23 @@ private:
 	void setScene(Scene* scene);
 	std::unique_ptr<Node> releaseChild(Node* node);
 
+protected:
+	virtual std::string getNamePrefix() const override;
+
 public:
-	virtual void setName(std::string const& name);
-	virtual std::string const& getName() const;
-	Scene& getScene() const;
+	Scene* getScene() const;
 	bool isEnabled() const;
 	void enable();
 	void disable();
 	bool isHighlighted() const;
 	void setHighlighted(bool);
-	void addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation = false);
+	Node* addChild(std::unique_ptr<Node>&& node, bool retainGlobalTransformation = false);
 	void addChildren(std::vector<std::unique_ptr<Node>>&& nodes, bool retainGlobalTransformation = false);
 	std::unique_ptr<Node> release();
 	std::vector<std::unique_ptr<Node>> releaseChildren();
 	std::vector<std::unique_ptr<Node>> const& getChildren() const;
 	virtual void setLocalTransformation(glm::mat4&&) = 0;
+	virtual void setGlobalTransformation(glm::mat4&&) = 0;
 	virtual glm::mat4 getLocalTransformation() const = 0;
 	virtual glm::mat4 getGlobalTransformation() const = 0;
 	virtual Bounds getBounds() const;

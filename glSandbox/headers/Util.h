@@ -1,15 +1,76 @@
 #pragma once
 #define GLM_ENABLE_EXPERIMENTAL
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
-#include <imgui.h>
-#include <string>
+#include <string_view>
 #include <tuple>
 #include <algorithm>
 #include <iostream>
+#include <array>
+#include <vector>
+#include <memory>
+
+inline std::string glEnumToString(GLenum e)
+{
+	switch(e)
+	{
+		case GL_POINTS:
+			return "GL_POINTS";
+		case GL_LINES:
+			return "GL_LINES";
+		case GL_LINE_LOOP:
+			return "GL_LINE_LOOP";
+		case GL_TRIANGLE_FAN:
+			return "GL_TRIANGLE_FAN";
+		case GL_TRIANGLE_STRIP:
+			return "GL_TRIANGLE_STRIP";
+		case GL_TRIANGLES:
+			return "GL_TRIANGLES";
+		case GL_BYTE:
+			return "GL_BYTE";
+		case GL_UNSIGNED_BYTE:
+			return "GL_UNSIGNED_BYTE";
+		case GL_SHORT:
+			return "GL_SHORT";
+		case GL_UNSIGNED_SHORT:
+			return "GL_UNSIGNED_SHORT";
+		case GL_FLOAT:
+			return "GL_FLOAT";
+		case GL_UNSIGNED_INT:
+			return "GL_UNSIGNED_INT";
+		case GL_ALWAYS:
+			return "GL_ALWAYS";
+		case GL_NEVER:
+			return "GL_NEVER";
+		case GL_LESS:
+			return "GL_LESS";
+		case GL_EQUAL:
+			return "GL_EQUAL";
+		case GL_LEQUAL:
+			return "GL_LEQUAL";
+		case GL_GREATER:
+			return "GL_GREATER";
+		case GL_NOTEQUAL:
+			return "GL_NOTEQUAL";
+		case GL_GEQUAL:
+			return "GL_GEQUAL";
+		case GL_FRONT_AND_BACK:
+			return "GL_FRONT_AND_BACK";
+		case GL_FRONT:
+			return "GL_FRONT";
+		case GL_BACK:
+			return "GL_BACK";
+		case GL_CCW:
+			return "GL_CCW";
+		case GL_CW:
+			return "GL_CW";
+	}
+	return "Unrecognized GL enum";
+}
 
 template <typename...>
 struct is_one_of
@@ -86,12 +147,47 @@ public:
 	}
 	Bounds& operator*=(glm::mat4 const& rhs)
 	{
-		assert(!_empty);
-		glm::vec4 min{this->min, 1.0f};
-		glm::vec4 max{this->max, 1.0f};
-		this->min = rhs * min;
-		this->max = rhs * max;
-		normalize();
+		if(!_empty)
+		{
+			std::array<glm::vec4, 8> corners;
+			int idx = 0;
+			for(int x = 0; x <= 1; x++)
+			{
+				for(int y = 0; y <= 1; y++)
+				{
+					for(int z = 0; z <= 1; z++)
+					{
+						corners[idx++] = glm::vec4{
+							x ? min.x : max.x,
+							y ? min.y : max.y,
+							z ? min.z : max.z,
+							1.0f};
+					}
+				}
+			}
+			bool initMinMax = false;
+			for(auto& corner : corners)
+			{
+				glm::vec4 transformedCorner = rhs * corner;
+				if(!initMinMax)
+				{
+					min = transformedCorner;
+					max = transformedCorner;
+					initMinMax = true;
+				}
+				for(int i = 0; i < 3; i++)
+				{
+					if(std::abs(transformedCorner[i]) > 2.0f)
+					{
+						volatile int a = 2;
+					}
+					min[i] = std::min(min[i], transformedCorner[i]);
+					max[i] = std::max(max[i], transformedCorner[i]);
+				}
+			}
+
+			normalize();
+		}
 		return *this;
 	}
 	Bounds& operator+=(Bounds const& rhs)
@@ -153,15 +249,21 @@ public:
 	{
 		return (min + max) * 0.5f;
 	}
-	glm::mat4 getTransformation() const
+	glm::mat4 getTransformation(bool invertible = false) const
 	{
+		if(empty())
+			return glm::mat4(1.0f);
 		glm::vec3 translation = -getCenter();
 		auto aux{*this};
 		aux += translation;
 
 		glm::vec3 scale;
 		for(int i = 0; i < 3; i++)
+		{
 			scale[i] = std::max(std::abs(aux.min[i]), std::abs(aux.max[i]));
+			if(invertible && scale[i] == 0.0f)
+				scale[i] = 1.0f;
+		}
 		glm::mat4 t = glm::translate(glm::mat4{1.0f}, -translation);
 		glm::mat4 s = glm::scale(glm::mat4{1.0f}, glm::vec3{scale});
 		return t * s;
@@ -170,10 +272,11 @@ public:
 
 inline Bounds operator*(Bounds const& lhs, glm::mat4 const& rhs)
 {
-	assert(!lhs._empty);
-	glm::vec4 min{lhs.min, 1.0f};
-	glm::vec4 max{lhs.max, 1.0f};
-	return {rhs * min, rhs * max};
+	if(lhs._empty)
+		return lhs;
+	Bounds ret = lhs;
+	ret *= rhs;
+	return ret;
 }
 
 inline Bounds operator+(Bounds const& lhs, Bounds const& rhs)
@@ -193,59 +296,6 @@ inline Bounds operator+(Bounds const& lhs, Bounds const& rhs)
 		max[i] = std::max(lhs.max[i], rhs.max[i]);
 	}
 	return {min, max};
-}
-
-class IDGuard
-{
-public:
-	IDGuard() = delete;
-	IDGuard(void* ID)
-	{
-		ImGui::PushID(ID);
-	}
-	~IDGuard()
-	{
-		ImGui::PopID();
-	}
-};
-
-inline void wrapAround(float& x, float const min, float const max)
-{
-	float const diff = max - min;
-	while(x < min)
-		x += diff;
-	while(x > max)
-		x -= diff;
-}
-
-inline bool drag2(const char* title, float const sensitivity, float& x, float& y)
-{
-	bool valueChanged = false;
-	ImGui::Button(title);
-	if(ImGui::IsItemActive())
-	{
-		ImVec2 mouseDelta = ImGui::GetMouseDragDelta(0, 0.0f);
-		x += mouseDelta.x  * sensitivity;
-		y -= mouseDelta.y * sensitivity;
-		valueChanged |= mouseDelta.x != 0 || mouseDelta.y != 0;
-	}
-	return valueChanged;
-}
-
-inline bool drag2(const char* title, float const sensitivity, float& x, float& y, float const min, float const max)
-{
-	bool ret = drag2(title, sensitivity, x, y);
-	wrapAround(x, min, max);
-	wrapAround(y, min, max);
-	return ret;
-}
-
-inline bool drag2(const char* title, float const sensitivity, float& x, float& y, float const xmin, float const xmax, const float ymin, const float ymax)
-{
-	bool ret = drag2(title, sensitivity, x, y);
-	wrapAround(x, xmin, xmax);
-	wrapAround(y, ymin, ymax);
-	return ret;
 }
 
 inline glm::mat4 composeTransformation(glm::vec3 const& translation, glm::vec3 const& rotation, glm::vec3 const& scale)
@@ -288,34 +338,3 @@ inline glm::mat4 removeScaling(glm::mat4 matrix)
 	return matrix;
 }
 
-inline std::string glEnumToString(GLenum e)
-{
-	switch(e)
-	{
-		case GL_POINTS:
-			return "GL_POINTS";
-		case GL_LINES:
-			return "GL_LINES";
-		case GL_LINE_LOOP:
-			return "GL_LINE_LOOP";
-		case GL_TRIANGLE_FAN:
-			return "GL_TRIANGLE_FAN";
-		case GL_TRIANGLE_STRIP:
-			return "GL_TRIANGLE_STRIP";
-		case GL_TRIANGLES:
-			return "GL_TRIANGLES";
-		case GL_BYTE:
-			return "GL_BYTE";
-		case GL_UNSIGNED_BYTE:
-			return "GL_UNSIGNED_BYTE";
-		case GL_SHORT:
-			return "GL_SHORT";
-		case GL_UNSIGNED_SHORT:
-			return "GL_UNSIGNED_SHORT";
-		case GL_FLOAT:
-			return "GL_FLOAT";
-		case GL_UNSIGNED_INT:
-			return "GL_UNSIGNED_INT";
-	}
-	return "Unrecognized GL enum";
-}

@@ -1,37 +1,49 @@
 #include "Scene.h"
+#include "Camera.h"
 #include "Prop.h"
 #include "Util.h"
-#include "Camera.h"
+#include "CubemapManager.h"
+#include "MeshManager.h"
 
 #include <imgui.h>
-#include <variant>
 #include <set>
+#include <variant>
 
 Scene::Scene()
 {
 	root->setScene(this);
-	root->addChild(std::make_unique<Camera>(), true);
-	root->addChild(std::make_unique<DirectionalLight>(), true);
+	addDefaultNodes();
 }
 
 Scene::Scene(Scene &&other)
 	:root(std::move(other.root))
 {
 	root->setScene(this);
-	if(getAll<Camera>().empty())
-		root->addChild(std::make_unique<Camera>(), true);
-	if(getAll<Light>().empty())
-		root->addChild(std::make_unique<DirectionalLight>(), true);
 }
 Scene::Scene(std::unique_ptr<Node>&& root)
 	:root(std::move(root))
 {
 	this->root->setScene(this);
 	fitToIdealSize();
-	if(getAll<Camera>().empty())
-		this->root->addChild(std::make_unique<Camera>(), true);
-	if(getAll<Light>().empty())
-		this->root->addChild(std::make_unique<DirectionalLight>(), true);
+	addDefaultNodes();
+}
+
+void Scene::addDefaultNodes()
+{
+	auto light = std::make_unique<DirectionalLight>();
+	light->setIntensity(10.0f);
+	light->setColor(glm::vec3(0.8f, 1.0f, 1.0f));
+	light->setLocalRotation(glm::vec3(-30.0f, 0.0f, 0.0f));
+	root->addChild(std::move(light), true);
+	auto light2 = std::make_unique<SpotLight>();
+	light2->setIntensity(50.0f);
+	light2->setColor(glm::vec3(1.0f, 0.8f, 0.5f));
+	root->addChild(std::make_unique<Camera>(), true);// ->addChild(std::move(light2));
+	//auto floor = std::make_unique<Prop>(MeshManager::box());
+	//floor->setName("Floor");
+	//floor->setLocalScale({100.0f, 0.5f, 100.0f});
+	//floor->setLocalTranslation({0.0f, -1.0f, 0.0f});
+	//root->addChild(std::move(floor), true);
 }
 
 void Scene::updateCache() const
@@ -62,6 +74,11 @@ void Scene::updateCache() const
 	cache.dirty = false;
 }
 
+std::string Scene::getNamePrefix() const
+{
+	return "scene";
+}
+
 void Scene::cacheOutdated() const
 {
 	cache.dirty = true;
@@ -77,9 +94,19 @@ Node * Scene::getCurrent() const
 	return current;
 }
 
+bool Scene::usesSkybox() const
+{
+	return useSkybox && skybox != nullptr;
+}
+
 glm::vec3 const& Scene::getBackground() const
 {
 	return backgroundColor;
+}
+
+Cubemap const* Scene::getSkyBox() const
+{
+	return skybox;
 }
 
 void Scene::fitToIdealSize() const
@@ -106,28 +133,61 @@ void Scene::fitToIdealSize() const
 void Scene::drawUI()
 {
 	IDGuard idGuard{this};
-	
-	ImGui::ColorEdit3("Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs);
-	ImGui::SameLine();
-	if(ImGui::Button("Fit To:"))
-		fitToIdealSize();
-
-	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
-	static int hierarchyView = 0;
-
 	ImGui::Columns(2, nullptr, false);
+	float const scrollAreaWidth = ImGui::GetTextLineHeightWithSpacing() * 15;
 	ImGui::SetColumnWidth(-1, scrollAreaWidth);
 
+	ImGui::Text("Background");
+	if(ImGui::RadioButton("Solid", useSkybox == false || skybox == nullptr))
+		useSkybox = false;
+	ImGui::SameLine();
+	static float aaa = 0.0f;
+	ImGui::ColorEdit3("###Background", &backgroundColor.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float);
+	if(ImGui::RadioButton("Cubemap", useSkybox == true && skybox != nullptr))
+		useSkybox = true;
+	ImGui::SameLine();
+	skybox = chooseFromCombo(skybox, CubemapManager::getAll());
+	if(ImGui::Button("Fit To:"))
+		fitToIdealSize();
+	ImGui::SameLine();
 	ImGui::InputFloat("###IdealSize", &idealSize);
+	
+	auto getName = [](Node* node) -> char const*{
+		//TODO find a better solution
+		auto camera = dynamic_cast<Camera*>(node);
+		if(camera)
+			return camera->getName().data();
+		auto prop = dynamic_cast<Prop*>(node);
+		if(prop)
+			return prop->getName().data();
+		auto dLight = dynamic_cast<DirectionalLight*>(node);
+		if(dLight)
+			return dLight->getName().data();
+		auto sLight = dynamic_cast<SpotLight*>(node);
+		if(sLight)
+			return sLight->getName().data();
+		auto pLight = dynamic_cast<PointLight*>(node);
+		if(pLight)
+			return pLight->getName().data();
+		return node->getName().data();
+
+	};
+	static bool hierarchyView = false;
 	ImGui::NewLine();
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Nodes");
 	ImGui::SameLine();
-	if(ImGui::RadioButton("Category", &hierarchyView, 0))
+	if(ImGui::RadioButton("Category", !hierarchyView))
+	{
 		current = nullptr;
+		hierarchyView = false;
+	}
 	ImGui::SameLine();
-	if(ImGui::RadioButton("Hierarchy", &hierarchyView, 1))
+	if(ImGui::RadioButton("Hierarchy", hierarchyView))
+	{
 		current = nullptr;
+		hierarchyView = true;
+	}
 	ImGui::BeginChild("###Nodes");
 
 	std::set<Node*> nodesMarkedForHighlighting;
@@ -250,7 +310,7 @@ void Scene::drawUI()
 				flags = flags | ImGuiTreeNodeFlags_Leaf;
 			if(current == node)
 				flags = flags | ImGuiTreeNodeFlags_Selected;
-			bool expandNode = ImGui::TreeNodeEx(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), flags);
+			bool expandNode = ImGui::TreeNodeEx(((root ? "Root Node" : getName(node)) + std::string(node->enabled ? "" : " *")).data(), flags);
 			if(ImGui::IsItemClicked())
 				current = node;
 			if(ImGui::IsItemHovered() || current == node)
@@ -284,7 +344,7 @@ void Scene::drawUI()
 	else
 	{
 		auto drawNode = [&](Node* node, bool root = false){
-			if(ImGui::Selectable(((root ? "Root Node" : node->getName().data()) + std::string(node->enabled ? "" : " *")).data(), current == node))
+			if(ImGui::Selectable(((root ? "Root Node" : getName(node)) + std::string(node->enabled ? "" : " *")).data(), current == node))
 				current = node;
 			if(ImGui::IsItemHovered() || current == node)
 				node->recursive([&](Node* node){ nodesMarkedForHighlighting.insert(node); });
@@ -355,7 +415,7 @@ void Scene::drawUI()
 	ImGui::EndChild();
 
 	ImGui::NextColumn();
-	ImGui::Text(current ? current->getName().data() : "No selection...");
+	ImGui::Text(current ? getName(current) : "No selection...");
 	ImGui::BeginChild("###Edit Node", {0, 0}, true);
 	if(current) current->drawUI();
 	ImGui::EndChild();

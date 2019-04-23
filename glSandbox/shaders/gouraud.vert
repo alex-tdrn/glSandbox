@@ -9,13 +9,11 @@ struct Material
 	vec3 overrideDiffuseColor;
 	bool hasDiffuseMap;
 	sampler2D diffuseMap;
-	vec2 diffuseMapOffset;
 
 	bool overrideSpecular;
 	vec3 overrideSpecularColor;
 	bool hasSpecularMap;
 	sampler2D specularMap;
-	vec2 specularMapOffset;
 	float shininess;
 };
 
@@ -59,7 +57,7 @@ uniform mat4 model;
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
-layout (location = 2) in vec2 texCoord;
+layout (location = 3) in vec2 texCoord;
 
 out vec4 color;
 
@@ -77,14 +75,14 @@ void main()
 {
 	gl_Position = projection * view * model * vec4(aPos, 1.0f);
 	if(!material.overrideDiffuse && material.hasDiffuseMap)
-		diffuseColor = vec3(texture(material.diffuseMap, texCoord + material.diffuseMapOffset));
+		diffuseColor = vec3(texture(material.diffuseMap, texCoord));
 	else if(material.overrideDiffuse)
 		diffuseColor = material.overrideDiffuseColor;
 	else
 		diffuseColor = vec3(1.0f);
 
 	if(!material.overrideSpecular && material.hasSpecularMap)
-		specularColor = vec3(texture(material.specularMap, texCoord + material.specularMapOffset));
+		specularColor = vec3(texture(material.specularMap, texCoord));
 	else if(material.overrideSpecular)
 		specularColor = material.overrideSpecularColor;
 	else

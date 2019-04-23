@@ -1,27 +1,32 @@
 #pragma once
-#include "Named.h"
-#include "Resources.h"
+#include "AutoName.h"
+#include "ShaderManager.h"
 #include "Material.h"
 #include "Grid.h"
+#include "Texture.h"
+#include "Cubemap.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <vector>
 
 class Camera;
+class Scene;
 
-class Renderer
+class Renderer : public AutoName<Renderer>
 {
 private:
-	Camera* sourceCamera = nullptr;
+	Camera* camera = nullptr;
+	Scene* scene = nullptr;
 	unsigned int multisampledFramebuffer = 0;
 	unsigned int multisampledColorbuffer = 0;
 	unsigned int multisampledRenderbuffer = 0;
 	unsigned int simpleFramebuffer = 0;
 	unsigned int simpleColorbuffer = 0;
 	unsigned int simpleRenderbuffer = 0;
-	bool explicitRendering = true;
-	bool _shouldRender = true;
-	bool shouldRenderSecondary = true;
+	bool explicitRendering = false;
+	mutable bool _shouldRender = true;
+	mutable bool shouldRenderSecondary = true;
 	struct {
 		int width = 1920;
 		int height = 960;
@@ -39,13 +44,13 @@ private:
 		int faceCullingOrdering = GL_CCW;
 	} pipeline;
 	struct{
-		bool enabled = true;
+		bool enabled = false;
 		glm::vec3 color{1.0f};
 		bool overlay = false;
 		bool boundingBox = false;
 	}highlighting;
 	struct{
-		res::ShaderType current = res::ShaderType::unlit;
+		Shader* current = ShaderManager::unlit();
 		struct
 		{
 			bool perChannel = false;
@@ -56,21 +61,6 @@ private:
 		}refraction;
 		struct{
 			struct{
-				glm::vec3 surfaceColor{1.0f};
-				glm::vec3 lineColor{0.0f};
-				std::optional<Material::Maps> map = Material::Maps::diffuse;
-			}unlit;
-			struct{
-				bool diffuse = false;
-				bool specular = false;
-				glm::vec3 diffuseColor{1.0f, 1.0f, 1.0f};
-				glm::vec3 specularColor{1.0f, 1.0f, 1.0f};
-			}override;
-			float ambientStrength = 1.0f;
-			float shininess = 128;
-		}lighting;
-		struct{
-			struct{
 				bool viewSpace = false;
 				bool faceNormals = false;
 				float explodeMagnitude = 0.0f;
@@ -79,9 +69,45 @@ private:
 				glm::vec3 lineColor{1.0f, 1.0f, 1.0f};
 			}normals;
 			bool depthBufferLinear = false;
+			Material::Map unlitMap = Material::Map::baseColor;
+			bool unlitShowRedChannel = true;
+			bool unlitShowGreenChannel = true;
+			bool unlitShowBlueChannel = true;
+			bool unlitShowAlphaChannel = true;
 		}debugging;
+		struct{
+			struct
+			{
+				bool enabled = false;
+				bool faceCulling = true;
+				int faceCullingMode = GL_BACK;
+				int resolution = 11;
+				float directionalLightProjectionSize = 10.0f;
+				float spotLightNearPlane = 0.1f;
+				float spotLightFarPlane = 20.0f;
+				float pointLightNearPlane = 0.1f;
+				float pointLightFarPlane = 100.0f;
+				mutable std::vector<Texture> shadowMapsD;
+				mutable std::vector<Texture> shadowMapsS;
+				mutable std::vector<Cubemap> shadowMapsP;
+				int showMap = -1;
+				int depthComparison = GL_LEQUAL;
+				float bias[2] = {0.0005f, 0.0020f};
+				bool usePoissonSampling = false;
+				enum PoissonSampling{
+					simple,
+					stratified,
+					rotated
+				}poissonVariant = simple;
+				int poissonSamples = 32;
+				float poissonRadius[2] = {1.5f, 20.0f};
+				int pcfSamples = 2;
+				float pcfRadius[2] = {0.5f, 10.0f};
+				bool pcfEarlyExit = true;
+			}shadows;
+			float ambientStrength = 1.0f;
+		}lighting;
 	}shading;
-
 	struct{
 		enum Mode
 		{
@@ -97,18 +123,19 @@ private:
 			Mode mode = triangles;
 		}prop;
 		struct{
-			bool enabled = true;
+			bool enabled = false;
 			Grid mainGenerator{64};
 			Grid subGenerator{2};
 			float scale = 32.0f;
 			float lineWidth = 2.0f;
 			glm::vec3 color{0.0f};
 		}grid;
+		struct{
+			bool wireframe = false;
+		}skybox;
 		float lineWidth = 3.0f;
 		float pointSize = 2.0f;
 	}geometry;
-public:
-	Name<Renderer> name{"renderer"};
 
 public:
 	Renderer(Camera* camera = nullptr);
@@ -119,7 +146,24 @@ public:
 	~Renderer();
 
 private:
+	bool skipFrame() const;
+	void configureFramebuffers() const;
+	void configureDepthTesting() const;
+	void configureFaceCulling() const;
+	void configurePolygonMode() const;
+	void clearBuffers() const;
+	void renderAuxiliaryGeometry() const;
+	void renderLights() const;
+	void updateShadowMaps() const;
+	void renderShadowMaps() const;
+	void configureShaders() const;
+	void renderHighlightedProps() const;
+	void renderProps(Shader* shader) const;
+	void renderSkybox() const;
 	void updateFramebuffers();
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
 	void resizeViewport(int width, int height);

@@ -1,16 +1,16 @@
-﻿#include "Shader.h"
+﻿#include "ShaderManager.h"
 #include "Camera.h"
 #include "Lights.h"
 #include "Globals.h"
-#include "Scene.h"
+#include "SceneManager.h"
 #include "Node.h"
 #include "Prop.h"
 #include "Renderer.h"
 #include "Profiler.h"
+#include "glad/glad.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glad\glad.h>
 #include <GLFW\glfw3.h>
 #include <imgui.h>
 #include "imgui_impl_glfw_gl3.h"
@@ -23,6 +23,7 @@
 #include <memory>
 #include <deque>
 #include <vld.h>
+#include <thread>
 
 double deltaTime = 0.0f;
 double lastFrame = 0.0f;
@@ -31,22 +32,7 @@ double lastMouseY = 300;
 bool mouseDrag = false;
 Renderer& settings::mainRenderer()
 {
-	static Renderer r = {[](){
-		auto defaultScene = std::make_unique<Scene>();
-		const int nPrimitives = 3;
-		const float spacing = 3.0f;
-		glm::vec3 pos{-spacing * (static_cast<float>(nPrimitives - 1) / 2.0f), 0.0f, 0.0f};
-		for(auto const& mesh : {res::meshes::quad(), res::meshes::box(), res::meshes::boxWireframe()})
-		{
-			std::unique_ptr<Node> prop = std::make_unique<Prop>(mesh);
-			prop->setLocalTransformation(glm::translate(glm::mat4(1.0f), pos));
-			pos.x += spacing;
-			defaultScene->getRoot()->addChild(std::move(prop));
-		}
-		auto ret = defaultScene->getAll<Camera>()[0];
-		res::scenes::add(std::move(defaultScene));
-		return ret;
-	}()};
+	static Renderer r = {SceneManager::basic()->getAll<Camera>().front()};
 	return r;
 }
 
@@ -112,13 +98,18 @@ int main(int argc, char** argv)
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
 	ImGui::GetStyle().PopupRounding= 0.0f;
 	ImGui::GetStyle().ScrollbarRounding = 0.0f;
-	res::loadShaders();
+	initializeResources();
 
 	while(!glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();
-		if(info::windowHeight == 0 || info::windowWidth == 0)
-			continue;
+		
+		while(glfwPollEvents(), 
+			!glfwGetWindowAttrib(window, GLFW_FOCUSED)
+			|| info::windowHeight == 0 
+			|| info::windowWidth == 0)
+		{
+			std::this_thread::yield();
+		}
 		processInput(window);
 		drawUI();
 		glfwSwapInterval(settings::rendering::vsync);
@@ -126,10 +117,11 @@ int main(int argc, char** argv)
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		settings::mainRenderer().render();
-		
-		glEnable(GL_FRAMEBUFFER_SRGB);
-		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
 		glDisable(GL_FRAMEBUFFER_SRGB);
+
+		//glEnable(GL_FRAMEBUFFER_SRGB);
+		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
+		//glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
@@ -189,7 +181,7 @@ void drawUI()
 		}
 		ImGui::EndMainMenuBar();
 	}
-	res::drawUI(&drawResources);
+	drawResourcesUI(&drawResources);
 	settings::mainRenderer().drawUI(&drawMainRenderer);
 	for(int i = 0; i < drawRenderer.size(); i++)
 	{

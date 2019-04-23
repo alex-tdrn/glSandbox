@@ -26,34 +26,22 @@ public:
 
 class DirectionalLight final : public Light, public Transformed<Rotation>
 {
-private:
-	Name<DirectionalLight> name{"Light(D)"};
+protected:
+	std::string getNamePrefix() const override;
 
 public:
-	DirectionalLight() = default;
-	virtual ~DirectionalLight() = default;
-
-public:
-	void setName(std::string const& name) override;
-	std::string const& getName() const override;
-	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const;
+	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const;
 	void drawUI() override;
 
 };
 
 class PointLight final : public Light, public Transformed<Translation>
 {
-private:
-	Name<DirectionalLight> name{"Light(P)"};
+protected:
+	std::string getNamePrefix() const override;
 
 public:
-	PointLight() = default;
-	virtual ~PointLight() = default;
-
-public:
-	void setName(std::string const& name) override;
-	std::string const& getName() const override;
-	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const;
+	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const;
 	void drawUI() override;
 
 };
@@ -61,21 +49,17 @@ public:
 class SpotLight final : public Light, public Transformed<Translation, Rotation>
 {
 private:
-	Name<DirectionalLight> name{"Light(S)"};
 	float innerCutoff = 15.0f;
 	float outerCutoff = 20.0f;
+	
+protected:
+	std::string getNamePrefix() const override;
 
 public:
-	SpotLight() = default;
-	virtual ~SpotLight() = default;
-
-public:
-	void setName(std::string const& name) override;
-	std::string const& getName() const override;
 	void setCutoff(float inner, float outer);
 	float getInnerCutoff() const;
 	float getOuterCutoff() const;
-	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader) const;
+	void use(std::string const& prefix, glm::mat4 const& viewMatrix, Shader& shader, bool flash) const;
 	void drawUI() override;
 
 };

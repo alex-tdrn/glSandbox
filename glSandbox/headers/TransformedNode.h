@@ -1,6 +1,6 @@
 #pragma once
 #include "Node.h"
-#include "Util.h"
+#include "UIUtilities.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -170,16 +170,23 @@ public:
 		auto[t, r, s] = decomposeTransformation(m);
 		if constexpr(isTransformUsed<Translation>::value)
 		{
-			static_cast<Translation*>(this)->setLocalTranslation(t);
+			this->setLocalTranslation(t);
 		}
 		if constexpr(isTransformUsed<Rotation>::value)
 		{
-			static_cast<Rotation*>(this)->setLocalRotation(r);
+			this->setLocalRotation(r);
 		}
 		if constexpr(isTransformUsed<Scale>::value)
 		{
-			static_cast<Scale*>(this)->setLocalScale(s);
+			this->setLocalScale(s);
 		}
+	}
+
+	void setGlobalTransformation(glm::mat4&& m) override
+	{
+		setLocalTransformation(glm::mat4(1.0f));
+		m = m * glm::inverse(getGlobalTransformation());
+		setLocalTransformation(std::move(m));
 	}
 
 	glm::mat4 getLocalTransformation() const override
@@ -187,11 +194,11 @@ public:
 		glm::mat4 transformation{1.0f};
 
 		if constexpr(isTransformUsed<Translation>::value)
-			transformation *= static_cast<Translation const*>(this)->getLocalTranslationMatrix();
+			transformation *= this->getLocalTranslationMatrix();
 		if constexpr(isTransformUsed<Rotation>::value)
-			transformation *= static_cast<Rotation const*>(this)->getLocalRotationMatrix();
+			transformation *= this->getLocalRotationMatrix();
 		if constexpr(isTransformUsed<Scale>::value)
-			transformation *= static_cast<Scale const*>(this)->getLocalScalingMatrix();
+			transformation *= this->getLocalScalingMatrix();
 
 		return transformation;
 	}
@@ -204,7 +211,9 @@ public:
 		{
 			glm::mat4 transformation = parent->getGlobalTransformation();
 
-			if constexpr(!isTransformUsed<Translation>::value || !isTransformUsed<Rotation>::value || !isTransformUsed<Scale>::value)
+			if constexpr(!isTransformUsed<Translation>::value || 
+				!isTransformUsed<Rotation>::value || 
+				!isTransformUsed<Scale>::value)
 			{
 				auto[t, r, s] = decomposeTransformation(transformation);
 				transformation = glm::mat4{1.0f};
@@ -221,14 +230,30 @@ public:
 	}
 
 	template<typename Dummy = void>
-	std::enable_if_t<isTransformUsed<Translation>::value && isTransformUsed<Rotation>::value, Dummy>
+	std::enable_if_t<isTransformUsed<Translation>::value && 
+		isTransformUsed<Rotation>::value, Dummy>
 		rotateAroundPointInFront(float const distance, float const yawAmount, float const pitchAmount)
 	{
-		glm::vec3 pivot = static_cast<Rotation*>(this)->getLocalRotationMatrix() * glm::vec4{0.0f, 0.0f, distance, 1.0f};
-		static_cast<Rotation*>(this)->rotate(yawAmount, pitchAmount);
-		glm::vec3 rotatedPivot = static_cast<Rotation*>(this)->getLocalRotationMatrix() * glm::vec4{0.0f, 0.0f, distance, 1.0f};
+		glm::vec3 pivot = this->getLocalRotationMatrix() * glm::vec4{0.0f, 0.0f, distance, 1.0f};
+		this->rotate(yawAmount, pitchAmount);
+		glm::vec3 rotatedPivot = this->getLocalRotationMatrix() * glm::vec4{0.0f, 0.0f, distance, 1.0f};
 		glm::vec3 diff = rotatedPivot - pivot;
-		static_cast<Translation*>(this)->translate(diff);
+		this->translate(diff);
+	}
+
+	template<typename Dummy = glm::vec3>
+	std::enable_if_t<isTransformUsed<Rotation>::value, Dummy>
+		getDirection() const
+	{
+		glm::vec4 dir{0.0f, 0.0f, -1.0f, 0.0f};
+		return glm::normalize(getGlobalTransformation() * dir);
+	}
+
+	template<typename Dummy = glm::vec3>
+	std::enable_if_t<isTransformUsed<Translation>::value, Dummy>
+		getPosition() const
+	{
+		return extractTranslationVector(getGlobalTransformation());
 	}
 
 	void drawUI()
@@ -242,16 +267,16 @@ public:
 			ImGui::Text("%.3f, %.3f, %.3f", globalTranslation[0], globalTranslation[1], globalTranslation[2]);
 
 			ImGui::Text("Local Translation");
-			glm::vec3 localTranslation = static_cast<Translation*>(this)->getLocalTranslation();
+			glm::vec3 localTranslation = this->getLocalTranslation();
 			if(ImGui::DragFloat3("###Local Translation", &localTranslation[0], 0.01f))
-				static_cast<Translation*>(this)->setLocalTranslation(localTranslation);
+				this->setLocalTranslation(localTranslation);
 
 			if constexpr(isTransformUsed<Rotation>::value)
 			{
 				ImGui::Text("Translate Oriented");
 				glm::vec3 translateOrientedAmount{0.0f};
 				if(ImGui::DragFloat3("###Translate Oriented", &translateOrientedAmount[0], 0.01f))
-					static_cast<Translation*>(this)->translate(static_cast<Rotation*>(this)->getLocalRotationMatrix() * glm::vec4{translateOrientedAmount, 1.0f});
+					this->translate(this->getLocalRotationMatrix() * glm::vec4{translateOrientedAmount, 1.0f});
 			}
 			
 			ImGui::NewLine();
@@ -266,7 +291,7 @@ public:
 			ImGui::Text("%.3f, %.3f, %.3f", globalRotationEuler[0], globalRotationEuler[1], globalRotationEuler[2]);
 
 			ImGui::Text("Local Rotation (Quaternion)");
-			glm::quat localRotation = static_cast<Rotation*>(this)->getLocalRotation();
+			glm::quat localRotation = this->getLocalRotation();
 			ImGui::Text("%.3f, %.3f, %.3f, %.3f", localRotation[0], localRotation[1], localRotation[2], localRotation[3]);
 
 			ImGui::Text("Local Rotation (Euler)");
@@ -283,10 +308,11 @@ public:
 				ImGui::SameLine();
 				ImGui::RadioButton("Orbital", reinterpret_cast<int*>(&rotationStyleOrbital), 1);
 			}
-			bool limitPitch = static_cast<Rotation*>(this)->getLimitPitch();
+			else rotationStyleOrbital = false;
+			bool limitPitch = this->getLimitPitch();
 			ImGui::SameLine();
 			if(ImGui::Checkbox("Limit Pitch", &limitPitch))
-				static_cast<Rotation*>(this)->setLimitPitch(limitPitch);
+				this->setLimitPitch(limitPitch);
 			if constexpr(isTransformUsed<Translation>::value)
 			{
 				if(rotationStyleOrbital)
@@ -300,11 +326,11 @@ public:
 					if(rotationStyleOrbital)
 						this->rotateAroundPointInFront(rotationDistance, rotateAmount.y, rotateAmount.x);
 					else
-						static_cast<Rotation*>(this)->rotate(rotateAmount.y, rotateAmount.x);
+						this->rotate(rotateAmount.y, rotateAmount.x);
 				}
 				else
 				{
-					static_cast<Rotation*>(this)->rotate(rotateAmount.y, rotateAmount.x);
+					this->rotate(rotateAmount.y, rotateAmount.x);
 				}
 			}
 			
@@ -316,19 +342,19 @@ public:
 			ImGui::Text("%.3f, %.3f, %.3f", globalScale[0], globalScale[1], globalScale[2]);
 
 			ImGui::Text("Local Scale");
-			glm::vec3 localScale = static_cast<Scale*>(this)->getLocalScale();
+			glm::vec3 localScale = this->getLocalScale();
 			if(ImGui::DragFloat3("###Local Scale", &localScale[0], 0.01f))
 			{
 				if(ImGui::GetIO().KeyShift)
 				{
-					glm::vec3 currentLocalScale = static_cast<Scale*>(this)->getLocalScale();
+					glm::vec3 currentLocalScale = this->getLocalScale();
 					float uniformScale = 1.0f;
 					for(int i = 0; i < 3; i++)
 						if(localScale[i] != currentLocalScale[i])
-							static_cast<Scale*>(this)->setLocalScale(localScale[i]);
+							this->setLocalScale(localScale[i]);
 				}
 				else
-					static_cast<Scale*>(this)->setLocalScale(localScale);
+					this->setLocalScale(localScale);
 			}
 			
 			ImGui::NewLine();

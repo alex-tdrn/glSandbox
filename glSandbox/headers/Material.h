@@ -1,45 +1,48 @@
 #pragma once
-#include "Texture.h"
-#include "Shader.h"
+#include "AutoName.h"
 
-#include <string>
+#include <glm/glm.hpp>
 #include <optional>
-#include <array>
 
-class Material
+class Texture;
+class Shader;
+
+class Material : public AutoName<Material>
 {
 public:
-	enum Maps
+	enum class Map
 	{
-		ambient,
-		diffuse,
-		specular,
-		shininess,
-		emission,
-		light,
-		reflection,
-		opacity,
+		none = -1,
 		normal,
-		bump,
-		displacement,
-		unknown,
-		n
+		occlusion,
+		emissive,
+		baseColor,
+		metallicRoughness
 	};
 private:
-	std::string const name;
-	std::array<std::optional<Texture>, Maps::n> maps;
-	float shininessValue = 32.0f;
-	inline static int ct = 0;
+	Texture* normalMap = nullptr;
+	bool normalMapping = true;
+	Texture* occlusionMap = nullptr;
+	bool occlusionMapping = true;
+	Texture* emissiveMap = nullptr;
+	glm::vec3 emissiveFactor = glm::vec3{0.0f};
 
 public:
-	Material(std::string const name = "Material#" + std::to_string(ct++));
+	Material() = default;
+	virtual ~Material() = default;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
-	static std::string mapTypeToString(Material::Maps mapType);
-	void setMap(int mapType, std::optional<Texture>&& map);
-	bool isInitialized() const;
-	std::string_view const getName() const;
-	bool contains(std::string_view const path);
-	void use(Shader shader) const;
-	[[nodiscard]]bool drawUI();
+	void setNormalMap(Texture* map);
+	void enableNormalMapping();
+	void disableNormalMapping();
+	void setOcclusionMap(Texture* map);
+	void enableOcclusionMapping();
+	void disableOcclusionMapping();
+	void setEmissiveMap(Texture* map);
+	void setEmissiveFactor(glm::vec3 factor);
+	virtual void use(Shader* shader, Material::Map visualizeMap = Material::Map::none) const;
+	virtual void drawUI();
 };

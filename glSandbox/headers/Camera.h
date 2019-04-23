@@ -9,7 +9,6 @@
 class Camera final : public Transformed<Translation, Rotation>
 {
 private:
-	Name<Camera> name{"camera"};
 	bool visualizeFrustum = true;
 	bool projectionOrtho = false;
 	float nearPlane = 0.1f;
@@ -19,15 +18,15 @@ private:
 
 public:
 	Camera();
-	virtual ~Camera() = default;
 
 private:
 	static unsigned int ubo();
 
+protected:
+	std::string getNamePrefix() const override;
+
 public:
 	void use() const;
-	void setName(std::string const& name) override;
-	std::string const& getName() const override;
 	glm::mat4 getProjectionMatrix() const;
 	glm::mat4 getViewMatrix() const;
 	float getNearPlane() const;

@@ -1,8 +1,5 @@
 #pragma once
-
-#include "Resources.h"
 #include "PostProcessingStep.h"
-#include "Shader.h"
 #include "Renderer.h"
 
 #include <glm/glm.hpp>
@@ -26,7 +23,7 @@ namespace settings
 	void addRenderer(std::unique_ptr<Renderer>&&);
 	namespace rendering
 	{
-		inline bool vsync = false;
+		inline bool vsync = true;
 		inline bool gammaCorrection = true;
 		enum tonemappingType
 		{

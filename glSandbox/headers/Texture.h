@@ -1,43 +1,54 @@
 #pragma once
-#include <string_view>
-#include <glad\glad.h>
-#include <glm/glm.hpp>
-#include <future>
+#include "glad/glad.h"
+#include "AutoName.h"
 
-class Texture
+#include <string>
+#include <glm/glm.hpp>
+#include <optional>
+
+class Texture : public AutoName<Texture>
 {
+	friend class Cubemap;
 private:
-	mutable bool initialized = false;
-	bool linear;
+	mutable bool allocated = false;
 	mutable unsigned int ID;
-	glm::vec2 uvOffset{0, 0};
-	struct ImageData
-	{
-		unsigned char* data = nullptr;
-		int width = 0;
-		int height = 0;
-		int nrChannels = 0;
-	};
-	mutable ImageData image;
-	mutable std::future<ImageData> loader;
-	std::string path;
+	mutable int width = -1;
+	mutable int height = -1;
+	mutable int nrChannels = -1;
+	mutable unsigned int format = 0;
+	mutable unsigned int pixelTransfer = 0;
+	mutable unsigned int dataType = 0;
+	bool mipmapping = true;
+	bool linear = true;
+	bool hdr = false;
+	std::optional<std::string> path = std::nullopt;
 
 public:
 	Texture() = delete;
-	Texture(std::string const path, bool linear);
+	Texture(unsigned int format, int width, int height,
+		unsigned int pixelTransfer, unsigned int dataType,
+		void* imageData = nullptr);
+	Texture(std::string const& path, bool linear);
 	Texture(Texture const& other) = delete;
-	Texture(Texture&& other) = default;
+	Texture(Texture&& other);
 	Texture& operator=(Texture const& other) = delete;
-	Texture& operator=(Texture&& other) = default;
+	Texture& operator=(Texture&& other);
+	~Texture();
 
 private:
-	void initialize(int location) const;
+	void allocate(void* imageData = nullptr) const;
+	void load() const;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
-	glm::vec2 const getUVOffset() const;
-	bool isLoaded() const;
-	std::string_view getPath() const;
+	unsigned int getID() const;
+	int getWidth() const;
+	int getHeight() const;
+	int getNumberOfChannels() const;
 	void use(int location) const;
-	[[nodiscard]]bool drawUI();
+	bool isLinear() const;
+	void drawUI();
 
 };

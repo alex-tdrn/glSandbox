@@ -1,5 +1,5 @@
 #pragma once
-#include "Named.h"
+#include "AutoName.h"
 #include "Util.h"
 
 #include <glm/glm.hpp>
@@ -8,13 +8,14 @@
 #include <array>
 #include <vector>
 
-class Mesh
+class Mesh : public AutoName<Mesh>
 {
 public:
 	enum AttributeType
 	{
 		positions,
 		normals,
+		tangents,
 		texcoords,
 		N
 	};
@@ -53,8 +54,7 @@ private:
 	GLenum const indexDataType;
 	bool indexedDrawing;
 	Bounds const bounds;
-public:
-	Name<Mesh> name{"mesh"};
+	bool availableAttributes[AttributeType::N];
 
 public:
 	Mesh(Bounds bounds, GLenum drawMode, Attributes&& attributes, std::optional<IndexBuffer>&& indices = std::nullopt);
@@ -64,7 +64,12 @@ public:
 	Mesh& operator=(Mesh const&) = delete;
 	Mesh& operator=(Mesh&&) = delete;
 
+protected:
+	std::string getNamePrefix() const override;
+
 public:
+	bool hasAttribute(AttributeType attributeType) const;
+	bool hasSurface() const;
 	Bounds const& getBounds() const;
 	void use() const;
 	void drawUI();
@@ -114,6 +119,6 @@ Bounds calculateBounds(std::vector<T> const& vertices)
 {
 	Bounds bounds;
 	for(auto const& vertex : vertices)
-		bounds += vertex.position;
+		bounds += Bounds(vertex.position);
 	return bounds;
 }

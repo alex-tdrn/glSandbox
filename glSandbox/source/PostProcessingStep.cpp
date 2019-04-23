@@ -1,6 +1,7 @@
 #include "Util.h"
 #include "PostProcessingStep.h"
 #include "Globals.h"
+#include "MeshManager.h"
 
 void PostProcessingStep::initFramebuffer()
 {
@@ -49,30 +50,28 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	Shader& currentShader = res::shaders()[currentShaderType];
-	currentShader.use();
-	currentShader.set("screenTexture", 0);
+	currentShader->use();
+	currentShader->set("screenTexture", 0);
 
-	switch(currentShaderType)
+	if(currentShader == ShaderManager::convolution())
 	{
-		case res::ShaderType::convolution:
-			currentShader.set("offset", convolutionOffset);
-			currentShader.set("divisor", convolutionDivisor);
-			for(int i = 0; i < 9; i++)
-				currentShader.set("kernel[" + std::to_string(i) + "]", convolutionKernel[i]);
-			break;
-		case res::ShaderType::chromaticAberration:
-			currentShader.set("intensity", chromaticAberrationIntensity);
-			currentShader.set("offsetR", chromaticAberrationOffsetR);
-			currentShader.set("offsetG", chromaticAberrationOffsetG);
-			currentShader.set("offsetB", chromaticAberrationOffsetB);
-			break;
+		currentShader->set("offset", convolutionOffset);
+		currentShader->set("divisor", convolutionDivisor);
+		for(int i = 0; i < 9; i++)
+			currentShader->set("kernel[" + std::to_string(i) + "]", convolutionKernel[i]);
+	}
+	else if(currentShader == ShaderManager::chromaticAberration())
+	{
+		currentShader->set("intensity", chromaticAberrationIntensity);
+		currentShader->set("offsetR", chromaticAberrationOffsetR);
+		currentShader->set("offsetG", chromaticAberrationOffsetG);
+		currentShader->set("offsetB", chromaticAberrationOffsetB);
 	}
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sourceColorbuffer);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	res::meshes::quad()->use();
+	MeshManager::quad()->use();
 
 	if(doGammaHDR)
 	{
@@ -82,8 +81,8 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glDisable(GL_CULL_FACE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		res::shaders()[res::ShaderType::gammaHDR].use();
-		res::shaders()[res::ShaderType::gammaHDR].set("screenTexture", 0);
+		ShaderManager::gammaHDR()->use();
+		ShaderManager::gammaHDR()->set("screenTexture", 0);
 		/*if(settings::rendering::gammaCorrection)
 			resources::shaders::gammaHDR.set("gamma", settings::rendering::gammaExponent);
 		else
@@ -99,7 +98,7 @@ void PostProcessingStep::draw(unsigned int sourceColorbuffer, unsigned int targe
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorbuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		res::meshes::quad()->use();
+		MeshManager::quad()->use();
 	}
 }
 

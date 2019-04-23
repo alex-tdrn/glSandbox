@@ -1,11 +1,11 @@
 #include "Profiler.h"
+#include "glad/glad.h"
 
 #include <imgui.h>
 #include <chrono>
 #include <array>
 #include <vector>
 #include <numeric>
-#include <glad/glad.h>
 
 const int frameSamples = 100;
 std::array<float, frameSamples> frametimePlot;

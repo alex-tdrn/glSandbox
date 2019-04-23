@@ -154,14 +154,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Globals.cpp" />
-    <ClCompile Include="SierpinskiCarpet.cpp" />
+    <ClCompile Include="source\CubemapRenderer.cpp" />
+    <ClCompile Include="source\MeshRenderer.cpp" />
+    <ClCompile Include="source\ResourceRenderer.cpp" />
+    <ClCompile Include="source\CubemapManager.cpp" />
+    <ClCompile Include="source\FileSelector.cpp" />
+    <ClCompile Include="source\Globals.cpp" />
+    <ClCompile Include="source\MaterialManager.cpp" />
+    <ClCompile Include="source\MaterialPBRMetallicRoughness.cpp" />
+    <ClCompile Include="source\MeshManager.cpp" />
+    <ClCompile Include="source\SceneManager.cpp" />
+    <ClCompile Include="source\ShaderManager.cpp" />
+    <ClCompile Include="source\SierpinskiCarpet.cpp" />
     <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
     <ClCompile Include="source\SierpinskiTriangle.cpp" />
     <ClCompile Include="source\Grid.cpp" />
     <ClCompile Include="source\ProceduralMesh.cpp" />
     <ClCompile Include="source\Profiler.cpp" />
-    <ClCompile Include="source\Resources.cpp" />
+    <ClCompile Include="source\ResourceManager.cpp" />
     <ClCompile Include="source\Node.cpp" />
     <ClCompile Include="source\Prop.cpp" />
     <ClCompile Include="source\ImportGLTF.cpp" />
@@ -178,10 +188,18 @@
     <ClCompile Include="source\Scene.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\Texture.cpp" />
+    <ClCompile Include="source\TextureManager.cpp" />
+    <ClCompile Include="source\TextureRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\CubemapRenderer.h" />
+    <ClInclude Include="headers\CubemapManager.h" />
+    <ClInclude Include="headers\FileSelector.h" />
+    <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Grid.h" />
-    <ClInclude Include="headers\Named.h" />
+    <ClInclude Include="headers\MaterialManager.h" />
+    <ClInclude Include="headers\MeshManager.h" />
+    <ClInclude Include="headers\AutoName.h" />
     <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />
@@ -196,17 +214,29 @@
     <ClInclude Include="headers\Profiler.h" />
     <ClInclude Include="headers\Prop.h" />
     <ClInclude Include="headers\Renderer.h" />
-    <ClInclude Include="headers\Resources.h" />
+    <ClInclude Include="headers\ResourceManager.h" />
     <ClInclude Include="headers\Scene.h" />
+    <ClInclude Include="headers\SceneManager.h" />
     <ClInclude Include="headers\Shader.h" />
+    <ClInclude Include="headers\ShaderManager.h" />
     <ClInclude Include="headers\SierpinskiTriangle.h" />
     <ClInclude Include="headers\Texture.h" />
+    <ClInclude Include="headers\TextureManager.h" />
     <ClInclude Include="headers\Util.h" />
     <ClInclude Include="headers\TransformedNode.h" />
     <ClInclude Include="headers\SierpinskiTetrahedon.h" />
     <ClInclude Include="headers\SierpinskiCarpet.h" />
+    <ClInclude Include="headers\MaterialPBRMetallicRoughness.h" />
+    <ClInclude Include="headers\ResourceRenderer.h" />
+    <ClInclude Include="headers\TextureRenderer.h" />
+    <ClInclude Include="headers\UIUtilities.h" />
+    <ClInclude Include="headers\MeshRenderer.h" />
+    <ClInclude Include="headers\Timestamp.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\equirectangularToCubemap.frag" />
+    <None Include="shaders\equirectangularToCubemap.geom" />
+    <None Include="shaders\equirectangularToCubemap.vert" />
     <None Include="shaders\blinn-phong.frag" />
     <None Include="shaders\debugNormals.geom" />
     <None Include="shaders\debugDepthBuffer.frag" />
@@ -223,6 +253,8 @@
     <None Include="shaders\flat.vert" />
     <None Include="shaders\gouraud.frag" />
     <None Include="shaders\gouraud.vert" />
+    <None Include="shaders\pbr.frag" />
+    <None Include="shaders\pbr.vert" />
     <None Include="shaders\unlit.frag" />
     <None Include="shaders\unlit.vert" />
     <None Include="shaders\phong.frag" />
@@ -240,6 +272,20 @@
     <None Include="shaders\refraction.vert" />
     <None Include="shaders\skybox.frag" />
     <None Include="shaders\skybox.vert" />
+    <None Include="shaders\shadowMappingUnidirectional.frag" />
+    <None Include="shaders\shadowMappingUnidirectional.vert" />
+    <None Include="shaders\shadowMappingOmnidirectional.frag" />
+    <None Include="shaders\shadowMappingOmnidirectional.geom" />
+    <None Include="shaders\shadowMappingOmnidirectional.vert" />
+    <None Include="shaders\visualizeMesh.frag" />
+    <None Include="shaders\visualizeMesh.vert" />
+    <None Include="shaders\visualizeTexture.frag" />
+    <None Include="shaders\visualizeTexture.vert" />
+    <None Include="shaders\visualizeCubemap.frag" />
+    <None Include="shaders\visualizeCubemap.vert" />
+    <None Include="shaders\convoluteCubemap.frag" />
+    <None Include="shaders\convoluteCubemap.geom" />
+    <None Include="shaders\convoluteCubemap.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

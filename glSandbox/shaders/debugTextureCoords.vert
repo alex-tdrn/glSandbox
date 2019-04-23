@@ -5,10 +5,9 @@ layout(std140, binding = 0) uniform CameraMatrices
 	uniform mat4 view;
 };
 uniform mat4 model;
-uniform vec2 uvOffset;
 
 layout (location = 0) in vec3 position;
-layout (location = 2) in vec2 textureCoordinates;
+layout (location = 3) in vec2 textureCoordinates;
 
 out VS_OUT
 {
@@ -17,7 +16,7 @@ out VS_OUT
 
 void main()
 {
-	vs_out.textureCoordinates = textureCoordinates+ uvOffset;
+	vs_out.textureCoordinates = textureCoordinates;
 	while(vs_out.textureCoordinates.x > 1.0f)
 		vs_out.textureCoordinates.x -= 1.0f;
 	while(vs_out.textureCoordinates.y > 1.0f)

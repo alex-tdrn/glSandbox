@@ -1,23 +1,50 @@
 #pragma once
-#include <array>
-#include <string>
+#include "AutoName.h"
+#include "Texture.h"
 
-class Cubemap
+#include <array>
+#include <optional>
+
+class Cubemap : public AutoName<Cubemap>
 {
 private:
-	unsigned int ID;
-	std::array<std::string, 6> paths;
-	std::string name;
-	bool initialized = false;
-	int width, height, nrChannels;
+	mutable bool allocated = false;
+	mutable unsigned int ID;
+	mutable int width = -1;
+	mutable int height = -1;
+	mutable int nrChannels = -1;
+	mutable unsigned int format = 0;
+	mutable unsigned int pixelTransfer = 0;
+	mutable unsigned int dataType = 0;
+	mutable bool mipmapping = true;
+	mutable bool linear;
+	std::optional<std::array<Texture, 6>> faces = std::nullopt;
+	std::optional<Texture> equirectangularMap = std::nullopt;
+	mutable Cubemap* convolutedMap = nullptr;
 
 public:
-	Cubemap(std::string name, std::array<std::string, 6> paths);
+	Cubemap() = delete;
+	Cubemap(unsigned int format, int width, int height,
+		unsigned int pixelTransfer, unsigned int dataType);
+	Cubemap(std::array<Texture, 6>&& faces);
+	Cubemap(Texture&& equirectangularMap);
+	Cubemap(Cubemap const&) = delete;
+	Cubemap(Cubemap&&) = default;
+	Cubemap& operator= (Cubemap const&) = delete;
+	Cubemap& operator= (Cubemap&&) = default;
+	~Cubemap();
+
+private:
+	void allocate() const;
+	void load() const;
+
+protected:
+	std::string getNamePrefix() const override;
 
 public:
-	std::string_view getName() const;
-	void use();
-	void initialize();
-	[[nodiscard]] bool drawUI();
+	Cubemap* convolute() const;
+	unsigned int getID() const;
+	void use(int location) const;
+	void drawUI();
 
 };

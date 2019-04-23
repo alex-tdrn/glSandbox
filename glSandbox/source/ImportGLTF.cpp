@@ -1,6 +1,10 @@
 #include "ImportGLTF.h"
-#include "Resources.h"
+#include "Texture.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "Scene.h"
 #include "Prop.h"
+#include "MaterialPBRMetallicRoughness.h"
 
 #include <fx/gltf.h>
 #include <numeric>
@@ -14,29 +18,40 @@ uint32_t calculateElementSize(gltf::Accessor const& accessor);
 uint32_t componentSize(gltf::Accessor::Type type);
 GLenum gltfToGLType(gltf::Accessor::ComponentType type);
 std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Document const& doc);
-std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes);
+std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Material>>>
+	loadTexturesAndMaterials(gltf::Document const& doc, std::filesystem::path const& currentPath);
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, 
+	PrimitivesMap const& primitivesMap, 
+	std::vector<std::unique_ptr<Mesh>>& loadedMeshes,
+	std::vector<std::unique_ptr<Material>> const& materials);
 
 Asset import(std::string_view const& filename)
 {
+	std::filesystem::path currentPath = filename;
 	gltf::ReadQuotas readQuota;
 	readQuota.MaxBufferByteLength = std::numeric_limits<uint32_t>::max();
 	gltf::Document doc = gltf::LoadFromText(filename.data(), readQuota);
 	
 	auto [meshes, primitivesMap] = loadMeshes(doc);
-	auto scenes = loadScenes(doc, primitivesMap, meshes);
+	auto [textures, materials] = loadTexturesAndMaterials(doc, currentPath.parent_path().string());
+
+	auto scenes = loadScenes(doc, primitivesMap, meshes, materials);
 	std::filesystem::path file(filename);
 	std::string name = file.stem().string();
 	for(int i = 0; i < scenes.size(); i++)
 	{
 		if(i > 0)
-			scenes[i]->name.set(name + "#" + std::to_string(i));
+			scenes[i]->setName(name + "#" + std::to_string(i));
 		else
-			scenes[i]->name.set(name);
+			scenes[i]->setName(name);
 	}
-	return {std::move(scenes), std::move(meshes)};
+	
+	return {std::move(scenes), std::move(meshes), std::move(textures), std::move(materials)};
 }
 
-std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, PrimitivesMap const& primitivesMap)
+std::unique_ptr<Node> loadNode(gltf::Document const& doc, 
+	size_t const idx, PrimitivesMap const& primitivesMap,
+	std::vector<std::unique_ptr<Material>> const& materials)
 {
 	auto const& node = doc.nodes[idx];
 	std::unique_ptr<Node> n;
@@ -46,13 +61,22 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 		auto const& mesh = doc.meshes[node.mesh];
 		if(mesh.primitives.size() == 1)
 		{
-			n = std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]));
+			int materialIndex = mesh.primitives[0].material;
+			if(materialIndex != -1)
+				n = std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]), materials[materialIndex].get());
+			else
+				n = std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]));
 		}
 		else
 		{
 			n = std::make_unique<TransformedNode>();
 			for(auto const& primitive :doc.meshes[node.mesh].primitives)
-				n->addChild(std::make_unique<Prop>(primitivesMap.at(&primitive)));
+			{
+				if(primitive.material != -1)
+					n->addChild(std::make_unique<Prop>(primitivesMap.at(&mesh.primitives[0]), materials[primitive.material].get()));
+				else
+					n->addChild(std::make_unique<Prop>(primitivesMap.at(&primitive)));
+			}
 		}
 	}
 	else
@@ -82,33 +106,26 @@ std::unique_ptr<Node> loadNode(gltf::Document const& doc, size_t const idx, Prim
 	assert(transformation[3][3] == 1);
 	n->setLocalTransformation(std::move(transformation));
 	for(auto childIdx : node.children)
-		n->addChild(loadNode(doc, childIdx, primitivesMap));
+		n->addChild(loadNode(doc, childIdx, primitivesMap, materials));
 
 	return n;
 }
 
-std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, PrimitivesMap const& primitivesMap, std::vector<std::unique_ptr<Mesh>>& loadedMeshes)
+std::vector<std::unique_ptr<Scene>> loadScenes(gltf::Document const& doc, 
+	PrimitivesMap const& primitivesMap, 
+	std::vector<std::unique_ptr<Mesh>>& loadedMeshes,
+	std::vector<std::unique_ptr<Material>> const& materials)
 {
 	std::vector<std::unique_ptr<Scene>> scenes;
-	if(doc.scenes.empty())
+	for(auto const& scene : doc.scenes)
 	{
 		std::vector<std::unique_ptr<Node>> nodes;
-		for(auto& mesh : loadedMeshes)
-			nodes.push_back(std::make_unique<Prop>(mesh.get()));
-		scenes.emplace_back(std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes))));
-	}
-	else
-	{
-		for(auto const& scene : doc.scenes)
-		{
-			std::vector<std::unique_ptr<Node>> nodes;
-			for(auto const nodeIdx : scene.nodes)
-				nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap));
-			auto s = std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes)));
-			if(!scene.name.empty())
-				s->name.set(scene.name);
-			scenes.emplace_back(std::move(s));
-		}
+		for(auto const nodeIdx : scene.nodes)
+			nodes.emplace_back(loadNode(doc, nodeIdx, primitivesMap, materials));
+		auto s = std::make_unique<Scene>(std::make_unique<TransformedNode>(std::move(nodes)));
+		if(!scene.name.empty())
+			s->setName(scene.name);
+		scenes.emplace_back(std::move(s));
 	}
 	return scenes;
 }
@@ -132,12 +149,14 @@ std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Do
 				{
 					attributeBuffer.attributeType = Mesh::AttributeType::positions;
 					auto const& aMin = doc.accessors[attribute.second].min;
- 					min = glm::vec3(aMin[0], aMin[1], aMin[2]);
+					min = glm::vec3(aMin[0], aMin[1], aMin[2]);
 					auto const& aMax = doc.accessors[attribute.second].max;
 					max = glm::vec3(aMax[0], aMax[1], aMax[2]);
 				}
 				else if(attribute.first == "NORMAL")
 					attributeBuffer.attributeType = Mesh::AttributeType::normals;
+				else if(attribute.first == "TANGENT")
+					attributeBuffer.attributeType = Mesh::AttributeType::tangents;
 				else if(attribute.first == "TEXCOORD_0")
 					attributeBuffer.attributeType = Mesh::AttributeType::texcoords;
 				else
@@ -194,12 +213,84 @@ std::pair<std::vector<std::unique_ptr<Mesh>>, PrimitivesMap> loadMeshes(gltf::Do
 			}();
 			auto m = std::make_unique<Mesh>(Bounds{min, max}, drawMode, std::move(attributes), std::move(indices));
 			if(!mesh.name.empty())
-				m->name.set(mesh.name + "#" + std::to_string(idx++));
+				m->setName(mesh.name + "#" + std::to_string(idx++));
 			primitivesMap[&primitive] = m.get();
 			meshes.push_back(std::move(m));
 		}
 	}
 	return {std::move(meshes), std::move(primitivesMap)};
+}
+
+
+
+template <size_t N>
+auto getFactor(std::array<float, N> const& factor)
+{
+	if constexpr(N == 0)
+		return std::nullopt;
+	else if constexpr(N == 3)
+		return glm::vec3(factor[0], factor[1], factor[2]);
+	else if constexpr(N == 4)
+		return glm::vec4(factor[0], factor[1], factor[2], factor[3]);
+
+};
+
+std::pair<std::vector<std::unique_ptr<Texture>>, std::vector<std::unique_ptr<Material>>>
+	loadTexturesAndMaterials(gltf::Document const& doc, std::filesystem::path const& currentPath)
+{
+	std::vector<std::unique_ptr<Texture>> textures;
+	std::vector<std::unique_ptr<Material>> materials;
+	auto getMap = [&textures, &doc, &currentPath](gltf::Material::Texture const& texture, bool linear = true) -> Texture*{
+		if(texture.empty())
+		{
+			return nullptr;
+		}
+		else
+		{
+			auto image = doc.images[texture.index];
+			if(image.IsEmbeddedResource())//TODO
+				assert(false);
+			auto path = currentPath / image.uri;
+			auto texture = std::make_unique<Texture>(path.string(), linear);
+			texture->setName(image.name.empty() ? path.filename().string() : image.name);
+			textures.push_back(std::move(texture));
+			return textures.back().get();
+		}
+	};
+
+	for(auto& material : doc.materials)
+	{
+		std::unique_ptr<Material> _material;
+		if(auto materialMR = material.pbrMetallicRoughness; !materialMR.empty())
+		{
+			auto _materialMR = new MaterialPBRMetallicRoughness;
+			_materialMR->setBaseColorMap(getMap(materialMR.baseColorTexture, false));
+			_materialMR->setBaseColorFactor(getFactor(materialMR.baseColorFactor));
+			_materialMR->setMetallicRoughnessMap(getMap(materialMR.metallicRoughnessTexture));
+			_materialMR->setMetallicFactor(materialMR.metallicFactor);
+			_materialMR->setRoughnessFactor(materialMR.roughnessFactor);
+			_material.reset(_materialMR);
+		}
+		else
+		{
+			_material = std::make_unique<Material>();
+			//assert(false);//TODO
+		}
+
+		if(!material.name.empty())
+			_material->setName(material.name);
+		_material->setNormalMap(getMap(material.normalTexture));
+		_material->setOcclusionMap(getMap(material.occlusionTexture));
+		_material->setEmissiveMap(getMap(material.emissiveTexture, false));
+		_material->setEmissiveFactor(getFactor(material.emissiveFactor));
+		if(material.doubleSided)
+		{
+			//TODO
+		}
+		materials.push_back(std::move(_material));
+	}
+
+	return {std::move(textures), std::move(materials)};
 }
 
 GLenum gltfToGLType(gltf::Accessor::ComponentType type)

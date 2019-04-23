@@ -12,13 +12,11 @@ struct Material
 	vec3 overrideDiffuseColor;
 	bool hasDiffuseMap;
 	sampler2D diffuseMap;
-	vec2 diffuseMapOffset;
 
 	bool overrideSpecular;
 	vec3 overrideSpecularColor;
 	bool hasSpecularMap;
 	sampler2D specularMap;
-	vec2 specularMapOffset;
 	float shininess;
 };
 
@@ -83,14 +81,14 @@ vec3 ambient();
 void main()
 {
 	if(!material.overrideDiffuse && material.hasDiffuseMap)
-		diffuseColor = vec3(texture(material.diffuseMap, texCoord + material.diffuseMapOffset));
+		diffuseColor = vec3(texture(material.diffuseMap, texCoord));
 	else if(material.overrideDiffuse)
 		diffuseColor = material.overrideDiffuseColor;
 	else
 		diffuseColor = vec3(1.0f);
 
 	if(!material.overrideSpecular && material.hasSpecularMap)
-		specularColor = vec3(texture(material.specularMap, texCoord + material.specularMapOffset));
+		specularColor = vec3(texture(material.specularMap, texCoord));
 	else if(material.overrideSpecular)
 		specularColor = material.overrideSpecularColor;
 	else

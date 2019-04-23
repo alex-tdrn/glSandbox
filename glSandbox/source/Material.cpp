@@ -1,176 +1,147 @@
 #include "Material.h"
-#include "Texture.h"
-#include "Util.h"
-#include <imgui.h>
+#include "TextureManager.h"
+#include "UIUtilities.h"
+#include "ShaderManager.h"
 
-std::string mapToString(int mapType)
+std::string Material::getNamePrefix() const
 {
-	switch(mapType)
+	return "material";
+}
+
+void Material::setNormalMap(Texture* map)
+{
+	normalMap = map;
+}
+
+void Material::enableNormalMapping()
+{
+	normalMapping = true;
+}
+
+void Material::disableNormalMapping()
+{
+	normalMapping = false;
+}
+
+void Material::setOcclusionMap(Texture* map)
+{
+	occlusionMap = map;
+}
+
+void Material::enableOcclusionMapping()
+{
+	occlusionMapping = true;
+}
+
+void Material::disableOcclusionMapping()
+{
+	occlusionMapping = false;
+}
+
+void Material::setEmissiveMap(Texture* map)
+{
+	emissiveMap = map;
+}
+
+void Material::setEmissiveFactor(glm::vec3 factor)
+{
+	emissiveFactor = factor;
+}
+
+
+void Material::use(Shader* shader, Material::Map visualizeMap) const
+{
+	if(shader == ShaderManager::pbr())
 	{
-		case Material::Maps::ambient:
-			return "Ambient";
-		case Material::Maps::diffuse:
-			return "Diffuse";
-		case Material::Maps::specular:
-			return "Specular";
-		case Material::Maps::shininess:
-			return "Shininess";
-		case Material::Maps::emission:
-			return "Emission";
-		case Material::Maps::light:
-			return "Light";
-		case Material::Maps::reflection:
-			return "Reflection";
-		case Material::Maps::opacity:
-			return "Opacity";
-		case Material::Maps::normal:
-			return "Normal";
-		case Material::Maps::bump:
-			return "Bump";
-		case Material::Maps::displacement:
-			return "Displacement";
-		default:
-			return "Unknown";
+		shader->set("material.normalMapExists", normalMap != nullptr && normalMapping);
+		if(normalMap && normalMapping)
+		{
+			shader->set("material.normalMap", static_cast<int>(Map::normal));
+			normalMap->use(static_cast<int>(Map::normal));
+		}
+		shader->set("material.occlusionMapExists", occlusionMap != nullptr && occlusionMapping);
+		if(occlusionMap && occlusionMapping)
+		{
+			shader->set("material.occlusionMap", static_cast<int>(Map::occlusion));
+			occlusionMap->use(static_cast<int>(Map::occlusion));
+		}
+		shader->set("material.emissiveMapExists", emissiveMap != nullptr);
+		if(emissiveMap)
+		{
+			shader->set("material.emissiveMap", static_cast<int>(Map::emissive));
+			emissiveMap->use(static_cast<int>(Map::emissive));
+		}
+		shader->set("material.emissiveFactor", emissiveFactor);
 	}
-}
-
-Material::Material(std::string const name)
-	: name(name)
-{
-}
-
-std::string Material::mapTypeToString(Material::Maps mapType)
-{
-	switch(mapType)
+	else if(shader == ShaderManager::unlit())
 	{
-		case ambient:
-			return "Ambient";
-		case diffuse:
-			return "Diffuse";
-		case specular:
-			return "Specular";
-		case shininess:
-			return "Shininess";
-		case emission:
-			return "Emission";
-		case light:
-			return "Light";
-		case reflection:
-			return "Reflection";
-		case opacity:
-			return "Opacity";
-		case normal:
-			return "Normal";
-		case bump:
-			return "Bump";
-		case displacement:
-			return "Displacement";
-	}
-	return "Unknown Map Type";
-}
-
-void Material::setMap(int mapType, std::optional<Texture>&& map)
-{
-	maps[mapType] = std::move(map);
-}
-
-std::string_view const Material::getName() const
-{
-	return name;
-}
-
-bool Material::isInitialized() const
-{
-	bool ret = true;
-	return true;
-	for(auto& map : maps)
+		Texture* map = nullptr;
+		glm::vec3 color{1.0f};
+		switch(visualizeMap)
+		{
+			case Map::normal:
+				map = normalMap;
+				break;
+			case Map::occlusion:
+				map = occlusionMap;
+				break;
+			case Map::emissive:
+				map = emissiveMap;
+				color = emissiveFactor;
+				break;
+			default:
+				return;
+		}
+		shader->set("material.hasMap", map != nullptr);
 		if(map)
-			ret = ret && map->isLoaded();
-
-	return ret;
-}
-
-bool Material::contains(std::string_view const path)
-{
-	for(auto& map : maps)
-		if(map && map->getPath() == path)
-			return true;
-	return false;
-}
-
-void Material::use(Shader shader) const
-{
-
-	shader.set("material.hasDiffuseMap", bool(maps[diffuse]));
-	if(maps[diffuse])
-	{
-		maps[diffuse]->use(diffuse);
-		shader.set("material.diffuseMap", diffuse);
-		shader.set("material.diffuseMapOffset", maps[diffuse]->getUVOffset());
-	}
-
-	shader.set("material.hasSpecularMap", bool(maps[specular]));
-	if(maps[specular])
-	{
-		maps[specular]->use(specular);
-		shader.set("material.specularMap", specular);
-		shader.set("material.specularMapOffset", maps[specular]->getUVOffset());
-		shader.set("material.shininess", shininessValue);
-	}
-
-	shader.set("material.hasOpacityMap", bool(maps[opacity]));
-	if(maps[opacity])
-	{
-		maps[opacity]->use(opacity);
-		shader.set("material.opacityMap", opacity);
-		shader.set("material.opacityMapOffset", maps[opacity]->getUVOffset());
-	}
-
-}
-
-bool Material::drawUI()
-{
-	IDGuard idGuard{this};
-
-	bool valueChanged = false;
-	std::string header = name;
-	if(!isInitialized())
-		header += "(loading...)";
-	if(ImGui::TreeNode(header.data()))
-	{
-		if(maps[specular])
-			ImGui::DragFloat("Shininess", &shininessValue, 0.1f);
-
-		int mapType = 0;
-		int columnsEmpty = 0;
-		while(mapType < Maps::n)
 		{
-			if(maps[mapType])
-			{
-				ImGui::Columns(2, nullptr, false);
-				columnsEmpty = 2;
-			}
-			else
-				mapType++;
-			while(mapType < Maps::n && columnsEmpty > 0)
-			{
-				if(maps[mapType])
-				{
-					ImGui::Text((mapToString(mapType) + " Map").c_str());
-					valueChanged |= maps[mapType]->drawUI();
-					ImGui::NextColumn();
-					columnsEmpty--;
-				}
-				mapType++;
-			}
+			shader->set("material.linear", map->isLinear());
+			shader->set("material.map", 1);
+			map->use(1);
 		}
-		while(columnsEmpty)
-		{
-			ImGui::NextColumn();
-			columnsEmpty--;
-		}
-		ImGui::Columns(1, nullptr, false);
-		ImGui::TreePop();
+		shader->set("material.color", color);
 	}
-	return valueChanged;
+}
+
+void Material::drawUI()
+{
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Normals");
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	ImGui::ChooseFromCombo("Normals", normalMap, TextureManager::getAll(), true,
+		&Material::setNormalMap, this);
+	if(normalMap)
+	{
+		ImGui::SameLine();
+		ImGui::Checkbox("###NormalMappingEnabled", normalMapping, 
+			&Material::enableNormalMapping, &Material::disableNormalMapping, this);
+		normalMap->drawUI();
+		ImGui::Separator();
+	}
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Occlusion");
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	ImGui::ChooseFromCombo("Occlusion", occlusionMap, TextureManager::getAll(), true,
+		&Material::setOcclusionMap, this);
+	if(occlusionMap)
+	{
+		ImGui::SameLine();
+		ImGui::Checkbox("###OcclusionMappingEnabled", occlusionMapping, 
+			&Material::enableOcclusionMapping, &Material::disableOcclusionMapping, this);
+		occlusionMap->drawUI();
+		ImGui::Separator();
+	}
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Emissive");
+	ImGui::SameLine();
+	ImGui::ColorEdit3("###FactorEmissive", emissiveFactor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_Float, 
+		&Material::setEmissiveFactor, this);
+	ImGui::Text("Map");
+	ImGui::SameLine();
+	ImGui::ChooseFromCombo("Emmissive", emissiveMap, TextureManager::getAll(), true,
+		&Material::setEmissiveMap, this);
+	if(emissiveMap)
+		emissiveMap->drawUI();
 }

@@ -1,21 +1,25 @@
 #include "Prop.h"
-#include "Resources.h"
-#include "Mesh.h"
+#include "MeshManager.h"
 #include "Grid.h"
 #include "SierpinskiTriangle.h"
 #include "SierpinskiTetrahedon.h"
 #include "SierpinskiCarpet.h"
 
-Prop::Prop(Mesh* mesh)
-	:staticMesh(mesh)
+Prop::Prop(Mesh* mesh, Material* material)
+	:staticMesh(mesh), material(material)
 {
 
 }
 
-Prop::Prop(std::unique_ptr<ProceduralMesh>&& mesh)
-	: proceduralMesh(std::move(mesh))
+Prop::Prop(std::unique_ptr<ProceduralMesh>&& mesh, Material* material)
+	: proceduralMesh(std::move(mesh)), material(material)
 {
 
+}
+
+std::string Prop::getNamePrefix() const
+{
+	return "prop";
 }
 
 Mesh& Prop::getMesh() const
@@ -24,23 +28,20 @@ Mesh& Prop::getMesh() const
 		return *staticMesh;
 	else if(proceduralMesh)
 		return *proceduralMesh->get();
-	else return *res::meshes::boxWireframe();
+	else return *MeshManager::boxWireframe();
+}
+
+Material* Prop::getMaterial() const
+{
+	return material;
 }
 
 Bounds Prop::getBounds() const
 {
-	return getMesh().getBounds() * getGlobalTransformation();
+	Bounds childBounds = Node::getBounds();
+	return getMesh().getBounds() * getGlobalTransformation() + childBounds;
 }
 
-void Prop::setName(std::string const& name)
-{
-	this->name.set(name);
-}
-
-std::string const& Prop::getName() const
-{
-	return name.get();
-}
 template <typename PM>
 void addProceduralMeshItem(std::unique_ptr<ProceduralMesh>& proceduralMesh, Mesh*& staticMesh)
 {
@@ -72,18 +73,18 @@ void Prop::drawUI()
 	ImGui::Text("Mesh");
 	ImGui::SameLine();
 	ImGui::PushItemWidth(-1);
-	std::string name = getMesh().name.get();
+	std::string meshName = getMesh().getName();
 	if(proceduralMesh)
-		name = "Procedural";//TODO
-	if(ImGui::BeginCombo("###Mesh", name.data()))
+		meshName = "Procedural";//TODO
+	if(ImGui::BeginCombo("###Mesh", meshName.data()))
 	{
 		int id = 0;
 		//static meshes
-		for(auto& m : res::meshes::getAll())
+		for(auto& m : MeshManager::getAll())
 		{
 			ImGui::PushID(id++);
 			bool isSelected = staticMesh == m.get();
-			if(ImGui::Selectable(m->name.get().data(), &isSelected))
+			if(ImGui::Selectable(m->getName().data(), &isSelected))
 			{
 				staticMesh = m.get();
 				proceduralMesh = nullptr;
@@ -102,6 +103,9 @@ void Prop::drawUI()
 	}
 	if(proceduralMesh)
 		proceduralMesh->drawUI();
+	assert(material);
+	material = chooseFromCombo(material, MaterialManager::getAll());
+
 	ImGui::EndChild();
 }
 

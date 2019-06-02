@@ -9,7 +9,7 @@ SierpinskiTetrahedon::SierpinskiTetrahedon(int iterations)
 {
 }
 
-void SierpinskiTetrahedon::generate() const
+void SierpinskiTetrahedon::update() const
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
@@ -69,5 +69,5 @@ void SierpinskiTetrahedon::drawUI()
 		iterations = 0;
 	ImGui::EndGroup();
 	if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
-		parametersChanged = true;
+		settingsTimestamp.update();
 }

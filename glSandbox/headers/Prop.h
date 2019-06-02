@@ -25,7 +25,7 @@ protected:
 	std::string getNamePrefix() const override;
 
 public:
-	Mesh& getMesh() const;
+	const Mesh& getMesh() const;
 	Material* getMaterial() const;
 	Bounds getBounds() const override;
 	void drawUI() override;

@@ -70,9 +70,6 @@
     <ClCompile Include="source\Mesh.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="source\ProceduralMesh.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
     <ClCompile Include="source\Scene.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
@@ -250,6 +247,10 @@
     <ClInclude Include="headers\Timestamp.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="headers\ResourceWrapper.h" />
+    <ClInclude Include="headers\Consumer.h" />
+    <ClInclude Include="headers\Producer.h" />
+    <ClInclude Include="Processor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\skybox.frag">

@@ -7,7 +7,7 @@ private:
 	using chrono = std::chrono::steady_clock;
 	chrono::time_point timestamp = chrono::now();
 
-protected:
+public:
 	Timestamp() = default;
 	Timestamp(Timestamp const&) = default;
 	Timestamp(Timestamp&&) = default;
@@ -15,16 +15,24 @@ protected:
 	Timestamp& operator=(Timestamp&&) = default;
 	~Timestamp() = default;
 
-protected:
-	void updateTimestamp()
+public:
+	void update()
 	{
 		timestamp = chrono::now();
 	}
-
-public:
-	chrono::time_point const& getTimestamp() const
+	
+	void reset()
 	{
-		return timestamp;
+		timestamp = chrono::time_point::min();
 	}
 
+	bool isNewerThan(Timestamp const& other) const
+	{
+		return this->timestamp > other.timestamp;
+	}
+
+	bool isOlderThan(Timestamp const& other) const
+	{
+		return this->timestamp < other.timestamp;
+	}
 };

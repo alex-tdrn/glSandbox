@@ -10,7 +10,7 @@ SierpinskiCarpet::SierpinskiCarpet(int iterations)
 {
 }
 
-void SierpinskiCarpet::generate() const
+void SierpinskiCarpet::update() const
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
@@ -98,5 +98,5 @@ void SierpinskiCarpet::drawUI()
 		iterations = 0;
 	ImGui::EndGroup();
 	if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
-		parametersChanged = true;
+		settingsTimestamp.update();
 }

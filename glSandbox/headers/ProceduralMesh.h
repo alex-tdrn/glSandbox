@@ -1,22 +1,22 @@
 #pragma once
+#include "Producer.h"
 #include <memory>
 
 class Mesh;
 
-class ProceduralMesh
+class ProceduralMesh : public Producer<Mesh>
 {
 protected:
 	mutable std::unique_ptr<Mesh> mesh;
-	mutable bool parametersChanged = true;
 
 public:
+	ProceduralMesh() = default;
 	virtual ~ProceduralMesh() = default;
 
-protected:
-	virtual void generate() const = 0;
-
-public:
-	Mesh* get() const;
-	virtual void drawUI() = 0;
+private:
+	Mesh const* getResourceHandle() const override
+	{
+		return mesh.get();
+	}
 
 };

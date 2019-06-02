@@ -9,7 +9,7 @@ Grid::Grid(int resolution)
 {
 }
 
-void Grid::generate() const
+void Grid::update() const
 {
 	std::vector<SimpleVertex> vertices;
 	std::vector<uint16_t> indices;
@@ -46,5 +46,5 @@ void Grid::drawUI()
 		resolution = 1;
 	ImGui::EndGroup();
 	if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
-		parametersChanged = true;
+		settingsTimestamp.update();
 }

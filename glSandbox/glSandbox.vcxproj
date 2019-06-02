@@ -169,7 +169,6 @@
     <ClCompile Include="source\SierpinskiTetrahedon.cpp" />
     <ClCompile Include="source\SierpinskiTriangle.cpp" />
     <ClCompile Include="source\Grid.cpp" />
-    <ClCompile Include="source\ProceduralMesh.cpp" />
     <ClCompile Include="source\Profiler.cpp" />
     <ClCompile Include="source\ResourceManager.cpp" />
     <ClCompile Include="source\Node.cpp" />
@@ -192,9 +191,11 @@
     <ClCompile Include="source\TextureRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Consumer.h" />
     <ClInclude Include="headers\CubemapRenderer.h" />
     <ClInclude Include="headers\CubemapManager.h" />
     <ClInclude Include="headers\FileSelector.h" />
+    <ClInclude Include="headers\Producer.h" />
     <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Grid.h" />
     <ClInclude Include="headers\MaterialManager.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="headers\Profiler.h" />
     <ClInclude Include="headers\Prop.h" />
     <ClInclude Include="headers\Renderer.h" />
+    <ClInclude Include="headers\ResourceWrapper.h" />
     <ClInclude Include="headers\ResourceManager.h" />
     <ClInclude Include="headers\Scene.h" />
     <ClInclude Include="headers\SceneManager.h" />
@@ -232,6 +234,7 @@
     <ClInclude Include="headers\UIUtilities.h" />
     <ClInclude Include="headers\MeshRenderer.h" />
     <ClInclude Include="headers\Timestamp.h" />
+    <ClInclude Include="Processor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\equirectangularToCubemap.frag" />

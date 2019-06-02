@@ -22,12 +22,12 @@ std::string Prop::getNamePrefix() const
 	return "prop";
 }
 
-Mesh& Prop::getMesh() const
+const Mesh& Prop::getMesh() const
 {
 	if(staticMesh)
 		return *staticMesh;
 	else if(proceduralMesh)
-		return *proceduralMesh->get();
+		return *proceduralMesh->getOutput().handle;
 	else return *MeshManager::boxWireframe();
 }
 
@@ -101,8 +101,8 @@ void Prop::drawUI()
 		addProceduralMeshItem<SierpinskiCarpet>(proceduralMesh, staticMesh);
 		ImGui::EndCombo();
 	}
-	if(proceduralMesh)
-		proceduralMesh->drawUI();
+	//if(proceduralMesh)
+		//proceduralMesh->drawUI();
 	assert(material);
 	material = chooseFromCombo(material, MaterialManager::getAll());
 

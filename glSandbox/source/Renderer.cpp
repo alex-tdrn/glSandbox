@@ -166,9 +166,9 @@ void Renderer::renderAuxiliaryGeometry() const
 		ShaderManager::unlit()->set("model", glm::scale(glm::mat4{1.0f}, glm::vec3{geometry.grid.scale}));
 		ShaderManager::unlit()->set("material.hasMap", false);
 		ShaderManager::unlit()->set("material.color", geometry.grid.color);
-		geometry.grid.mainGenerator.get()->use();
+		geometry.grid.mainGenerator.getOutput().handle->use();
 		glLineWidth(geometry.grid.lineWidth * 4);
-		geometry.grid.subGenerator.get()->use();
+		geometry.grid.subGenerator.getOutput().handle->use();
 		configurePolygonMode();
 	}
 	configureFaceCulling();

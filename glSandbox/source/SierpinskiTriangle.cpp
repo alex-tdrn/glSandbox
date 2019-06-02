@@ -9,7 +9,7 @@ SierpinskiTriangle::SierpinskiTriangle(int iterations)
 {
 }
 
-void SierpinskiTriangle::generate() const
+void SierpinskiTriangle::update() const
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
@@ -49,5 +49,5 @@ void SierpinskiTriangle::drawUI()
 		iterations = 0;
 	ImGui::EndGroup();
 	if(ImGui::IsItemActive() || ImGui::IsItemDeactivatedAfterChange())
-		parametersChanged = true;
+		settingsTimestamp.update();
 }

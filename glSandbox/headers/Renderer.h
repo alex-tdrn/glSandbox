@@ -29,7 +29,7 @@ private:
 	mutable bool shouldRenderSecondary = true;
 	struct {
 		int width = 1920;
-		int height = 960;
+		int height = 1080;
 		float aspect()
 		{
 			return float(width) / height;

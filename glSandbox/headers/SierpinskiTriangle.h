@@ -11,9 +11,9 @@ public:
 	SierpinskiTriangle(int iterations);
 
 private:
-	void generate() const override;
+	void update() const override;
 
 public:
-	void drawUI() override;
+	void drawUI();
 
 }; 

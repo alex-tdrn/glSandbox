@@ -30,9 +30,9 @@ double lastFrame = 0.0f;
 double lastMouseX = 400;
 double lastMouseY = 300;
 bool mouseDrag = false;
-Renderer& settings::mainRenderer()
+Renderer_Legacy& settings::mainRenderer()
 {
-	static Renderer r = {SceneManager::basic()->getAll<Camera>().front()};
+	static Renderer_Legacy r = {SceneManager::basic()->getAll<Camera>().front()};
 	return r;
 }
 
@@ -158,7 +158,7 @@ void drawUI()
 						drawRenderer[i] = true;
 				if(ImGui::MenuItem("Add Secondary Renderer"))
 				{
-					settings::addRenderer(std::make_unique<Renderer>());
+					settings::addRenderer(std::make_unique<Renderer_Legacy>());
 					drawRenderer.push_back(true);
 				}
 				ImGui::EndMenu();

@@ -13,7 +13,7 @@
 class Camera;
 class Scene;
 
-class Renderer : public AutoName<Renderer>
+class Renderer_Legacy : public AutoName<Renderer_Legacy>
 {
 private:
 	Camera* camera = nullptr;
@@ -138,12 +138,12 @@ private:
 	}geometry;
 
 public:
-	Renderer(Camera* camera = nullptr);
-	Renderer(Renderer const&) = delete;
-	Renderer(Renderer&&) = delete;
-	Renderer& operator=(Renderer const&) = delete;
-	Renderer& operator=(Renderer&&) = delete;
-	~Renderer();
+	Renderer_Legacy(Camera* camera = nullptr);
+	Renderer_Legacy(Renderer_Legacy const&) = delete;
+	Renderer_Legacy(Renderer_Legacy&&) = delete;
+	Renderer_Legacy& operator=(Renderer_Legacy const&) = delete;
+	Renderer_Legacy& operator=(Renderer_Legacy&&) = delete;
+	~Renderer_Legacy();
 
 private:
 	bool skipFrame() const;

@@ -32,6 +32,9 @@
     <Filter Include="Shaders\ResourceRendering">
       <UniqueIdentifier>{5ecb0321-1a03-4e33-ab8b-65785ba4e263}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pipeline System">
+      <UniqueIdentifier>{29381a6b-4f40-4fec-b627-9127c9a2ff9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CubemapManager.cpp">
@@ -244,13 +247,21 @@
     <ClInclude Include="headers\AutoName.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Timestamp.h">
-      <Filter>Utilities</Filter>
+    <ClInclude Include="headers\Producer.h">
+      <Filter>Pipeline System</Filter>
     </ClInclude>
-    <ClInclude Include="headers\ResourceWrapper.h" />
-    <ClInclude Include="headers\Consumer.h" />
-    <ClInclude Include="headers\Producer.h" />
-    <ClInclude Include="Processor.h" />
+    <ClInclude Include="Processor.h">
+      <Filter>Pipeline System</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\ResourceWrapper.h">
+      <Filter>Pipeline System</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Consumer.h">
+      <Filter>Pipeline System</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Timestamp.h">
+      <Filter>Pipeline System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\skybox.frag">

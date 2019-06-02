@@ -6,7 +6,7 @@
 #include "TextureManager.h"
 #include "MeshManager.h"
 
-Renderer::Renderer(Camera* camera)
+Renderer_Legacy::Renderer_Legacy(Camera* camera)
 {
 	setCamera(camera);
 	glGenTextures(1, &multisampledColorbuffer);
@@ -32,7 +32,7 @@ Renderer::Renderer(Camera* camera)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-Renderer::~Renderer()
+Renderer_Legacy::~Renderer_Legacy()
 {
 	glDeleteTextures(1, &multisampledColorbuffer);
 	glDeleteTextures(1, &simpleColorbuffer);
@@ -44,7 +44,7 @@ Renderer::~Renderer()
 	glDeleteFramebuffers(1, &simpleFramebuffer);
 }
 
-bool Renderer::skipFrame() const
+bool Renderer_Legacy::skipFrame() const
 {
 	if(!camera)
 		return true;
@@ -71,7 +71,7 @@ bool Renderer::skipFrame() const
 	return false;
 }
 
-void Renderer::configureFramebuffers() const
+void Renderer_Legacy::configureFramebuffers() const
 {
 	if(pipeline.samples > 0)
 	{
@@ -86,7 +86,7 @@ void Renderer::configureFramebuffers() const
 	glViewport(0, 0, viewport.width, viewport.height);
 }
 
-void Renderer::configureDepthTesting() const
+void Renderer_Legacy::configureDepthTesting() const
 {
 	if(pipeline.depthTesting)
 	{
@@ -99,7 +99,7 @@ void Renderer::configureDepthTesting() const
 	}
 }
 
-void Renderer::configureFaceCulling() const
+void Renderer_Legacy::configureFaceCulling() const
 {
 	if(pipeline.faceCulling)
 	{
@@ -109,21 +109,21 @@ void Renderer::configureFaceCulling() const
 	}
 }
 
-void Renderer::configurePolygonMode() const
+void Renderer_Legacy::configurePolygonMode() const
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glLineWidth(geometry.lineWidth);
 	glPointSize(geometry.pointSize);
 }
 
-void Renderer::clearBuffers() const
+void Renderer_Legacy::clearBuffers() const
 {
 	glm::vec3 background = scene->getBackground();
 	glClearColor(background.r, background.g, background.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void Renderer::renderAuxiliaryGeometry() const
+void Renderer_Legacy::renderAuxiliaryGeometry() const
 {
 	camera->use();
 	glDisable(GL_CULL_FACE);
@@ -174,7 +174,7 @@ void Renderer::renderAuxiliaryGeometry() const
 	configureFaceCulling();
 }
 
-void Renderer::renderLights() const
+void Renderer_Legacy::renderLights() const
 {
 	auto drawLights = [&](auto lights){
 		for(auto const& light : lights)
@@ -192,7 +192,7 @@ void Renderer::renderLights() const
 	drawLights(scene->getAll<SpotLight>());
 }
 
-void Renderer::updateShadowMaps() const
+void Renderer_Legacy::updateShadowMaps() const
 {
 	const int resolution = 1 << shading.lighting.shadows.resolution;
 	auto allocateShadowMap = [&]() -> Texture{
@@ -228,7 +228,7 @@ void Renderer::updateShadowMaps() const
 	}
 }
 
-void Renderer::renderShadowMaps() const
+void Renderer_Legacy::renderShadowMaps() const
 {
 	auto lightsD = scene->getAll<DirectionalLight>();
 	auto lightsS = scene->getAll<SpotLight>();
@@ -349,7 +349,7 @@ void Renderer::renderShadowMaps() const
 	configureFaceCulling();
 }
 
-void Renderer::configureShaders() const
+void Renderer_Legacy::configureShaders() const
 {
 	shading.current->use();
 	glm::mat4 viewMatrix = camera->getViewMatrix();
@@ -454,7 +454,7 @@ void Renderer::configureShaders() const
 	}
 }
 
-void Renderer::renderHighlightedProps() const
+void Renderer_Legacy::renderHighlightedProps() const
 {
 	if(!highlighting.enabled)
 		return;
@@ -495,7 +495,7 @@ void Renderer::renderHighlightedProps() const
 	}
 }
 
-void Renderer::renderProps(Shader* shader) const
+void Renderer_Legacy::renderProps(Shader* shader) const
 {
 	shader->use();
 	if(geometry.prop.mode != geometry.lines)
@@ -537,7 +537,7 @@ void Renderer::renderProps(Shader* shader) const
 	}
 }
 
-void Renderer::renderSkybox() const
+void Renderer_Legacy::renderSkybox() const
 {
 	glDisable(GL_STENCIL_TEST);
 	glDisable(GL_CULL_FACE);
@@ -560,7 +560,7 @@ void Renderer::renderSkybox() const
 	configureDepthTesting();
 }
 
-void Renderer::updateFramebuffers()
+void Renderer_Legacy::updateFramebuffers()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorbuffer);
@@ -583,19 +583,19 @@ void Renderer::updateFramebuffers()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
-std::string Renderer::getNamePrefix() const
+std::string Renderer_Legacy::getNamePrefix() const
 {
 	return "renderer";
 }
 
-void Renderer::resizeViewport(int width, int height)
+void Renderer_Legacy::resizeViewport(int width, int height)
 {
 	viewport.width = width;
 	viewport.height = height;
 	updateFramebuffers();
 }
 
-void Renderer::setCamera(Camera* camera)
+void Renderer_Legacy::setCamera(Camera* camera)
 {
 	this->camera = camera;
 	scene = camera->getScene();
@@ -604,17 +604,17 @@ void Renderer::setCamera(Camera* camera)
 	shouldRender();
 }
 
-Camera* Renderer::getCamera()
+Camera* Renderer_Legacy::getCamera()
 {
 	return camera;
 }
 
-void Renderer::shouldRender()
+void Renderer_Legacy::shouldRender()
 {
 	_shouldRender = true;
 }
 
-void Renderer::render()
+void Renderer_Legacy::render()
 {
 	if(skipFrame())
 		return;
@@ -636,7 +636,7 @@ void Renderer::render()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-unsigned int Renderer::getOutput()
+unsigned int Renderer_Legacy::getOutput()
 {
 	if(pipeline.samples > 0)
 	{
@@ -647,7 +647,7 @@ unsigned int Renderer::getOutput()
 	return simpleColorbuffer;
 }
 
-void Renderer::drawUI(bool* open)
+void Renderer_Legacy::drawUI(bool* open)
 {
 	if(!*open)
 		return;

@@ -1,6 +1,6 @@
 #pragma once
 #include "PostProcessingStep.h"
-#include "Renderer.h"
+#include "Renderer_Legacy.h"
 
 #include <glm/glm.hpp>
 #include <imgui.h>

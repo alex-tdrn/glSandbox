@@ -154,6 +154,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Framebuffer.cpp" />
+    <ClCompile Include="source\Renderer_Legacy.cpp" />
     <ClCompile Include="source\CubemapRenderer.cpp" />
     <ClCompile Include="source\MeshRenderer.cpp" />
     <ClCompile Include="source\ResourceRenderer.cpp" />
@@ -191,6 +193,7 @@
     <ClCompile Include="source\TextureRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Framebuffer.h" />
     <ClInclude Include="headers\Consumer.h" />
     <ClInclude Include="headers\CubemapRenderer.h" />
     <ClInclude Include="headers\CubemapManager.h" />
@@ -234,7 +237,8 @@
     <ClInclude Include="headers\UIUtilities.h" />
     <ClInclude Include="headers\MeshRenderer.h" />
     <ClInclude Include="headers\Timestamp.h" />
-    <ClInclude Include="Processor.h" />
+    <ClInclude Include="headers\Processor.h" />
+    <ClInclude Include="headers\Renderer_Legacy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\equirectangularToCubemap.frag" />

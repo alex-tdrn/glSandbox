@@ -5,7 +5,7 @@
 #include "SceneManager.h"
 #include "Node.h"
 #include "Prop.h"
-#include "Renderer.h"
+#include "Renderer_Legacy.h"
 #include "Profiler.h"
 #include "glad/glad.h"
 

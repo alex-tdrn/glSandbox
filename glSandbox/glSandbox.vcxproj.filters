@@ -134,6 +134,8 @@
     <ClCompile Include="source\CubemapRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="source\Renderer_Legacy.cpp" />
+    <ClCompile Include="source\Framebuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\ResourceManager.h">
@@ -250,9 +252,6 @@
     <ClInclude Include="headers\Producer.h">
       <Filter>Pipeline System</Filter>
     </ClInclude>
-    <ClInclude Include="Processor.h">
-      <Filter>Pipeline System</Filter>
-    </ClInclude>
     <ClInclude Include="headers\ResourceWrapper.h">
       <Filter>Pipeline System</Filter>
     </ClInclude>
@@ -262,6 +261,11 @@
     <ClInclude Include="headers\Timestamp.h">
       <Filter>Pipeline System</Filter>
     </ClInclude>
+    <ClInclude Include="headers\Processor.h">
+      <Filter>Pipeline System</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\Renderer_Legacy.h" />
+    <ClInclude Include="headers\Framebuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\skybox.frag">

@@ -11,8 +11,6 @@ Renderer_Legacy::Renderer_Legacy(Camera* camera)
 	setCamera(camera);
 	glGenTextures(1, &multisampledColorbuffer);
 	glGenRenderbuffers(1, &multisampledRenderbuffer);
-	glGenTextures(1, &simpleColorbuffer);
-	glGenRenderbuffers(1, &simpleRenderbuffer);
 	updateFramebuffers();
 
 	glGenFramebuffers(1, &multisampledFramebuffer);
@@ -23,53 +21,17 @@ Renderer_Legacy::Renderer_Legacy(Camera* camera)
 		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glGenFramebuffers(1, &simpleFramebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, simpleFramebuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, simpleColorbuffer, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, simpleRenderbuffer);
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		throw "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 Renderer_Legacy::~Renderer_Legacy()
 {
 	glDeleteTextures(1, &multisampledColorbuffer);
-	glDeleteTextures(1, &simpleColorbuffer);
 
 	glDeleteRenderbuffers(1, &multisampledRenderbuffer);
-	glDeleteRenderbuffers(1, &simpleRenderbuffer);
 
 	glDeleteFramebuffers(1, &multisampledFramebuffer);
-	glDeleteFramebuffers(1, &simpleFramebuffer);
 }
 
-bool Renderer_Legacy::skipFrame() const
-{
-	if(!camera)
-		return true;
-	if(explicitRendering)
-	{
-		if(_shouldRender)
-		{
-			_shouldRender = false;
-			shouldRenderSecondary = true;
-		}
-		else if(shouldRenderSecondary)
-		{
-			shouldRenderSecondary = false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-	else
-	{
-		_shouldRender = true;
-	};
-	return false;
-}
 
 void Renderer_Legacy::configureFramebuffers() const
 {
@@ -78,12 +40,6 @@ void Renderer_Legacy::configureFramebuffers() const
 		glEnable(GL_MULTISAMPLE);
 		glBindFramebuffer(GL_FRAMEBUFFER, multisampledFramebuffer);
 	}
-	else
-	{
-		glDisable(GL_MULTISAMPLE);
-		glBindFramebuffer(GL_FRAMEBUFFER, simpleFramebuffer);
-	}
-	glViewport(0, 0, viewport.width, viewport.height);
 }
 
 void Renderer_Legacy::configureDepthTesting() const
@@ -114,13 +70,6 @@ void Renderer_Legacy::configurePolygonMode() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glLineWidth(geometry.lineWidth);
 	glPointSize(geometry.pointSize);
-}
-
-void Renderer_Legacy::clearBuffers() const
-{
-	glm::vec3 background = scene->getBackground();
-	glClearColor(background.r, background.g, background.b, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void Renderer_Legacy::renderAuxiliaryGeometry() const
@@ -344,7 +293,7 @@ void Renderer_Legacy::renderShadowMaps() const
 		shadowMapsP[i].use(10 + i + enabledDirectionalLights + enabledSpotLights);
 	}
 
-	glViewport(0, 0, viewport.width, viewport.height);
+	//glViewport(0, 0, viewport.width, viewport.height);
 	configureFramebuffers();
 	configureFaceCulling();
 }
@@ -562,37 +511,20 @@ void Renderer_Legacy::renderSkybox() const
 
 void Renderer_Legacy::updateFramebuffers()
 {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorbuffer);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, pipeline.samples > 0 && pipeline.samples < 16 ? pipeline.samples : 1, GL_RGB16F, viewport.width, viewport.height, GL_TRUE);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorbuffer);
+	//glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, pipeline.samples > 0 && pipeline.samples < 16 ? pipeline.samples : 1, GL_RGB16F, viewport.width, viewport.height, GL_TRUE);
+	//glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
-	glBindRenderbuffer(GL_RENDERBUFFER, multisampledRenderbuffer);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, pipeline.samples > 0 && pipeline.samples < 16 ? pipeline.samples : 1, GL_DEPTH24_STENCIL8, viewport.width, viewport.height);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	//glBindRenderbuffer(GL_RENDERBUFFER, multisampledRenderbuffer);
+	//glRenderbufferStorageMultisample(GL_RENDERBUFFER, pipeline.samples > 0 && pipeline.samples < 16 ? pipeline.samples : 1, GL_DEPTH24_STENCIL8, viewport.width, viewport.height);
+	//glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, simpleColorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, viewport.width, viewport.height, 0, GL_RGB, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, simpleRenderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, viewport.width, viewport.height);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 std::string Renderer_Legacy::getNamePrefix() const
 {
 	return "renderer";
-}
-
-void Renderer_Legacy::resizeViewport(int width, int height)
-{
-	viewport.width = width;
-	viewport.height = height;
-	updateFramebuffers();
 }
 
 void Renderer_Legacy::setCamera(Camera* camera)
@@ -607,11 +539,6 @@ void Renderer_Legacy::setCamera(Camera* camera)
 Camera* Renderer_Legacy::getCamera()
 {
 	return camera;
-}
-
-void Renderer_Legacy::shouldRender()
-{
-	_shouldRender = true;
 }
 
 void Renderer_Legacy::render()
@@ -638,13 +565,13 @@ void Renderer_Legacy::render()
 
 unsigned int Renderer_Legacy::getOutput()
 {
-	if(pipeline.samples > 0)
-	{
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFramebuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, simpleFramebuffer);
-		glBlitFramebuffer(0, 0, viewport.width, viewport.height, 0, 0, viewport.width, viewport.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	}
-	return simpleColorbuffer;
+	//if(pipeline.samples > 0)
+	//{
+	//	glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFramebuffer);
+	//	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, simpleFramebuffer);
+	//	glBlitFramebuffer(0, 0, viewport.width, viewport.height, 0, 0, viewport.width, viewport.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	//}
+	//return simpleColorbuffer;
 }
 
 void Renderer_Legacy::drawUI(bool* open)
@@ -652,10 +579,9 @@ void Renderer_Legacy::drawUI(bool* open)
 	if(!*open)
 		return;
 	ImGui::Begin(getName().data(), open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
-	ImGui::Image(ImTextureID(getOutput()), ImVec2(512, 512 / viewport.aspect()), ImVec2(0, 1), ImVec2(1, 0));
+	//ImGui::Image(ImTextureID(getOutput()), ImVec2(512, 512 / viewport.aspect()), ImVec2(0, 1), ImVec2(1, 0));
 	ImGui::NewLine();
 	ImGui::Columns(2, nullptr, true);
-	ImGui::Checkbox("Explicit Rendering", &explicitRendering);
 	ImGui::NextColumn();
 	ImGui::AlignTextToFramePadding();
 	ImGui::Text("Camera");
@@ -1064,13 +990,13 @@ void Renderer_Legacy::drawUI(bool* open)
 			}
 		}
 	}
-	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())
+	/*if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())
 		_shouldRender = true;
 	ImGui::Text("Status: ");
 	ImGui::SameLine();
 	if(_shouldRender)
 		ImGui::Text("rendering...");
 	else
-		ImGui::Text("idle...");
+		ImGui::Text("idle...");*/
 	ImGui::End();
 }

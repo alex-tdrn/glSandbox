@@ -192,10 +192,10 @@ void drawResourcesUI(bool* open)
 			if(!browser && !importCallback)
 			{
 				browser = new FileSelector({".gltf"});
-				importCallback = [](std::filesystem::path file)	{
+				/*importCallback = [](std::filesystem::path file)	{
 					settings::mainRenderer().setCamera(
 						SceneManager::importGLTF(file.string())->getAll<Camera>().front());
-				};
+				};*/
 			}
 		}
 		ImGui::SameLine();

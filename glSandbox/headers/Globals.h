@@ -1,6 +1,6 @@
 #pragma once
 #include "PostProcessingStep.h"
-#include "Renderer_Legacy.h"
+#include "Renderer.h"
 
 #include <glm/glm.hpp>
 #include <imgui.h>
@@ -18,12 +18,12 @@ namespace info
 
 namespace settings
 {
-	Renderer_Legacy& mainRenderer();
-	std::vector<std::unique_ptr<Renderer_Legacy>> const& getAllRenderers();
-	void addRenderer(std::unique_ptr<Renderer_Legacy>&&);
+	//Renderer_Legacy& mainRenderer();
+	std::vector<std::unique_ptr<Renderer>> const& getAllRenderers();
+	void addRenderer(std::unique_ptr<Renderer>&&);
 	namespace rendering
 	{
-		inline bool vsync = true;
+		inline bool vsync = false;
 		inline bool gammaCorrection = true;
 		enum tonemappingType
 		{

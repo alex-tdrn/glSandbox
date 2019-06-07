@@ -134,7 +134,6 @@
     <ClCompile Include="source\CubemapRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="source\Renderer_Legacy.cpp" />
     <ClCompile Include="source\Framebuffer.cpp" />
   </ItemGroup>
   <ItemGroup>

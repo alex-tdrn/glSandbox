@@ -155,7 +155,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\Framebuffer.cpp" />
-    <ClCompile Include="source\Renderer_Legacy.cpp" />
     <ClCompile Include="source\CubemapRenderer.cpp" />
     <ClCompile Include="source\MeshRenderer.cpp" />
     <ClCompile Include="source\ResourceRenderer.cpp" />

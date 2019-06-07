@@ -5,7 +5,7 @@
 #include "SceneManager.h"
 #include "Node.h"
 #include "Prop.h"
-#include "Renderer_Legacy.h"
+#include "Renderer.h"
 #include "Profiler.h"
 #include "glad/glad.h"
 
@@ -30,11 +30,11 @@ double lastFrame = 0.0f;
 double lastMouseX = 400;
 double lastMouseY = 300;
 bool mouseDrag = false;
-Renderer_Legacy& settings::mainRenderer()
-{
-	static Renderer_Legacy r = {SceneManager::basic()->getAll<Camera>().front()};
-	return r;
-}
+//Renderer_Legacy& settings::mainRenderer()
+//{
+//	static Renderer_Legacy r = {SceneManager::basic()->getAll<Camera>().front()};
+//	return r;
+//}
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam);
@@ -45,6 +45,11 @@ void keyCallback(GLFWwindow* window, int key, int keycode, int mode, int modifie
 void processInput(GLFWwindow* window);
 void drawUI();
 
+Renderer& ren() 
+{
+	static Renderer ren;
+	return ren;
+};
 
 int main(int argc, char** argv)
 {
@@ -116,11 +121,12 @@ int main(int argc, char** argv)
 		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		settings::mainRenderer().render();
+
+		//settings::mainRenderer().render();
 		glDisable(GL_FRAMEBUFFER_SRGB);
 
 		//glEnable(GL_FRAMEBUFFER_SRGB);
-		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
+		settings::postprocessing::steps()[0].draw(ren().getOutput().handle->getColorbufferID(), 0);
 		//glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -158,7 +164,7 @@ void drawUI()
 						drawRenderer[i] = true;
 				if(ImGui::MenuItem("Add Secondary Renderer"))
 				{
-					settings::addRenderer(std::make_unique<Renderer_Legacy>());
+					settings::addRenderer(std::make_unique<Renderer>());
 					drawRenderer.push_back(true);
 				}
 				ImGui::EndMenu();
@@ -182,12 +188,13 @@ void drawUI()
 		ImGui::EndMainMenuBar();
 	}
 	drawResourcesUI(&drawResources);
-	settings::mainRenderer().drawUI(&drawMainRenderer);
+	ren().drawUI(&drawMainRenderer);
+	//settings::mainRenderer().drawUI(&drawMainRenderer);
 	for(int i = 0; i < drawRenderer.size(); i++)
 	{
-		settings::getAllRenderers()[i]->drawUI(&drawRenderer[i]);
+		/*settings::getAllRenderers()[i]->drawUI(&drawRenderer[i]);
 		if(drawRenderer[i])
-			settings::getAllRenderers()[i]->render();
+			settings::getAllRenderers()[i]->render();*/
 	}
 	settings::postprocessing::drawUI(&drawPostprocessingSettings);
 	profiler::drawUI(&drawProfiler);
@@ -201,7 +208,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height)
 	info::windowHeight = height;
 
 	glViewport(0, 0, width, height);
-	settings::mainRenderer().resizeViewport(width, height);
+	//settings::mainRenderer().resizeViewport(width, height);
 	for(auto& step : settings::postprocessing::steps())
 		step.updateFramebuffer();
 }
@@ -221,8 +228,8 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 	float sensitivity = 0.05f;
 	xoffset *= -sensitivity;
 	yoffset *= -sensitivity;
-	settings::mainRenderer().getCamera()->rotate(xoffset, yoffset);
-	settings::mainRenderer().shouldRender();
+	//settings::mainRenderer().getCamera()->rotate(xoffset, yoffset);
+	//settings::mainRenderer().shouldRender();
 }
 void mouseButtonCallback(GLFWwindow* window, int button, int mode, int modifier)
 {
@@ -271,8 +278,8 @@ void processInput(GLFWwindow* window)
 		direction.y -= 1.0f;
 	if(direction != glm::vec3{0.0f})
 	{
-		settings::mainRenderer().getCamera()->move(direction * distance);
-		settings::mainRenderer().shouldRender();
+		//settings::mainRenderer().getCamera()->move(direction * distance);
+		//settings::mainRenderer().shouldRender();
 	}
 }
 

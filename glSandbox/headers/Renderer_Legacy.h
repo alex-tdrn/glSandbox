@@ -21,20 +21,6 @@ private:
 	unsigned int multisampledFramebuffer = 0;
 	unsigned int multisampledColorbuffer = 0;
 	unsigned int multisampledRenderbuffer = 0;
-	unsigned int simpleFramebuffer = 0;
-	unsigned int simpleColorbuffer = 0;
-	unsigned int simpleRenderbuffer = 0;
-	bool explicitRendering = false;
-	mutable bool _shouldRender = true;
-	mutable bool shouldRenderSecondary = true;
-	struct {
-		int width = 1920;
-		int height = 1080;
-		float aspect()
-		{
-			return float(width) / height;
-		}
-	} viewport;
 	struct {
 		int samples = 0;
 		bool depthTesting = true;

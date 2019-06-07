@@ -1,28 +1,29 @@
 #pragma once
+#include <glm/glm.hpp>
 
 class Framebuffer
 {
 private:
-	unsigned int msaaFramebufferID = 0;
-	unsigned int msaaColorbufferID = 0;
-	unsigned int msaaRenderbufferID = 0;
-	unsigned int mainFramebufferID = 0;
-	unsigned int mainColorbufferID = 0;
-	unsigned int mainRenderbufferID = 0;
-	int samples = 0;
-	int width = 100;
-	int height = 100;
+	unsigned int framebufferID = 0;
+	unsigned int colorbufferID = 0;
+	unsigned int renderbufferID = 0;
+	glm::ivec2 size = { 800, 600 };
 
 public:
 	Framebuffer();
 	~Framebuffer();
 	Framebuffer(Framebuffer const&) = delete;
-	Framebuffer(Framebuffer&&);
+	Framebuffer(Framebuffer&&) = delete;
 	Framebuffer& operator=(Framebuffer const&) = delete;
-	Framebuffer& operator=(Framebuffer&&);
+	Framebuffer& operator=(Framebuffer&&) = delete;
+
+private:
+	void update();
 
 public:
+	void resize(glm::ivec2 size);
 	void bind();
 	unsigned int getColorbufferID() const;
+	virtual void drawUI() const;
 };
 

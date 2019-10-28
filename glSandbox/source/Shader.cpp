@@ -29,9 +29,9 @@ Shader::Shader(std::string const vertexPath, std::string const fragmentPath, std
 int Shader::getLocation(std::string_view const name) const
 {
 	int res = glGetUniformLocation(ID, name.data());
-#ifndef NDEBUG
-	assert(res != -1);
-#endif
+//#ifndef NDEBUG
+	//assert(res != -1);
+//#endif
 	return res;
 }
 

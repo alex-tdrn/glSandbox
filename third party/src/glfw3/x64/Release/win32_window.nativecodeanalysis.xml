@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+      <FILENAME>win32_window.c</FILENAME>
+      <LINE>1741</LINE>
+      <COLUMN>22</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'window-&gt;monitor'. </DESCRIPTION>
+    <FUNCTION>_glfwPlatformSetWindowMonitor</FUNCTION>
+    <DECORATED>_glfwPlatformSetWindowMonitor</DECORATED>
+    <FUNCLINE>1679</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1685</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1720</LINE>
+        <COLUMN>14</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window-&gt;monitor' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1723</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1725</LINE>
+        <COLUMN>8</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'monitor')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1727</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1728</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1730</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1739</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\glfw3\src\</FILEPATH>
+        <FILENAME>win32_window.c</FILENAME>
+        <LINE>1741</LINE>
+        <COLUMN>22</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window-&gt;monitor' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+</DEFECTS>

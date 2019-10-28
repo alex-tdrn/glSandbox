@@ -78,7 +78,7 @@ private:
 		struct{
 			struct
 			{
-				bool enabled = false;
+				bool enabled = true;
 				bool faceCulling = true;
 				int faceCullingMode = GL_BACK;
 				int resolution = 11;

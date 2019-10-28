@@ -1064,7 +1064,7 @@ void Renderer::drawUI(bool* open)
 			}
 		}
 	}
-	if(ImGui::IsAnyItemActive() && ImGui::IsMouseHoveringWindow())
+	if(ImGui::IsAnyItemActive())
 		_shouldRender = true;
 	ImGui::Text("Status: ");
 	ImGui::SameLine();

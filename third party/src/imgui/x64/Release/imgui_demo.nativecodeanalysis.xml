@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1753</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IH@Z</DECORATED>
+    <FUNCLINE>1753</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1754</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IM@Z</DECORATED>
+    <FUNCLINE>1754</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>856</LINE>
+      <COLUMN>54</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ShowDemoWindowWidgets</FUNCTION>
+    <DECORATED>?ShowDemoWindowWidgets@@YAXXZ</DECORATED>
+    <FUNCLINE>476</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>856</LINE>
+      <COLUMN>76</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ShowDemoWindowWidgets</FUNCTION>
+    <DECORATED>?ShowDemoWindowWidgets@@YAXXZ</DECORATED>
+    <FUNCLINE>476</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>3473</LINE>
+      <COLUMN>46</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'font-&gt;ConfigData'. </DESCRIPTION>
+    <FUNCTION>ImGui::ShowStyleEditor</FUNCTION>
+    <DECORATED>?ShowStyleEditor@ImGui@@YAXPEAUImGuiStyle@@@Z</DECORATED>
+    <FUNCLINE>3309</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3312</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3313</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3316</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3317</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3319</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3320</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3323</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3325</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3327</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3330</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3332</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3332</LINE>
+        <COLUMN>79</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3333</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3334</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3334</LINE>
+        <COLUMN>77</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3335</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3336</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3336</LINE>
+        <COLUMN>77</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3339</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3341</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3342</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3344</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3345</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3347</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3349</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3351</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3389</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3447</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3449</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3450</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3451</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3452</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3453</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3453</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3455</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3456</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3457</LINE>
+        <COLUMN>21</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'font-&gt;ConfigData' may be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3458</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3458</LINE>
+        <COLUMN>57</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'SmallButton("Set as default")' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3459</LINE>
+        <COLUMN>20</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'font_details_opened')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3461</LINE>
+        <COLUMN>35</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3462</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3463</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3464</LINE>
+        <COLUMN>36</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3465</LINE>
+        <COLUMN>35</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3465</LINE>
+        <COLUMN>49</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3466</LINE>
+        <COLUMN>37</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3467</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3468</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3469</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3470</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3471</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3472</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3472</LINE>
+        <COLUMN>52</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'config_i&lt;font-&gt;ConfigDataCount')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3473</LINE>
+        <COLUMN>46</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'font-&gt;ConfigData' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>3467</LINE>
+      <COLUMN>113</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowStyleEditor</FUNCTION>
+    <DECORATED>?ShowStyleEditor@ImGui@@YAXPEAUImGuiStyle@@@Z</DECORATED>
+    <FUNCLINE>3309</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>3695</LINE>
+      <COLUMN>142</COLUMN>
+    </SFA>
+    <DEFECTCODE>6387</DEFECTCODE>
+    <DESCRIPTION>'buf' could be '0':  this does not adhere to the specification for the function 'memcpy'. </DESCRIPTION>
+    <FUNCTION>ExampleAppConsole::Strdup</FUNCTION>
+    <DECORATED>?Strdup@ExampleAppConsole@@SAPEADPEBD@Z</DECORATED>
+    <FUNCLINE>3695</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3695</LINE>
+        <COLUMN>78</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3695</LINE>
+        <COLUMN>105</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'buf' may be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3695</LINE>
+        <COLUMN>142</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'buf' is an In/Out argument to 'memcpy' (declared at c:\program files (x86)\microsoft visual studio\2019\community\vc\tools\msvc\14.23.28105\include\vcruntime_string.h:40)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3695</LINE>
+        <COLUMN>142</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'buf' should not be NULL, because this is not consistent with the SAL annotation on 'memcpy'</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>4690</LINE>
+      <COLUMN>24</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'p_open'. </DESCRIPTION>
+    <FUNCTION>ShowExampleAppDockSpace</FUNCTION>
+    <DECORATED>?ShowExampleAppDockSpace@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>4626</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4628</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4629</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4630</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4634</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4635</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4648</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4656</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4657</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4658</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4660</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4664</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4665</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4672</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4675</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4677</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4683</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4684</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4685</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4686</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4687</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4688</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4689</LINE>
+        <COLUMN>31</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'p_open' may be NULL (Enter this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4690</LINE>
+        <COLUMN>24</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'p_open' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>4815</LINE>
+      <COLUMN>31</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ShowExampleAppDocuments::__l2::Target' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ShowExampleAppDocuments</FUNCTION>
+    <DECORATED>?ShowExampleAppDocuments@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>4804</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>4941</LINE>
+      <COLUMN>57</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiCond_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ShowExampleAppDocuments</FUNCTION>
+    <DECORATED>?ShowExampleAppDocuments@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>4804</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

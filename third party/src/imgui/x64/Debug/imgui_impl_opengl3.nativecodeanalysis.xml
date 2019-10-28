@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1753</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IH@Z</DECORATED>
+    <FUNCLINE>1753</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1754</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IM@Z</DECORATED>
+    <FUNCLINE>1754</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_impl_opengl3.cpp</FILENAME>
+      <LINE>486</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui_ImplOpenGL3_CreateDeviceObjects</FUNCTION>
+    <DECORATED>?ImGui_ImplOpenGL3_CreateDeviceObjects@@YA_NXZ</DECORATED>
+    <FUNCLINE>473</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

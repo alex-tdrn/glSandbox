@@ -7,13 +7,14 @@
 #include "Prop.h"
 #include "Renderer.h"
 #include "Profiler.h"
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW\glfw3.h>
 #include <imgui.h>
-#include "imgui_impl_glfw_gl3.h"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <cstdlib>
 #include <iostream>
 #include <algorithm>
@@ -22,7 +23,6 @@
 #include <optional>
 #include <memory>
 #include <deque>
-#include <vld.h>
 #include <thread>
 
 double deltaTime = 0.0f;
@@ -88,11 +88,14 @@ int main(int argc, char** argv)
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetScrollCallback(window, ImGui_ImplGlfw_ScrollCallback);
 	glfwSetCharCallback(window, ImGui_ImplGlfw_CharCallback);
-	//setup ImGui
-	//IMGUI_CHECKVERSION();
+
+	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	ImGui_ImplGlfwGL3_Init(window, false);
+
+	ImGui_ImplGlfw_InitForOpenGL(window, false);
+	ImGui_ImplOpenGL3_Init("#version 420");
+
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().WindowRounding = 0.0f;
 	ImGui::GetStyle().WindowBorderSize = 0.0f;
@@ -123,7 +126,7 @@ int main(int argc, char** argv)
 		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
 		//glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
-		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
 		profiler::recordFrame();
 	}
@@ -142,7 +145,10 @@ void drawUI()
 	static bool drawImGuiDemo = false;
 	static std::deque<bool> drawRenderer;
 
-	ImGui_ImplGlfwGL3_NewFrame();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
 	if(ImGui::BeginMainMenuBar())
 	{
 		if(ImGui::BeginMenu("View"))

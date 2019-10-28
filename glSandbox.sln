@@ -1,9 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2018
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glSandbox", "glSandbox\glSandbox.vcxproj", "{10D73CE8-8818-4818-80FB-6CCD941835F3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592} = {8FBB3B10-0881-41F5-B214-2790EA9AC592}
+		{CD84D226-7C03-4304-8B74-50E4AE876C35} = {CD84D226-7C03-4304-8B74-50E4AE876C35}
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC} = {3A58E254-90C1-4D35-85D2-57FA8C177DFC}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Third Party", "Third Party", "{CCEB2B25-0C78-462F-A685-9182235613DE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glad", "third party\src\glad\glad.vcxproj", "{3A58E254-90C1-4D35-85D2-57FA8C177DFC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw3", "third party\src\glfw3\glfw3.vcxproj", "{8FBB3B10-0881-41F5-B214-2790EA9AC592}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "third party\src\imgui\imgui.vcxproj", "{CD84D226-7C03-4304-8B74-50E4AE876C35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +34,32 @@ Global
 		{10D73CE8-8818-4818-80FB-6CCD941835F3}.Release|x64.Build.0 = Release|x64
 		{10D73CE8-8818-4818-80FB-6CCD941835F3}.Release|x86.ActiveCfg = Release|Win32
 		{10D73CE8-8818-4818-80FB-6CCD941835F3}.Release|x86.Build.0 = Release|Win32
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC}.Debug|x64.ActiveCfg = Debug|x64
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC}.Debug|x64.Build.0 = Debug|x64
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC}.Debug|x86.ActiveCfg = Debug|x64
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC}.Release|x64.ActiveCfg = Release|x64
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC}.Release|x64.Build.0 = Release|x64
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC}.Release|x86.ActiveCfg = Release|x64
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592}.Debug|x64.ActiveCfg = Debug|x64
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592}.Debug|x64.Build.0 = Debug|x64
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592}.Debug|x86.ActiveCfg = Debug|x64
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592}.Release|x64.ActiveCfg = Release|x64
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592}.Release|x64.Build.0 = Release|x64
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592}.Release|x86.ActiveCfg = Release|x64
+		{CD84D226-7C03-4304-8B74-50E4AE876C35}.Debug|x64.ActiveCfg = Debug|x64
+		{CD84D226-7C03-4304-8B74-50E4AE876C35}.Debug|x64.Build.0 = Debug|x64
+		{CD84D226-7C03-4304-8B74-50E4AE876C35}.Debug|x86.ActiveCfg = Debug|x64
+		{CD84D226-7C03-4304-8B74-50E4AE876C35}.Release|x64.ActiveCfg = Release|x64
+		{CD84D226-7C03-4304-8B74-50E4AE876C35}.Release|x64.Build.0 = Release|x64
+		{CD84D226-7C03-4304-8B74-50E4AE876C35}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3A58E254-90C1-4D35-85D2-57FA8C177DFC} = {CCEB2B25-0C78-462F-A685-9182235613DE}
+		{8FBB3B10-0881-41F5-B214-2790EA9AC592} = {CCEB2B25-0C78-462F-A685-9182235613DE}
+		{CD84D226-7C03-4304-8B74-50E4AE876C35} = {CCEB2B25-0C78-462F-A685-9182235613DE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CDDA50B-A7CC-45F9-A248-BB15F3164FDD}

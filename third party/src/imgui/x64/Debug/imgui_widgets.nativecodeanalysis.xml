@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1753</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IH@Z</DECORATED>
+    <FUNCLINE>1753</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1754</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IM@Z</DECORATED>
+    <FUNCLINE>1754</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1263</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiInputSource' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1287</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiNavLayer' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1300</LINE>
+      <COLUMN>30</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiNavForward' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1346</LINE>
+      <COLUMN>16</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiLogType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1799</LINE>
+      <COLUMN>28</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiInputReadMode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::IsNavInputPressed</FUNCTION>
+    <DECORATED>?IsNavInputPressed@ImGui@@YA_NHW4ImGuiInputReadMode@@@Z</DECORATED>
+    <FUNCLINE>1799</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>631</LINE>
+      <COLUMN>40</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiCol_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::ButtonEx</FUNCTION>
+    <DECORATED>?ButtonEx@ImGui@@YA_NPEBDAEBUImVec2@@H@Z</DECORATED>
+    <FUNCLINE>604</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>774</LINE>
+      <COLUMN>85</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiDir_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::CollapseButton</FUNCTION>
+    <DECORATED>?CollapseButton@ImGui@@YA_NIAEBUImVec2@@PEAUImGuiDockNode@@@Z</DECORATED>
+    <FUNCLINE>752</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>783</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiAxis' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::GetScrollbarID</FUNCTION>
+    <DECORATED>?GetScrollbarID@ImGui@@YAIPEAUImGuiWindow@@W4ImGuiAxis@@@Z</DECORATED>
+    <FUNCLINE>783</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1135</LINE>
+      <COLUMN>85</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ProgressBar</FUNCTION>
+    <DECORATED>?ProgressBar@ImGui@@YAXMAEBUImVec2@@PEBD@Z</DECORATED>
+    <FUNCLINE>1108</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1135</LINE>
+      <COLUMN>81</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ProgressBar</FUNCTION>
+    <DECORATED>?ProgressBar@ImGui@@YAXMAEBUImVec2@@PEBD@Z</DECORATED>
+    <FUNCLINE>1108</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1299</LINE>
+      <COLUMN>55</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiSeparatorFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::Separator</FUNCTION>
+    <DECORATED>?Separator@ImGui@@YAXXZ</DECORATED>
+    <FUNCLINE>1291</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1325</LINE>
+      <COLUMN>28</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiMouseCursor_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::SplitterBehavior</FUNCTION>
+    <DECORATED>?SplitterBehavior@ImGui@@YA_NAEBUImRect@@IW4ImGuiAxis@@PEAM2MMMM@Z</DECORATED>
+    <FUNCLINE>1305</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1457</LINE>
+      <COLUMN>127</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImDrawCornerFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::BeginCombo</FUNCTION>
+    <DECORATED>?BeginCombo@ImGui@@YA_NPEBD0H@Z</DECORATED>
+    <FUNCLINE>1423</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1844</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::DataTypeApplyOpFromText</FUNCTION>
+    <DECORATED>?DataTypeApplyOpFromText@ImGui@@YA_NPEBD0HPEAX0@Z</DECORATED>
+    <FUNCLINE>1765</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1850</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::DataTypeApplyOpFromText</FUNCTION>
+    <DECORATED>?DataTypeApplyOpFromText@ImGui@@YA_NPEBD0HPEAX0@Z</DECORATED>
+    <FUNCLINE>1765</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>2860</LINE>
+      <COLUMN>48</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiInputTextFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::TempInputTextScalar</FUNCTION>
+    <DECORATED>?TempInputTextScalar@ImGui@@YA_NAEBUImRect@@IPEBDHPEAX1@Z</DECORATED>
+    <FUNCLINE>2842</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3223</LINE>
+      <COLUMN>73</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::STB_TEXTEDIT_INSERTCHARS</FUNCTION>
+    <DECORATED>?STB_TEXTEDIT_INSERTCHARS@ImStb@@YA_NPEAUImGuiInputTextState@@HPEBGH@Z</DECORATED>
+    <FUNCLINE>3202</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_textedit.h</FILENAME>
+      <LINE>1130</LINE>
+      <COLUMN>156</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::stb_textedit_discard_redo</FUNCTION>
+    <DECORATED>?stb_textedit_discard_redo@ImStb@@YAXPEAUStbUndoState@1@@Z</DECORATED>
+    <FUNCLINE>1120</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_textedit.h</FILENAME>
+      <LINE>1138</LINE>
+      <COLUMN>83</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::stb_textedit_discard_redo</FUNCTION>
+    <DECORATED>?stb_textedit_discard_redo@ImStb@@YAXPEAUStbUndoState@1@@Z</DECORATED>
+    <FUNCLINE>1120</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_textedit.h</FILENAME>
+      <LINE>1138</LINE>
+      <COLUMN>63</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::stb_textedit_discard_redo</FUNCTION>
+    <DECORATED>?stb_textedit_discard_redo@ImStb@@YAXPEAUStbUndoState@1@@Z</DECORATED>
+    <FUNCLINE>1120</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3309</LINE>
+      <COLUMN>73</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGuiInputTextCallbackData::InsertChars</FUNCTION>
+    <DECORATED>?InsertChars@ImGuiInputTextCallbackData@@QEAAXHPEBD0@Z</DECORATED>
+    <FUNCLINE>3288</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3481</LINE>
+      <COLUMN>54</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::InputTextEx</FUNCTION>
+    <DECORATED>?InputTextEx@ImGui@@YA_NPEBD0PEADHAEBUImVec2@@HP6AHPEAUImGuiInputTextCallbackData@@@ZPEAX@Z</DECORATED>
+    <FUNCLINE>3390</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3753</LINE>
+      <COLUMN>56</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::InputTextEx</FUNCTION>
+    <DECORATED>?InputTextEx@ImGui@@YA_NPEBD0PEADHAEBUImVec2@@HP6AHPEAUImGuiInputTextCallbackData@@@ZPEAX@Z</DECORATED>
+    <FUNCLINE>3390</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>4298</LINE>
+      <COLUMN>22</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::ColorEdit4</FUNCTION>
+    <DECORATED>?ColorEdit4@ImGui@@YA_NPEBDQEAMH@Z</DECORATED>
+    <FUNCLINE>4174</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>4300</LINE>
+      <COLUMN>22</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::ColorEdit4</FUNCTION>
+    <DECORATED>?ColorEdit4@ImGui@@YA_NPEBDQEAMH@Z</DECORATED>
+    <FUNCLINE>4174</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>5754</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiPlotType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::PlotEx</FUNCTION>
+    <DECORATED>?PlotEx@ImGui@@YAXW4ImGuiPlotType@@PEBDP6AMPEAXH@Z2HH1MMUImVec2@@@Z</DECORATED>
+    <FUNCLINE>5754</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>6092</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'window'. See line 6067 for an earlier location where this can occur</DESCRIPTION>
+    <FUNCTION>ImGui::EndMenuBar</FUNCTION>
+    <DECORATED>?EndMenuBar@ImGui@@YAXXZ</DECORATED>
+    <FUNCLINE>6064</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6066</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6067</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6069</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6072</LINE>
+        <COLUMN>108</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6074</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6075</LINE>
+        <COLUMN>48</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6077</LINE>
+        <COLUMN>128</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6092</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this loop, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6092</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>2439</LINE>
+      <COLUMN>60</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::SliderBehaviorT</FUNCTION>
+    <DECORATED>??$SliderBehaviorT@_J_JN@ImGui@@YA_NAEBUImRect@@IHPEA_J_J2PEBDMHPEAU1@@Z</DECORATED>
+    <FUNCLINE>2312</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>2439</LINE>
+      <COLUMN>60</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::SliderBehaviorT</FUNCTION>
+    <DECORATED>??$SliderBehaviorT@_K_JN@ImGui@@YA_NAEBUImRect@@IHPEA_K_K2PEBDMHPEAU1@@Z</DECORATED>
+    <FUNCLINE>2312</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>261</LINE>
+      <COLUMN>95</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImLerp</FUNCTION>
+    <DECORATED>??$ImLerp@_J@@YA_J_J0M@Z</DECORATED>
+    <FUNCLINE>261</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>261</LINE>
+      <COLUMN>95</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImLerp</FUNCTION>
+    <DECORATED>??$ImLerp@_K@@YA_K_K0M@Z</DECORATED>
+    <FUNCLINE>261</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1882</LINE>
+      <COLUMN>31</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImAtoi</FUNCTION>
+    <DECORATED>??$ImAtoi@_J@@YAPEBDPEBDPEA_J@Z</DECORATED>
+    <FUNCLINE>1875</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1882</LINE>
+      <COLUMN>31</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImAtoi</FUNCTION>
+    <DECORATED>??$ImAtoi@N@@YAPEBDPEBDPEAN@Z</DECORATED>
+    <FUNCLINE>1875</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

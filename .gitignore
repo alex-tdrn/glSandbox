@@ -4,7 +4,11 @@
 
 /x64
 /glSandbox/x64
+<<<<<<< HEAD
 /.vs/
+=======
+/.vs
+>>>>>>> 2e25658... fixed dependencies
 /glSandbox/.vs/Hello Triangle/v15
 /glSandbox/imgui.ini
 /glSandbox/models

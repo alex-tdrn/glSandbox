@@ -1,0 +1,4632 @@
+﻿<?xml version="1.0" encoding="utf-8"?><DEFECTS><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1753</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IH@Z</DECORATED>
+    <FUNCLINE>1753</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1754</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiStorage::ImGuiStoragePair::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiStoragePair@ImGuiStorage@@QEAA@IM@Z</DECORATED>
+    <FUNCLINE>1754</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiStorage::ImGuiStoragePair::&lt;unnamed-tag&gt;::val_p</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1263</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiInputSource' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1287</LINE>
+      <COLUMN>17</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiNavLayer' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1300</LINE>
+      <COLUMN>30</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiNavForward' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1346</LINE>
+      <COLUMN>16</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiLogType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiContext::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiContext@@QEAA@PEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1224</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>1799</LINE>
+      <COLUMN>28</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiInputReadMode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::IsNavInputPressed</FUNCTION>
+    <DECORATED>?IsNavInputPressed@ImGui@@YA_NHW4ImGuiInputReadMode@@@Z</DECORATED>
+    <FUNCLINE>1799</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>4158</LINE>
+      <COLUMN>45</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiCol_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::UpdateDebugToolItemPicker</FUNCTION>
+    <DECORATED>?UpdateDebugToolItemPicker@ImGui@@YAXXZ</DECORATED>
+    <FUNCLINE>4139</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>4720</LINE>
+      <COLUMN>58</COLUMN>
+    </SFA>
+    <DEFECTCODE>28182</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer. 'window' contains the same NULL value as 'hovered_window' did. See line 4692 for an earlier location where this can occur</DESCRIPTION>
+    <FUNCTION>FindHoveredWindow</FUNCTION>
+    <DECORATED>?FindHoveredWindow@@YAXXZ</DECORATED>
+    <FUNCLINE>4673</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4675</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4678</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4679</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4680</LINE>
+        <COLUMN>33</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4682</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4683</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4684</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4687</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4688</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4689</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4689</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4691</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4692</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4694</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4696</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4697</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4701</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4702</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4705</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4706</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4709</LINE>
+        <COLUMN>38</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4718</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4719</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4720</LINE>
+        <COLUMN>58</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4722</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4689</LINE>
+        <COLUMN>46</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4689</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4691</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4692</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4694</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4696</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4697</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4701</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4702</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4705</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4706</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4709</LINE>
+        <COLUMN>38</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4718</LINE>
+        <COLUMN>27</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window' may be NULL (Enter this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4719</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4720</LINE>
+        <COLUMN>58</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>4720</LINE>
+        <COLUMN>58</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui.h</FILENAME>
+      <LINE>1595</LINE>
+      <COLUMN>0</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiSizeCallbackData::UserData' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiSizeCallbackData::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiSizeCallbackData@@QEAA@XZ</DECORATED>
+    <FUNCLINE>1595</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiSizeCallbackData::UserData</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>5525</LINE>
+      <COLUMN>77</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::UpdateManualResize</FUNCTION>
+    <DECORATED>?UpdateManualResize@ImGui@@YA_NPEAUImGuiWindow@@AEBUImVec2@@PEAHHQEAI@Z</DECORATED>
+    <FUNCLINE>5453</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>5501</LINE>
+      <COLUMN>43</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiMouseCursor_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::UpdateManualResize</FUNCTION>
+    <DECORATED>?UpdateManualResize@ImGui@@YA_NPEAUImGuiWindow@@AEBUImVec2@@PEAHHQEAI@Z</DECORATED>
+    <FUNCLINE>5453</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>5680</LINE>
+      <COLUMN>155</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImDrawCornerFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::RenderWindowDecorations</FUNCTION>
+    <DECORATED>?RenderWindowDecorations@ImGui@@YAXPEAUImGuiWindow@@AEBUImRect@@_N2HQEBIM@Z</DECORATED>
+    <FUNCLINE>5632</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>6724</LINE>
+      <COLUMN>112</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::BringWindowToFocusFront</FUNCTION>
+    <DECORATED>?BringWindowToFocusFront@ImGui@@YAXPEAUImGuiWindow@@@Z</DECORATED>
+    <FUNCLINE>6716</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>6724</LINE>
+      <COLUMN>108</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::BringWindowToFocusFront</FUNCTION>
+    <DECORATED>?BringWindowToFocusFront@ImGui@@YAXPEAUImGuiWindow@@@Z</DECORATED>
+    <FUNCLINE>6716</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>6739</LINE>
+      <COLUMN>82</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::BringWindowToDisplayFront</FUNCTION>
+    <DECORATED>?BringWindowToDisplayFront@ImGui@@YAXPEAUImGuiWindow@@@Z</DECORATED>
+    <FUNCLINE>6730</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>6739</LINE>
+      <COLUMN>78</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::BringWindowToDisplayFront</FUNCTION>
+    <DECORATED>?BringWindowToDisplayFront@ImGui@@YAXPEAUImGuiWindow@@@Z</DECORATED>
+    <FUNCLINE>6730</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>602</LINE>
+      <COLUMN>0</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImGuiColorMod::Col' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImGuiColorMod::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiColorMod@@QEAA@XZ</DECORATED>
+    <FUNCLINE>602</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImGuiColorMod::Col</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>8480</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiPopupPositionPolicy' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::FindBestWindowPosForPopupEx</FUNCTION>
+    <DECORATED>?FindBestWindowPosForPopupEx@ImGui@@YA?AUImVec2@@AEBU2@0PEAHAEBUImRect@@2W4ImGuiPopupPositionPolicy@@@Z</DECORATED>
+    <FUNCLINE>8480</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>8605</LINE>
+      <COLUMN>19</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiDir_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGetDirQuadrantFromDelta</FUNCTION>
+    <DECORATED>?ImGetDirQuadrantFromDelta@@YAHMM@Z</DECORATED>
+    <FUNCLINE>8602</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>10948</LINE>
+      <COLUMN>55</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'window-&gt;Viewport'. </DESCRIPTION>
+    <FUNCTION>ImGui::UpdateSelectWindowViewport</FUNCTION>
+    <DECORATED>?UpdateSelectWindowViewport@ImGui@@YAXPEAUImGuiWindow@@@Z</DECORATED>
+    <FUNCLINE>10835</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10837</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10838</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10839</LINE>
+        <COLUMN>47</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10842</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10843</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10848</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10851</LINE>
+        <COLUMN>70</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10857</LINE>
+        <COLUMN>72</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10872</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10873</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10880</LINE>
+        <COLUMN>52</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10885</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10889</LINE>
+        <COLUMN>43</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10893</LINE>
+        <COLUMN>68</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10902</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10903</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10908</LINE>
+        <COLUMN>25</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10909</LINE>
+        <COLUMN>25</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10912</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10914</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10926</LINE>
+        <COLUMN>100</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window-&gt;Viewport' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10944</LINE>
+        <COLUMN>64</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume '&lt;branch condition&gt;')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10948</LINE>
+        <COLUMN>55</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window-&gt;Viewport' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>10953</LINE>
+      <COLUMN>26</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'window'. See line 10838 for an earlier location where this can occur</DESCRIPTION>
+    <FUNCTION>ImGui::UpdateSelectWindowViewport</FUNCTION>
+    <DECORATED>?UpdateSelectWindowViewport@ImGui@@YAXPEAUImGuiWindow@@@Z</DECORATED>
+    <FUNCLINE>10835</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10837</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10838</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10839</LINE>
+        <COLUMN>47</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10842</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10843</LINE>
+        <COLUMN>8</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10848</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10851</LINE>
+        <COLUMN>70</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10857</LINE>
+        <COLUMN>72</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10872</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10873</LINE>
+        <COLUMN>31</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10880</LINE>
+        <COLUMN>52</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10885</LINE>
+        <COLUMN>19</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'flags' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10889</LINE>
+        <COLUMN>43</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window' is an In/Out argument to 'ImGui::GetWindowAlwaysWantOwnViewport' (declared on line 1107)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10889</LINE>
+        <COLUMN>43</COLUMN>
+        <KEYEVENT>
+          <ID>8</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10893</LINE>
+        <COLUMN>68</COLUMN>
+        <KEYEVENT>
+          <ID>9</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10902</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10903</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>10</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10908</LINE>
+        <COLUMN>25</COLUMN>
+        <KEYEVENT>
+          <ID>11</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'window-&gt;Viewport==0')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10909</LINE>
+        <COLUMN>25</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10912</LINE>
+        <COLUMN>8</COLUMN>
+        <KEYEVENT>
+          <ID>12</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume '!lock_viewport')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10914</LINE>
+        <COLUMN>18</COLUMN>
+        <KEYEVENT>
+          <ID>13</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'flags' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10926</LINE>
+        <COLUMN>100</COLUMN>
+        <KEYEVENT>
+          <ID>14</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10944</LINE>
+        <COLUMN>64</COLUMN>
+        <KEYEVENT>
+          <ID>15</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume '&lt;branch condition&gt;')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10948</LINE>
+        <COLUMN>55</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>10953</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>16</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>11255</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiDockRequestType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiDockRequest::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiDockRequest@@QEAA@XZ</DECORATED>
+    <FUNCLINE>11253</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>11885</LINE>
+      <COLUMN>37</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'node'. See line 11796 for an earlier location where this can occur</DESCRIPTION>
+    <FUNCTION>ImGui::DockContextProcessDock</FUNCTION>
+    <DECORATED>?DockContextProcessDock@ImGui@@YAXPEAUImGuiContext@@PEAUImGuiDockRequest@@@Z</DECORATED>
+    <FUNCLINE>11756</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11758</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11759</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11761</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11762</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11764</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11765</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11766</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11767</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11773</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11774</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11775</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11787</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11789</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11793</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11795</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11796</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11797</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11798</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11806</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11807</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11818</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11820</LINE>
+        <COLUMN>13</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'node' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>11885</LINE>
+        <COLUMN>37</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'node' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>11810</LINE>
+      <COLUMN>24</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiAxis' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::DockContextProcessDock</FUNCTION>
+    <DECORATED>?DockContextProcessDock@ImGui@@YAXPEAUImGuiContext@@PEAUImGuiDockRequest@@@Z</DECORATED>
+    <FUNCLINE>11756</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>11995</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiDockNodeState' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGuiDockNode::{ctor}</FUNCTION>
+    <DECORATED>??0ImGuiDockNode@@QEAA@I@Z</DECORATED>
+    <FUNCLINE>11987</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>12071</LINE>
+      <COLUMN>40</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'node-&gt;TabBar'. </DESCRIPTION>
+    <FUNCTION>ImGui::DockNodeAddWindow</FUNCTION>
+    <DECORATED>?DockNodeAddWindow@ImGui@@YAXPEAUImGuiDockNode@@PEAUImGuiWindow@@_N@Z</DECORATED>
+    <FUNCLINE>12026</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12028</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12028</LINE>
+        <COLUMN>37</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12029</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12035</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12038</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12039</LINE>
+        <COLUMN>33</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12040</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12041</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12042</LINE>
+        <COLUMN>25</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12043</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12047</LINE>
+        <COLUMN>60</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12055</LINE>
+        <COLUMN>33</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12066</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12068</LINE>
+        <COLUMN>25</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'node-&gt;TabBar' may be NULL (Enter this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12070</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12071</LINE>
+        <COLUMN>40</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'node-&gt;TabBar' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>12250</LINE>
+      <COLUMN>26</COLUMN>
+    </SFA>
+    <DEFECTCODE>28182</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer. 'node' contains the same NULL value as 'results-&gt;CentralNode' did. See line 12236 for an earlier location where this can occur</DESCRIPTION>
+    <FUNCTION>DockNodeFindInfo</FUNCTION>
+    <DECORATED>?DockNodeFindInfo@@YAXPEAUImGuiDockNode@@PEAUImGuiDockNodeFindInfoResults@@@Z</DECORATED>
+    <FUNCLINE>12234</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12236</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12242</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12244</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12245</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12246</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12248</LINE>
+        <COLUMN>43</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'node' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12250</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'node-&gt;ChildNodes[0]' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>12250</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'node' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>12814</LINE>
+      <COLUMN>77</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::DockNodeUpdateTabBar</FUNCTION>
+    <DECORATED>?DockNodeUpdateTabBar@ImGui@@YAXPEAUImGuiDockNode@@PEAUImGuiWindow@@@Z</DECORATED>
+    <FUNCLINE>12695</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>13367</LINE>
+      <COLUMN>31</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'merge_lead_child'. </DESCRIPTION>
+    <FUNCTION>ImGui::DockNodeTreeMerge</FUNCTION>
+    <DECORATED>?DockNodeTreeMerge@ImGui@@YAXPEAUImGuiContext@@PEAUImGuiDockNode@@1@Z</DECORATED>
+    <FUNCLINE>13339</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13342</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13343</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13344</LINE>
+        <COLUMN>4</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13345</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'merge_lead_child' may be NULL (Enter this loop)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13346</LINE>
+        <COLUMN>47</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13353</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13354</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'merge_lead_child' is an In/Out argument to 'ImGui::DockNodeMoveChildNodes' (declared on line 11327)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13355</LINE>
+        <COLUMN>8</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'child_0' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13360</LINE>
+        <COLUMN>8</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'child_1')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13362</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13363</LINE>
+        <COLUMN>40</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13365</LINE>
+        <COLUMN>33</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13366</LINE>
+        <COLUMN>33</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>13367</LINE>
+        <COLUMN>31</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'merge_lead_child' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>14377</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>28182</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer. 'window-&gt;DockNode' contains the same NULL value as 'node' did. See line 14309 for an earlier location where this can occur</DESCRIPTION>
+    <FUNCTION>ImGui::BeginDocked</FUNCTION>
+    <DECORATED>?BeginDocked@ImGui@@YAXPEAUImGuiWindow@@PEA_N@Z</DECORATED>
+    <FUNCLINE>14260</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14262</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14263</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14265</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14266</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14277</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14278</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14279</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14280</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14288</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14289</LINE>
+        <COLUMN>13</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window-&gt;DockNode' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14291</LINE>
+        <COLUMN>28</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'window-&gt;DockId!=0&amp;&amp;node==0' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14309</LINE>
+        <COLUMN>29</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14328</LINE>
+        <COLUMN>25</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'node-&gt;HostWindow==0' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14335</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume '!!((node-&gt;HostWindow))')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14336</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume '!!((node-&gt;IsLeafNode()))')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14337</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume '&lt;branch condition&gt;')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14338</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14341</LINE>
+        <COLUMN>40</COLUMN>
+        <KEYEVENT>
+          <ID>8</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14348</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14349</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14350</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14351</LINE>
+        <COLUMN>25</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14352</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14353</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>9</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'node-&gt;SharedFlags' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14357</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14361</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>10</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume '&lt;branch condition&gt;')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14362</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14363</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14366</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14370</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14373</LINE>
+        <COLUMN>67</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14377</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>11</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window-&gt;DockNode' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>14309</LINE>
+      <COLUMN>29</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'node'. </DESCRIPTION>
+    <FUNCTION>ImGui::BeginDocked</FUNCTION>
+    <DECORATED>?BeginDocked@ImGui@@YAXPEAUImGuiWindow@@PEA_N@Z</DECORATED>
+    <FUNCLINE>14260</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14262</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14263</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14265</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14266</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14277</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14278</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14279</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14280</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14288</LINE>
+        <COLUMN>17</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14289</LINE>
+        <COLUMN>13</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'node' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14291</LINE>
+        <COLUMN>28</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'window-&gt;DockId!=0&amp;&amp;node==0' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui.cpp</FILENAME>
+        <LINE>14309</LINE>
+        <COLUMN>29</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'node' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>15008</LINE>
+      <COLUMN>87</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowMetricsWindow::Funcs::NodeColumns</FUNCTION>
+    <DECORATED>?NodeColumns@Funcs@?1??ShowMetricsWindow@ImGui@@YAXPEA_N@Z@SAXPEBUImGuiColumns@@@Z</DECORATED>
+    <FUNCLINE>15004</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>15074</LINE>
+      <COLUMN>220</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowMetricsWindow::Funcs::NodeViewport</FUNCTION>
+    <DECORATED>?NodeViewport@Funcs@?1??ShowMetricsWindow@ImGui@@YAXPEA_N@Z@SAXPEAUImGuiViewportP@@@Z</DECORATED>
+    <FUNCLINE>15068</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>15173</LINE>
+      <COLUMN>36</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowMetricsWindow</FUNCTION>
+    <DECORATED>?ShowMetricsWindow@ImGui@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>14877</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>15174</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowMetricsWindow</FUNCTION>
+    <DECORATED>?ShowMetricsWindow@ImGui@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>14877</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>15174</LINE>
+      <COLUMN>96</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowMetricsWindow</FUNCTION>
+    <DECORATED>?ShowMetricsWindow@ImGui@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>14877</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>15175</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowMetricsWindow</FUNCTION>
+    <DECORATED>?ShowMetricsWindow@ImGui@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>14877</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui.cpp</FILENAME>
+      <LINE>15175</LINE>
+      <COLUMN>96</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowMetricsWindow</FUNCTION>
+    <DECORATED>?ShowMetricsWindow@ImGui@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>14877</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>856</LINE>
+      <COLUMN>54</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ShowDemoWindowWidgets</FUNCTION>
+    <DECORATED>?ShowDemoWindowWidgets@@YAXXZ</DECORATED>
+    <FUNCLINE>476</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>856</LINE>
+      <COLUMN>76</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ShowDemoWindowWidgets</FUNCTION>
+    <DECORATED>?ShowDemoWindowWidgets@@YAXXZ</DECORATED>
+    <FUNCLINE>476</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>3473</LINE>
+      <COLUMN>46</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'font-&gt;ConfigData'. </DESCRIPTION>
+    <FUNCTION>ImGui::ShowStyleEditor</FUNCTION>
+    <DECORATED>?ShowStyleEditor@ImGui@@YAXPEAUImGuiStyle@@@Z</DECORATED>
+    <FUNCLINE>3309</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3312</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3313</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3316</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3317</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3319</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3320</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3323</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3325</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3327</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3330</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3332</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3332</LINE>
+        <COLUMN>79</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3333</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3334</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3334</LINE>
+        <COLUMN>77</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3335</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3336</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3336</LINE>
+        <COLUMN>77</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3339</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3341</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3342</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3344</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3345</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3347</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3349</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3351</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3389</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3447</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3449</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3450</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3451</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3452</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3453</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3453</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3455</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3456</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3457</LINE>
+        <COLUMN>21</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'font-&gt;ConfigData' may be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3458</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3458</LINE>
+        <COLUMN>57</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'SmallButton("Set as default")' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3459</LINE>
+        <COLUMN>20</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'font_details_opened')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3461</LINE>
+        <COLUMN>35</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3462</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3463</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3464</LINE>
+        <COLUMN>36</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3465</LINE>
+        <COLUMN>35</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3465</LINE>
+        <COLUMN>49</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3466</LINE>
+        <COLUMN>37</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3467</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3468</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3469</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3470</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3471</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3472</LINE>
+        <COLUMN>29</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3472</LINE>
+        <COLUMN>52</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'config_i&lt;font-&gt;ConfigDataCount')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>3473</LINE>
+        <COLUMN>46</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'font-&gt;ConfigData' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>3467</LINE>
+      <COLUMN>113</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ShowStyleEditor</FUNCTION>
+    <DECORATED>?ShowStyleEditor@ImGui@@YAXPEAUImGuiStyle@@@Z</DECORATED>
+    <FUNCLINE>3309</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>4690</LINE>
+      <COLUMN>24</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'p_open'. </DESCRIPTION>
+    <FUNCTION>ShowExampleAppDockSpace</FUNCTION>
+    <DECORATED>?ShowExampleAppDockSpace@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>4626</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4628</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4629</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4630</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4634</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4635</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4648</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4656</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4657</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4658</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4660</LINE>
+        <COLUMN>8</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4664</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4665</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4672</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4675</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4677</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4683</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4684</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4685</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4686</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4687</LINE>
+        <COLUMN>31</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4688</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4689</LINE>
+        <COLUMN>31</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'p_open' may be NULL (Enter this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_demo.cpp</FILENAME>
+        <LINE>4690</LINE>
+        <COLUMN>24</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'p_open' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>4815</LINE>
+      <COLUMN>31</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ShowExampleAppDocuments::__l2::Target' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ShowExampleAppDocuments</FUNCTION>
+    <DECORATED>?ShowExampleAppDocuments@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>4804</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_demo.cpp</FILENAME>
+      <LINE>4941</LINE>
+      <COLUMN>57</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiCond_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ShowExampleAppDocuments</FUNCTION>
+    <DECORATED>?ShowExampleAppDocuments@@YAXPEA_N@Z</DECORATED>
+    <FUNCLINE>4804</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1315</LINE>
+      <COLUMN>48</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetFontOffsetForIndex_internal</FUNCTION>
+    <DECORATED>?stbtt_GetFontOffsetForIndex_internal@@YAHPEAEH@Z</DECORATED>
+    <FUNCLINE>1302</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1476</LINE>
+      <COLUMN>76</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1476</LINE>
+      <COLUMN>68</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1496</LINE>
+      <COLUMN>66</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1504</LINE>
+      <COLUMN>51</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1515</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1516</LINE>
+      <COLUMN>58</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1516</LINE>
+      <COLUMN>68</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1520</LINE>
+      <COLUMN>59</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1520</LINE>
+      <COLUMN>69</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1524</LINE>
+      <COLUMN>66</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1524</LINE>
+      <COLUMN>59</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1524</LINE>
+      <COLUMN>96</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1524</LINE>
+      <COLUMN>106</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1522</LINE>
+      <COLUMN>95</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1522</LINE>
+      <COLUMN>105</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1533</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1534</LINE>
+      <COLUMN>62</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1540</LINE>
+      <COLUMN>68</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_FindGlyphIndex</FUNCTION>
+    <DECORATED>stbtt_FindGlyphIndex</DECORATED>
+    <FUNCLINE>1461</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1581</LINE>
+      <COLUMN>71</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyfOffset</FUNCTION>
+    <DECORATED>?stbtt__GetGlyfOffset@@YAHPEBUstbtt_fontinfo@@H@Z</DECORATED>
+    <FUNCLINE>1568</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1582</LINE>
+      <COLUMN>71</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyfOffset</FUNCTION>
+    <DECORATED>?stbtt__GetGlyfOffset@@YAHPEBUstbtt_fontinfo@@H@Z</DECORATED>
+    <FUNCLINE>1568</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1578</LINE>
+      <COLUMN>71</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyfOffset</FUNCTION>
+    <DECORATED>?stbtt__GetGlyfOffset@@YAHPEBUstbtt_fontinfo@@H@Z</DECORATED>
+    <FUNCLINE>1568</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1579</LINE>
+      <COLUMN>71</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyfOffset</FUNCTION>
+    <DECORATED>?stbtt__GetGlyfOffset@@YAHPEBUstbtt_fontinfo@@H@Z</DECORATED>
+    <FUNCLINE>1568</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1660</LINE>
+      <COLUMN>54</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphShapeTT</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphShapeTT@@YAHPEBUstbtt_fontinfo@@HPEAPEAUstbtt_vertex@@@Z</DECORATED>
+    <FUNCLINE>1639</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1661</LINE>
+      <COLUMN>48</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphShapeTT</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphShapeTT@@YAHPEBUstbtt_fontinfo@@HPEAPEAUstbtt_vertex@@@Z</DECORATED>
+    <FUNCLINE>1639</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1663</LINE>
+      <COLUMN>56</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphShapeTT</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphShapeTT@@YAHPEBUstbtt_fontinfo@@HPEAPEAUstbtt_vertex@@@Z</DECORATED>
+    <FUNCLINE>1639</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1758</LINE>
+      <COLUMN>55</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphShapeTT</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphShapeTT@@YAHPEBUstbtt_fontinfo@@HPEAPEAUstbtt_vertex@@@Z</DECORATED>
+    <FUNCLINE>1639</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>1838</LINE>
+      <COLUMN>33</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphShapeTT</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphShapeTT@@YAHPEBUstbtt_fontinfo@@HPEAPEAUstbtt_vertex@@@Z</DECORATED>
+    <FUNCLINE>1639</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2277</LINE>
+      <COLUMN>82</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetGlyphHMetrics</FUNCTION>
+    <DECORATED>stbtt_GetGlyphHMetrics</DECORATED>
+    <FUNCLINE>2273</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2278</LINE>
+      <COLUMN>82</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetGlyphHMetrics</FUNCTION>
+    <DECORATED>stbtt_GetGlyphHMetrics</DECORATED>
+    <FUNCLINE>2273</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2280</LINE>
+      <COLUMN>82</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetGlyphHMetrics</FUNCTION>
+    <DECORATED>stbtt_GetGlyphHMetrics</DECORATED>
+    <FUNCLINE>2273</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2281</LINE>
+      <COLUMN>82</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetGlyphHMetrics</FUNCTION>
+    <DECORATED>stbtt_GetGlyphHMetrics</DECORATED>
+    <FUNCLINE>2273</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2281</LINE>
+      <COLUMN>106</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetGlyphHMetrics</FUNCTION>
+    <DECORATED>stbtt_GetGlyphHMetrics</DECORATED>
+    <FUNCLINE>2273</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2304</LINE>
+      <COLUMN>32</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphKernInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphKernInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2285</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2310</LINE>
+      <COLUMN>34</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphKernInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphKernInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2285</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2351</LINE>
+      <COLUMN>45</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetCoverageIndex</FUNCTION>
+    <DECORATED>?stbtt__GetCoverageIndex@@YAHPEAEH@Z</DECORATED>
+    <FUNCLINE>2315</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2329</LINE>
+      <COLUMN>50</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetCoverageIndex</FUNCTION>
+    <DECORATED>?stbtt__GetCoverageIndex@@YAHPEAEH@Z</DECORATED>
+    <FUNCLINE>2315</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2401</LINE>
+      <COLUMN>57</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphClass</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphClass@@YAHPEAEH@Z</DECORATED>
+    <FUNCLINE>2374</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2385</LINE>
+      <COLUMN>69</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphClass</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphClass@@YAHPEAEH@Z</DECORATED>
+    <FUNCLINE>2374</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2448</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphGPOSInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphGPOSInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2428</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2458</LINE>
+      <COLUMN>79</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphGPOSInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphGPOSInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2428</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2531</LINE>
+      <COLUMN>79</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphGPOSInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphGPOSInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2428</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2532</LINE>
+      <COLUMN>81</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphGPOSInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphGPOSInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2428</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2473</LINE>
+      <COLUMN>81</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphGPOSInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphGPOSInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2428</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2495</LINE>
+      <COLUMN>94</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphGPOSInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphGPOSInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2428</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>2495</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__GetGlyphGPOSInfoAdvance</FUNCTION>
+    <DECORATED>?stbtt__GetGlyphGPOSInfoAdvance@@YAHPEBUstbtt_fontinfo@@HH@Z</DECORATED>
+    <FUNCLINE>2428</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3147</LINE>
+      <COLUMN>27</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__rasterize_sorted_edges</FUNCTION>
+    <DECORATED>?stbtt__rasterize_sorted_edges@@YAXPEAUstbtt__bitmap@@PEAUstbtt__edge@@HHHHPEAX@Z</DECORATED>
+    <FUNCLINE>3137</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3163</LINE>
+      <COLUMN>43</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__rasterize_sorted_edges</FUNCTION>
+    <DECORATED>?stbtt__rasterize_sorted_edges@@YAXPEAUstbtt__bitmap@@PEAUstbtt__edge@@HHHHPEAX@Z</DECORATED>
+    <FUNCLINE>3137</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3349</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt__rasterize</FUNCTION>
+    <DECORATED>?stbtt__rasterize@@YAXPEAUstbtt__bitmap@@PEAUstbtt__point@@PEAHHMMMMHHHPEAX@Z</DECORATED>
+    <FUNCLINE>3330</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3582</LINE>
+      <COLUMN>37</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetGlyphBitmapSubpixel</FUNCTION>
+    <DECORATED>stbtt_GetGlyphBitmapSubpixel</DECORATED>
+    <FUNCLINE>3553</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3665</LINE>
+      <COLUMN>29</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_BakeFontBitmap_internal</FUNCTION>
+    <DECORATED>?stbtt_BakeFontBitmap_internal@@YAHPEAEHM0HHHHPEAUstbtt_bakedchar@@@Z</DECORATED>
+    <FUNCLINE>3653</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3684</LINE>
+      <COLUMN>42</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_BakeFontBitmap_internal</FUNCTION>
+    <DECORATED>?stbtt_BakeFontBitmap_internal@@YAHPEAEHM0HHHHPEAUstbtt_bakedchar@@@Z</DECORATED>
+    <FUNCLINE>3653</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3824</LINE>
+      <COLUMN>32</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_PackBegin</FUNCTION>
+    <DECORATED>stbtt_PackBegin</DECORATED>
+    <FUNCLINE>3797</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3906</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>6385</DEFECTCODE>
+    <DESCRIPTION>Reading invalid data from 'buffer':  the readable size is '_Old_3`kernel_width' bytes, but '3' bytes may be read.</DESCRIPTION>
+    <FUNCTION>stbtt__h_prefilter</FUNCTION>
+    <DECORATED>?stbtt__h_prefilter@@YAXPEAEHHHI@Z</DECORATED>
+    <FUNCLINE>3852</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3854</LINE>
+        <COLUMN>17</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'buffer' is a 8 byte array</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3855</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3856</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3857</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'buffer' is an Output from 'memset' (declared at c:\program files (x86)\microsoft visual studio\2019\community\vc\tools\msvc\14.23.28105\include\vcruntime_string.h:60)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3858</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3858</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'j&lt;h')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3859</LINE>
+        <COLUMN>10</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3860</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3861</LINE>
+        <COLUMN>18</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'buffer' is an Output from 'memset' (declared at c:\program files (x86)\microsoft visual studio\2019\community\vc\tools\msvc\14.23.28105\include\vcruntime_string.h:60)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3863</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3866</LINE>
+        <COLUMN>14</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Assume switch ( 'kernel_width' ) resolves to case 2: </MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3867</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3868</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3868</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3869</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3870</LINE>
+        <COLUMN>59</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3871</LINE>
+        <COLUMN>25</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3868</LINE>
+        <COLUMN>35</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3868</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3904</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'i&lt;w')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3905</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume '!!((pixels[i]==0))')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3906</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3907</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3904</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3904</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>8</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Continue this loop, (assume 'i&lt;w')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3905</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>9</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Continue this loop, (assume '!!((pixels[i]==0))')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3906</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>10</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Invalid read from 'buffer[2]', (readable range is 0 to 1)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>3968</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>6385</DEFECTCODE>
+    <DESCRIPTION>Reading invalid data from 'buffer':  the readable size is '_Old_3`kernel_width' bytes, but '3' bytes may be read.</DESCRIPTION>
+    <FUNCTION>stbtt__v_prefilter</FUNCTION>
+    <DECORATED>?stbtt__v_prefilter@@YAXPEAEHHHI@Z</DECORATED>
+    <FUNCLINE>3914</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3916</LINE>
+        <COLUMN>17</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'buffer' is a 8 byte array</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3917</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3918</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3919</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'buffer' is an Output from 'memset' (declared at c:\program files (x86)\microsoft visual studio\2019\community\vc\tools\msvc\14.23.28105\include\vcruntime_string.h:60)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3920</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3920</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'j&lt;w')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3921</LINE>
+        <COLUMN>10</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3922</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3923</LINE>
+        <COLUMN>18</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'buffer' is an Output from 'memset' (declared at c:\program files (x86)\microsoft visual studio\2019\community\vc\tools\msvc\14.23.28105\include\vcruntime_string.h:60)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3925</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3928</LINE>
+        <COLUMN>14</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Assume switch ( 'kernel_width' ) resolves to case 2: </MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3929</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3930</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3930</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3931</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3932</LINE>
+        <COLUMN>59</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3933</LINE>
+        <COLUMN>41</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3930</LINE>
+        <COLUMN>35</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3930</LINE>
+        <COLUMN>24</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3966</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'i&lt;h')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3967</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume '&lt;branch condition&gt;')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3968</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3969</LINE>
+        <COLUMN>35</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3966</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3966</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>8</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Continue this loop, (assume 'i&lt;h')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3967</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>9</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Continue this loop, (assume '&lt;branch condition&gt;')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+        <FILENAME>imstb_truetype.h</FILENAME>
+        <LINE>3968</LINE>
+        <COLUMN>15</COLUMN>
+        <KEYEVENT>
+          <ID>10</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Invalid read from 'buffer[2]', (readable range is 0 to 1)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>4084</LINE>
+      <COLUMN>67</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_PackFontRangesRenderIntoRects</FUNCTION>
+    <DECORATED>stbtt_PackFontRangesRenderIntoRects</DECORATED>
+    <FUNCLINE>4045</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>4094</LINE>
+      <COLUMN>59</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_PackFontRangesRenderIntoRects</FUNCTION>
+    <DECORATED>stbtt_PackFontRangesRenderIntoRects</DECORATED>
+    <FUNCLINE>4045</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>4099</LINE>
+      <COLUMN>59</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_PackFontRangesRenderIntoRects</FUNCTION>
+    <DECORATED>stbtt_PackFontRangesRenderIntoRects</DECORATED>
+    <FUNCLINE>4045</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_truetype.h</FILENAME>
+      <LINE>4447</LINE>
+      <COLUMN>31</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stbtt_GetGlyphSDF</FUNCTION>
+    <DECORATED>stbtt_GetGlyphSDF</DECORATED>
+    <FUNCLINE>4406</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>623</LINE>
+      <COLUMN>46</COLUMN>
+    </SFA>
+    <DEFECTCODE>6255</DEFECTCODE>
+    <DESCRIPTION>_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead.</DESCRIPTION>
+    <FUNCTION>ImDrawList::AddPolyline</FUNCTION>
+    <DECORATED>?AddPolyline@ImDrawList@@QEAAXPEBUImVec2@@HI_NM@Z</DECORATED>
+    <FUNCLINE>600</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>623</LINE>
+      <COLUMN>60</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImDrawList::AddPolyline</FUNCTION>
+    <DECORATED>?AddPolyline@ImDrawList@@QEAAXPEBUImVec2@@HI_NM@Z</DECORATED>
+    <FUNCLINE>600</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>814</LINE>
+      <COLUMN>46</COLUMN>
+    </SFA>
+    <DEFECTCODE>6255</DEFECTCODE>
+    <DESCRIPTION>_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead.</DESCRIPTION>
+    <FUNCTION>ImDrawList::AddConvexPolyFilled</FUNCTION>
+    <DECORATED>?AddConvexPolyFilled@ImDrawList@@QEAAXPEBUImVec2@@HI@Z</DECORATED>
+    <FUNCLINE>788</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>1494</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'ImFontAtlas::CustomRectIds' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>ImFontAtlas::{ctor}</FUNCTION>
+    <DECORATED>??0ImFontAtlas@@QEAA@XZ</DECORATED>
+    <FUNCLINE>1494</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>ImFontAtlas::CustomRectIds</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>1808</LINE>
+      <COLUMN>41</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImFontAtlasBuildMultiplyRectAlpha8</FUNCTION>
+    <DECORATED>?ImFontAtlasBuildMultiplyRectAlpha8@@YAXQEBEPEAEHHHHH@Z</DECORATED>
+    <FUNCLINE>1806</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>2028</LINE>
+      <COLUMN>45</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImFontAtlasBuildWithStbTruetype</FUNCTION>
+    <DECORATED>?ImFontAtlasBuildWithStbTruetype@@YA_NPEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1851</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>2029</LINE>
+      <COLUMN>54</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImFontAtlasBuildWithStbTruetype</FUNCTION>
+    <DECORATED>?ImFontAtlasBuildWithStbTruetype@@YA_NPEAUImFontAtlas@@@Z</DECORATED>
+    <FUNCLINE>1851</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3221</LINE>
+      <COLUMN>73</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3221</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3221</LINE>
+      <COLUMN>52</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3222</LINE>
+      <COLUMN>69</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3224</LINE>
+      <COLUMN>75</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3224</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3224</LINE>
+      <COLUMN>52</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3225</LINE>
+      <COLUMN>75</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3225</LINE>
+      <COLUMN>64</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3225</LINE>
+      <COLUMN>52</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3226</LINE>
+      <COLUMN>78</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3227</LINE>
+      <COLUMN>69</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3228</LINE>
+      <COLUMN>63</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3228</LINE>
+      <COLUMN>52</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3229</LINE>
+      <COLUMN>63</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_draw.cpp</FILENAME>
+      <LINE>3229</LINE>
+      <COLUMN>52</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>stb_decompress_token</FUNCTION>
+    <DECORATED>?stb_decompress_token@@YAPEBEPEBE@Z</DECORATED>
+    <FUNCLINE>3217</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_impl_glfw.cpp</FILENAME>
+      <LINE>66</LINE>
+      <COLUMN>42</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'GlfwClientApi' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION></FUNCTION>
+    <DECORATED></DECORATED>
+    <FUNCLINE>0</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_impl_glfw.cpp</FILENAME>
+      <LINE>270</LINE>
+      <COLUMN>69</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui_ImplGlfw_UpdateMousePosAndButtons</FUNCTION>
+    <DECORATED>?ImGui_ImplGlfw_UpdateMousePosAndButtons@@YAXXZ</DECORATED>
+    <FUNCLINE>239</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_impl_glfw.cpp</FILENAME>
+      <LINE>270</LINE>
+      <COLUMN>117</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui_ImplGlfw_UpdateMousePosAndButtons</FUNCTION>
+    <DECORATED>?ImGui_ImplGlfw_UpdateMousePosAndButtons@@YAXXZ</DECORATED>
+    <FUNCLINE>239</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_impl_glfw.cpp</FILENAME>
+      <LINE>705</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'VkResult' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui_ImplGlfw_CreateVkSurface</FUNCTION>
+    <DECORATED>?ImGui_ImplGlfw_CreateVkSurface@@YAHPEAUImGuiViewport@@_KPEBXPEA_K@Z</DECORATED>
+    <FUNCLINE>701</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_impl_opengl3.cpp</FILENAME>
+      <LINE>486</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui_ImplOpenGL3_CreateDeviceObjects</FUNCTION>
+    <DECORATED>?ImGui_ImplOpenGL3_CreateDeviceObjects@@YA_NXZ</DECORATED>
+    <FUNCLINE>473</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>631</LINE>
+      <COLUMN>40</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiCol_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::ButtonEx</FUNCTION>
+    <DECORATED>?ButtonEx@ImGui@@YA_NPEBDAEBUImVec2@@H@Z</DECORATED>
+    <FUNCLINE>604</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>774</LINE>
+      <COLUMN>85</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiDir_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::CollapseButton</FUNCTION>
+    <DECORATED>?CollapseButton@ImGui@@YA_NIAEBUImVec2@@PEAUImGuiDockNode@@@Z</DECORATED>
+    <FUNCLINE>752</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>783</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiAxis' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::GetScrollbarID</FUNCTION>
+    <DECORATED>?GetScrollbarID@ImGui@@YAIPEAUImGuiWindow@@W4ImGuiAxis@@@Z</DECORATED>
+    <FUNCLINE>783</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1135</LINE>
+      <COLUMN>85</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ProgressBar</FUNCTION>
+    <DECORATED>?ProgressBar@ImGui@@YAXMAEBUImVec2@@PEBD@Z</DECORATED>
+    <FUNCLINE>1108</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1135</LINE>
+      <COLUMN>81</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::ProgressBar</FUNCTION>
+    <DECORATED>?ProgressBar@ImGui@@YAXMAEBUImVec2@@PEBD@Z</DECORATED>
+    <FUNCLINE>1108</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1299</LINE>
+      <COLUMN>55</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiSeparatorFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::Separator</FUNCTION>
+    <DECORATED>?Separator@ImGui@@YAXXZ</DECORATED>
+    <FUNCLINE>1291</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1325</LINE>
+      <COLUMN>28</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiMouseCursor_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::SplitterBehavior</FUNCTION>
+    <DECORATED>?SplitterBehavior@ImGui@@YA_NAEBUImRect@@IW4ImGuiAxis@@PEAM2MMMM@Z</DECORATED>
+    <FUNCLINE>1305</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1457</LINE>
+      <COLUMN>127</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImDrawCornerFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::BeginCombo</FUNCTION>
+    <DECORATED>?BeginCombo@ImGui@@YA_NPEBD0H@Z</DECORATED>
+    <FUNCLINE>1423</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1844</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::DataTypeApplyOpFromText</FUNCTION>
+    <DECORATED>?DataTypeApplyOpFromText@ImGui@@YA_NPEBD0HPEAX0@Z</DECORATED>
+    <FUNCLINE>1765</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1850</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::DataTypeApplyOpFromText</FUNCTION>
+    <DECORATED>?DataTypeApplyOpFromText@ImGui@@YA_NPEBD0HPEAX0@Z</DECORATED>
+    <FUNCLINE>1765</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>2860</LINE>
+      <COLUMN>48</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiInputTextFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::TempInputTextScalar</FUNCTION>
+    <DECORATED>?TempInputTextScalar@ImGui@@YA_NAEBUImRect@@IPEBDHPEAX1@Z</DECORATED>
+    <FUNCLINE>2842</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3223</LINE>
+      <COLUMN>73</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::STB_TEXTEDIT_INSERTCHARS</FUNCTION>
+    <DECORATED>?STB_TEXTEDIT_INSERTCHARS@ImStb@@YA_NPEAUImGuiInputTextState@@HPEBGH@Z</DECORATED>
+    <FUNCLINE>3202</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_textedit.h</FILENAME>
+      <LINE>1130</LINE>
+      <COLUMN>156</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::stb_textedit_discard_redo</FUNCTION>
+    <DECORATED>?stb_textedit_discard_redo@ImStb@@YAXPEAUStbUndoState@1@@Z</DECORATED>
+    <FUNCLINE>1120</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_textedit.h</FILENAME>
+      <LINE>1138</LINE>
+      <COLUMN>83</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::stb_textedit_discard_redo</FUNCTION>
+    <DECORATED>?stb_textedit_discard_redo@ImStb@@YAXPEAUStbUndoState@1@@Z</DECORATED>
+    <FUNCLINE>1120</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imstb_textedit.h</FILENAME>
+      <LINE>1138</LINE>
+      <COLUMN>63</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImStb::stb_textedit_discard_redo</FUNCTION>
+    <DECORATED>?stb_textedit_discard_redo@ImStb@@YAXPEAUStbUndoState@1@@Z</DECORATED>
+    <FUNCLINE>1120</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3309</LINE>
+      <COLUMN>73</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGuiInputTextCallbackData::InsertChars</FUNCTION>
+    <DECORATED>?InsertChars@ImGuiInputTextCallbackData@@QEAAXHPEBD0@Z</DECORATED>
+    <FUNCLINE>3288</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3481</LINE>
+      <COLUMN>54</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::InputTextEx</FUNCTION>
+    <DECORATED>?InputTextEx@ImGui@@YA_NPEBD0PEADHAEBUImVec2@@HP6AHPEAUImGuiInputTextCallbackData@@@ZPEAX@Z</DECORATED>
+    <FUNCLINE>3390</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>3753</LINE>
+      <COLUMN>56</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::InputTextEx</FUNCTION>
+    <DECORATED>?InputTextEx@ImGui@@YA_NPEBD0PEADHAEBUImVec2@@HP6AHPEAUImGuiInputTextCallbackData@@@ZPEAX@Z</DECORATED>
+    <FUNCLINE>3390</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>4298</LINE>
+      <COLUMN>22</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::ColorEdit4</FUNCTION>
+    <DECORATED>?ColorEdit4@ImGui@@YA_NPEBDQEAMH@Z</DECORATED>
+    <FUNCLINE>4174</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>4300</LINE>
+      <COLUMN>22</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'sscanf'.</DESCRIPTION>
+    <FUNCTION>ImGui::ColorEdit4</FUNCTION>
+    <DECORATED>?ColorEdit4@ImGui@@YA_NPEBDQEAMH@Z</DECORATED>
+    <FUNCLINE>4174</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>5754</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'ImGuiPlotType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>ImGui::PlotEx</FUNCTION>
+    <DECORATED>?PlotEx@ImGui@@YAXW4ImGuiPlotType@@PEBDP6AMPEAXH@Z2HH1MMUImVec2@@@Z</DECORATED>
+    <FUNCLINE>5754</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>6092</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>Dereferencing NULL pointer 'window'. See line 6067 for an earlier location where this can occur</DESCRIPTION>
+    <FUNCTION>ImGui::EndMenuBar</FUNCTION>
+    <DECORATED>?EndMenuBar@ImGui@@YAXXZ</DECORATED>
+    <FUNCLINE>6064</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6066</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6067</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6069</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6072</LINE>
+        <COLUMN>108</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6074</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6075</LINE>
+        <COLUMN>48</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6077</LINE>
+        <COLUMN>128</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'window' may be NULL (Skip this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6092</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this loop, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+        <FILENAME>imgui_widgets.cpp</FILENAME>
+        <LINE>6092</LINE>
+        <COLUMN>4</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'window' is dereferenced, but may still be NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>2439</LINE>
+      <COLUMN>60</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImGui::SliderBehaviorT</FUNCTION>
+    <DECORATED>??$SliderBehaviorT@_J_JN@ImGui@@YA_NAEBUImRect@@IHPEA_J_J2PEBDMHPEAU1@@Z</DECORATED>
+    <FUNCLINE>2312</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\include\</FILEPATH>
+      <FILENAME>imgui_internal.h</FILENAME>
+      <LINE>261</LINE>
+      <COLUMN>95</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImLerp</FUNCTION>
+    <DECORATED>??$ImLerp@_J@@YA_J_J0M@Z</DECORATED>
+    <FUNCLINE>261</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>D:\Projects\rendershop\third party\src\imgui\src\</FILEPATH>
+      <FILENAME>imgui_widgets.cpp</FILENAME>
+      <LINE>1882</LINE>
+      <COLUMN>31</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>ImAtoi</FUNCTION>
+    <DECORATED>??$ImAtoi@_J@@YAPEBDPEBDPEA_J@Z</DECORATED>
+    <FUNCLINE>1875</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT></DEFECTS>

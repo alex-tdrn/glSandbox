@@ -118,9 +118,7 @@
     <ClCompile Include="source\PostProcessingStep.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="source\glad.c" />
     <ClCompile Include="source\Globals.cpp" />
-    <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\ResourceRenderer.cpp">
       <Filter>Rendering</Filter>
@@ -214,6 +212,9 @@
     <ClInclude Include="headers\ImportGLTF.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="headers\Named.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
     <ClInclude Include="headers\Profiler.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -226,9 +227,7 @@
     <ClInclude Include="headers\Renderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Globals.h" />
-    <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="headers\ResourceRenderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
@@ -243,12 +242,6 @@
     </ClInclude>
     <ClInclude Include="headers\CubemapRenderer.h">
       <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\AutoName.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\Timestamp.h">
-      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -397,15 +390,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\equirectangularToCubemap.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shaders\convoluteCubemap.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shaders\convoluteCubemap.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shaders\convoluteCubemap.geom">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

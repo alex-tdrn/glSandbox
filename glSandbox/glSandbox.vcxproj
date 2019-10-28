@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{10D73CE8-8818-4818-80FB-6CCD941835F3}</ProjectGuid>
     <RootNamespace>HelloWindow</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>glSandbox</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -106,15 +106,15 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>E:\Libraries\fx-gltf\include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third party/include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <EnablePREfast>false</EnablePREfast>
       <DisableSpecificWarnings>4312; 4244; 4312;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;glad.lib;imgui.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)third party/lib/$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,7 +141,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>E:\Libraries\fx-gltf\include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third party/include;$(ProjectDir)headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -149,8 +149,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;glad.lib;imgui.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)third party/lib/$(Platform)/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -177,8 +177,6 @@
     <ClCompile Include="source\ImportGLTF.cpp" />
     <ClCompile Include="source\Cubemap.cpp" />
     <ClCompile Include="source\Camera.cpp" />
-    <ClCompile Include="source\glad.c" />
-    <ClCompile Include="source\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="source\Lights.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\Material.cpp" />
@@ -195,16 +193,14 @@
     <ClInclude Include="headers\CubemapRenderer.h" />
     <ClInclude Include="headers\CubemapManager.h" />
     <ClInclude Include="headers\FileSelector.h" />
-    <ClInclude Include="headers\glad.h" />
     <ClInclude Include="headers\Grid.h" />
     <ClInclude Include="headers\MaterialManager.h" />
     <ClInclude Include="headers\MeshManager.h" />
-    <ClInclude Include="headers\AutoName.h" />
+    <ClInclude Include="headers\Named.h" />
     <ClInclude Include="headers\ImportGLTF.h" />
     <ClInclude Include="headers\Cubemap.h" />
     <ClInclude Include="headers\Camera.h" />
     <ClInclude Include="headers\Globals.h" />
-    <ClInclude Include="headers\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="headers\Lights.h" />
     <ClInclude Include="headers\Material.h" />
     <ClInclude Include="headers\Mesh.h" />
@@ -231,7 +227,6 @@
     <ClInclude Include="headers\TextureRenderer.h" />
     <ClInclude Include="headers\UIUtilities.h" />
     <ClInclude Include="headers\MeshRenderer.h" />
-    <ClInclude Include="headers\Timestamp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\equirectangularToCubemap.frag" />
@@ -283,9 +278,6 @@
     <None Include="shaders\visualizeTexture.vert" />
     <None Include="shaders\visualizeCubemap.frag" />
     <None Include="shaders\visualizeCubemap.vert" />
-    <None Include="shaders\convoluteCubemap.frag" />
-    <None Include="shaders\convoluteCubemap.geom" />
-    <None Include="shaders\convoluteCubemap.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

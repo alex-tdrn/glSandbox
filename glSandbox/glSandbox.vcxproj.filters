@@ -243,6 +243,8 @@
     <ClInclude Include="headers\CubemapRenderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="headers\AutoName.h" />
+    <ClInclude Include="headers\Timestamp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\skybox.frag">
@@ -392,5 +394,8 @@
     <None Include="shaders\equirectangularToCubemap.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\convoluteCubemap.frag" />
+    <None Include="shaders\convoluteCubemap.geom" />
+    <None Include="shaders\convoluteCubemap.vert" />
   </ItemGroup>
 </Project>

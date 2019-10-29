@@ -353,8 +353,8 @@ void Scene::drawUI()
 		};
 		auto drawList = [&](auto const& nodes){
 
-			if(ImGui::IsAnyItemActive() /*&& ImGui::IsMouseHoveringWindow()*/ && !ImGui::IsMouseDragging())//check for mouse click inside window
-				current = nullptr;
+			//if(ImGui::IsAnyItemActive() /*&& ImGui::IsMouseHoveringWindow()*/ && !ImGui::IsMouseDragging())//check for mouse click inside window
+				//current = nullptr;
 
 			int id = 0;
 			for(auto node : nodes)
@@ -410,8 +410,8 @@ void Scene::drawUI()
 		node->release();
 	}
 
-	if(ImGui::IsAnyItemActive() /*&& ImGui::IsMouseHoveringWindow()*/ && !ImGui::IsMouseDragging())//check for mouse click inside window
-		current = nullptr;
+	//if(ImGui::IsAnyItemActive() /*&& ImGui::IsMouseHoveringWindow()*/ && !ImGui::IsMouseDragging())//check for mouse click inside window
+		//current = nullptr;
 	ImGui::EndChild();
 
 	ImGui::NextColumn();

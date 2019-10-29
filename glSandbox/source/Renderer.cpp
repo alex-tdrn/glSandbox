@@ -265,6 +265,21 @@ void Renderer::renderShadowMaps() const
 		glDisable(GL_CULL_FACE);
 	}
 	int enabledDirectionalLights = 0;
+
+	if(shading.current == ShaderManager::pbr())
+	{
+		shading.current->set("dirLights[0].shadowMap", 16);
+		shading.current->set("pointLights[0].shadowMap", 17);
+		shading.current->set("spotLights[0].shadowMap", 18);
+		shading.current->set("material.normalMap", 19);
+		shading.current->set("material.occlusionMap", 20);
+		shading.current->set("material.emissiveMap", 21);
+		shading.current->set("material.baseColorMap", 22);
+		shading.current->set("material.metallicRoughnessMap", 23);
+		shading.current->set("irradianceMap", 23);
+
+	}
+
 	for(int i = 0; i < lightsD.size(); i++)
 	{
 		if(!lightsD[i]->isEnabled())
@@ -407,21 +422,16 @@ void Renderer::configureShaders() const
 	}
 	else if(shading.current == ShaderManager::refraction())
 	{
-		/*shading.current->set("perChannel", shading.refraction.perChannel);
+		shading.current->set("cameraPos", camera->getPosition());
+		shading.current->set("perChannel", shading.refraction.perChannel);
 		shading.current->set("n1", shading.refraction.n1);
 		shading.current->set("n1RGB", shading.refraction.n1RGB);
 		shading.current->set("n2", shading.refraction.n2);
-		shading.current->set("n2RGB", shading.refraction.n2RGB);*/
+		shading.current->set("n2RGB", shading.refraction.n2RGB);
 	}
 	else if(shading.current == ShaderManager::reflection())
 	{
-		/*if(skybox)
-		{
-			skybox->use();
-			shading.current->set("skybox", 0);
-			shading.current->set("S->os", S->getPosition());
-		}*/
-
+		shading.current->set("cameraPos", camera->getPosition());
 	}
 	else if(shading.current == ShaderManager::debugDepthBuffer())
 	{
@@ -452,6 +462,7 @@ void Renderer::configureShaders() const
 			shading.current->use();
 		}
 	}
+
 }
 
 void Renderer::renderHighlightedProps() const
@@ -513,6 +524,7 @@ void Renderer::renderProps(Shader* shader) const
 					shader->set("material.a", shading.debugging.unlitShowAlphaChannel);
 				}
 				prop->getMaterial()->use(shader, shading.debugging.unlitMap);
+				shader->validate();
 				prop->getMesh().use();
 			}
 		}
@@ -598,6 +610,8 @@ void Renderer::resizeViewport(int width, int height)
 void Renderer::setCamera(Camera* camera)
 {
 	this->camera = camera;
+	if(!camera)
+		return;
 	scene = camera->getScene();
 	shading.lighting.shadows.showMap = -1;
 	updateShadowMaps();

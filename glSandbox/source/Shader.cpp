@@ -18,6 +18,18 @@ unsigned int compile(std::string_view const source, GLenum type)
 	char const* stupidfuckingbullshit = source.data();
 	glShaderSource(compiledShader, 1, &stupidfuckingbullshit, nullptr);
 	glCompileShader(compiledShader);
+	int logLength;
+
+	glGetShaderiv(compiledShader, GL_INFO_LOG_LENGTH, &logLength);
+	if(logLength > 0)
+	{
+		std::string log;
+		log.resize(logLength + 1);
+		glGetShaderInfoLog(compiledShader, logLength, NULL, log.data());
+		std::cout << "ERROR COMPILING SHADER" << ":\n" << log;
+		assert(false);
+	}
+
 	return compiledShader;
 }
 
@@ -30,7 +42,7 @@ int Shader::getLocation(std::string_view const name) const
 {
 	int res = glGetUniformLocation(ID, name.data());
 //#ifndef NDEBUG
-	//assert(res != -1);
+//	assert(res != -1);
 //#endif
 	return res;
 }
@@ -64,6 +76,18 @@ void Shader::reload()
 	}
 
 	glLinkProgram(ID);
+
+	int logLength;
+	glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &logLength);
+	if(logLength > 0)
+	{
+		std::string log;
+		log.resize(logLength + 1);
+		glGetProgramInfoLog(ID, logLength, NULL, log.data());
+		std::cout << "ERROR LINKING: \n" << log;
+		//assert(false);
+	}
+
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 	if(geometryPath)
@@ -75,6 +99,21 @@ void Shader::use()
 	if(!initialized)
 		reload();
 	glUseProgram(ID);
+}
+
+void Shader::validate()
+{
+	glValidateProgram(ID);
+	int logLength;
+	glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &logLength);
+	if(logLength > 0)
+	{
+		std::string log;
+		log.resize(logLength + 1);
+		glGetProgramInfoLog(ID, logLength, NULL, log.data());
+		std::cout << "Shader cannot be run in current context: \n" << log;
+		//assert(false);
+	}
 }
 
 void Shader::set(std::string_view const name, int value) const

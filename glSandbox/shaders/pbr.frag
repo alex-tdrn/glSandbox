@@ -1,7 +1,7 @@
-#version 420 core
-#define MAX_DIR_LIGHTS 4
-#define MAX_POINT_LIGHTS 4
-#define MAX_SPOT_LIGHTS 4
+#version 460 core
+#define MAX_DIR_LIGHTS 1
+#define MAX_POINT_LIGHTS 1
+#define MAX_SPOT_LIGHTS 1
 
 struct DirLight
 {
@@ -96,7 +96,7 @@ float roughness = material.roughnessFactor;
 vec3 occlusion = vec3(1.0f);
 vec3 emission = material.emissiveFactor;
 vec3 F0 = vec3(0.04);
-const float shadowSamplingRadius = 
+float shadowSamplingRadius = 
 	shadowMappingRadius[0] + (length(fs_in.position) / cameraFarPlane)
 	* (shadowMappingRadius[1] - shadowMappingRadius[0]);
 

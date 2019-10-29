@@ -190,6 +190,7 @@
     <ClCompile Include="source\TextureRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\AutoName.h" />
     <ClInclude Include="headers\CubemapRenderer.h" />
     <ClInclude Include="headers\CubemapManager.h" />
     <ClInclude Include="headers\FileSelector.h" />
@@ -218,6 +219,7 @@
     <ClInclude Include="headers\SierpinskiTriangle.h" />
     <ClInclude Include="headers\Texture.h" />
     <ClInclude Include="headers\TextureManager.h" />
+    <ClInclude Include="headers\Timestamp.h" />
     <ClInclude Include="headers\Util.h" />
     <ClInclude Include="headers\TransformedNode.h" />
     <ClInclude Include="headers\SierpinskiTetrahedon.h" />
@@ -229,6 +231,9 @@
     <ClInclude Include="headers\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\convoluteCubemap.frag" />
+    <None Include="shaders\convoluteCubemap.geom" />
+    <None Include="shaders\convoluteCubemap.vert" />
     <None Include="shaders\equirectangularToCubemap.frag" />
     <None Include="shaders\equirectangularToCubemap.geom" />
     <None Include="shaders\equirectangularToCubemap.vert" />

@@ -94,7 +94,7 @@ int main(int argc, char** argv)
 	ImGuiIO& io = ImGui::GetIO();
 
 	ImGui_ImplGlfw_InitForOpenGL(window, false);
-	ImGui_ImplOpenGL3_Init("#version 420");
+	ImGui_ImplOpenGL3_Init("#version 460");
 
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().WindowRounding = 0.0f;
@@ -122,8 +122,8 @@ int main(int argc, char** argv)
 		settings::mainRenderer().render();
 		glDisable(GL_FRAMEBUFFER_SRGB);
 
-		//glEnable(GL_FRAMEBUFFER_SRGB);
 		settings::postprocessing::steps()[0].draw(settings::mainRenderer().getOutput(), 0);
+		glEnable(GL_FRAMEBUFFER_SRGB);
 		//glDisable(GL_FRAMEBUFFER_SRGB);
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -285,7 +285,7 @@ void processInput(GLFWwindow* window)
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar *message, const void* userParam)
 {
-	if(type == GL_DEBUG_TYPE_PERFORMANCE || type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR)
+	if(type == GL_DEBUG_TYPE_PERFORMANCE)
 		return;
 	std::cout << "-----------------------------------\n"
 		<< "OpenGL Debug Message (" << id << "): \n" << message << '\n';

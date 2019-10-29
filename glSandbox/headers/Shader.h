@@ -31,6 +31,7 @@ protected:
 public:
 	void reload();
 	void use();
+	void validate();
 	void set(std::string_view const name, int value) const;
 	void set(std::string_view const name, float value) const;
 	void set(std::string_view const name, glm::vec2 const& value) const;

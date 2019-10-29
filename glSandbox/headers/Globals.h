@@ -8,8 +8,8 @@
 
 namespace info
 {
-	inline int windowWidth = 1920;
-	inline int windowHeight = 960;
+	inline int windowWidth = 2560;
+	inline int windowHeight = 1440;
 	inline float aspect()
 	{
 		return float(windowWidth) / windowHeight;

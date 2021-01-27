@@ -92,6 +92,8 @@ void Shader::reload()
 	glDeleteShader(fragment);
 	if(geometryPath)
 		glDeleteShader(geometry);
+
+	//validate();
 }
 
 void Shader::use()
@@ -111,7 +113,10 @@ void Shader::validate()
 		std::string log;
 		log.resize(logLength + 1);
 		glGetProgramInfoLog(ID, logLength, NULL, log.data());
-		std::cout << "Shader cannot be run in current context: \n" << log;
+		std::cout << "Shader validation complete\n";
+		std::cout << "    Vertex path: " << vertexPath << '\n';
+		std::cout << "    Fragment path: " << fragmentPath << '\n';
+		std::cout << "Validation result: \n" << log;
 		//assert(false);
 	}
 }

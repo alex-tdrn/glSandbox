@@ -1,0 +1,2 @@
+D:\Projects\glSandbox\third party\lib\x64\Debug\glad.pdb
+D:\Projects\glSandbox\third party\src\glad\x64\Debug\glad.pdb

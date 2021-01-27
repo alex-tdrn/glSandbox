@@ -276,7 +276,7 @@ void Renderer::renderShadowMaps() const
 		shading.current->set("material.emissiveMap", 21);
 		shading.current->set("material.baseColorMap", 22);
 		shading.current->set("material.metallicRoughnessMap", 23);
-		shading.current->set("irradianceMap", 23);
+		shading.current->set("irradianceMap", 24);
 
 	}
 
@@ -462,7 +462,6 @@ void Renderer::configureShaders() const
 			shading.current->use();
 		}
 	}
-
 }
 
 void Renderer::renderHighlightedProps() const
@@ -524,7 +523,7 @@ void Renderer::renderProps(Shader* shader) const
 					shader->set("material.a", shading.debugging.unlitShowAlphaChannel);
 				}
 				prop->getMaterial()->use(shader, shading.debugging.unlitMap);
-				shader->validate();
+				//shader->validate();
 				prop->getMesh().use();
 			}
 		}

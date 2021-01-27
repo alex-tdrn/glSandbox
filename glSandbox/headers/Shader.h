@@ -9,6 +9,9 @@
 #include <sstream>
 #include <iostream>
 #include <optional>
+#include <unordered_map>
+#include <vector>
+#include <unordered_set>
 
 class Shader : public AutoName<Shader>
 {

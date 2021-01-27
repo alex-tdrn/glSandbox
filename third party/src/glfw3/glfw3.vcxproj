@@ -42,7 +42,7 @@
     <ProjectGuid>{8FBB3B10-0881-41F5-B214-2790EA9AC592}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>renderdeck</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>glfw3</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

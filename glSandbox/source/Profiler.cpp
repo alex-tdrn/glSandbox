@@ -6,6 +6,7 @@
 #include <array>
 #include <vector>
 #include <numeric>
+#include <string>
 
 const int frameSamples = 100;
 std::array<float, frameSamples> frametimePlot;

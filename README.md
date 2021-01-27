@@ -1,3 +1,11 @@
+My first attempt at a rendering engine in OpenGL and C++. Written over the summer in 2018, as I was following along the tutorials from https://learnopengl.com/. The focus was on learning and experimenting with techniques, and exposing as much engine state to the UI as possible. 
+
+Later, trying, and failing to refactor the engine to use a modular, demand-driven pipeline is what prompted me to start from scratch with my current side-project, [rendershop](https://github.com/alex-tdrn/rendershop).
+
+HDRi's from https://hdrihaven.com/
+
+Some eyecandy:
+
 ![alt text][shadowmapping]
 ![alt text][shadowmapping2]
 ![alt text][debug_depth]
